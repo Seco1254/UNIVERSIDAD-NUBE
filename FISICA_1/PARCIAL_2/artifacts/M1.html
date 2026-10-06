@@ -1,0 +1,787 @@
+<title>M1 Newton y planos inclinados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px, barra de secciones fija arriba; las figuras y el lab son las piezas que rompen la columna. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>20 min</span></a>
+    <a href="#lab">2 Lab <span>15 min</span></a>
+    <a href="#taller">3 Taller <span>35 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Módulo 1 de 9</p>
+    <h1>Newton, diagramas de cuerpo libre y planos inclinados</h1>
+    <div class="meta">
+      <span class="chip-ref">Refuerzo</span>
+      <span>Martes 6 de octubre · carga liviana · 1–1,5 h</span>
+      <span>Libro: 4.1–4.6 y 5.1</span>
+    </div>
+    <p class="prose">Este módulo es la base de todo el parcial: si el diagrama de fuerzas está bien, el resto es álgebra. Ya lo viste en clase, así que la teoría es corta y el tiempo se va al taller.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, saltas M1.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Lo mínimo que necesitas para el parcial, con las trampas que pone el profesor.</p></div>
+
+    <div class="block">
+      <h3>Las tres leyes, en versión parcial</h3>
+      <div class="laws">
+        <div class="law"><b>1.ª ley</b><span>Si la fuerza neta es cero, el cuerpo sigue en reposo o con velocidad constante.</span><span class="ex">En el parcial, «equilibrio» significa ΣF = 0 en cada eje.</span></div>
+        <div class="law"><b>2.ª ley</b><span>ΣF = m·a, eje por eje.</span><span class="ex">Escribes una ecuación por eje y por cuerpo.</span></div>
+        <div class="law"><b>3.ª ley</b><span>Si A empuja a B con F, B empuja a A con −F.</span><span class="ex">Las dos fuerzas actúan sobre cuerpos distintos: van en diagramas distintos y nunca se cancelan entre sí.</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Las fuerzas que usa el profesor</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Fuerza</th><th>Dirección</th><th>Valor</th><th>Ojo</th></tr></thead>
+        <tbody>
+          <tr><td><b>Peso</b></td><td>Siempre vertical, hacia abajo</td><td class="mono">mg</td><td>No se inclina con el plano.</td></tr>
+          <tr><td><b>Normal</b></td><td>Perpendicular a la superficie, empujando</td><td>Incógnita</td><td>No siempre vale mg.</td></tr>
+          <tr><td><b>Tensión</b></td><td>A lo largo de la cuerda, jalando</td><td>Igual en toda una cuerda ideal</td><td>Una cuerda nunca empuja.</td></tr>
+          <tr><td><b>Fuerza aplicada</b></td><td>La que diga el enunciado</td><td>Dato o incógnita</td><td>Si es horizontal sobre un plano inclinado, también se descompone.</td></tr>
+          <tr><td><b>Contacto entre bloques</b></td><td>Perpendicular a la cara de contacto</td><td>Incógnita</td><td>Aparece en los dos bloques con sentidos opuestos (3.ª ley).</td></tr>
+          <tr><td><b>Fricción</b></td><td>Paralela a la superficie</td><td>Se ve en M3</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>Receta del diagrama de cuerpo libre</h3>
+      <ol class="steps">
+        <li><span><b>Aísla un cuerpo.</b> Dibuja solo ese bloque, sin el resto del sistema.</span></li>
+        <li><span><b>Pon el peso primero.</b> Siempre está.</span></li>
+        <li><span><b>Recorre el contorno.</b> Cada cosa que toca al bloque es una fuerza: una superficie da normal (y fricción), una cuerda da tensión, otro bloque da contacto, una mano da F.</span></li>
+        <li><span><b>Elige los ejes.</b> En un plano inclinado: x a lo largo del plano, y perpendicular a él.</span></li>
+        <li><span><b>Escribe ΣF<sub>x</sub> = m·a<sub>x</sub> y ΣF<sub>y</sub> = m·a<sub>y</sub>.</b> En equilibrio, las dos son cero.</span></li>
+      </ol>
+    </div>
+
+    <div class="block">
+      <h3>Plano inclinado: la descomposición que más falla</h3>
+      <p class="prose">El profesor a veces da el ángulo con la horizontal (θ) y a veces con la vertical (β). Es el mismo plano con otro nombre, pero el seno y el coseno se intercambian.</p>
+      <div class="figs">
+        <figure>
+          <div id="fig-h"></div>
+          <figcaption><b>Ángulo θ con la horizontal</b>
+            <div class="eq"><span>a lo largo del plano: <b>mg·sen θ</b></span><span>contra el plano: <b>mg·cos θ</b></span></div>
+          </figcaption>
+        </figure>
+        <figure>
+          <div id="fig-v"></div>
+          <figcaption><b>Ángulo β con la vertical</b>
+            <div class="eq"><span>a lo largo del plano: <b>mg·cos β</b></span><span>contra el plano: <b>mg·sen β</b></span></div>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="callout">
+        <h3>Prueba del límite: 5 segundos y no te equivocas</h3>
+        <p>No memorices cuál es seno. Imagina el caso extremo. Si el plano fuera horizontal (θ = 0), la componente a lo largo del plano tendría que ser 0, y sen 0 = 0. Si el plano fuera una pared (β = 0), la componente a lo largo tendría que ser todo el peso, y cos 0 = 1.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Fuerza horizontal sobre un plano inclinado</h3>
+      <div class="figs">
+        <figure>
+          <div id="fig-f"></div>
+          <figcaption>F horizontal empujando un bloque contra un plano de ángulo θ con la horizontal.</figcaption>
+        </figure>
+        <div class="prose">
+          <p>La F horizontal también se descompone:</p>
+          <div class="eq"><span>sube por el plano: <b>F·cos θ</b></span><span>empuja contra el plano: <b>F·sen θ</b></span></div>
+          <p>Por eso la normal crece:</p>
+          <div class="eq"><span><b>N = mg·cos θ + F·sen θ</b></span></div>
+          <div class="callout trap"><h3>Trampa</h3><p>Escribir N = mg·cos θ cuando hay una F horizontal. Salió en 2026-1 (Abierto 1).</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Bloques en contacto: sistema primero, luego aísla</h3>
+      <ol class="steps">
+        <li><span><b>Toma todos los bloques como un solo sistema</b> para hallar la aceleración o la fuerza externa. Las fuerzas de contacto son internas y se cancelan.</span></li>
+        <li><span><b>Aísla el bloque con menos fuerzas</b> para hallar la fuerza de contacto. Casi siempre es el que no recibe la F.</span></li>
+      </ol>
+      <div class="eq"><span>Ejemplo: m y 2m en un piso sin fricción; F empuja a m.</span><span>Sistema: a = F / 3m.</span><span>Aislando 2m: contacto = 2m·a = <b>2F/3</b>.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: el plano inclinado</h2><p>Mueve el ángulo, cambia desde dónde se mide y agrega una fuerza horizontal. Los valores están en unidades de mg.</p></div>
+
+    <div class="lab">
+      <div class="lab-stage">
+        <canvas id="lab-cv" role="img" aria-label="Bloque sobre un plano inclinado con sus fuerzas"></canvas>
+        <div class="legend-f" aria-hidden="true">
+          <span><i style="background:var(--c-peso)"></i>Peso</span>
+          <span><i style="background:var(--c-comp)"></i>Componentes del peso</span>
+          <span><i style="background:var(--c-normal)"></i>Normal</span>
+          <span><i style="background:var(--c-f)"></i>F horizontal</span>
+        </div>
+      </div>
+      <div class="lab-side">
+        <fieldset class="ctl">
+          <legend>Medir el ángulo desde</legend>
+          <div class="seg">
+            <label><input type="radio" name="modo" id="modo-h" value="h" checked><span>la horizontal (θ)</span></label>
+            <label><input type="radio" name="modo" id="modo-v" value="v"><span>la vertical (β)</span></label>
+          </div>
+        </fieldset>
+        <div class="ctl">
+          <label for="ang" id="ang-lab">θ = 30°</label>
+          <input type="range" id="ang" min="5" max="80" step="1" value="30">
+        </div>
+        <label class="chk"><input type="checkbox" id="comp" checked> Mostrar componentes del peso</label>
+        <div class="ctl">
+          <label for="fuerza" id="f-lab">F horizontal = 0,00 mg</label>
+          <input type="range" id="fuerza" min="0" max="3" step="0.01" value="0">
+        </div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span id="ro-par-l">A lo largo del plano · mg·sen θ</span><b id="ro-par">0,50 mg</b></div>
+          <div class="ro"><span id="ro-per-l">Contra el plano · mg·cos θ</span><b id="ro-per">0,87 mg</b></div>
+          <div class="ro"><span>F que sube por el plano · F·cos θ</span><b id="ro-fpar">0,00 mg</b></div>
+          <div class="ro"><span>F contra el plano · F·sen θ</span><b id="ro-fper">0,00 mg</b></div>
+          <div class="ro"><span>Normal · N = mg·cos θ + F·sen θ</span><b id="ro-n">0,87 mg</b></div>
+          <div class="ro"><span>Fuerza neta a lo largo del plano</span><b id="ro-net">0,50 mg ↓</b></div>
+          <div class="status" id="ro-status">El bloque se desliza plano abajo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo moviendo los controles.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · En modo «desde la vertical», pon β = 60°. ¿Cuánto vale la componente a lo largo del plano?</summary>
+          <div class="rev-body"><p><b>mg·cos 60° = 0,50 mg.</b> Es exactamente el mismo plano que θ = 30°: cambia el nombre del ángulo, no la física.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Agrega F y súbela desde 0. ¿La normal sube o baja?</summary>
+          <div class="rev-body"><p><b>Sube.</b> F tiene una componente F·sen θ que empuja el bloque contra el plano, y la normal la tiene que equilibrar: N = mg·cos θ + F·sen θ.</p></div></details>
+        <details class="rev"><summary>Reto 3 · Con θ = 30°, ¿qué F deja el bloque en equilibrio sin fricción?</summary>
+          <div class="rev-body"><p><b>F = mg·tan 30° ≈ 0,58 mg.</b> Sale de igualar lo que sube con lo que baja: F·cos θ = mg·sen θ. El indicador se pone verde cuando lo logras.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Cuatro problemas, del más fácil al tipo parcial. Hazlos en papel: diagrama, ecuaciones y resultado.</p></div>
+    <p class="prose">Después de resolver, usa el chequeo rápido. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo completo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M2 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted" id="att-empty">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M2 · Poleas y equilibrio, el miércoles 7 (carga media, junto con M3).</p>
+    <p>Fuente de los problemas: parciales 2 de 2024-2 y 2026-1 de Física 1, Universidad de los Andes.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+
+/* ---------- Figuras SVG del plano inclinado ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = 8, w = 4.5;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${x2.toFixed(1)},${y2.toFixed(1)} ${(bx - uy * w).toFixed(1)},${(by + ux * w).toFixed(1)} ${(bx + uy * w).toFixed(1)},${(by - ux * w).toFixed(1)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 200, A = { x: 28, y: 172 }, L = 236, th = Math.PI / 6;
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + L * u.x, y: A.y + L * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * L * u.x + off * n.x, y: A.y + s * L * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${B.x.toFixed(1)},${B.y} ${C.x.toFixed(1)},${C.y.toFixed(1)}" class="sv-ground"/>`;
+  if (o.mode === "h") {
+    const R = 38;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${(A.x + R * u.x).toFixed(1)} ${(A.y + R * u.y).toFixed(1)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 8}" y="${A.y - 6}" class="sv-ang">${o.angLabel || "θ"}</text>`;
+  } else {
+    const R = 30;
+    g += `<path d="M ${C.x.toFixed(1)} ${(C.y + R).toFixed(1)} A ${R} ${R} 0 0 1 ${(C.x - R * u.x).toFixed(1)} ${(C.y - R * u.y).toFixed(1)}" class="sv-arc"/>`;
+    g += `<text x="${(C.x - 0.5 * (R + 12)).toFixed(1)}" y="${(C.y + 0.866 * (R + 12) + 5).toFixed(1)}" class="sv-ang" text-anchor="middle">${o.angLabel || "β"}</text>`;
+  }
+  let centers = [];
+  (o.blocks || []).forEach((b) => {
+    const c = P(b.s, b.size / 2); centers.push(c);
+    g += `<g transform="rotate(-30 ${c.x.toFixed(1)} ${c.y.toFixed(1)})"><rect x="${(c.x - b.size / 2).toFixed(1)}" y="${(c.y - b.size / 2).toFixed(1)}" width="${b.size}" height="${b.size}" class="sv-block"/><text x="${c.x.toFixed(1)}" y="${(c.y + 4).toFixed(1)}" class="sv-lab" text-anchor="middle">${b.label}</text></g>`;
+  });
+  if (o.peg) {
+    const b = o.blocks[0], c = centers[0];
+    const s1 = { x: c.x + u.x * b.size / 2, y: c.y + u.y * b.size / 2 };
+    const Q = P(0.98, b.size / 2);
+    g += `<line x1="${s1.x.toFixed(1)}" y1="${s1.y.toFixed(1)}" x2="${Q.x.toFixed(1)}" y2="${Q.y.toFixed(1)}" class="sv-rope"/>`;
+    g += `<line x1="${Q.x.toFixed(1)}" y1="${Q.y.toFixed(1)}" x2="${P(0.98, 0).x.toFixed(1)}" y2="${P(0.98, 0).y.toFixed(1)}" class="sv-line" stroke-width="3"/>`;
+    g += `<circle cx="${Q.x.toFixed(1)}" cy="${Q.y.toFixed(1)}" r="3.5" class="sv-pulley"/>`;
+  }
+  if (o.pulley) {
+    const b = o.blocks[0], c = centers[0], r = 12;
+    const pc = { x: C.x + u.x * 12 + n.x * (b.size / 2 - r), y: C.y + u.y * 12 + n.y * (b.size / 2 - r) };
+    const s1 = { x: c.x + u.x * b.size / 2, y: c.y + u.y * b.size / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${C.x.toFixed(1)}" y1="${C.y.toFixed(1)}" x2="${pc.x.toFixed(1)}" y2="${pc.y.toFixed(1)}" class="sv-line" stroke-width="3"/>`;
+    g += `<line x1="${s1.x.toFixed(1)}" y1="${s1.y.toFixed(1)}" x2="${t1.x.toFixed(1)}" y2="${t1.y.toFixed(1)}" class="sv-rope"/>`;
+    g += `<circle cx="${pc.x.toFixed(1)}" cy="${pc.y.toFixed(1)}" r="${r}" class="sv-pulley"/><circle cx="${pc.x.toFixed(1)}" cy="${pc.y.toFixed(1)}" r="2" class="sv-line"/>`;
+    const hx = pc.x + r, top = 108, hs = 26;
+    g += `<line x1="${hx.toFixed(1)}" y1="${pc.y.toFixed(1)}" x2="${hx.toFixed(1)}" y2="${top}" class="sv-rope"/>`;
+    g += `<rect x="${(hx - hs / 2).toFixed(1)}" y="${top}" width="${hs}" height="${hs}" class="sv-block"/><text x="${hx.toFixed(1)}" y="${top + 17}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.force) {
+    const b = o.blocks[o.force.on || 0], c = centers[o.force.on || 0];
+    const ex = c.x - b.size / 2 - 2;
+    g += arrowSvg(ex - 58, c.y, ex, c.y, "a-f");
+    g += `<text x="${(ex - 58).toFixed(1)}" y="${(c.y - 8).toFixed(1)}" class="sv-t t-f">F</text>`;
+  }
+  if (o.weight) {
+    const c = centers[0], M = 62, s = Math.sin(th), co = Math.cos(th);
+    g += arrowSvg(c.x, c.y, c.x, c.y + M, "a-peso");
+    g += `<text x="${(c.x + 6).toFixed(1)}" y="${(c.y + M + 2).toFixed(1)}" class="sv-t t-peso">mg</text>`;
+    const pe = { x: c.x - u.x * M * s, y: c.y - u.y * M * s };
+    const qe = { x: c.x - n.x * M * co, y: c.y - n.y * M * co };
+    g += `<line x1="${pe.x.toFixed(1)}" y1="${pe.y.toFixed(1)}" x2="${c.x.toFixed(1)}" y2="${(c.y + M).toFixed(1)}" class="sv-dash"/>`;
+    g += `<line x1="${qe.x.toFixed(1)}" y1="${qe.y.toFixed(1)}" x2="${c.x.toFixed(1)}" y2="${(c.y + M).toFixed(1)}" class="sv-dash"/>`;
+    g += arrowSvg(c.x, c.y, pe.x, pe.y, "a-comp");
+    g += arrowSvg(c.x, c.y, qe.x, qe.y, "a-comp");
+    const lp = o.mode === "h" ? "mg sen θ" : "mg cos β", lq = o.mode === "h" ? "mg cos θ" : "mg sen β";
+    g += `<text x="${(pe.x - 4).toFixed(1)}" y="${(pe.y - 8).toFixed(1)}" class="sv-t t-comp" text-anchor="end">${lp}</text>`;
+    g += `<text x="${(qe.x + 6).toFixed(1)}" y="${(qe.y + 4).toFixed(1)}" class="sv-t t-comp">${lq}</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+$("#fig-h").innerHTML = inclineSvg({ mode: "h", blocks: [{ s: 0.5, size: 30, label: "m" }], weight: true, aria: "Plano con ángulo θ respecto a la horizontal y las componentes del peso" });
+$("#fig-v").innerHTML = inclineSvg({ mode: "v", blocks: [{ s: 0.5, size: 30, label: "m" }], weight: true, aria: "Plano con ángulo β respecto a la vertical y las componentes del peso" });
+$("#fig-f").innerHTML = inclineSvg({ mode: "h", blocks: [{ s: 0.52, size: 30, label: "m" }], force: { on: 0 }, aria: "Fuerza horizontal F sobre un bloque en un plano inclinado" });
+
+/* ---------- Lab ---------- */
+const S = { ang: 30, mode: "h", F: 0, comp: true };
+const cv = $("#lab-cv"), ctx = cv.getContext("2d");
+function cssv(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function arrowC(x1, y1, x2, y2, color, wdt) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+  if (L < 3) return;
+  const ux = dx / L, uy = dy / L, h = Math.min(11, L * 0.45), w = h * 0.55;
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = wdt || 2.6; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * h, y2 - uy * h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * h - uy * w, y2 - uy * h + ux * w); ctx.lineTo(x2 - ux * h + uy * w, y2 - uy * h - ux * w); ctx.closePath(); ctx.fill();
+}
+function drawLab() {
+  const dpr = window.devicePixelRatio || 1;
+  const Wc = cv.clientWidth || 600;
+  const Hc = Math.round(Math.min(400, Math.max(270, Wc * 0.66)));
+  cv.style.height = Hc + "px"; cv.width = Math.round(Wc * dpr); cv.height = Math.round(Hc * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, Wc, Hc);
+  const ink = cssv("--ink"), muted = cssv("--muted"), ground = cssv("--c-ground"), surf = cssv("--surface"), acc = cssv("--accent");
+  const cP = cssv("--c-peso"), cN = cssv("--c-normal"), cF = cssv("--c-f"), cC = cssv("--c-comp");
+  const mono = cssv("--f-mono") || "monospace";
+  const thDeg = S.mode === "h" ? S.ang : 90 - S.ang, th = thDeg * Math.PI / 180;
+  const s = Math.sin(th), c = Math.cos(th);
+  const pad = 18, baseY = Hc - 22, topY = 22;
+  const Ls = Math.min((Wc - 2 * pad - 30) / c, (baseY - topY) / s);
+  const A = { x: Math.max(pad + 8, Wc - pad - 24 - Ls * c), y: baseY };
+  const u = { x: c, y: -s }, n = { x: -s, y: -c };
+  const C = { x: A.x + Ls * u.x, y: A.y + Ls * u.y };
+  /* piso */
+  ctx.strokeStyle = ink; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(4, baseY); ctx.lineTo(Wc - 4, baseY); ctx.stroke();
+  /* plano */
+  ctx.fillStyle = ground; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(C.x, A.y); ctx.lineTo(C.x, C.y); ctx.closePath(); ctx.fill(); ctx.stroke();
+  /* ángulo */
+  ctx.strokeStyle = acc; ctx.fillStyle = acc; ctx.lineWidth = 2;
+  ctx.font = `800 15px ${cssv("--f-display") || "sans-serif"}`;
+  if (S.mode === "h") {
+    const R = 40; ctx.beginPath(); ctx.arc(A.x, A.y, R, -th, 0); ctx.stroke();
+    ctx.fillText(`θ = ${Math.round(thDeg)}°`, A.x + R + 6, A.y - 8);
+  } else {
+    const R = 34; ctx.beginPath(); ctx.arc(C.x, C.y, R, Math.PI / 2, Math.PI - th); ctx.stroke();
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    ctx.textAlign = "right"; ctx.fillText(`β = ${Math.round(S.ang)}°`, C.x + Math.cos(mid) * (R + 10) - 2, C.y + Math.sin(mid) * (R + 10) + 14); ctx.textAlign = "left";
+  }
+  /* bloque */
+  const b = Math.max(28, Math.min(46, Wc * 0.075));
+  const M0 = { x: A.x + u.x * Ls * 0.52, y: A.y + u.y * Ls * 0.52 };
+  const ctr = { x: M0.x + n.x * b / 2, y: M0.y + n.y * b / 2 };
+  ctx.save(); ctx.translate(ctr.x, ctr.y); ctx.rotate(-th);
+  ctx.fillStyle = surf; ctx.strokeStyle = ink; ctx.lineWidth = 2; ctx.fillRect(-b / 2, -b / 2, b, b); ctx.strokeRect(-b / 2, -b / 2, b, b);
+  ctx.fillStyle = ink; ctx.font = `500 13px ${mono}`; ctx.textAlign = "center"; ctx.fillText("m", 0, 5); ctx.textAlign = "left";
+  ctx.restore();
+  /* fuerzas (escala: mg) */
+  const mg = Math.min(Wc, Hc) * 0.27;
+  const F = S.F, N = c + F * s;
+  ctx.font = `500 12px ${mono}`;
+  if (S.comp) {
+    const pe = { x: ctr.x - u.x * mg * s, y: ctr.y - u.y * mg * s };
+    const qe = { x: ctr.x - n.x * mg * c, y: ctr.y - n.y * mg * c };
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = muted; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(pe.x, pe.y); ctx.lineTo(ctr.x, ctr.y + mg); ctx.lineTo(qe.x, qe.y); ctx.stroke(); ctx.setLineDash([]);
+    arrowC(ctr.x, ctr.y, pe.x, pe.y, cC, 2.2);
+    arrowC(ctr.x, ctr.y, qe.x, qe.y, cC, 2.2);
+    ctx.fillStyle = cC;
+    ctx.textAlign = "right"; ctx.fillText(S.mode === "h" ? "mg sen θ" : "mg cos β", pe.x - 6, pe.y - 6); ctx.textAlign = "left";
+    ctx.fillText(S.mode === "h" ? "mg cos θ" : "mg sen β", qe.x + 6, qe.y + 12);
+  }
+  arrowC(ctr.x, ctr.y, ctr.x, ctr.y + mg, cP);
+  ctx.fillStyle = cP; ctx.fillText("mg", ctr.x + 7, ctr.y + mg - 2);
+  const Nd = Math.min(N, 2.2);
+  const ne = { x: ctr.x + n.x * mg * Nd, y: ctr.y + n.y * mg * Nd };
+  arrowC(ctr.x, ctr.y, ne.x, ne.y, cN);
+  ctx.fillStyle = cN; ctx.fillText("N", ne.x - 16, ne.y - 4);
+  if (F > 0.001) {
+    const fl = mg * Math.min(F, 2.2);
+    const ex = ctr.x - b / 2 - 4;
+    arrowC(ex - fl, ctr.y, ex, ctr.y, cF);
+    ctx.fillStyle = cF; ctx.fillText("F", ex - fl, ctr.y - 8);
+  }
+  /* lecturas */
+  const net = s - F * c; /* positiva: baja por el plano */
+  $("#ang-lab").textContent = (S.mode === "h" ? "θ = " : "β = ") + Math.round(S.ang) + "°" + (S.mode === "h" ? "  (β = " + (90 - Math.round(S.ang)) + "°)" : "  (θ = " + (90 - Math.round(S.ang)) + "°)");
+  $("#f-lab").textContent = "F horizontal = " + fmt(F) + " mg";
+  $("#ro-par-l").textContent = "A lo largo del plano · " + (S.mode === "h" ? "mg·sen θ" : "mg·cos β");
+  $("#ro-per-l").textContent = "Contra el plano · " + (S.mode === "h" ? "mg·cos θ" : "mg·sen β");
+  $("#ro-par").textContent = fmt(s) + " mg";
+  $("#ro-per").textContent = fmt(c) + " mg";
+  $("#ro-fpar").textContent = fmt(F * c) + " mg";
+  $("#ro-fper").textContent = fmt(F * s) + " mg";
+  $("#ro-n").textContent = fmt(N) + " mg";
+  const st = $("#ro-status");
+  if (Math.abs(net) < 0.006) { $("#ro-net").textContent = "0,00 mg"; st.textContent = "En equilibrio: F·cos θ = mg·sen θ"; st.className = "status ok"; }
+  else if (net > 0) { $("#ro-net").textContent = fmt(net) + " mg ↓"; st.textContent = "El bloque se desliza plano abajo"; st.className = "status"; }
+  else { $("#ro-net").textContent = fmt(-net) + " mg ↑"; st.textContent = "F gana: el bloque sube por el plano"; st.className = "status"; }
+}
+$("#ang").addEventListener("input", (e) => { S.ang = Number(e.target.value); drawLab(); });
+$("#fuerza").addEventListener("input", (e) => { S.F = Number(e.target.value); drawLab(); });
+$("#comp").addEventListener("change", (e) => { S.comp = e.target.checked; drawLab(); });
+document.querySelectorAll('input[name="modo"]').forEach((r) => r.addEventListener("change", (e) => {
+  if (e.target.value === S.mode) return;
+  S.mode = e.target.value; S.ang = 90 - S.ang; $("#ang").value = S.ang; drawLab();
+}));
+if ("ResizeObserver" in window) new ResizeObserver(() => drawLab()).observe(cv); else window.addEventListener("resize", drawLab);
+try { window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawLab); } catch (e) {}
+new MutationObserver(drawLab).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+drawLab();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawLab);
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Calentamiento: ángulo con la vertical", src: "Problema nuevo",
+    fig: { mode: "v", blocks: [{ s: 0.45, size: 30, label: "m" }], peg: true, aria: "Bloque sostenido por una cuerda paralela a un plano de ángulo β con la vertical" },
+    txt: "Un bloque de masa m está en reposo sobre un plano sin fricción que forma un ángulo β con la vertical. Lo sostiene una cuerda paralela al plano, amarrada arriba. Halla la tensión T y la normal N.",
+    hints: ["Ejes: x a lo largo del plano, y perpendicular. Hay tres fuerzas: peso, normal y tensión.",
+      "Prueba del límite: si β → 0, el plano es una pared vertical y la cuerda sostiene todo el peso. ¿Qué función vale 1 en 0?"],
+    sol: ["Eje a lo largo del plano: T − mg·cos β = 0, así que <b>T = mg·cos β</b>.",
+      "Eje perpendicular: N − mg·sen β = 0, así que <b>N = mg·sen β</b>.",
+      "Chequeo con β = 0 (pared): T = mg y N = 0. Tiene sentido."],
+    checks: [{ q: "¿Cuánto vale T?", opts: ["mg·sen β", "mg·cos β", "mg·tan β", "mg"], a: 1 }] },
+  { n: "T2", t: "Bloque en plano + bloque colgante", src: "Parcial 2024-2 · SM1, versión sin fricción",
+    fig: { mode: "v", angLabel: "θ", blocks: [{ s: 0.5, size: 30, label: "M" }], pulley: "x", aria: "Bloque M sobre un plano de ángulo θ con la vertical, unido por una polea a un bloque colgante x" },
+    txt: "Un bloque de masa M está sobre un plano sin fricción que forma un ángulo θ con la vertical (el ángulo marcado en la figura, en el vértice de arriba). Una cuerda paralela al plano pasa por una polea ideal y sostiene un bloque colgante de masa x. ¿Qué valor de x mantiene el sistema en equilibrio?",
+    hints: ["Bloque colgante: T = xg. Para M, necesitas la componente del peso a lo largo del plano con el ángulo medido desde la vertical.",
+      "Prueba del límite: si θ → 0, el plano es una pared y x tiene que ser igual a M."],
+    sol: ["Bloque colgante: T − xg = 0.",
+      "Bloque M, eje a lo largo del plano: T − Mg·cos θ = 0.",
+      "Igualando: <b>x = M·cos θ</b>.",
+      "En el parcial real había fricción y la respuesta fue M(cos θ + µ<sub>s</sub>·sen θ). El término M·cos θ es este mismo; la fricción la sumamos en M3. Ojo: M·cos θ era una de las opciones, como distractor."],
+    checks: [{ q: "¿Cuál es x?", opts: ["M·sen θ", "M·cos θ", "M·tan θ", "M", "M / cos θ"], a: 1 }] },
+  { n: "T3", t: "Fuerza horizontal que sostiene un bloque", src: "Problema nuevo",
+    fig: { mode: "h", blocks: [{ s: 0.5, size: 30, label: "m" }], force: { on: 0 }, aria: "Bloque m sostenido por una fuerza horizontal F sobre un plano de ángulo θ" },
+    txt: "Un bloque de masa m está sobre un plano sin fricción inclinado un ángulo θ respecto a la horizontal. Una fuerza horizontal F lo mantiene en reposo. Halla F y la normal N.",
+    hints: ["Descompón también F: F·cos θ sube por el plano y F·sen θ empuja contra el plano.",
+      "Eje a lo largo del plano: lo que sube es igual a lo que baja."],
+    sol: ["Eje a lo largo del plano: F·cos θ − mg·sen θ = 0, así que <b>F = mg·tan θ</b>.",
+      "Eje perpendicular: N − mg·cos θ − F·sen θ = 0.",
+      "Reemplazando F: N = mg·cos θ + mg·sen²θ / cos θ = mg(cos²θ + sen²θ) / cos θ, así que <b>N = mg / cos θ</b>.",
+      "Chequeo: con θ → 0, F → 0 y N → mg. Con θ → 90°, F → ∞: una fuerza horizontal no puede sostener un bloque contra una pared sin fricción."],
+    checks: [{ q: "¿Cuánto vale N?", opts: ["mg·cos θ", "mg / cos θ", "mg·cos θ − F·sen θ", "mg"], a: 1 }] },
+  { n: "T4", t: "Dos bloques en un plano inclinado con F horizontal", src: "Parcial 2026-1 · Abierto 1 (20 pts)",
+    fig: { mode: "h", blocks: [{ s: 0.36, size: 26, label: "m" }, { s: 0.36 + 31 / 236, size: 36, label: "2m" }], force: { on: 0 }, aria: "Bloques m y 2m en contacto sobre un plano inclinado, con F horizontal sobre m" },
+    txt: "Dos bloques están sobre un plano inclinado sin fricción con ángulo θ respecto a la horizontal: el de masa m abajo y el de masa 2m encima, en contacto. Se aplica una fuerza horizontal F sobre el bloque de menor masa. A) Dibuja los diagramas de fuerza de cada bloque (6 pts). B) Halla F para que los bloques queden en equilibrio (7 pts). C) Halla la normal que hace el bloque 2m sobre el bloque m (7 pts). Da tus respuestas en términos de m, θ y g.",
+    hints: ["Para F, toma los dos bloques como un solo sistema de masa 3m: la fuerza de contacto es interna y se cancela.",
+      "Para la fuerza de contacto, aísla el bloque 2m: es el que tiene menos fuerzas."],
+    sol: ["<b>A)</b> Bloque m: peso mg, normal del plano N₁, fuerza F horizontal y el contacto N₂ que le hace el 2m (apunta plano abajo). Bloque 2m: peso 2mg, normal del plano N₃ y el contacto N₂ que le hace el m (apunta plano arriba).",
+      "<b>B)</b> Sistema completo, eje a lo largo del plano: F·cos θ − 3mg·sen θ = 0, así que <b>F = 3mg·tan θ</b>.",
+      "<b>C)</b> Bloque 2m, eje a lo largo del plano: N₂ − 2mg·sen θ = 0, así que <b>N₂ = 2mg·sen θ</b>.",
+      "Extra: la normal del plano sobre m es N₁ = mg·cos θ + F·sen θ = mg·cos θ + 3mg·sen θ·tan θ."],
+    checks: [{ q: "B) ¿Cuánto vale F?", opts: ["3mg·sen θ", "3mg·tan θ", "2mg·tan θ", "mg·tan θ", "3mg·cos θ"], a: 1 },
+      { q: "C) ¿Qué normal hace 2m sobre m?", opts: ["2mg·cos θ", "2mg·sen θ", "3mg·sen θ", "2mg·tan θ"], a: 1 }] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = inclineSvg(p.fig); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(el("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => { const pp = el("p"); pp.innerHTML = s; sb.appendChild(pp); }); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "Un libro está en reposo sobre una mesa. ¿Cuál es la pareja de acción–reacción del peso del libro?",
+      o: ["La normal que la mesa hace sobre el libro.", "La fuerza que el libro hace sobre la mesa.", "La fuerza gravitacional que el libro hace sobre la Tierra.", "No tiene pareja porque el libro está en reposo."], a: 2,
+      e: "El peso es la Tierra jalando al libro; su pareja es el libro jalando a la Tierra. La normal vale lo mismo que el peso aquí por la 1.ª ley (equilibrio), no por la 3.ª: actúa sobre el mismo cuerpo, así que no es su pareja." },
+    { k: "Conceptual", q: "Un plano inclinado sin fricción forma 60° con la vertical. ¿Cuál es la componente del peso de un bloque a lo largo del plano?",
+      o: ["mg·sen 60°", "mg·cos 60°", "mg·tan 60°", "mg"], a: 1,
+      e: "60° con la vertical son 30° con la horizontal: mg·sen 30° = mg·cos 60° = mg/2. Prueba del límite: con 0° respecto a la vertical (una pared) la componente debe ser mg, y cos 0 = 1." },
+    { k: "Conceptual", q: "Un bloque está sobre un plano sin fricción inclinado θ respecto a la horizontal, y una fuerza horizontal F lo empuja contra el plano. ¿Cuánto vale la normal?",
+      o: ["mg·cos θ", "mg·cos θ − F·sen θ", "mg·cos θ + F·sen θ", "mg·cos θ + F·cos θ"], a: 2,
+      e: "La componente de F perpendicular al plano es F·sen θ y apunta contra el plano, así que la normal tiene que equilibrar mg·cos θ y además F·sen θ." },
+    { k: "Tipo parcial", q: "Dos bloques de masas m y 3m están en contacto sobre un piso horizontal sin fricción. Una fuerza horizontal F empuja al bloque m, que a su vez empuja al 3m. ¿Qué fuerza hace m sobre 3m?",
+      o: ["F", "F/4", "3F/4", "F/3", "4F/3"], a: 2,
+      e: "Sistema: a = F/(4m). Aislando el bloque 3m, la única fuerza horizontal es el contacto: P = 3m·a = 3F/4." },
+    { k: "Tipo parcial", q: "Dos bloques están sobre un plano sin fricción inclinado θ respecto a la horizontal: m abajo y 3m arriba, en contacto. Una fuerza horizontal F sobre m mantiene a ambos en equilibrio. ¿Cuánto vale F?",
+      o: ["4mg·sen θ", "4mg·tan θ", "3mg·tan θ", "4mg·cos θ", "mg·tan θ"], a: 1,
+      e: "Sistema completo (masa 4m), eje a lo largo del plano: F·cos θ = 4mg·sen θ, así que F = 4mg·tan θ. Es el Abierto 1 de 2026-1 con otras masas: así repite el profesor." }
+  ],
+  B: [
+    { k: "Conceptual", q: "Un bloque cuelga de una cuerda dentro de un ascensor que sube con velocidad constante. Comparada con el peso, la tensión es:",
+      o: ["Mayor", "Igual", "Menor", "Depende de la rapidez"], a: 1,
+      e: "Velocidad constante significa a = 0. Por la 1.ª ley, T − mg = 0." },
+    { k: "Conceptual", q: "Un plano sin fricción forma un ángulo β con la vertical. ¿Cuánto vale la normal sobre un bloque m apoyado en él, sin otras fuerzas perpendiculares?",
+      o: ["mg·cos β", "mg·sen β", "mg", "mg / cos β"], a: 1,
+      e: "Contra el plano: mg·sen β. Prueba del límite: con β → 0 el plano es una pared y la normal debe ser 0; sen 0 = 0." },
+    { k: "Conceptual", q: "Una caja de masa m está en reposo en el piso y la empujas hacia abajo con una fuerza vertical P. ¿Cuánto vale la normal?",
+      o: ["mg", "mg − P", "mg + P", "P"], a: 2,
+      e: "Eje vertical: N − mg − P = 0. La normal no siempre vale mg: vale lo que haga falta para el equilibrio." },
+    { k: "Tipo parcial", q: "Tres bloques de masas m, 2m y 3m están en fila y en contacto sobre un piso sin fricción. Una fuerza F empuja al de masa m. ¿Qué fuerza hace el bloque 2m sobre el 3m?",
+      o: ["F/2", "F/3", "F/6", "5F/6", "F"], a: 0,
+      e: "Sistema: a = F/(6m). Aislando el 3m: P = 3m·F/(6m) = F/2." },
+    { k: "Tipo parcial", q: "Dos bloques, 2m arriba y m abajo, están sobre un plano sin fricción inclinado θ respecto a la horizontal. Una cuerda paralela al plano, amarrada arriba, sostiene al 2m, y el m cuelga del 2m con otra cuerda paralela al plano. ¿Cuál es la tensión en la cuerda de arriba?",
+      o: ["3mg·sen θ", "3mg·cos θ", "2mg·sen θ", "mg·sen θ", "3mg·tan θ"], a: 0,
+      e: "La cuerda de arriba sostiene a los dos bloques: sistema de masa 3m, eje a lo largo del plano, T − 3mg·sen θ = 0. La cuerda de en medio solo sostiene a m: mg·sen θ." }
+  ]
+};
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div"); row.style.display = "flex"; row.style.gap = "10px"; row.style.flexWrap = "wrap"; row.style.alignItems = "center";
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? "Aprobado. Pasas a M2 · Poleas y equilibrio." : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: "M1", quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

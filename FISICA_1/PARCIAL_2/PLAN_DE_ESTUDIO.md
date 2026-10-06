@@ -1,5 +1,7 @@
 # Plan de estudio — Parcial 2, Física 1 (FISI 1518)
 
+> **Versión interactiva (la que se usa):** [Plan Parcial 2 Física](https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv). Este archivo es la copia de respaldo en texto.
+
 **Fecha del parcial:** jueves 15 de octubre de 2026 (clase 19) · **Peso:** 15 % · **Temas:** capítulos 4 a 7 (Young & Freedman, 13.ª ed.)
 **Profesor:** Carlos Ávila · **Días de estudio:** 9 (martes 6 → miércoles 14 de octubre)
 
@@ -73,7 +75,7 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 ```
 
 ### M1 — Leyes de Newton, diagramas de cuerpo libre y planos inclinados
-*Libro: 4.1–4.6, 5.1 · Base de todo · ~2,5 h*
+*Libro: 4.1–4.6, 5.1 · Refuerzo · ~1–1,5 h*
 
 - **Teoría:** las 3 leyes. Los pares acción–reacción actúan sobre cuerpos distintos, así que nunca se cancelan dentro del mismo diagrama. Procedimiento de diagrama de cuerpo libre en 5 pasos. Ejes rotados en el plano inclinado. Descomponer el peso cuando el ángulo se mide desde la horizontal o desde la vertical. Por qué N ≠ mg en general.
 - **Lab / visual:** un plano inclinado interactivo con un control para el ángulo. Muestra las componentes del peso en vivo y qué pasa con el seno y el coseno si el ángulo se mide desde la vertical. Incluye la regla de chequeo «si θ → 0, ¿la fórmula tiene sentido?».
@@ -82,7 +84,7 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 - **Trampas:** la F horizontal sobre un plano inclinado **sí cambia la normal**; olvidar la reacción en el segundo bloque.
 
 ### M2 — Poleas y equilibrio
-*Salió en 4 de 4 parciales · ~2,5 h*
+*Salió en 4 de 4 parciales · Refuerzo · ~1,5 h*
 
 - **Teoría:** en una cuerda ideal la tensión es la misma en todo el tramo. La polea fija solo cambia la dirección. La polea móvil recibe 2T en el eje. Método de «encerrar y contar cuerdas»: trazas una frontera alrededor de un sistema y sumas las cuerdas que la cruzan. La persona que jala su propia cuerda: fuerza en la mano más normal entre persona y tabla. **Los tramos horizontales no sostienen peso** (2026-1 SM1). Extra: ligadura de aceleraciones en la polea móvil (a/2).
 - **Lab / visual:** un diagrama interactivo donde marcas la frontera del sistema y cuentas las cuerdas que la cruzan.
@@ -91,7 +93,7 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 - **Trampas:** olvidar la normal entre persona y tabla; contar dos veces una cuerda; contar un tramo horizontal.
 
 ### M3 — Fricción y equilibrio con desigualdades
-*Libro: 5.3 · Salió en 3 de 4 parciales con rangos de masa · ~2,5 h*
+*Libro: 5.3 · Salió en 3 de 4 parciales con rangos de masa · Refuerzo · ~1,5 h*
 
 - **Teoría:** la fricción estática es **una incógnita** que cumple f_s ≤ µ_s·N, y solo vale µ_s·N cuando el bloque está «a punto de deslizar». Su dirección es contraria a hacia dónde *tiende* a moverse el bloque. Hay que analizar dos casos, «a punto de subir» y «a punto de bajar», y de ahí sale un **rango**. La cinética es constante: f_k = µ_k·N. Ángulo crítico: tan θ = µ_s.
 - **Lab / visual:** la gráfica de fricción contra fuerza aplicada: sube en la zona estática hasta µ_s·N y luego cae a µ_k·N. Un plano inclinado con control de ángulo que muestra en qué momento el bloque empieza a deslizar.
@@ -100,7 +102,7 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 - **Trampas:** poner f_s = µ_s·N cuando el bloque no está a punto de deslizar; voltear la desigualdad al despejar.
 
 ### M4 — Dinámica de sistemas conectados (con aceleración)
-*Libro: 5.2–5.3 · 50 pts históricos · ~3 h*
+*Libro: 5.2–5.3 · 50 pts históricos · Refuerzo · ~1–1,5 h*
 
 - **Teoría:** los bloques unidos por una cuerda tienen la misma |a|. Usa una convención de signos según el sentido del movimiento. **Truco del sistema:** a = (fuerzas que impulsan − fuerzas que frenan) / masa total, y después sacas T de un solo bloque. Primero decides hacia dónde se mueve el sistema y solo después pones la fricción. Bloque sobre bloque: el bloque de arriba solo se acelera por la fricción, así que a_máx = µ_s·g.
 - **Lab / visual:** simulación de mesa + colgante y de Atwood con la curva de aceleración contra la masa colgante (a → g cuando X → ∞). Las 3 configuraciones de 2024-2 SM2, lado a lado.
@@ -123,7 +125,7 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 - **Trampas:** el signo de N por dentro y por fuera de la superficie; confundir el ω mínimo con el máximo.
 
 ### M6 — Trabajo y teorema trabajo–energía
-*Libro: 6.1–6.4 · ~2 h*
+*Libro: 6.1–6.4 · ~1,5–2 h*
 
 - **Teoría:** W = F·d·cos φ y W = ∫F·dr. El signo del trabajo. La normal no hace trabajo, el peso hace W = −mg·Δh y la fricción W = −µ_k·N·d. Teorema: W_total = ΔK. El trabajo es el área bajo la curva F(x), por ejemplo en un resorte. Potencia: P = F·v (prioridad baja).
 - **Lab / visual:** gráfica F contra x donde el área sombreada es el trabajo. Una calculadora visual de trabajos en un plano inclinado.
@@ -144,7 +146,7 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 - **Trampas:** usar solo un tramo para la fricción cuando el bloque va y vuelve; equivocarse en el extremo donde queda el bloque.
 
 ### M8 — Circular + energía: el problema más pesado
-*Es el tipo que más pesa: 26 % de los puntos históricos · ~4 h*
+*Es el tipo que más pesa: 26 % de los puntos históricos · ~4–5 h*
 
 - **Teoría.** Receta de 3 pasos:
   1. **Diagrama en el punto crítico** y ecuación radial (para N o T).
@@ -163,33 +165,35 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 - **Trampas:** tomar mal la altura de referencia (las columnas de 2026-1); el signo de N por dentro y por fuera; usar cos θ cuando el ángulo se mide desde la horizontal (en 2026-1 A3 la altura es R + R·sen θ).
 
 ### M9 — Simulacro final, estilo Ávila
-*~3 h (80 min de examen + corrección)*
+*~2 h (80 min de examen + corrección)*
 
 - Un parcial **nuevo** escrito al estilo del profesor: 3 de selección múltiple + 3 abiertos con pasos A, B y C, uno por cada familia 🔴.
 - **Cronometrado: 80 minutos**, lo mismo que dura la clase. Sin apuntes.
 - Lo califico con una rúbrica tipo profesor: diagrama, ecuaciones y resultado por separado.
 - Construyes tu **hoja de fórmulas mental**: lo que tienes que saber de memoria.
-- **Meta: ≥ 80/100.** Si sacas menos, el miércoles 14 repasamos solo las familias en las que perdiste puntos.
+- **Meta: ≥ 80/100.** Si sacas menos, el martes 13 y el miércoles 14 repasamos solo las familias en las que perdiste puntos.
 
 ---
 
 ## 4. Cronograma
 
-| Día | Fecha | Módulo | Tiempo |
-|---|---|---|---|
-| 1 | Mar 6 oct | **M1** Newton + DCL + planos inclinados | 2,5 h |
-| 2 | Mié 7 oct | **M2** Poleas y equilibrio | 2,5 h |
-| 3 | Jue 8 oct | **M3** Fricción y desigualdades | 2,5 h |
-| 4 | Vie 9 oct | **M4** Sistemas con aceleración | 3 h |
-| 5 | Sáb 10 oct | **M5** Circular + **M6** Trabajo | 4 h |
-| 6 | Dom 11 oct | **M7** Energía y conservación con fricción | 3 h |
-| 7 | Lun 12 oct (festivo) | **M8** Circular + energía | 4 h |
-| 8 | Mar 13 oct | **M9** Simulacro cronometrado + corrección | 3 h |
-| 9 | Mié 14 oct | Repaso de errores + quiz relámpago mezclado + **descanso temprano** | 2 h |
-| — | **Jue 15 oct** | **PARCIAL 2** | — |
+La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes, suave** (~2 h); **miércoles, media** (2,5–3 h); **sábado y domingo, pesada** (4–5 h). M1 a M4 ya los viste en clase y estás entre mal y medio, así que son **módulos de refuerzo**: más cortos y con más taller que teoría. Por eso van en los días livianos.
 
-**Si te atrasas:** fusiona M6 con M7 y M5 con M8. **Nunca recortes M8 ni el simulacro.**
-**Si vas adelantado:** usa el atajo de quiz primero y dedica el tiempo extra a M8.
+| Día | Fecha | Carga | Módulo | Tiempo |
+|---|---|---|---|---|
+| 1 | Mar 6 oct | Liviana | **M1** Newton + DCL + planos inclinados (refuerzo) | 1–1,5 h |
+| 2 | Mié 7 oct | Media | **M2** Poleas + **M3** Fricción (refuerzo) | 2,5–3 h |
+| 3 | Jue 8 oct | Liviana | **M4** Sistemas con aceleración (refuerzo) | 1–1,5 h |
+| 4 | Vie 9 oct | Suave | **M5** Movimiento circular | 2 h |
+| 5 | Sáb 10 oct | Pesada | **M6** Trabajo + **M7** Energía con fricción | 4–5 h |
+| 6 | Dom 11 oct | Pesada | **M8** Circular + energía (el que más pesa) | 4–5 h |
+| 7 | Lun 12 oct (festivo) | Suave | **M9** Simulacro cronometrado (80 min) + corrección | 2 h |
+| 8 | Mar 13 oct | Liviana | Repaso de los errores del simulacro + hoja de fórmulas | 1–1,5 h |
+| 9 | Mié 14 oct | Media | Quiz relámpago de las 4 familias 🔴 + refuerzo de lo que falló + **descanso temprano** | 2–2,5 h |
+| — | **Jue 15 oct** | — | **PARCIAL 2** | — |
+
+**Si te atrasas:** fusiona M6 con M7. **Nunca recortes M8 ni el simulacro.**
+**Si vas adelantado:** en M1–M4 haz el quiz primero; si sacas ≥ 4/5, saltas el módulo y le das ese tiempo a M8.
 
 ---
 

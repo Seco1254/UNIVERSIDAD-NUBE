@@ -1,0 +1,538 @@
+<title>Plan Parcial 2 Física</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio. Una columna de lectura (≤ 900px) sobre papel milimetrado tenue; "hoy" arriba, la semana como tira de días con medidor de carga, los módulos como lista con chips de progreso. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9; --yellow:#8a6e00; --yellow-soft:#f8f0c9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.55;
+}
+.wrap{max-width:900px; margin:0 auto; padding-inline:16px; padding-block:28px 64px; display:grid; gap:44px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.1}
+h1{font-size:clamp(2.6rem,9vw,4.4rem); font-weight:900; font-stretch:112%; letter-spacing:-.02em}
+h2{font-size:1.55rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.08rem; font-weight:700}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+
+/* Header */
+.top{display:grid; gap:14px}
+.lede{font-size:1.1rem; max-width:60ch}
+.stats{display:flex; flex-wrap:wrap; gap:10px 28px; align-items:end; margin-top:6px}
+.stat{display:grid; gap:2px}
+.stat b{font-family:var(--f-display); font-size:2rem; font-weight:800; font-stretch:110%; line-height:1; font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem; color:var(--muted)}
+.bar{height:8px; background:var(--rule); border-radius:99px; overflow:hidden; width:min(260px,100%)}
+.bar i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .4s}
+
+/* Hoy */
+.today{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:18px 20px; display:grid; gap:10px; box-shadow:4px 4px 0 var(--ink)}
+.today .row{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.today h3{font-size:1.35rem}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+
+/* Load meter */
+.load{display:inline-flex; align-items:center; gap:7px; font-size:.82rem; font-weight:600}
+.load .m{display:inline-flex; gap:2px; align-items:flex-end; height:14px}
+.load .m i{width:4px; background:var(--rule); border-radius:1px}
+.load .m i:nth-child(1){height:5px}.load .m i:nth-child(2){height:8px}.load .m i:nth-child(3){height:11px}.load .m i:nth-child(4){height:14px}
+.load .m i.on{background:var(--accent)}
+
+/* Semana */
+.legend{display:flex; flex-wrap:wrap; gap:8px 18px; color:var(--muted); font-size:.88rem}
+.days{display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr)); gap:10px}
+.day{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 13px; display:grid; gap:6px; align-content:start; min-width:0}
+.day .dn{display:flex; justify-content:space-between; align-items:baseline; gap:6px}
+.day .dn b{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.day .dn span{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.day .w{font-size:.92rem; line-height:1.35}
+.day .h{font-family:var(--f-mono); font-size:.78rem; color:var(--muted)}
+.day.is-today{border:1.5px solid var(--ink); background:linear-gradient(var(--hi),var(--hi)) left top/100% 5px no-repeat, var(--surface)}
+.day.is-past{opacity:.6}
+.day.exam{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.day.exam .dn span,.day.exam .h{color:var(--paper); opacity:.75}
+.tag-today{font-family:var(--f-mono); font-size:.7rem; background:var(--hi); color:var(--hi-ink); padding:1px 6px; border-radius:4px}
+
+/* Módulos */
+.note{font-size:.95rem; max-width:68ch}
+.dbnote{font-size:.85rem; color:var(--muted); font-style:italic}
+.mods{display:grid; gap:12px}
+.mod{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px 18px; display:grid; gap:12px; min-width:0}
+.mod.done{border-color:var(--green)}
+.mod-head{display:grid; grid-template-columns:auto 1fr auto; gap:4px 14px; align-items:start}
+.code{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:1.5rem; line-height:1; padding-top:2px; min-width:2.2em}
+.mod-meta{font-size:.84rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:4px}
+.pill{font-size:.75rem; font-weight:600; padding:3px 9px; border-radius:99px; white-space:nowrap; background:var(--rule); color:var(--ink)}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.go{background:var(--accent-soft); color:var(--accent)}
+.pill.lock{background:transparent; border:1px dashed var(--rule); color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.chip-hot{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.prog{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.tog{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:.88rem; padding:6px 11px; border-radius:8px; border:1px solid var(--rule); background:transparent; color:var(--ink); cursor:pointer}
+.tog .box{width:15px; height:15px; border:1.5px solid var(--muted); border-radius:4px; display:grid; place-items:center; font-size:11px; line-height:1}
+.tog[aria-pressed="true"]{border-color:var(--green); background:var(--green-soft)}
+.tog[aria-pressed="true"] .box{background:var(--green); border-color:var(--green); color:var(--surface)}
+.tog:disabled{cursor:default; opacity:.7}
+.quizsel{display:inline-flex; align-items:center; gap:7px; font-size:.88rem; padding:4px 6px 4px 11px; border-radius:8px; border:1px solid var(--rule)}
+.quizsel select,.quizsel input{font:inherit; font-family:var(--f-mono); background:var(--paper); color:var(--ink); border:1px solid var(--rule); border-radius:6px; padding:3px 6px}
+.quizsel input{width:4.5em}
+.open{margin-left:auto; font-weight:600; font-size:.9rem; text-decoration:none}
+.open:hover{text-decoration:underline}
+details.more summary{cursor:pointer; font-size:.88rem; color:var(--muted); list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+ "; font-family:var(--f-mono)}
+details.more[open] summary::before{content:"− "}
+.more-body{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:12px}
+.more-body h4{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
+.more-body ul{margin:0; padding-left:18px; font-size:.9rem; display:grid; gap:4px}
+
+/* Qué sale */
+.freq{display:grid; gap:12px}
+.fr{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:baseline}
+.fr .lab{font-weight:600}
+.fr .lab small{font-weight:400; color:var(--muted)}
+.fr .val{font-family:var(--f-mono); font-size:.85rem; font-variant-numeric:tabular-nums; color:var(--muted)}
+.fr .track{grid-column:1 / -1; height:12px; background:var(--rule); border-radius:3px; overflow:hidden}
+.fr .track i{display:block; height:100%; border-radius:3px}
+.p-alta i{background:var(--red)} .p-media i{background:var(--orange)} .p-baja i{background:var(--yellow)}
+.prio{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:1px}
+.prio.alta{background:var(--red)} .prio.media{background:var(--orange)} .prio.baja{background:var(--yellow)}
+.patterns{display:grid; gap:10px; padding:0; margin:0; list-style:none; counter-reset:p}
+.patterns li{display:grid; grid-template-columns:2rem 1fr; gap:10px; counter-increment:p}
+.patterns li::before{content:counter(p); font-family:var(--f-display); font-weight:900; font-size:1.3rem; color:var(--accent); line-height:1.2}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.9rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td.ans{font-family:var(--f-mono); font-size:.85rem}
+.warn{color:var(--red); font-weight:600}
+.fix{background:var(--red-soft)}
+section{display:grid; gap:16px; min-width:0}
+.sec-head{display:grid; gap:6px}
+footer{font-size:.82rem; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ .bar i{transition:none} }
+@media (max-width:560px){
+  .mod-head{grid-template-columns:auto 1fr}
+  .mod-head .pill{grid-column:2; justify-self:start}
+  .open{margin-left:0}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">FISI 1518 · Física 1 · Prof. Carlos Ávila</p>
+    <h1>Parcial 2</h1>
+    <p class="lede">Capítulos 4 a 7 de Young &amp; Freedman. Vale el 15 % de la nota. Jueves 15 de octubre de 2026, 12:30.</p>
+    <div class="stats">
+      <div class="stat"><b id="dias">9</b><span id="dias-lab">días para el parcial</span></div>
+      <div class="stat"><b id="aprob">0/9</b><span>módulos aprobados</span></div>
+      <div class="stat" style="align-self:center"><div class="bar" aria-hidden="true"><i id="aprob-bar"></i></div></div>
+    </div>
+  </header>
+
+  <section aria-labelledby="hoy-h">
+    <div class="today" id="hoy">
+      <p class="eyebrow" id="hoy-h">Hoy</p>
+      <h3 id="hoy-t">M1 · Newton, diagramas de cuerpo libre y planos inclinados</h3>
+      <div class="row" id="hoy-row"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sem-h">
+    <div class="sec-head">
+      <h2 id="sem-h">Tu semana</h2>
+      <p class="note">La carga sigue tus días: martes y jueves son tus días más pesados, así que ahí va lo liviano. Lo difícil queda para el sábado y el domingo.</p>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="days" id="days"></div>
+    <p class="note muted"><b>Si te atrasas:</b> fusiona M6 con M7. Nunca recortes M8 ni el simulacro. <b>Si vas adelantado:</b> en M1–M4 haz el quiz primero; si sacas 4/5 o más, saltas el módulo y le das ese tiempo a M8.</p>
+  </section>
+
+  <section aria-labelledby="mod-h">
+    <div class="sec-head">
+      <h2 id="mod-h">Módulos</h2>
+      <p class="note">Cada módulo tiene cuatro partes: teoría, lab visual, taller y quiz. Pasas al siguiente con 4/5 o más en el quiz; si no, repasamos el error y haces el Quiz B. M1 a M4 ya los viste en clase, así que son <b>refuerzo</b>: menos teoría y más taller.</p>
+      <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
+    </div>
+    <div class="mods" id="mods"></div>
+  </section>
+
+  <section aria-labelledby="sale-h">
+    <div class="sec-head">
+      <h2 id="sale-h">Qué sale en el parcial</h2>
+      <p class="note">Puntos que valió cada tipo de problema en los parciales 2 de 2024-2, 2025-1, 2025-2 y 2026-1 (380 pts en total). Los cuatro son del mismo profesor y tienen el mismo formato: 3 o 4 preguntas de selección múltiple de 10 pts, que hay que justificar, y 3 problemas abiertos de 20 pts divididos en pasos.</p>
+      <div class="legend"><span><i class="prio alta"></i>Sale seguro</span><span><i class="prio media"></i>Muy probable</span><span><i class="prio baja"></i>Posible</span></div>
+    </div>
+    <div class="freq" id="freq"></div>
+    <h3>Lo que el profesor repite</h3>
+    <ol class="patterns">
+      <li><span><b>Reusa problemas cambiando los números.</b> La rampa con tramo rugoso salió 3 veces, la semiesfera 3, la persona–tabla 2 y la mesa + colgante 2.</span></li>
+      <li><span><b>Mide ángulos desde la vertical</b> (2024-2 SM1, 2025-1 A3, 2026-1 A2). Eso intercambia seno y coseno; es la trampa más repetida.</span></li>
+      <li><span><b>Combina circular con energía</b> en un mismo problema. Es lo que más pesa.</span></li>
+      <li><span><b>El diagrama de cuerpo libre vale unos 6 de los 20 pts</b> de cada abierto. Dibujarlo bien es la parte más fácil de ganar.</span></li>
+      <li><span><b>Pide las respuestas en símbolos</b> (M, g, R, µ, θ), no en números. Lo que se evalúa es el álgebra limpia.</span></li>
+      <li><span><b>Nunca han salido</b> potencia, F = −dU/dx, diagramas de energía ni curva peraltada. Se ven rápido. Solo 2024-2 trajo hoja de fórmulas: asume que no te la dan.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="err-h">
+    <div class="sec-head">
+      <h2 id="err-h">Errores en las soluciones oficiales</h2>
+      <p class="note">Revisé las cuatro soluciones. Estas cuatro tienen errores: no las memorices.</p>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Problema</th><th>La oficial dice</th><th>Lo correcto</th></tr></thead>
+      <tbody>
+        <tr><td>2024-2 · Abierto 2<br><span class="muted">cuenco por dentro, N = mg/3</span></td><td class="ans">h = R/3</td><td><b class="mono">h = 8R/9</b>. Por dentro del cuenco, soltado desde el borde, N = 3mg·cos φ, así que cos φ = 1/9.</td></tr>
+        <tr><td>2025-1 · SM3<br><span class="muted">semiesfera, N = mg/3</span></td><td class="ans">cos θ = 2/3 a mitad del cálculo</td><td><b class="mono">cos θ = 7/9</b>. La opción E sí es la correcta.</td></tr>
+        <tr><td>2025-1 · Abierto 2, parte A</td><td class="ans">X ≤ 2√2m/3</td><td><b class="mono">X ≥ 2√2m/3</b>. La desigualdad está volteada; el rango final sí está bien.</td></tr>
+        <tr><td>2025-1 · Abierto 3<br><span class="muted">v(H/4) = v(H/2)/3</span></td><td class="ans">µ = cot β</td><td><b>El enunciado es imposible.</b> Con µ constante, v² crece en proporción a la altura bajada, así que v(H/4)/v(H/2) = √(3/2) siempre. µ = cot β significa que el bloque ni se mueve.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="clave-h">
+    <div class="sec-head">
+      <h2 id="clave-h">Clave de los parciales anteriores</h2>
+      <p class="note">Respuestas verificadas, con el módulo donde se practica cada una. Las marcadas en rojo no coinciden con la solución oficial.</p>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Parcial</th><th>Problema</th><th>Respuesta</th><th>Módulo</th></tr></thead>
+      <tbody id="clave"></tbody>
+    </table></div>
+  </section>
+
+  <footer>Fuente: parciales 2 de 2024-2 a 2026-1, sus soluciones y el programa FISI 1518 2026-2. El progreso se guarda en esta página; Claude lo actualiza cuando pasas un quiz.</footer>
+</div>
+
+<script>
+const EXAM = new Date(2026, 9, 15, 12, 30);
+const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
+const DAYS = [
+  {d:"2026-10-06", n:"Mar", f:"6 oct", load:1, what:"M1 Newton + diagramas de cuerpo libre", mods:["M1"], h:"1–1,5 h"},
+  {d:"2026-10-07", n:"Mié", f:"7 oct", load:3, what:"M2 Poleas + M3 Fricción", mods:["M2","M3"], h:"2,5–3 h"},
+  {d:"2026-10-08", n:"Jue", f:"8 oct", load:1, what:"M4 Sistemas con aceleración", mods:["M4"], h:"1–1,5 h"},
+  {d:"2026-10-09", n:"Vie", f:"9 oct", load:2, what:"M5 Movimiento circular", mods:["M5"], h:"2 h"},
+  {d:"2026-10-10", n:"Sáb", f:"10 oct", load:4, what:"M6 Trabajo + M7 Energía con fricción", mods:["M6","M7"], h:"4–5 h"},
+  {d:"2026-10-11", n:"Dom", f:"11 oct", load:4, what:"M8 Circular + energía", mods:["M8"], h:"4–5 h"},
+  {d:"2026-10-12", n:"Lun", f:"12 oct · festivo", load:2, what:"M9 Simulacro de 80 min + corrección", mods:["M9"], h:"2 h"},
+  {d:"2026-10-13", n:"Mar", f:"13 oct", load:1, what:"Repaso de los errores del simulacro + hoja de fórmulas", mods:[], h:"1–1,5 h"},
+  {d:"2026-10-14", n:"Mié", f:"14 oct", load:3, what:"Quiz relámpago de las 4 familias rojas + refuerzo + descanso temprano", mods:[], h:"2–2,5 h"},
+  {d:"2026-10-15", n:"Jue", f:"15 oct · 12:30", load:0, what:"Parcial 2", mods:[], h:"Llega descansado", exam:true}
+];
+const MODS = [
+  {id:"M1", t:"Newton, diagramas de cuerpo libre y planos inclinados", ref:true, day:"Mar 6", h:"1–1,5 h", libro:"4.1–4.6, 5.1",
+    dominar:["Dibujar el diagrama completo de cada bloque sin que falte ninguna fuerza.","Descomponer el peso cuando el ángulo se mide desde la horizontal o desde la vertical.","Hallar la fuerza de contacto entre bloques (pares de la 3.ª ley)."],
+    taller:["2026-1 Abierto 1: dos bloques en un plano inclinado con F horizontal","2024-2 SM1 sin fricción (ángulo con la vertical)","Problemas nuevos con F horizontal"],
+    trampas:["Una F horizontal sobre un plano inclinado sí cambia la normal.","Los pares acción–reacción van en diagramas distintos: nunca se cancelan entre sí."]},
+  {id:"M2", t:"Poleas y equilibrio", ref:true, day:"Mié 7", h:"1,5 h", libro:"cap. 4–5", extra:"4 de 4 parciales",
+    dominar:["Polea móvil: el eje recibe 2T.","Método de encerrar el sistema y contar las cuerdas que cruzan la frontera.","Persona que jala su propia cuerda: fuerza en la mano + normal con la tabla."],
+    taller:["2025-2 SM1 (X = 5M/3)","2026-1 SM1 (α = 1/5)","2025-1 A1 (F = Mg/2)","2024-2 A3 (F = Mg/8)"],
+    trampas:["Olvidar la normal entre persona y tabla.","Contar un tramo horizontal: no sostiene peso."]},
+  {id:"M3", t:"Fricción y equilibrio con desigualdades", ref:true, day:"Mié 7", h:"1,5 h", libro:"5.3", extra:"3 de 4 parciales",
+    dominar:["La fricción estática es una incógnita que cumple f_s ≤ µ_s·N.","Casos «a punto de subir» y «a punto de bajar»: de ahí sale un rango de masas.","Ángulo crítico: tan θ = µ_s."],
+    taller:["2024-2 SM1 (x_máx = M(cos θ + µ_s sen θ))","2025-1 A2 (2√2m/3 ≤ X ≤ 2√2m)","2026-1 A2 partes A y B (X_máx)","Bloque presionado contra una pared"],
+    trampas:["Poner f_s = µ_s·N cuando el bloque no está a punto de deslizar.","Voltear la desigualdad al despejar."]},
+  {id:"M4", t:"Sistemas conectados con aceleración", ref:true, day:"Jue 8", h:"1–1,5 h", libro:"5.2–5.3", extra:"50 pts históricos",
+    dominar:["Truco del sistema: a = (fuerzas que impulsan − fuerzas que frenan) / masa total.","Decidir hacia dónde se mueve antes de poner la fricción.","Bloque sobre bloque: a_máx = µ_s·g."],
+    taller:["2025-1 SM1 (a = 2g/3)","2025-2 SM2 (X = M/4)","2024-2 SM2 (tensión máxima en la configuración I)","2025-2 A3 (µ_k = 1 − 4a/g)","2025-2 A1 (M_X = 3M)","2026-1 A2 parte C"],
+    trampas:["Suponer T = mg cuando el sistema acelera.","Mezclar convenciones de signo entre bloques."]},
+  {id:"M5", t:"Dinámica del movimiento circular", day:"Vie 9", h:"2 h", libro:"5.4",
+    dominar:["a_c = v²/R hacia el centro; la «fuerza centrípeta» es la resultante radial.","Disco: ω_máx = √(µg/R). Rotor: ω_mín = √(g/(µR)).","Ecuación radial arriba y abajo de un loop o de un péndulo."],
+    taller:["2025-1 SM2 (disco giratorio)","2026-1 SM2 (rotor)","Loop con v dada","Curva peraltada, por si acaso"],
+    trampas:["Dibujar una «fuerza centrífuga».","El signo de N por dentro y por fuera de la superficie."]},
+  {id:"M6", t:"Trabajo y teorema trabajo–energía", day:"Sáb 10", h:"1,5–2 h", libro:"6.1–6.4",
+    dominar:["Signo y valor del trabajo de cada fuerza.","W_total = ΔK.","El trabajo como área bajo la curva F(x)."],
+    taller:["2025-2 SM3 (H = v₀²/[2g(1 + µ_k cot θ)])","Fuerza variable y resorte","Un problema de potencia"],
+    trampas:["En un plano inclinado, d = H/sen θ (o H/cos β si el ángulo es con la vertical)."]},
+  {id:"M7", t:"Energía potencial y conservación con fricción", day:"Sáb 10", h:"2,5–3 h", libro:"7.1–7.5", extra:"4 de 4 parciales",
+    dominar:["La ecuación del profesor: E_i + W_fricción = E_f.","La fricción usa la distancia total recorrida, contando idas y vueltas.","Número de pasadas por el tramo rugoso: n = H/(µD)."],
+    taller:["2024-2 SM4 (se detiene a H/2 de A)","2025-1 SM4 (a H/5 de A)","2026-1 SM3 (µ_k = 3/4)","2025-1 A3: descubrir por qué es imposible","Resorte que lanza un bloque"],
+    trampas:["Usar un solo tramo cuando el bloque va y vuelve.","Equivocarse en el extremo donde queda el bloque."]},
+  {id:"M8", t:"Circular + energía", hot:true, day:"Dom 11", h:"4–5 h", libro:"5.4 + cap. 7", extra:"26 % de los puntos",
+    dominar:["Receta: ecuación radial en el punto crítico → energía para v² → reemplazar.","«Pierde contacto» significa N = 0.","La altura en función del ángulo según la figura."],
+    taller:["2024-2 SM3 (baja R/3)","2025-1 SM3 (cos θ = 7/9)","2024-2 A1 (θ = 60°)","2024-2 A2 (h = 8R/9)","2025-2 A2 (x = √(7mgR/k))","2026-1 A3 (H = 5R/3)","Dos nuevos: rampa rugosa + loop"],
+    trampas:["La altura de referencia (las columnas de 2026-1).","Usar cos θ cuando el ángulo se mide desde la horizontal."]},
+  {id:"M9", t:"Simulacro al estilo Ávila", day:"Lun 12", h:"2 h", libro:"caps. 4–7", extra:"80 min sin apuntes", sim:true,
+    dominar:["3 de selección múltiple + 3 abiertos, uno de cada familia roja.","Calificación con rúbrica: diagrama, ecuaciones y resultado por separado.","Construir tu hoja de fórmulas mental."],
+    taller:["Un parcial nuevo escrito al estilo del profesor"],
+    trampas:["La meta es 80/100 o más."]}
+];
+const FREQ = [
+  {t:"Circular + energía", ex:"semiesfera, péndulo, loop, se despega", pts:100, p:"alta", v:"4 de 4"},
+  {t:"Plano inclinado con fricción estática", ex:"masa máxima o mínima, rangos", pts:70, p:"alta", v:"3 de 4"},
+  {t:"Trabajo–energía con fricción", ex:"rampa con tramo rugoso", pts:60, p:"alta", v:"4 de 4"},
+  {t:"Poleas en equilibrio", ex:"persona–tabla, contar cuerdas", pts:60, p:"alta", v:"4 de 4"},
+  {t:"Bloques conectados con aceleración", ex:"mesa + colgante, Atwood", pts:50, p:"media", v:"3 de 4"},
+  {t:"Circular horizontal con fricción", ex:"disco giratorio, rotor", pts:20, p:"baja", v:"2 de 4"},
+  {t:"Bloque sobre bloque", ex:"fricción entre bloques", pts:20, p:"baja", v:"1 de 4"}
+];
+const CLAVE = [
+  ["2024-2","SM1 · bloque en plano inclinado + colgante (máx)","E · x = M(cos θ + µ_s sen θ)","M3"],
+  ["2024-2","SM2 · tensión en 3 configuraciones","E · máxima en la I (4mg/3)","M4"],
+  ["2024-2","SM3 · semiesfera, se despega","B · baja R/3","M8"],
+  ["2024-2","SM4 · rampa con tramo rugoso","C · H/2 de A","M7"],
+  ["2024-2","A1 · péndulo, T = 2mg abajo","θ = 60°","M8"],
+  ["2024-2","A2 · cuenco, N = mg/3","h = 8R/9 (la oficial dice R/3)","M8",true],
+  ["2024-2","A3 · persona + tabla con 6 poleas","F = Mg/8 en cada brazo","M2"],
+  ["2025-1","SM1 · mesa + colgante 2M","D · a = 2g/3","M4"],
+  ["2025-1","SM2 · disco giratorio","B · ω = √(µg/R)","M5"],
+  ["2025-1","SM3 · semiesfera, N = mg/3","E · θ = cos⁻¹(7/9)","M8",true],
+  ["2025-1","SM4 · rampa con tramo rugoso","C · H/5 de A","M7"],
+  ["2025-1","A1 · persona + tabla","F = Mg/2","M2"],
+  ["2025-1","A2 · plano a 45° + colgante (rango)","2√2m/3 ≤ X ≤ 2√2m","M3"],
+  ["2025-1","A3 · plano con fricción, v(H/4) = v(H/2)/3","Enunciado inconsistente","M7",true],
+  ["2025-2","SM1 · poleas con 2M, M y X","B · X = 5M/3","M2"],
+  ["2025-2","SM2 · mesa + colgante, a = g/5","E · X = M/4","M4"],
+  ["2025-2","SM3 · bloque sube un plano con fricción","C · H = v₀²/[2g(1 + µ_k cot θ)]","M6"],
+  ["2025-2","A1 · bloque M sobre 2M + colgante","M_X = 3M","M4"],
+  ["2025-2","A2 · resorte + loop, N = 2mg arriba","x = √(7mgR/k)","M8"],
+  ["2025-2","A3 · tres bloques, a conocida","µ_k = 1 − 4a/g","M4"],
+  ["2026-1","SM1 · tabla + bloque αM con poleas","C · α = 1/5","M2"],
+  ["2026-1","SM2 · cilindro giratorio (rotor)","B · ω_mín = √(g/(µR))","M5"],
+  ["2026-1","SM3 · riel con tramo rugoso, sube H/4","E · µ_k = 3/4","M7"],
+  ["2026-1","A1 · dos bloques en plano + F horizontal","F = 3mg tan θ; contacto = 2mg sen θ","M1"],
+  ["2026-1","A2 · dos planos inclinados con fricción","X_máx = M(sen α + µ_s cos α)/(cos β − µ_s sen β); a = g[X cos β − M sen α − µ_k(M cos α + X sen β)]/(X + M)","M3 + M4"],
+  ["2026-1","A3 · estructura semicircular sobre columnas","v² = gR sen θ; sen θ = 2/3; H = 5R/3","M8"]
+];
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const pad = (n) => String(n).padStart(2, "0");
+const now = new Date();
+const todayIso = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+
+function loadMeter(level) {
+  const w = el("span", "load");
+  const m = el("span", "m"); m.setAttribute("aria-hidden", "true");
+  for (let i = 1; i <= 4; i++) { const b = el("i", i <= level ? "on" : ""); m.appendChild(b); }
+  w.appendChild(m); w.appendChild(el("span", "", LOADS[level]));
+  return w;
+}
+
+/* Cuenta regresiva */
+(function () {
+  const ms = EXAM - now;
+  const d = Math.ceil(ms / 86400000);
+  if (ms <= 0) { $("#dias").textContent = "—"; $("#dias-lab").textContent = "el parcial ya pasó"; }
+  else { $("#dias").textContent = d; $("#dias-lab").textContent = d === 1 ? "día para el parcial" : "días para el parcial"; }
+})();
+
+/* Semana */
+(function () {
+  const lg = $("#legend");
+  [[1,"Mar y jue · 1–1,5 h"],[2,"Lun y vie · ~2 h"],[3,"Mié · 2,5–3 h"],[4,"Sáb y dom · 4–5 h"]].forEach(([l, t]) => {
+    const s = el("span"); s.appendChild(loadMeter(l)); s.appendChild(document.createTextNode(" " + t)); lg.appendChild(s);
+  });
+  const box = $("#days");
+  DAYS.forEach((d) => {
+    const c = el("article", "day" + (d.exam ? " exam" : "") + (d.d === todayIso ? " is-today" : "") + (d.d < todayIso ? " is-past" : ""));
+    const dn = el("div", "dn"); dn.appendChild(el("b", "", d.n)); dn.appendChild(el("span", "", d.f)); c.appendChild(dn);
+    if (d.d === todayIso) { const t = el("span", "tag-today", "HOY"); t.style.justifySelf = "start"; c.appendChild(t); }
+    if (!d.exam) c.appendChild(loadMeter(d.load));
+    c.appendChild(el("p", "w", d.what));
+    c.appendChild(el("p", "h", d.h));
+    box.appendChild(c);
+  });
+})();
+
+/* Qué sale */
+(function () {
+  const box = $("#freq");
+  FREQ.forEach((f) => {
+    const r = el("div", "fr p-" + f.p);
+    const lab = el("div", "lab"); const dot = el("i", "prio " + f.p); lab.appendChild(dot);
+    lab.appendChild(document.createTextNode(f.t + " ")); lab.appendChild(el("small", "", "· " + f.ex));
+    r.appendChild(lab);
+    r.appendChild(el("div", "val", f.pts + " pts · " + Math.round(f.pts / 380 * 100) + " % · " + f.v));
+    const tr = el("div", "track"); const i = el("i"); i.style.width = (f.pts / 100 * 100) + "%"; tr.appendChild(i); r.appendChild(tr);
+    box.appendChild(r);
+  });
+})();
+
+/* Clave */
+(function () {
+  const tb = $("#clave");
+  CLAVE.forEach((r) => {
+    const tr = el("tr", r[4] ? "fix" : "");
+    tr.appendChild(el("td", "mono", r[0]));
+    tr.appendChild(el("td", "", r[1]));
+    const a = el("td", "ans" + (r[4] ? " warn" : ""), r[2]); tr.appendChild(a);
+    tr.appendChild(el("td", "mono", r[3]));
+    tb.appendChild(tr);
+  });
+})();
+
+/* Progreso */
+let progress = {};
+let db = null, canWrite = false;
+const writeQueue = {};
+
+function isPassed(m, p) { if (!p || p.quiz == null || p.quiz === "") return false; return m.sim ? Number(p.quiz) >= 80 : Number(p.quiz) >= 4; }
+function status(m, idx) {
+  const p = progress[m.id] || {};
+  if (isPassed(m, p)) return ["Aprobado", "ok"];
+  if (p.teoria || p.lab || p.taller || (p.quiz != null && p.quiz !== "")) return ["En curso", "go"];
+  if (idx > 0 && !isPassed(MODS[idx - 1], progress[MODS[idx - 1].id])) return ["Después de " + MODS[idx - 1].id, "lock"];
+  return ["Siguiente", "go"];
+}
+
+function renderMods() {
+  const box = $("#mods"); box.textContent = "";
+  let passed = 0;
+  MODS.forEach((m, idx) => {
+    const p = progress[m.id] || {};
+    if (isPassed(m, p)) passed++;
+    const card = el("article", "mod" + (isPassed(m, p) ? " done" : ""));
+    const head = el("div", "mod-head");
+    head.appendChild(el("span", "code", m.id));
+    const tbox = el("div"); tbox.style.minWidth = "0";
+    tbox.appendChild(el("h3", "", m.t));
+    const meta = el("div", "mod-meta");
+    if (m.ref) meta.appendChild(el("span", "chip-ref", "Refuerzo"));
+    if (m.hot) meta.appendChild(el("span", "chip-hot", "El que más pesa"));
+    meta.appendChild(el("span", "", m.day + " · " + m.h));
+    meta.appendChild(el("span", "", "Libro " + m.libro));
+    if (m.extra) meta.appendChild(el("span", "", m.extra));
+    tbox.appendChild(meta); head.appendChild(tbox);
+    const [st, cls] = status(m, idx);
+    head.appendChild(el("span", "pill " + cls, st));
+    card.appendChild(head);
+
+    const prog = el("div", "prog");
+    if (!m.sim) {
+      [["teoria", "Teoría"], ["lab", "Lab"], ["taller", "Taller"]].forEach(([k, lab]) => {
+        const b = el("button", "tog"); b.type = "button"; b.id = "tog-" + m.id + "-" + k;
+        b.setAttribute("aria-pressed", p[k] ? "true" : "false");
+        const bx = el("span", "box", p[k] ? "✓" : ""); bx.setAttribute("aria-hidden", "true");
+        b.appendChild(bx); b.appendChild(document.createTextNode(lab));
+        b.disabled = !canWrite;
+        b.addEventListener("click", () => save(m.id, { [k]: !p[k] }));
+        prog.appendChild(b);
+      });
+    }
+    const q = el("label", "quizsel"); q.htmlFor = "quiz-" + m.id;
+    q.appendChild(document.createTextNode(m.sim ? "Simulacro" : "Quiz"));
+    let inp;
+    if (m.sim) {
+      inp = el("input"); inp.type = "number"; inp.min = 0; inp.max = 100; inp.placeholder = "—";
+      inp.value = p.quiz != null ? p.quiz : "";
+      inp.addEventListener("change", () => { const v = inp.value === "" ? null : Math.max(0, Math.min(100, Number(inp.value))); save(m.id, { quiz: v }); });
+      q.appendChild(inp); q.appendChild(document.createTextNode("/100"));
+    } else {
+      inp = el("select");
+      const o0 = el("option", "", "—"); o0.value = ""; inp.appendChild(o0);
+      for (let i = 0; i <= 5; i++) { const o = el("option", "", i + "/5"); o.value = String(i); inp.appendChild(o); }
+      inp.value = p.quiz != null ? String(p.quiz) : "";
+      inp.addEventListener("change", () => save(m.id, { quiz: inp.value === "" ? null : Number(inp.value) }));
+      q.appendChild(inp);
+    }
+    inp.id = "quiz-" + m.id; inp.disabled = !canWrite;
+    prog.appendChild(q);
+    if (p.url) { const a = el("a", "open", "Abrir módulo →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; prog.appendChild(a); }
+    else { prog.appendChild(el("span", "open muted", "Módulo aún no creado")); }
+    card.appendChild(prog);
+
+    const det = el("details", "more");
+    det.appendChild(el("summary", "", "Qué incluye"));
+    const body = el("div", "more-body");
+    [["Vas a dominar", m.dominar], [m.sim ? "Formato" : "Taller", m.taller], [m.sim ? "Meta" : "Trampas", m.trampas]].forEach(([h, list]) => {
+      const col = el("div"); col.appendChild(el("h4", "", h));
+      const ul = el("ul"); list.forEach((x) => ul.appendChild(el("li", "", x))); col.appendChild(ul); body.appendChild(col);
+    });
+    det.appendChild(body); card.appendChild(det);
+    box.appendChild(card);
+  });
+  $("#aprob").textContent = passed + "/" + MODS.length;
+  $("#aprob-bar").style.width = (passed / MODS.length * 100) + "%";
+  renderToday();
+}
+
+function renderToday() {
+  const d = DAYS.find((x) => x.d === todayIso) || (todayIso < DAYS[0].d ? DAYS[0] : null);
+  const row = $("#hoy-row"); row.textContent = "";
+  if (!d) { $("#hoy-h").textContent = "Después del parcial"; $("#hoy-t").textContent = "El parcial 2 ya pasó."; return; }
+  $("#hoy-h").textContent = d.d === todayIso ? "Hoy · " + d.n + " " + d.f : "Primer día · " + d.n + " " + d.f;
+  $("#hoy-t").textContent = d.what;
+  if (!d.exam) row.appendChild(loadMeter(d.load));
+  row.appendChild(el("span", "mono muted", d.h));
+  d.mods.forEach((id) => {
+    const p = progress[id] || {};
+    if (p.url) { const a = el("a", "btn", "Abrir " + id + " →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a); }
+  });
+}
+
+async function save(id, patch) {
+  if (!db || !canWrite) return;
+  progress[id] = Object.assign({}, progress[id] || {}, patch);
+  renderMods();
+  const prev = writeQueue[id] || Promise.resolve();
+  const run = prev.then(() => db.collection("progreso").doc(id).set(Object.assign({}, progress[id]))).catch((e) => {
+    if (e && e.code === "invalid_argument") { canWrite = false; $("#dbnote").textContent = "Esta vista es de solo lectura: no se pudo guardar el cambio."; renderMods(); }
+    else { $("#dbnote").textContent = "No se pudo guardar el cambio. Vuelve a intentarlo en un momento."; }
+  });
+  writeQueue[id] = run;
+  return run;
+}
+
+renderMods();
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) { $("#dbnote").textContent = "Abre esta página en claude.ai con tu cuenta para guardar y ver tu progreso."; return; }
+  let user = null;
+  try { user = await window.claude.use("user"); } catch (e) { user = null; }
+  let cw = null;
+  try { cw = user ? await user.can("data.write") : null; } catch (e) { cw = null; }
+  canWrite = cw !== false;
+  $("#dbnote").textContent = canWrite ? "Marca cada parte cuando la termines. Claude actualiza la nota del quiz cuando lo apruebas." : "Estás viendo el progreso en modo lectura.";
+  db.collection("progreso").onSnapshot((snap) => {
+    const next = {};
+    snap.docs.forEach((d) => { if (d.exists) next[d.id] = Object.assign({}, d.data()); });
+    progress = next;
+    renderMods();
+  }, () => { $("#dbnote").textContent = "Se perdió la conexión con tu progreso. Recarga la página."; });
+})();
+</script>
