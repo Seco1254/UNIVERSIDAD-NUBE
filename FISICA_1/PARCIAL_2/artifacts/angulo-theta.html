@@ -1,0 +1,437 @@
+<title>¿Dónde queda θ en el DCL?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: ficha de refuerzo del cuaderno de laboratorio (mismo sistema de M1). Columna ≤ 980px; los dos casos van lado a lado y se apilan en el teléfono. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-comp:#b8680c; --c-ground:#e2e6ee;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-comp:#f2a955; --c-ground:#253041;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-comp:#f2a955; --c-ground:#253041;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:980px; margin:0 auto; padding-inline:16px; padding-block:28px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.mono{font-family:var(--f-mono)}
+.th{color:var(--accent); font-weight:700}
+.peso{color:var(--c-peso); font-weight:700}
+section{display:grid; gap:20px; min-width:0}
+.sec-head{display:grid; gap:8px}
+.sec-head p{max-width:68ch; color:var(--muted)}
+.tag{justify-self:start; font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 7px; border-radius:4px}
+
+/* Encabezado */
+.head{display:grid; gap:16px}
+.lede{font-size:1.08rem; max-width:62ch}
+.answer{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:16px}
+.ans{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:grid; gap:8px; align-content:start}
+.ans .big{font-size:1.08rem; font-weight:600; line-height:1.4}
+.back{justify-self:start; font-weight:600; text-decoration:none}
+.back:hover{text-decoration:underline}
+
+/* Control de θ */
+.control{display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 16px}
+.control label{font-family:var(--f-mono); font-size:1.05rem; min-width:7.5ch}
+.control input[type=range]{flex:1 1 220px; min-width:0; accent-color:var(--accent)}
+.control .hint{font-size:.85rem; color:var(--muted); flex-basis:100%}
+
+/* Casos */
+.cases,.proofs{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr)); gap:16px}
+.case,.proof{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0; align-content:start}
+.case-h{display:grid; gap:6px}
+figure{margin:0; display:grid; gap:4px; min-width:0}
+figure svg{display:block; width:100%; height:auto}
+figcaption{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.key{font-size:1rem; line-height:1.5}
+.ro{margin:0; border-top:1px solid var(--rule)}
+.ro div{display:flex; flex-wrap:wrap; justify-content:space-between; gap:2px 12px; padding:7px 0; border-bottom:1px solid var(--rule); font-size:.92rem}
+.ro dt{color:var(--muted)}
+.ro dd{margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.ro dd b{font-weight:600}
+
+/* Demostraciones */
+.proof p{max-width:62ch}
+.rot-ctl{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px}
+.rot-ctl label{font-family:var(--f-mono); font-size:.9rem; min-width:9ch}
+.rot-ctl input[type=range]{flex:1 1 160px; min-width:0; accent-color:var(--accent)}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:8px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.readout{font-size:.92rem; color:var(--muted); min-height:3em}
+.rule{background:var(--hi); color:var(--hi-ink); border-radius:8px; padding:10px 12px; font-size:.95rem}
+.steps{list-style:none; padding:0; display:grid; gap:10px; counter-reset:s}
+.steps li{display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:start; counter-increment:s}
+.steps li::before{content:counter(s); width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font-family:var(--f-mono); font-size:.8rem; display:grid; place-items:center; margin-top:1px}
+.steps li > span{min-width:0}
+.callout{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:8px}
+.callout p{max-width:70ch}
+
+/* Comprueba */
+.qs{display:grid; gap:10px}
+details.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 16px}
+details.q summary{cursor:pointer; font-weight:600; line-height:1.45}
+details.q .a{padding-top:10px; display:grid; gap:6px; max-width:70ch}
+footer{display:grid; gap:6px; font-size:.88rem; color:var(--muted); border-top:1px solid var(--rule); padding-top:16px}
+
+/* SVG */
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-thin{stroke:var(--ink); stroke-width:1.1; fill:none}
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5; stroke-linejoin:round}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.6}
+.sv-axis{stroke:var(--muted); stroke-width:1.3; stroke-dasharray:5 4; fill:none}
+.sv-proj{stroke:var(--c-comp); stroke-width:1; stroke-dasharray:3 3; fill:none}
+.sv-mgline{stroke:var(--c-peso); stroke-width:1.4; stroke-dasharray:4 4; fill:none}
+.sv-dot{fill:var(--ink)}
+.tri-hi{fill:var(--accent); fill-opacity:.08; stroke:none}
+.ray{stroke:var(--ink); stroke-width:2.2; fill:none; stroke-linecap:round}
+.ray-ghost{stroke:var(--muted); stroke-width:1.3; stroke-dasharray:4 4; fill:none}
+.w-th{fill:var(--accent); fill-opacity:.2; stroke:none}
+.w-ghost{fill:var(--muted); fill-opacity:.12; stroke:none}
+.arc-th{stroke:var(--accent); stroke-width:2.2; fill:none}
+.arc-co{stroke:var(--muted); stroke-width:1.5; fill:none}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)}
+.t{font-family:var(--f-mono); font-size:13px; fill:var(--ink); paint-order:stroke; stroke:var(--surface); stroke-width:4px; stroke-linejoin:round}
+.t-th{fill:var(--accent); font-size:16px; font-weight:600}
+.t-co{fill:var(--muted)}
+.t-mut{fill:var(--muted); font-size:12px}
+.t-peso{fill:var(--c-peso); font-weight:600}
+.t-comp{fill:var(--c-comp); font-weight:500}
+.t-n{fill:var(--c-normal); font-weight:600}
+.t-ax{fill:var(--muted); font-size:14px; font-style:italic}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Refuerzo de M1</p>
+    <h1>¿Dónde queda θ en el DCL?</h1>
+    <p class="lede">El peso siempre apunta hacia abajo, esté como esté el plano. Lo que cambia es dónde reaparece el ángulo θ cuando dibujas el DCL, y eso depende de contra qué te midieron θ.</p>
+    <div class="answer">
+      <div class="ans">
+        <span class="tag">θ desde la horizontal</span>
+        <p class="big"><span class="th">θ</span> queda entre <span class="peso">mg</span> y la perpendicular al plano (eje y′).</p>
+        <p class="small muted">Entre mg y el plano quedan 90° − θ. Por eso: a lo largo del plano <b class="mono">mg·sen θ</b>, contra el plano <b class="mono">mg·cos θ</b>.</p>
+      </div>
+      <div class="ans">
+        <span class="tag">θ desde la vertical</span>
+        <p class="big"><span class="th">θ</span> queda entre <span class="peso">mg</span> y el plano (eje x′).</p>
+        <p class="small muted">Entre mg y la perpendicular quedan 90° − θ. Por eso: a lo largo del plano <b class="mono">mg·cos θ</b>, contra el plano <b class="mono">mg·sen θ</b>.</p>
+      </div>
+    </div>
+    <a class="back" href="https://claude.ai/artifact/RdHQeTYL9rNrrrPoWXiTMj">← Volver a M1 · Newton, DCL y planos inclinados</a>
+  </header>
+
+  <section id="imagen">
+    <div class="sec-head">
+      <h2>La imagen</h2>
+      <p>El mismo valor de θ en los dos casos. Arriba está el plano; abajo, el DCL del peso con los ejes inclinados: x′ a lo largo del plano y y′ perpendicular a él. El azul es el θ que te dan, y el mismo azul marca dónde reaparece.</p>
+    </div>
+    <div class="control">
+      <label for="theta">θ = <b id="th-val">30°</b></label>
+      <input type="range" id="theta" min="15" max="75" step="1" value="30">
+      <p class="hint">Mueve θ: los dos azules de cada caso cambian juntos porque son el mismo ángulo.</p>
+    </div>
+    <div class="cases">
+      <article class="case">
+        <div class="case-h"><span class="tag">Caso A</span><h3>θ medido desde la horizontal (el piso)</h3></div>
+        <figure><div id="sc-h"></div><figcaption>El plano</figcaption></figure>
+        <figure><div id="dcl-h"></div><figcaption>DCL del peso</figcaption></figure>
+        <p class="key"><span class="th">θ</span> queda entre <span class="peso">mg</span> y el eje y′, la línea perpendicular al plano (prolongada hacia adentro). El plano se queda con 90° − θ.</p>
+        <dl class="ro">
+          <div><dt>Entre mg y el eje y′</dt><dd><b id="h-a1">30°</b> = θ</dd></div>
+          <div><dt>Entre mg y el plano</dt><dd><b id="h-a2">60°</b> = 90° − θ</dd></div>
+          <div><dt>A lo largo del plano</dt><dd>mg·sen θ = <b id="h-par">0,50</b> mg</dd></div>
+          <div><dt>Contra el plano</dt><dd>mg·cos θ = <b id="h-per">0,87</b> mg</dd></div>
+        </dl>
+      </article>
+      <article class="case">
+        <div class="case-h"><span class="tag">Caso B</span><h3>θ medido desde la vertical (una pared)</h3></div>
+        <figure><div id="sc-v"></div><figcaption>El plano</figcaption></figure>
+        <figure><div id="dcl-v"></div><figcaption>DCL del peso</figcaption></figure>
+        <p class="key"><span class="th">θ</span> queda entre <span class="peso">mg</span> y el plano (eje x′). El eje y′ se queda con 90° − θ. <span class="muted small" id="v-ramp">Con θ = 30° desde la vertical, la rampa forma 60° con el piso.</span></p>
+        <dl class="ro">
+          <div><dt>Entre mg y el plano</dt><dd><b id="v-a1">30°</b> = θ</dd></div>
+          <div><dt>Entre mg y el eje y′</dt><dd><b id="v-a2">60°</b> = 90° − θ</dd></div>
+          <div><dt>A lo largo del plano</dt><dd>mg·cos θ = <b id="v-par">0,87</b> mg</dd></div>
+          <div><dt>Contra el plano</dt><dd>mg·sen θ = <b id="v-per">0,50</b> mg</dd></div>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <section id="porque">
+    <div class="sec-head">
+      <h2>¿Por qué pasa esto?</h2>
+      <p>El caso A es el que confunde. Hay dos formas de verlo y las dos dicen lo mismo; quédate con la que te convenza. El caso B sale directo.</p>
+    </div>
+    <div class="proofs">
+      <article class="proof">
+        <div class="case-h"><span class="tag">Caso A · forma 1</span><h3>Gira el ángulo 90°</h3></div>
+        <figure><div id="rot"></div><figcaption>Piso y plano girados juntos</figcaption></figure>
+        <div class="rot-ctl">
+          <button type="button" class="btn" id="rot-btn">Girar 90°</button>
+          <label for="giro">giro <b id="giro-val">0°</b></label>
+          <input type="range" id="giro" min="0" max="90" step="1" value="0">
+        </div>
+        <p class="readout" id="rot-ro">Giro de 0°. El ángulo entre las dos líneas es θ = 30°.</p>
+        <p>Toma las dos líneas que forman θ en el dibujo: el piso y el plano. Gíralas juntas 90°. El ángulo entre ellas no cambia, porque las giraste igual.</p>
+        <p>El piso girado 90° es la vertical, que es justo la dirección de mg. El plano girado 90° es su perpendicular, el eje y′. Así que el ángulo entre mg y y′ es el mismo θ del piso.</p>
+        <p class="rule"><b>Regla corta:</b> si los lados de dos ángulos son perpendiculares entre sí, los ángulos son iguales. Piso ⊥ mg y plano ⊥ y′, entonces ∠(mg, y′) = ∠(piso, plano) = θ.</p>
+      </article>
+      <article class="proof">
+        <div class="case-h"><span class="tag">Caso A · forma 2</span><h3>Suma 180° en un triángulo</h3></div>
+        <figure><div id="tri"></div><figcaption>Triángulo APQ debajo del bloque</figcaption></figure>
+        <ol class="steps">
+          <li><span>Baja una vertical desde el bloque (P) hasta el piso (Q). Esa vertical es la dirección de mg.</span></li>
+          <li><span>El triángulo APQ tiene θ en A y 90° en Q. Los tres ángulos suman 180°, así que en P quedan <b>90° − θ</b>. Ese es el ángulo entre mg y el plano.</span></li>
+          <li><span>La perpendicular al plano forma 90° con el plano. A esos 90° les quitas los 90° − θ que ya ocupa el plano y queda <b class="th">θ</b>: el ángulo entre mg y el eje y′.</span></li>
+        </ol>
+      </article>
+    </div>
+    <div class="callout">
+      <span class="tag">Caso B</span>
+      <h3>Desde la vertical no hay nada que demostrar</h3>
+      <p>mg apunta en la vertical. Si el plano forma θ con la vertical, forma θ con mg, directamente. El eje y′ está a 90° del plano, así que entre mg y y′ quedan 90° − θ.</p>
+    </div>
+  </section>
+
+  <section id="regla">
+    <div class="sec-head"><h2>La regla para el parcial</h2></div>
+    <div class="callout">
+      <ol class="steps">
+        <li><span><b>Mira contra qué miden θ.</b> ¿El arco del dibujo toca el piso o una pared vertical? Si el enunciado dice «plano inclinado θ» sin dibujo, casi siempre es contra la horizontal.</span></li>
+        <li><span><b>Pasa θ al DCL.</b> Desde el piso, θ va entre mg y el eje y′. Desde la pared, θ va entre mg y el plano.</span></li>
+        <li><span><b>El eje pegado a θ se lleva el coseno.</b> La componente que queda al lado de θ es mg·cos θ; la otra es mg·sen θ.</span></li>
+      </ol>
+    </div>
+    <div class="callout">
+      <h3>Prueba del límite (5 segundos)</h3>
+      <p>Pon θ = 0 en tu respuesta y mira si tiene sentido. Desde la horizontal, θ = 0 es un piso: lo que va a lo largo del plano debe dar 0 (sen 0 = 0) y la normal debe ser mg (cos 0 = 1). Desde la vertical, θ = 0 es una pared: lo que va a lo largo es todo el peso (cos 0 = 1).</p>
+    </div>
+  </section>
+
+  <section id="comprueba">
+    <div class="sec-head"><h2>Comprueba</h2><p>Respóndelas en tu cabeza antes de abrir la respuesta.</p></div>
+    <div class="qs">
+      <details class="q"><summary>1 · Una rampa forma 25° con el piso. ¿Qué ángulo hay entre mg y el plano? ¿Y entre mg y el eje y′?</summary>
+        <div class="a"><p><b>Entre mg y el plano: 65°. Entre mg y y′: 25°.</b> Medido desde el piso, θ va entre mg y y′, y el plano se queda con el complemento.</p></div></details>
+      <details class="q"><summary>2 · El dibujo marca 70° entre la rampa y una pared vertical. ¿Cuánto vale la componente de mg a lo largo del plano?</summary>
+        <div class="a"><p><b>mg·cos 70° ≈ 0,34 mg.</b> Medido desde la pared, θ va entre mg y el plano, así que esa componente es la pegada a θ y lleva coseno.</p><p class="muted">Compruébalo: es la misma rampa que 20° con el piso, y mg·sen 20° ≈ 0,34 mg.</p></div></details>
+      <details class="q"><summary>3 · Un compañero escribe N = mg·sen θ para un bloque sobre un plano con θ desde la horizontal y sin otras fuerzas perpendiculares. ¿Cómo sabes que está mal sin hacer cuentas?</summary>
+        <div class="a"><p><b>Pon θ = 0.</b> El bloque estaría sobre el piso y su fórmula daría N = 0, pero en el piso N = mg. La correcta es N = mg·cos θ.</p></div></details>
+    </div>
+  </section>
+
+  <footer>
+    <p>Refuerzo de M1 · Newton, DCL y planos inclinados. En M1 el ángulo medido desde la vertical se llama β; aquí se llama θ en los dos casos para poder compararlos.</p>
+  </footer>
+</div>
+
+<script>
+const D = Math.PI / 180;
+const $ = (s) => document.querySelector(s);
+const n1 = (v) => v.toFixed(1);
+const f2 = (v) => v.toFixed(2).replace(".", ",");
+const pt = (o, ang, r) => ({ x: o.x + r * Math.cos(ang * D), y: o.y + r * Math.sin(ang * D) });
+const svg = (W, H, inner, aria) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">${inner}</svg>`;
+const line = (a, b, cls) => `<line x1="${n1(a.x)}" y1="${n1(a.y)}" x2="${n1(b.x)}" y2="${n1(b.y)}" class="${cls}"/>`;
+const text = (p, s, cls, anchor = "middle") => `<text x="${n1(p.x)}" y="${n1(p.y)}" dy=".35em" text-anchor="${anchor}" class="t ${cls}">${s}</text>`;
+const dot = (p) => `<circle cx="${n1(p.x)}" cy="${n1(p.y)}" r="2.6" class="sv-dot"/>`;
+
+function arrow(a, b, cls) {
+  const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = 9, w = 4.6;
+  const bx = b.x - ux * h, by = b.y - uy * h;
+  return `<line x1="${n1(a.x)}" y1="${n1(a.y)}" x2="${n1(bx)}" y2="${n1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${n1(b.x)},${n1(b.y)} ${n1(bx - uy * w)},${n1(by + ux * w)} ${n1(bx + uy * w)},${n1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+// Ángulo entre las direcciones a1 y a2 (grados SVG, a1 < a2). kind: "th" (el θ, azul) o "co" (el complemento).
+// anchor "auto" pone la etiqueta a un lado de la vertical que pasa por o, para no pisar la flecha de mg.
+function angle(o, a1, a2, r, label, kind, lr, anchor) {
+  const p1 = pt(o, a1, r), p2 = pt(o, a2, r), arc = `A ${r} ${r} 0 0 1 ${n1(p2.x)} ${n1(p2.y)}`;
+  let g = kind === "th" ? `<path d="M ${n1(o.x)} ${n1(o.y)} L ${n1(p1.x)} ${n1(p1.y)} ${arc} Z" class="w-th"/>` : "";
+  g += `<path d="M ${n1(p1.x)} ${n1(p1.y)} ${arc}" class="${kind === "th" ? "arc-th" : "arc-co"}"/>`;
+  const m = (a1 + a2) / 2, p = pt(o, m, lr), c = Math.cos(m * D);
+  let ta = "middle";
+  if (anchor === "auto") {
+    if (c > 0.02) { ta = "start"; p.x = Math.max(p.x, o.x + 6); }
+    else if (c < -0.02) { ta = "end"; p.x = Math.min(p.x, o.x - 6); }
+  }
+  return g + text(p, label, kind === "th" ? "t-th" : "t-co", ta);
+}
+
+/* Plano inclinado: a = ángulo de la rampa con el piso. mode "h": θ = a; mode "v": θ = 90° − a. */
+function scene(a, mode) {
+  const W = 340, H = 230, Gy = 212, ca = Math.cos(a * D), sa = Math.sin(a * D);
+  const L = Math.min(296 / ca, 184 / sa), base = L * ca, hg = L * sa;
+  const A = { x: (W - base) / 2, y: Gy }, B = { x: A.x + base, y: Gy }, C = { x: B.x, y: Gy - hg };
+  const u = { x: ca, y: -sa }, n = { x: -sa, y: -ca }, s = 30, f = 0.6;
+  const c = { x: A.x + f * L * u.x + s / 2 * n.x, y: A.y + f * L * u.y + s / 2 * n.y };
+  let g = `<line x1="8" y1="${Gy}" x2="${W - 8}" y2="${Gy}" class="sv-line"/>`;
+  g += `<polygon points="${n1(A.x)},${Gy} ${n1(B.x)},${Gy} ${n1(C.x)},${n1(C.y)}" class="sv-ground"/>`;
+  g += `<polyline points="${n1(B.x - 10)},${Gy} ${n1(B.x - 10)},${Gy - 10} ${n1(B.x)},${Gy - 10}" class="sv-thin"/>`;
+  g += mode === "h" ? angle(A, -a, 0, 40, "θ", "th", 54, "mid") : angle(C, 90, 180 - a, 34, "θ", "th", 48, "mid");
+  const ref = mode === "h" ? 90 - a : 180 - a;
+  const e = pt(c, ref, Math.min(72, (Gy - 6 - c.y) / Math.sin(ref * D)));
+  g += line(c, e, "sv-axis");
+  g += mode === "h" ? text(pt(e, -a, 10), "⊥ al plano", "t-mut", "start") : text(pt(e, 270 - a, 10), "∥ al plano", "t-mut", "end");
+  g += mode === "h" ? angle(c, 90 - a, 90, 34, "θ", "th", 47, "auto") : angle(c, 90, 180 - a, 34, "θ", "th", 47, "auto");
+  g += `<rect x="${n1(c.x - s / 2)}" y="${n1(c.y - s / 2)}" width="${s}" height="${s}" transform="rotate(${-a} ${n1(c.x)} ${n1(c.y)})" class="sv-block"/>`;
+  g += dot(c) + arrow(c, { x: c.x, y: c.y + 52 }, "a-peso");
+  g += mode === "h" ? text({ x: c.x - 8, y: c.y + 46 }, "mg", "t-peso", "end") : text({ x: c.x + 8, y: c.y + 46 }, "mg", "t-peso", "start");
+  return svg(W, H, g, mode === "h"
+    ? `Plano inclinado con θ entre el piso y el plano; el mismo θ aparece en el bloque entre el peso y la perpendicular al plano.`
+    : `Plano inclinado con θ entre la pared vertical y el plano; el mismo θ aparece en el bloque entre el peso y la dirección del plano.`);
+}
+
+/* DCL del peso con ejes inclinados: x′ a lo largo del plano, y′ perpendicular. */
+function dcl(a, mode) {
+  const W = 340, H = 256, O = { x: 170, y: 118 }, R = 96, M = 100, sa = Math.sin(a * D), ca = Math.cos(a * D);
+  let g = line(pt(O, 180 - a, R), pt(O, -a, R), "sv-axis") + line(pt(O, 90 - a, R), pt(O, -90 - a, R), "sv-axis");
+  g += `<text x="${n1(pt(O, -a, R + 13).x)}" y="${n1(pt(O, -a, R + 13).y)}" dy=".35em" text-anchor="middle" class="t t-ax">x′</text>`;
+  g += `<text x="${n1(pt(O, -90 - a, R + 13).x)}" y="${n1(pt(O, -90 - a, R + 13).y)}" dy=".35em" text-anchor="middle" class="t t-ax">y′</text>`;
+  const thArc = mode === "h" ? [90 - a, 90] : [90, 180 - a], coArc = mode === "h" ? [90, 180 - a] : [90 - a, 90];
+  g += angle(O, coArc[0], coArc[1], 34, "90° − θ", "co", 62, "auto");
+  g += angle(O, thArc[0], thArc[1], 34, "θ", "th", 47, "auto");
+  const Tm = { x: O.x, y: O.y + M }, T1 = pt(O, 180 - a, M * sa), T2 = pt(O, 90 - a, M * ca), TN = pt(O, -90 - a, M * ca);
+  g += line(Tm, T1, "sv-proj") + line(Tm, T2, "sv-proj");
+  g += arrow(O, T1, "a-comp") + arrow(O, T2, "a-comp") + arrow(O, TN, "a-n") + arrow(O, Tm, "a-peso");
+  const lp = mode === "h" ? "mg sen θ" : "mg cos θ", lq = mode === "h" ? "mg cos θ" : "mg sen θ";
+  const p1 = pt(T1, -90 - a, 12); p1.x -= 4;
+  g += text(p1, lp, "t-comp", "end") + text(pt(T2, -a, 12), lq, "t-comp", "start");
+  g += text(pt(TN, 180 - a, 12), "N", "t-n", "end");
+  g += text({ x: O.x + 8, y: O.y + M - 4 }, "mg", "t-peso", "start");
+  g += dot(O);
+  return svg(W, H, g, mode === "h"
+    ? `DCL: θ entre mg y el eje y′; 90° menos θ entre mg y el eje x′. Componentes mg sen θ a lo largo del plano y mg cos θ contra el plano.`
+    : `DCL: θ entre mg y el eje x′; 90° menos θ entre mg y el eje y′. Componentes mg cos θ a lo largo del plano y mg sen θ contra el plano.`);
+}
+
+/* Demostración 1: piso y plano girados juntos phi grados. */
+function rot(a, phi) {
+  const W = 340, H = 262, V = { x: 120, y: 128 }, R = 110, moved = phi > 0.5, done = phi >= 89.5;
+  let g = "";
+  if (moved) {
+    const q1 = pt(V, -a, 38), q2 = pt(V, 0, 38);
+    g += `<path d="M ${n1(V.x)} ${n1(V.y)} L ${n1(q1.x)} ${n1(q1.y)} A 38 38 0 0 1 ${n1(q2.x)} ${n1(q2.y)} Z" class="w-ghost"/>`;
+    g += line(V, pt(V, 0, R), "ray-ghost") + line(V, pt(V, -a, R), "ray-ghost");
+    g += text(pt(V, -a / 2, 54), "θ", "t-co");
+  }
+  g += text(pt(V, 0, R + 8), "piso", moved ? "t-mut" : "", "start");
+  g += text(pt(V, -a, R + 8), "plano", moved ? "t-mut" : "", "start");
+  g += angle(V, phi - a, phi, 38, "θ", "th", 54, "mid");
+  g += done ? arrow(V, pt(V, 90, R), "a-peso") : line(V, pt(V, phi, R), "ray");
+  g += line(V, pt(V, phi - a, R), "ray");
+  if (done) {
+    g += text({ x: V.x - 8, y: V.y + R - 8 }, "vertical (mg)", "t-peso", "end");
+    g += text(pt(V, 90 - a, R + 8), "y′ (⊥ plano)", "", "start");
+  }
+  g += dot(V);
+  return svg(W, H, g, `El piso y el plano, que forman θ, girados ${Math.round(phi)} grados. El ángulo entre ellos sigue siendo θ; a 90 grados el piso es la vertical de mg y el plano es su perpendicular.`);
+}
+
+/* Demostración 2: triángulo APQ (estático, θ = 32°). */
+function tri() {
+  const a = 32, W = 340, H = 222, Gy = 196, L = 280, ca = Math.cos(a * D), sa = Math.sin(a * D);
+  const A = { x: 28, y: Gy }, B = { x: A.x + L * ca, y: Gy }, C = { x: B.x, y: Gy - L * sa };
+  const P = { x: A.x + 0.62 * L * ca, y: Gy - 0.62 * L * sa }, Q = { x: P.x, y: Gy };
+  let g = `<line x1="8" y1="${Gy}" x2="${W - 8}" y2="${Gy}" class="sv-line"/>`;
+  g += `<polygon points="${n1(A.x)},${Gy} ${n1(B.x)},${Gy} ${n1(C.x)},${n1(C.y)}" class="sv-ground"/>`;
+  g += `<polygon points="${n1(A.x)},${Gy} ${n1(P.x)},${n1(P.y)} ${n1(Q.x)},${Gy}" class="tri-hi"/>`;
+  g += `<polyline points="${n1(Q.x - 10)},${Gy} ${n1(Q.x - 10)},${Gy - 10} ${n1(Q.x)},${Gy - 10}" class="sv-thin"/>`;
+  g += angle(A, -a, 0, 36, "θ", "th", 50, "mid");
+  const nE = pt(P, 90 - a, 58);
+  g += line(P, nE, "sv-axis") + text(pt(nE, -a, 9), "⊥ plano", "t-mut", "start");
+  g += angle(P, 90, 180 - a, 28, "90° − θ", "co", 64, "mid");
+  g += angle(P, 90 - a, 90, 28, "θ", "th", 44, "auto");
+  g += line({ x: P.x, y: P.y + 70 }, Q, "sv-mgline") + arrow(P, { x: P.x, y: P.y + 70 }, "a-peso");
+  g += text({ x: P.x + 8, y: P.y + 66 }, "mg", "t-peso", "start");
+  g += dot(P);
+  g += text({ x: A.x, y: Gy + 15 }, "A", "t-mut") + text({ x: Q.x, y: Gy + 15 }, "Q", "t-mut") + text(pt(P, -90 - a, 15), "P", "t-mut");
+  return svg(W, H, g, "Triángulo APQ: θ en A, 90 grados en Q y 90 menos θ en P entre el peso y el plano; entre el peso y la perpendicular al plano queda θ.");
+}
+
+/* Estado y render */
+const S = { th: 30, phi: 0 };
+function renderRot() {
+  $("#rot").innerHTML = rot(S.th, S.phi);
+  const p = Math.round(S.phi);
+  $("#giro").value = p;
+  $("#giro-val").textContent = p + "°";
+  $("#rot-ro").textContent = p >= 90
+    ? `Giro de 90°. El piso quedó vertical (la dirección de mg) y el plano quedó en su perpendicular (el eje y′). El ángulo entre ellos sigue siendo θ = ${S.th}°.`
+    : `Giro de ${p}°. El ángulo entre las dos líneas sigue siendo θ = ${S.th}°.`;
+  $("#rot-btn").textContent = S.phi >= 89.5 ? "Volver a 0°" : "Girar 90°";
+}
+function render() {
+  const th = S.th, s = Math.sin(th * D), c = Math.cos(th * D);
+  $("#th-val").textContent = th + "°";
+  $("#sc-h").innerHTML = scene(th, "h");
+  $("#dcl-h").innerHTML = dcl(th, "h");
+  $("#sc-v").innerHTML = scene(90 - th, "v");
+  $("#dcl-v").innerHTML = dcl(90 - th, "v");
+  $("#h-a1").textContent = th + "°"; $("#h-a2").textContent = (90 - th) + "°";
+  $("#h-par").textContent = f2(s); $("#h-per").textContent = f2(c);
+  $("#v-a1").textContent = th + "°"; $("#v-a2").textContent = (90 - th) + "°";
+  $("#v-par").textContent = f2(c); $("#v-per").textContent = f2(s);
+  $("#v-ramp").textContent = `Con θ = ${th}° desde la vertical, la rampa forma ${90 - th}° con el piso.`;
+  renderRot();
+}
+
+let anim = null;
+$("#theta").addEventListener("input", (e) => { S.th = +e.target.value; render(); });
+$("#giro").addEventListener("input", (e) => {
+  if (anim) { cancelAnimationFrame(anim); anim = null; }
+  S.phi = +e.target.value; renderRot();
+});
+$("#rot-btn").addEventListener("click", () => {
+  const from = S.phi, to = S.phi >= 89.5 ? 0 : 90;
+  if (anim) { cancelAnimationFrame(anim); anim = null; }
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { S.phi = to; renderRot(); return; }
+  const t0 = performance.now(), dur = Math.max(1, 1400 * Math.abs(to - from) / 90);
+  const step = (t) => {
+    const k = Math.min(1, (t - t0) / dur), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    S.phi = from + (to - from) * e; renderRot();
+    anim = k < 1 ? requestAnimationFrame(step) : null;
+  };
+  anim = requestAnimationFrame(step);
+});
+$("#tri").innerHTML = tri();
+render();
+</script>
