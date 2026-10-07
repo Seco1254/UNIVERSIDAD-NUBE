@@ -1,0 +1,383 @@
+<title>¿Qué sostiene la cuerda de arriba?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: ficha de refuerzo del cuaderno de laboratorio (mismo sistema de M1). Columna ≤ 980px, barra de θ fija arriba; el dibujo grande abre y los DCL van lado a lado. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red-soft:#fbe6e6; --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-t2:#7b4fc9; --on-strong:#ffffff;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red-soft:#3b1c20; --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-comp:#f2a955; --c-ground:#253041; --c-t2:#c3a6ff; --on-strong:#0e131a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red-soft:#3b1c20; --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-comp:#f2a955; --c-ground:#253041; --c-t2:#c3a6ff; --on-strong:#0e131a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:980px; margin:0 auto; padding-inline:16px; padding-block:28px 72px; display:grid; gap:44px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.mono{font-family:var(--f-mono)}
+.t1{color:var(--accent); font-weight:700}
+.t2{color:var(--c-t2); font-weight:700}
+.wt{color:var(--c-comp); font-weight:700}
+section{display:grid; gap:20px; min-width:0}
+.sec-head{display:grid; gap:8px}
+.sec-head p{max-width:68ch; color:var(--muted)}
+.tag{justify-self:start; font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 7px; border-radius:4px}
+
+/* Encabezado */
+.head{display:grid; gap:16px}
+.enun{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:8px}
+.enun p{max-width:70ch}
+.lede{font-size:1.08rem; max-width:62ch}
+.answer{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:16px}
+.ans{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:grid; gap:4px; align-content:start}
+.ans .big{font-family:var(--f-mono); font-size:1.35rem; font-weight:600}
+.back{justify-self:start; font-weight:600; text-decoration:none}
+.back:hover{text-decoration:underline}
+
+/* Barra de θ */
+.control{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; display:flex; flex-wrap:wrap; align-items:center; gap:6px 16px; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px 16px; box-shadow:0 6px 16px -12px rgba(0,0,0,.35)}
+.control label{font-family:var(--f-mono); font-size:1.05rem; min-width:7.5ch}
+.control input[type=range]{flex:1 1 200px; min-width:0; accent-color:var(--accent)}
+.control .vals{display:flex; flex-wrap:wrap; gap:4px 16px; font-family:var(--f-mono); font-size:.95rem; font-variant-numeric:tabular-nums}
+
+/* Figuras y tarjetas */
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0; align-content:start}
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr)); gap:16px}
+.card-h{display:grid; gap:6px}
+figure{margin:0; display:grid; gap:6px; min-width:0}
+figure svg{display:block; width:100%; height:auto}
+figcaption{font-size:.88rem; color:var(--muted); max-width:72ch}
+.eq{display:grid; gap:4px; font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border-radius:8px; padding:10px 12px; overflow-x:auto}
+.eq .res{font-weight:600}
+.trap{background:var(--red-soft); border-radius:var(--r); padding:14px 16px; display:grid; gap:6px}
+.trap p{max-width:70ch}
+
+/* Balanza: lo que sube vs lo que baja, a escala (pista completa = 3 mg) */
+.bal{display:grid; gap:6px}
+.bal-t{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.bal-row{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:baseline; gap:3px 8px; font-size:.88rem}
+.bal-l{font-family:var(--f-mono); min-width:0}
+.bal-track{grid-column:1/-1; display:flex; height:14px; background:var(--paper); border:1px solid var(--rule); border-radius:4px; overflow:hidden}
+.seg{display:block; transition:width .12s}
+.seg + .seg{border-left:2px solid var(--surface)}
+.s-t1{background:var(--accent)} .s-t2{background:var(--c-t2)} .s-w{background:var(--c-comp)}
+.bal-v{font-family:var(--f-mono); text-align:right; font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion: reduce){ .seg{transition:none} }
+
+/* Opciones */
+.opts{display:grid; gap:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); overflow:hidden}
+.opt{display:grid; grid-template-columns:minmax(8.5rem,auto) 1fr; gap:6px 16px; padding:12px 16px; border-bottom:1px solid var(--rule); align-items:baseline}
+.opt:last-child{border-bottom:0}
+.opt b{font-family:var(--f-mono); font-size:1rem}
+.opt.ok{background:var(--green-soft)}
+.opt .chip{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; margin-left:8px; color:var(--green)}
+.opt p{min-width:0}
+@media (max-width:520px){ .opt{grid-template-columns:1fr} }
+footer{display:grid; gap:6px; font-size:.88rem; color:var(--muted); border-top:1px solid var(--rule); padding-top:16px}
+
+/* SVG */
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-thin{stroke:var(--ink); stroke-width:1.1; fill:none}
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5; stroke-linejoin:round}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.6}
+.sv-block-f{fill:var(--surface); stroke:var(--muted); stroke-width:1.2; stroke-dasharray:3 3}
+.sv-axis{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:5 4; fill:none}
+.sv-post{stroke:var(--ink); stroke-width:3.5; stroke-linecap:round; fill:none}
+.sv-nail{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-dot{fill:var(--ink)}
+.sv-arc{stroke:var(--ink); stroke-width:1.5; fill:none}
+.rope-1{stroke:var(--accent); stroke-width:2.6; fill:none; stroke-linecap:round}
+.rope-2{stroke:var(--c-t2); stroke-width:2.6; fill:none; stroke-linecap:round}
+.br-1{stroke:var(--accent); stroke-width:1.6; fill:none}
+.br-2{stroke:var(--c-t2); stroke-width:1.6; fill:none}
+.sys-b{fill:var(--accent); fill-opacity:.06; stroke:var(--ink); stroke-width:1.5; stroke-dasharray:6 4}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)}
+.a-t1{stroke:var(--accent); fill:var(--accent)}
+.a-t2{stroke:var(--c-t2); fill:var(--c-t2)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)}
+.a-w{stroke:var(--c-comp); fill:var(--c-comp)}
+.t{font-family:var(--f-mono); font-size:13px; fill:var(--ink); paint-order:stroke; stroke:var(--surface); stroke-width:4px; stroke-linejoin:round}
+.t-blk{font-weight:600; font-size:13px; stroke-width:0}
+.t-ax{fill:var(--muted); font-size:14px; font-style:italic}
+.t-mut{fill:var(--muted); font-size:12px}
+.t-t1{fill:var(--accent); font-weight:600}
+.t-t2{fill:var(--c-t2); font-weight:600}
+.t-peso{fill:var(--c-peso); font-weight:600}
+.t-n{fill:var(--c-normal); font-weight:600}
+.t-w{fill:var(--c-comp); font-weight:600}
+.sc .t{font-size:16px}
+.sc .t-mut{font-size:14px}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Refuerzo de M1</p>
+    <h1>¿Qué sostiene la cuerda de arriba?</h1>
+    <blockquote class="enun">
+      <span class="tag">Enunciado · M1, quiz B, pregunta 5</span>
+      <p>Dos bloques, 2m arriba y m abajo, están sobre un plano sin fricción inclinado θ respecto a la horizontal. Una cuerda paralela al plano, amarrada arriba, sostiene al 2m, y el m cuelga del 2m con otra cuerda paralela al plano. ¿Cuál es la tensión en la cuerda de arriba?</p>
+    </blockquote>
+    <p class="lede">Cada cuerda sostiene todo lo que cuelga debajo de ella. La de arriba carga los dos bloques; la de en medio, solo el de abajo.</p>
+    <div class="answer">
+      <div class="ans"><span class="tag">Cuerda de arriba</span><p class="big"><span class="t1">T₁</span> = 3mg·sen θ</p><p class="small muted">Sostiene a 2m + m a lo largo del plano.</p></div>
+      <div class="ans"><span class="tag">Cuerda de en medio</span><p class="big"><span class="t2">T₂</span> = mg·sen θ</p><p class="small muted">Sostiene solo al m de abajo.</p></div>
+    </div>
+    <a class="back" href="https://claude.ai/artifact/RdHQeTYL9rNrrrPoWXiTMj">← Volver a M1 · Newton, DCL y planos inclinados</a>
+  </header>
+
+  <div class="control">
+    <label for="theta">θ = <b id="th-val">30°</b></label>
+    <input type="range" id="theta" min="20" max="70" step="1" value="30">
+    <div class="vals"><span><span class="t1">T₁</span> = <b id="v-t1">1,50</b> mg</span><span><span class="t2">T₂</span> = <b id="v-t2">0,50</b> mg</span></div>
+  </div>
+
+  <section id="dibujo">
+    <div class="sec-head">
+      <h2>El dibujo</h2>
+      <p>Las dos cuerdas van paralelas al plano. Los corchetes de arriba marcan lo que cuelga de cada cuerda: eso es lo que esa cuerda tiene que sostener.</p>
+    </div>
+    <div class="card">
+      <figure>
+        <div id="scene" class="sc"></div>
+        <figcaption>La cuerda de arriba (<span class="t1">T₁</span>) va del clavo al 2m. La de en medio (<span class="t2">T₂</span>) va del 2m al m. Las flechas rojas son los pesos.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="dcl">
+    <div class="sec-head">
+      <h2>DCL de cada bloque</h2>
+      <p>Empieza por el de abajo: tiene una sola cuerda, así que T₂ sale directo. Luego el 2m, que tiene dos cuerdas. Ejes inclinados: x′ a lo largo del plano y y′ perpendicular. Las flechas están a escala.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="card-h"><span class="tag">Paso 1 · Bloque m (abajo)</span><h3>Una cuerda que lo jala hacia arriba</h3></div>
+        <figure><div id="dcl-m"></div><figcaption>Sobre m actúan T₂ (plano arriba), su peso mg y la normal N₂.</figcaption></figure>
+        <div class="eq">
+          <span>x′:  T₂ − mg·sen θ = 0</span>
+          <span class="res">T₂ = mg·sen θ</span>
+        </div>
+        <div class="bal" id="bal-m"></div>
+      </article>
+      <article class="card">
+        <div class="card-h"><span class="tag">Paso 2 · Bloque 2m (arriba)</span><h3>Dos cuerdas: una sube, otra baja</h3></div>
+        <figure><div id="dcl-2m"></div><figcaption>Sobre 2m actúan T₁ (plano arriba), T₂ (plano abajo, porque el m cuelga de él), su peso 2mg y la normal N₁.</figcaption></figure>
+        <div class="eq">
+          <span>x′:  T₁ − T₂ − 2mg·sen θ = 0</span>
+          <span>T₁ = 2mg·sen θ + mg·sen θ</span>
+          <span class="res">T₁ = 3mg·sen θ</span>
+        </div>
+        <div class="bal" id="bal-2m"></div>
+      </article>
+    </div>
+    <div class="trap">
+      <h3>La trampa de este ejercicio</h3>
+      <p>En el DCL del 2m, la cuerda de en medio también lo jala, y lo jala <b>hacia abajo</b>, hacia el m. Si te olvidas de esa T₂ te sale T₁ = 2mg·sen θ, que es una de las opciones incorrectas.</p>
+    </div>
+  </section>
+
+  <section id="sistema">
+    <div class="sec-head">
+      <h2>Atajo: los dos como un solo bloque</h2>
+      <p>Encierra los dos bloques y la cuerda de en medio en una frontera. Solo cuentan las fuerzas que cruzan la frontera desde afuera.</p>
+    </div>
+    <div class="card">
+      <figure>
+        <div id="scene-sys" class="sc"></div>
+        <figcaption>T₂ queda adentro: jala al 2m hacia abajo y al m hacia arriba con la misma fuerza, así que se cancela. De afuera, a lo largo del plano, solo quedan T₁ y la parte del peso total 3mg que va plano abajo.</figcaption>
+      </figure>
+      <div class="eq">
+        <span>x′ (sistema de masa 3m):  T₁ − 3mg·sen θ = 0</span>
+        <span class="res">T₁ = 3mg·sen θ</span>
+      </div>
+      <div class="bal" id="bal-sys"></div>
+    </div>
+  </section>
+
+  <section id="opciones">
+    <div class="sec-head">
+      <h2>¿Por qué no las otras opciones?</h2>
+      <p>Cada opción incorrecta sale de un error concreto. Si marcaste una de estas, aquí está cuál fue.</p>
+    </div>
+    <div class="opts">
+      <div class="opt ok"><b>3mg·sen θ<span class="chip">correcta</span></b><p>La cuerda de arriba sostiene a los dos bloques (3m) a lo largo del plano, y con θ desde la horizontal esa componente lleva seno.</p></div>
+      <div class="opt"><b>2mg·sen θ</b><p>Faltó T₂ en el DCL del 2m. El m de abajo también jala al 2m a través de la cuerda de en medio.</p></div>
+      <div class="opt"><b>mg·sen θ</b><p>Esa es T₂, la tensión de la cuerda de en medio, que solo sostiene al m.</p></div>
+      <div class="opt"><b>3mg·cos θ</b><p>Se cambió seno por coseno. 3mg·cos θ es la normal total (N₁ + N₂), que va perpendicular al plano; las cuerdas van paralelas.</p></div>
+      <div class="opt"><b>3mg·tan θ</b><p>Eso sale cuando la fuerza es horizontal, como la F del Abierto 1 de 2026-1. Aquí las cuerdas van paralelas al plano, así que no aparece la tangente.</p></div>
+    </div>
+  </section>
+
+  <section id="limite">
+    <div class="sec-head"><h2>Prueba del límite</h2><p>Antes de entregar, pon valores extremos de θ en tu respuesta y mira si tienen sentido.</p></div>
+    <div class="cards">
+      <div class="card"><span class="tag">θ = 0°</span><p>El plano es un piso. Los bloques descansan solos y las cuerdas quedan flojas: T₁ debe ser 0. Con 3mg·sen 0 = 0, cuadra.</p></div>
+      <div class="card"><span class="tag">θ = 90°</span><p>El plano es una pared. Los dos bloques cuelgan en fila de la cuerda de arriba, que carga todo el peso: T₁ debe ser 3mg. Con 3mg·sen 90° = 3mg, cuadra.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Refuerzo de M1 · Newton, DCL y planos inclinados. Es la pregunta 5 del quiz B de M1.</p>
+  </footer>
+</div>
+
+<script>
+const D = Math.PI / 180;
+const $ = (s) => document.querySelector(s);
+const n1 = (v) => v.toFixed(1);
+const f2 = (v) => v.toFixed(2).replace(".", ",");
+const pt = (o, ang, r) => ({ x: o.x + r * Math.cos(ang * D), y: o.y + r * Math.sin(ang * D) });
+const svg = (W, H, inner, aria) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">${inner}</svg>`;
+const line = (a, b, cls) => `<line x1="${n1(a.x)}" y1="${n1(a.y)}" x2="${n1(b.x)}" y2="${n1(b.y)}" class="${cls}"/>`;
+const text = (p, s, cls, anchor = "middle") => `<text x="${n1(p.x)}" y="${n1(p.y)}" dy=".35em" text-anchor="${anchor}" class="t ${cls}">${s}</text>`;
+const rtext = (p, s, cls, th) => `<text transform="translate(${n1(p.x)} ${n1(p.y)}) rotate(${n1(-th)})" dy=".35em" text-anchor="middle" class="t ${cls}">${s}</text>`;
+const dot = (p) => `<circle cx="${n1(p.x)}" cy="${n1(p.y)}" r="2.6" class="sv-dot"/>`;
+
+function arrow(a, b, cls) {
+  const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = 9, w = 4.6;
+  const bx = b.x - ux * h, by = b.y - uy * h;
+  return `<line x1="${n1(a.x)}" y1="${n1(a.y)}" x2="${n1(bx)}" y2="${n1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${n1(b.x)},${n1(b.y)} ${n1(bx - uy * w)},${n1(by + ux * w)} ${n1(bx + uy * w)},${n1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function block(c, size, th, label, cls = "sv-block") {
+  return `<rect x="${n1(c.x - size / 2)}" y="${n1(c.y - size / 2)}" width="${size}" height="${size}" transform="rotate(${n1(-th)} ${n1(c.x)} ${n1(c.y)})" class="${cls}"/>` +
+    (label ? text(c, label, "t-blk") : "");
+}
+
+/* Escena: plano con θ desde la horizontal, clavo arriba, 2m y m con sus cuerdas.
+   mode "main": corchetes de lo que sostiene cada cuerda y pesos. mode "sys": frontera del sistema. */
+function scene(th, mode) {
+  const W = 480, H = 304, Gy = 282, c = Math.cos(th * D), s = Math.sin(th * D);
+  const L = Math.min(420 / c, 236 / s), base = L * c, hg = L * s;
+  const A = { x: (W - base) / 2, y: Gy }, B = { x: A.x + base, y: Gy }, C = { x: B.x, y: Gy - hg };
+  // P(sl, d): punto a sl px plano arriba desde A y d px por encima de la superficie
+  const P = (sl, d) => ({ x: A.x + sl * c - d * s, y: A.y - sl * s - d * c });
+  const a1 = 28, a2 = 38, h = 13, s1 = 0.3 * L, s2 = 0.62 * L, sp = 0.95 * L;
+  let g = `<line x1="8" y1="${Gy}" x2="${W - 8}" y2="${Gy}" class="sv-line"/>`;
+  g += `<polygon points="${n1(A.x)},${Gy} ${n1(B.x)},${Gy} ${n1(C.x)},${n1(C.y)}" class="sv-ground"/>`;
+  g += `<polyline points="${n1(B.x - 10)},${Gy} ${n1(B.x - 10)},${Gy - 10} ${n1(B.x)},${Gy - 10}" class="sv-thin"/>`;
+  const q1 = pt(A, -th, 44), q2 = pt(A, 0, 44);
+  g += `<path d="M ${n1(q1.x)} ${n1(q1.y)} A 44 44 0 0 1 ${n1(q2.x)} ${n1(q2.y)}" class="sv-arc"/>`;
+  g += text(pt(A, -th / 2, 58), "θ", "");
+  if (mode === "sys") {
+    const sa = s1 - a1 / 2 - 12, sb = s2 + a2 / 2 + 12;
+    g += `<polygon points="${[P(sa, -6), P(sb, -6), P(sb, a2 + 14), P(sa, a2 + 14)].map((p) => n1(p.x) + "," + n1(p.y)).join(" ")}" class="sys-b"/>`;
+  }
+  // cuerdas y clavo
+  g += line(P(s2 + a2 / 2, h), P(sp, h), "rope-1") + line(P(s1 + a1 / 2, h), P(s2 - a2 / 2, h), "rope-2");
+  g += line(P(sp, 0), P(sp, h + 10), "sv-post") + `<circle cx="${n1(P(sp, h).x)}" cy="${n1(P(sp, h).y)}" r="4.5" class="sv-nail"/>`;
+  g += rtext(P((s2 + a2 / 2 + sp) / 2, h + 13), "T₁", "t-t1", th);
+  g += rtext(P((s1 + a1 / 2 + s2 - a2 / 2) / 2, h + 13), mode === "sys" ? "T₂ (adentro)" : "T₂", "t-t2", th);
+  // bloques
+  const cm = P(s1, a1 / 2), c2 = P(s2, a2 / 2);
+  g += block(cm, a1, th, "m") + block(c2, a2, th, "2m");
+  if (mode === "main") {
+    const br = (sa, sb, d, cls, label, lcls) =>
+      line(P(sa, d), P(sb, d), cls) + line(P(sa, d), P(sa, d - 8), cls) + line(P(sb, d), P(sb, d - 8), cls) +
+      rtext(P((sa + sb) / 2, d + 14), label, lcls, th);
+    g += br(s1 - a1 / 2, s1 + a1 / 2, 48, "br-2", "T₂ sostiene a m", "t-t2");
+    g += br(s1 - a1 / 2, s2 + a2 / 2, 84, "br-1", "T₁ sostiene a 2m + m", "t-t1");
+    g += arrow(cm, { x: cm.x, y: cm.y + 30 }, "a-peso") + text({ x: cm.x + 7, y: cm.y + 26 }, "mg", "t-peso", "start");
+    g += arrow(c2, { x: c2.x, y: c2.y + 60 }, "a-peso") + text({ x: c2.x + 7, y: c2.y + 56 }, "2mg", "t-peso", "start");
+  } else {
+    const mid = (s1 - a1 / 2 + s2 + a2 / 2) / 2, d = a2 + 44, l = 26 * 3 * s, M = P(mid, d);
+    g += arrow(M, P(mid + l, d), "a-t1") + arrow(M, P(mid - l, d), "a-w") + dot(M);
+    g += rtext(P(mid + l + 16, d), "T₁", "t-t1", th);
+    g += rtext(P(mid - l - 48, d), "3mg·sen θ", "t-w", th);
+    g += rtext(P(mid, a2 + 24), "sistema 2m + m", "t-mut", th);
+  }
+  return svg(W, H, g, mode === "main"
+    ? "Plano inclinado θ. Una cuerda amarrada a un clavo arriba sostiene al bloque 2m; del 2m cuelga el bloque m con otra cuerda. La cuerda de arriba sostiene a los dos bloques; la de en medio, solo al m."
+    : "Los dos bloques encerrados en una frontera. T₂ queda adentro; a lo largo del plano solo actúan T₁ hacia arriba y 3mg sen θ hacia abajo.");
+}
+
+/* DCL de un bloque con ejes inclinados, a escala: K px por cada mg. */
+function dcl(th, which) {
+  const W = 340, H = 330, O = { x: 170, y: 165 }, R = 150, K = 52, s = Math.sin(th * D), c = Math.cos(th * D);
+  const u = -th, n = -90 - th; // direcciones SVG: plano arriba y hacia afuera del plano
+  let g = line(pt(O, 180 + u, R), pt(O, u, R), "sv-axis") + line(pt(O, n + 180, R), pt(O, n, R), "sv-axis");
+  g += text(pt(O, 180 + u, R + 8), "x′", "t-ax") + text(pt(O, n, R + 8), "y′", "t-ax");
+  const big = which === "2m";
+  g += block(O, big ? 34 : 26, th, "", "sv-block-f");
+  const lab = (tip, ang, str, cls) => {
+    const p = pt(tip, ang, 15), cx = Math.cos(ang * D);
+    return text(p, str, cls, cx > 0.3 ? "start" : cx < -0.3 ? "end" : "middle");
+  };
+  const F = [];
+  if (big) {
+    F.push([u, 3 * K * s, "a-t1", "T₁", "t-t1"], [180 + u, K * s, "a-t2", "T₂", "t-t2"], [n, 2 * K * c, "a-n", "N₁", "t-n"], [90, 2 * K, "a-peso", "2mg", "t-peso"]);
+  } else {
+    F.push([u, K * s, "a-t2", "T₂", "t-t2"], [n, K * c, "a-n", "N₂", "t-n"], [90, K, "a-peso", "mg", "t-peso"]);
+  }
+  F.forEach(([ang, len, cls, str, tcls]) => { const tip = pt(O, ang, len); g += arrow(O, tip, cls) + lab(tip, ang, str, tcls); });
+  g += dot(O);
+  return svg(W, H, g, big
+    ? "DCL del bloque 2m: T₁ plano arriba, T₂ plano abajo, peso 2mg vertical y normal N₁ perpendicular al plano."
+    : "DCL del bloque m: T₂ plano arriba, peso mg vertical y normal N₂ perpendicular al plano.");
+}
+
+/* Balanza a lo largo del plano. La pista completa vale 3 mg. */
+function balance(id, up, down) {
+  const row = (k, segs) => {
+    const tot = segs.reduce((a, x) => a + x[1], 0);
+    return `<div class="bal-row"><span class="bal-l"><span class="muted">${k}:</span> ${segs.map(([lab, , , tc]) => `<span class="${tc}">${lab}</span>`).join(" + ")}</span>` +
+      `<span class="bal-v">${f2(tot)} mg</span><div class="bal-track">` +
+      segs.map(([lab, v, cls]) => `<i class="seg ${cls}" style="width:${(v / 3 * 100).toFixed(2)}%" title="${lab}"></i>`).join("") +
+      `</div></div>`;
+  };
+  $(id).innerHTML = `<span class="bal-t">A lo largo del plano · lo que sube = lo que baja</span>` + row("Sube", up) + row("Baja", down);
+}
+
+function render(th) {
+  const s = Math.sin(th * D);
+  $("#th-val").textContent = th + "°";
+  $("#v-t1").textContent = f2(3 * s);
+  $("#v-t2").textContent = f2(s);
+  $("#scene").innerHTML = scene(th, "main");
+  $("#scene-sys").innerHTML = scene(th, "sys");
+  $("#dcl-m").innerHTML = dcl(th, "m");
+  $("#dcl-2m").innerHTML = dcl(th, "2m");
+  balance("#bal-m", [["T₂", s, "s-t2", "t2"]], [["mg·sen θ", s, "s-w", "wt"]]);
+  balance("#bal-2m", [["T₁", 3 * s, "s-t1", "t1"]], [["2mg·sen θ", 2 * s, "s-w", "wt"], ["T₂", s, "s-t2", "t2"]]);
+  balance("#bal-sys", [["T₁", 3 * s, "s-t1", "t1"]], [["3mg·sen θ", 3 * s, "s-w", "wt"]]);
+}
+$("#theta").addEventListener("input", (e) => render(+e.target.value));
+render(+$("#theta").value);
+</script>
