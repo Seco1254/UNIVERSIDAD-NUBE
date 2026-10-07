@@ -1,0 +1,770 @@
+<title>M2 Poleas y equilibrio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px, barra de secciones fija arriba; el lab de poleas y las figuras de cada problema rompen la columna. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M2: poleas */
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.sv-board{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-floor{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:2 5}
+.sv-tl{fill:var(--muted); font-family:var(--f-mono); font-size:11px}
+.sv-hand{fill:var(--c-f); stroke:none}
+.sv-person{stroke:var(--ink); stroke-width:2; stroke-linecap:round}
+.sv-person-h{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-rope-h{stroke:var(--orange); stroke-width:2; stroke-dasharray:5 3; fill:none}
+.sub{font-size:8px}
+.bd{fill:var(--accent-soft); fill-opacity:.35; stroke:var(--accent); stroke-width:2; stroke-dasharray:6 4}
+.cx{fill:var(--accent); stroke:var(--surface); stroke-width:1.5}
+.cx-t{fill:var(--accent); font-family:var(--f-mono); font-size:11px; font-weight:500}
+.lab-pul{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.lab-fig svg{width:100%; height:auto; display:block; max-height:420px}
+.lab-desc{font-size:.92rem}
+.tabs{display:flex; flex-wrap:wrap; gap:6px; padding:2px 2px 10px}
+.tab{font:inherit; font-size:.85rem; font-weight:600; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.stepbtns{display:flex; flex-wrap:wrap; gap:6px}
+.stepbtn{font:inherit; font-size:.85rem; padding:6px 10px; border-radius:7px; border:1px solid var(--accent); background:transparent; color:var(--accent); cursor:pointer; text-align:left}
+.stepbtn[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.eqbox{display:grid; gap:6px; font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:10px 12px; min-height:5.5em}
+.eqbox b{font-family:var(--f-mono); font-weight:500}
+.solfig svg{width:100%; max-width:440px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.sv-ten{fill:var(--muted); font-family:var(--f-mono); font-size:11px}
+.stepped .sv-ten{display:none}
+.solwrap{display:grid; gap:8px}
+.soleq b{font-family:var(--f-mono); font-weight:500}
+[hidden]{display:none!important}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>15 min</span></a>
+    <a href="#lab">2 Lab <span>15 min</span></a>
+    <a href="#taller">3 Taller <span>45 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Módulo 2 de 9</p>
+    <h1>Poleas y equilibrio</h1>
+    <div class="meta">
+      <span class="chip-ref">Refuerzo</span>
+      <span>Miércoles 7 de octubre · carga media (con M3) · ~1,5 h</span>
+      <span>Salió en los 4 parciales</span>
+    </div>
+    <p class="prose">Las poleas salieron en todos los parciales anteriores: dos veces como persona sobre una tabla y dos como bloques colgando. Casi siempre se resuelven con un solo truco: encerrar el sistema correcto y contar las cuerdas que cruzan la frontera.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, saltas M2 y pasas a M3.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Tres reglas, un método y la trampa de la persona sobre la tabla.</p></div>
+
+    <div class="block">
+      <h3>Las tres reglas de la cuerda y la polea ideales</h3>
+      <div class="laws">
+        <div class="law"><b>Cuerda</b><span>La tensión es la misma en todo un tramo continuo de cuerda ideal, aunque pase por varias poleas.</span><span class="ex">Cada cuerda distinta tiene su propia tensión: T₁, T₂, T₃…</span></div>
+        <div class="law"><b>Polea fija</b><span>Solo cambia la dirección de la fuerza, no su tamaño.</span><span class="ex">Si jalas con T de un lado, el otro lado jala con T.</span></div>
+        <div class="law"><b>Polea móvil</b><span>No tiene masa, así que la fuerza neta sobre ella es cero.</span><span class="ex">Si dos tramos de su cuerda jalan con T, lo que la sostiene jala con 2T.</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>El método: encierra y cuenta</h3>
+      <ol class="steps">
+        <li><span><b>Encierra con un rectángulo</b> el grupo de cuerpos que te conviene: el que tenga una sola incógnita.</span></li>
+        <li><span><b>Marca cada tramo de cuerda que cruza la frontera.</b> Cada cruce es una fuerza igual a la tensión de esa cuerda, jalando hacia afuera.</span></li>
+        <li><span><b>Suma el peso de todo lo que quedó adentro.</b> Las fuerzas entre cuerpos que están dentro de la frontera (normales, tramos internos) no cuentan.</span></li>
+        <li><span><b>Escribe ΣF = 0 en vertical</b> y despeja.</span></li>
+      </ol>
+      <div class="callout"><h3>¿Por qué funciona?</h3><p>Es la 2.ª ley aplicada a un sistema. Las fuerzas internas vienen en pares de la 3.ª ley y se cancelan, así que solo quedan las que cruzan la frontera.</p></div>
+    </div>
+
+    <div class="block">
+      <h3>La persona que jala su propia cuerda</h3>
+      <div class="figs">
+        <div class="prose">
+          <p><b>Persona sola:</b> peso hacia abajo; normal de la tabla hacia arriba; tensión de la cuerda en cada mano, hacia arriba.</p>
+          <p><b>Tabla sola:</b> peso hacia abajo; normal de la persona hacia abajo; los tramos de cuerda que la sostienen, hacia arriba.</p>
+          <p><b>El truco:</b> encierra persona y tabla juntas. La normal queda adentro y desaparece de la ecuación. Después, si te piden la normal, haz el diagrama de la persona sola.</p>
+        </div>
+        <div class="prose">
+          <div class="eq"><span>Sistema persona + tabla:</span><span><b>Σ (tramos que cruzan) = (m<sub>persona</sub> + m<sub>tabla</sub>)·g</b></span></div>
+          <div class="eq"><span>Persona sola:</span><span><b>T<sub>manos</sub> + N = m<sub>persona</sub>·g</b></span></div>
+          <div class="callout"><h3>«Por encima del piso»</h3><p>Significa que el piso no ayuda: no hay normal del piso. Si te preguntan si la persona sigue parada sobre la tabla, la condición es N ≥ 0.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Trampas que pone el profesor</h3>
+      <div class="callout trap">
+        <p><b>Tramos horizontales.</b> Un tramo horizontal no sostiene peso. Si además une dos poleas de la misma tabla, es interno y se cancela (2026-1, SM1).</p>
+        <p><b>Contar dos veces</b> el mismo tramo, o contar la cuerda que sostiene una polea móvil y también los dos tramos de esa polea cuando todo está dentro del sistema.</p>
+        <p><b>Mezclar tensiones.</b> La cuerda que cuelga de una polea móvil no tiene la misma tensión que la cuerda que la rodea: tiene el doble.</p>
+        <p><b>Olvidar la normal</b> entre la persona y la tabla cuando los analizas por separado.</p>
+      </div>
+    </div>
+
+    <details class="rev">
+      <summary>Extra: lo que ganas en fuerza lo pierdes en distancia</summary>
+      <div class="rev-body">
+        <p>Con n poleas móviles en cascada, la fuerza necesaria es W/2ⁿ. A cambio, tienes que jalar 2ⁿ veces más cuerda de lo que sube la carga. El trabajo es el mismo: F·d = W·h. Esta misma ligadura entre distancias es la que conecta las aceleraciones cuando el sistema se mueve (M4).</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: cuenta cuerdas</h2><p>Escoge un sistema y recorre los pasos. Cada paso encierra un grupo de cuerpos y marca las cuerdas que cruzan la frontera.</p></div>
+
+    <div class="lab lab-pul">
+      <div class="lab-stage">
+        <div class="tabs" role="tablist" aria-label="Sistema">
+          <button type="button" role="tab" class="tab" id="tab-L1" aria-selected="true">Polea móvil</button>
+          <button type="button" role="tab" class="tab" id="tab-L2" aria-selected="false">Aparejo doble</button>
+          <button type="button" role="tab" class="tab" id="tab-L3" aria-selected="false">Tabla 2026-1</button>
+        </div>
+        <div id="lab-fig" class="lab-fig"></div>
+      </div>
+      <div class="lab-side">
+        <p class="eyebrow" id="lab-name">Polea móvil</p>
+        <p id="lab-desc" class="lab-desc"></p>
+        <div class="ctl" id="pull-ctl">
+          <label for="pull" id="pull-lab">Jala la cuerda: 0 cm</label>
+          <input type="range" id="pull" min="0" max="60" step="1" value="0">
+        </div>
+        <div class="stepbtns" id="stepbtns"></div>
+        <div class="eqbox" id="lab-eq" aria-live="polite"><p class="muted">Toca un paso para ver la frontera.</p></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · En la polea móvil, jala 40 cm. ¿Cuánto sube la carga?</summary>
+          <div class="rev-body"><p><b>20 cm.</b> La carga cuelga de dos tramos y cada uno se acorta la mitad de lo que jalas. Fuerza a la mitad, distancia al doble.</p></div></details>
+        <details class="rev"><summary>Reto 2 · En el aparejo doble, antes de ver los pasos: ¿con qué fuerza hay que jalar?</summary>
+          <div class="rev-body"><p><b>W/4.</b> La polea de abajo divide la carga entre 2 y la de arriba vuelve a dividir entre 2.</p></div></details>
+        <details class="rev"><summary>Reto 3 · En la tabla de 2026-1, ¿por qué el tramo horizontal no cuenta?</summary>
+          <div class="rev-body"><p>Por dos razones: es horizontal, así que no tiene componente vertical, y sus dos extremos están en poleas de la misma tabla, así que es una fuerza interna que se cancela. Por eso quedan 5 tramos y α = 1/5.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Tres problemas de parciales anteriores y una variante nueva. Hazlos en papel antes de abrir las pistas.</p></div>
+    <p class="prose">Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M3 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M3 · Fricción y equilibrio con desigualdades, hoy mismo (segunda parte de la carga media).</p>
+    <p>Fuente de los problemas: parciales 2 de 2024-2, 2025-1, 2025-2 y 2026-1 de Física 1, Universidad de los Andes.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Primitivas SVG ---------- */
+const L = (x1, y1, x2, y2, c = "sv-rope") => `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" class="${c}"/>`;
+const Pul = (cx, cy, r) => `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${r}" class="sv-pulley"/><circle cx="${f1(cx)}" cy="${f1(cy)}" r="2.2" class="sv-axle"/>`;
+const Brk = (x1, y1, x2, y2) => L(x1, y1, x2, y2, "sv-brk");
+function Ceil(x1, x2, y) { let s = L(x1, y, x2, y, "sv-line"); for (let x = x1 + 4; x < x2; x += 10) s += L(x, y, x + 6, y - 6, "sv-hatch"); return s; }
+const Blk = (x, y, w, h, lab) => `<rect x="${f1(x)}" y="${f1(y)}" width="${w}" height="${h}" class="sv-block"/><text x="${f1(x + w / 2)}" y="${f1(y + h / 2 + 4)}" class="sv-lab" text-anchor="middle">${lab}</text>`;
+const Board = (x1, x2, y, lab) => `<rect x="${x1}" y="${y}" width="${x2 - x1}" height="8" class="sv-board"/>` + (lab ? `<text x="${x2 + 4}" y="${y + 8}" class="sv-lab">${lab}</text>` : "");
+const Tx = (x, y, t, c = "sv-tl", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${c}" text-anchor="${anchor}">${t}</text>`;
+const Floor = (y) => L(10, y, 310, y, "sv-floor");
+function Person(cx, feetY, hands, lab) {
+  let s = `<circle cx="${cx}" cy="${feetY - 34}" r="6" class="sv-person-h"/>`;
+  s += L(cx, feetY - 28, cx, feetY - 12, "sv-person") + L(cx, feetY - 12, cx - 6, feetY, "sv-person") + L(cx, feetY - 12, cx + 6, feetY, "sv-person");
+  hands.forEach(([hx, hy]) => { s += L(cx, feetY - 24, hx, hy, "sv-person"); });
+  if (lab) s += Tx(cx + 9, feetY - 30, lab, "sv-lab");
+  return s;
+}
+function Boundary(st) {
+  const [x1, y1, x2, y2] = st.bd;
+  let s = `<rect x="${x1}" y="${f1(y1)}" width="${x2 - x1}" height="${f1(y2 - y1)}" rx="8" class="bd"/>`;
+  st.cx.forEach(([x, y, t, below]) => { s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="4.5" class="cx"/>` + Tx(x + 6, below ? y + 15 : y - 6, t, "cx-t"); });
+  return s;
+}
+const svgWrap = (inner, aria) => `<svg viewBox="0 0 320 250" role="img" aria-label="${aria}">${inner}</svg>`;
+
+/* ---------- Figuras ---------- */
+const FIGS = {
+  L1: (st = {}) => {
+    const d = st.d || 0, Y = 120 - d / 2, Hy = 150 + d;
+    let s = Ceil(60, 260, 14);
+    s += Brk(190, 14, 190, 40) + Pul(190, 40, 16);
+    s += L(110, 14, 110, Y) + L(174, Y, 174, 40) + L(206, 40, 206, Hy);
+    s += `<circle cx="206" cy="${f1(Hy + 6)}" r="6" class="sv-hand"/>` + Tx(216, Hy + 10, "F", "sv-lab");
+    s += Pul(142, Y, 32) + Brk(142, Y, 142, Y + 52) + Blk(122, Y + 52, 40, 30, "W");
+    s += Tx(96, Y - 30, "T", "sv-ten", "end") + Tx(166, Y - 40, "T", "sv-ten", "end") + Tx(212, Hy - 40, "T", "sv-ten");
+    return {
+      svg: s, aria: "Polea móvil que sostiene una carga W; un extremo de la cuerda está en el techo y el otro se jala con F",
+      desc: "Un extremo de la cuerda está amarrado al techo, la cuerda rodea la polea móvil, sube a una polea fija y la jalas con F. Mueve el control para jalar.",
+      steps: [{ name: "Polea móvil + carga", bd: [92, Y - 50, 192, Y + 92], cx: [[110, Y - 50, "T"], [174, Y - 50, "T"]], eq: ["Cruzan 2 tramos de la misma cuerda: T + T.", "Adentro: el peso W.", "<b>2T − W = 0  →  T = W/2</b>", "Y como la cuerda es una sola, F = T = W/2."] }]
+    };
+  },
+  L2: () => {
+    let s = Ceil(120, 280, 14);
+    s += Brk(240, 14, 240, 40) + Pul(240, 40, 14);
+    s += L(146, 14, 146, 170) + L(198, 170, 198, 100, "sv-brk") + Pul(172, 170, 26) + Brk(172, 170, 172, 200) + Blk(152, 200, 40, 26, "W");
+    s += L(170, 14, 170, 100) + L(226, 100, 226, 40) + L(254, 40, 254, 180) + Pul(198, 100, 28);
+    s += `<circle cx="254" cy="186" r="6" class="sv-hand"/>` + Tx(264, 190, "F", "sv-lab");
+    s += Tx(140, 120, "T<tspan class='sub' dy='3'>A</tspan>", "sv-ten", "end") + Tx(164, 52, "T<tspan class='sub' dy='3'>B</tspan>", "sv-ten", "end") + Tx(260, 120, "T<tspan class='sub' dy='3'>B</tspan>", "sv-ten");
+    s += Tx(206, 200, "A", "sv-lab") + Tx(232, 104, "B", "sv-lab");
+    return {
+      svg: s, aria: "Dos poleas móviles en cascada sosteniendo una carga W",
+      desc: "La carga W cuelga de la polea A. La cuerda de A va del techo al eje de la polea B. La cuerda de B va del techo a una polea fija y la jalas con F.",
+      steps: [
+        { name: "Paso 1 · Polea A + carga", bd: [132, 132, 212, 234], cx: [[146, 132, 'T<tspan class="sub" dy="3">A</tspan>'], [198, 132, 'T<tspan class="sub" dy="3">A</tspan>']], eq: ["Cruzan 2 tramos de la cuerda A.", "<b>2T<sub>A</sub> = W  →  T<sub>A</sub> = W/2</b>"] },
+        { name: "Paso 2 · Polea B", bd: [156, 62, 240, 136], cx: [[170, 62, 'T<tspan class="sub" dy="3">B</tspan>'], [226, 62, 'T<tspan class="sub" dy="3">B</tspan>'], [198, 136, 'T<tspan class="sub" dy="3">A</tspan><tspan dy="-3"> ↓</tspan>', true]], eq: ["Arriba cruzan 2 tramos de la cuerda B; abajo cruza la cuerda A, que jala hacia abajo.", "<b>2T<sub>B</sub> = T<sub>A</sub>  →  T<sub>B</sub> = W/4</b>", "F = T<sub>B</sub> = W/4."] }
+      ]
+    };
+  },
+  L3: () => {
+    let s = Ceil(20, 300, 14);
+    [[60, 40], [116, 40], [258, 40]].forEach(([x, y]) => { s += Brk(x, 14, x, y) + Pul(x, y, 14); });
+    s += L(46, 40, 46, 118) + Blk(30, 118, 32, 28, "αM");
+    s += L(74, 40, 74, 170) + L(102, 170, 102, 40) + L(130, 40, 130, 170) + L(144, 184, 230, 184, "sv-rope-h") + L(244, 170, 244, 40) + L(272, 40, 272, 192);
+    [[88, 170], [144, 170], [230, 170]].forEach(([x, y]) => { s += Brk(x, y, x, 192) + Pul(x, y, 14); });
+    s += Board(70, 290, 192, "") + Tx(292, 216, "M", "sv-lab", "end");
+    s += Tx(187, 230, "tramo horizontal (punteado)", "sv-tl", "middle");
+    return {
+      svg: s, aria: "Tabla de masa M con tres poleas y un tramo horizontal; un bloque alfa M cuelga del extremo de la cuerda",
+      desc: "Parcial 2026-1, SM1. Una sola cuerda sostiene al bloque αM y, pasando por poleas del techo y de la tabla, sostiene la tabla de masa M. ¿Qué α da equilibrio?",
+      steps: [
+        { name: "Paso 1 · Tabla + sus poleas", bd: [64, 142, 290, 208], cx: [[74, 142, "T"], [102, 142, "T"], [130, 142, "T"], [244, 142, "T"], [272, 142, "T"]], eq: ["Cruzan 5 tramos verticales de la misma cuerda. El horizontal queda adentro.", "<b>5T = Mg  →  T = Mg/5</b>"] },
+        { name: "Paso 2 · Bloque αM", bd: [24, 100, 68, 152], cx: [[46, 100, "T"]], eq: ["Cruza 1 tramo.", "<b>T = αMg</b>", "Igualando: αMg = Mg/5  →  <b>α = 1/5</b>"] }
+      ]
+    };
+  },
+  T1: () => {
+    let s = Ceil(40, 260, 14);
+    s += Brk(90, 14, 90, 40) + Pul(90, 40, 14) + Brk(200, 14, 200, 40) + Pul(200, 40, 14);
+    s += L(76, 40, 76, 170) + L(104, 40, 104, 110, "sv-brk") + Pul(104, 110, 12);
+    s += L(92, 110, 92, 170) + L(116, 110, 116, 196) + L(186, 40, 186, 196) + L(214, 40, 214, 160);
+    s += Blk(60, 170, 42, 28, "2M") + Blk(108, 196, 88, 30, "X") + Blk(202, 160, 26, 26, "M");
+    s += Tx(70, 100, "T₁", "sv-ten", "end") + Tx(110, 80, "T₁", "sv-ten") + Tx(88, 152, "T₂", "sv-ten", "end") + Tx(122, 160, "T₂", "sv-ten") + Tx(180, 120, "T₃", "sv-ten", "end") + Tx(220, 110, "T₃", "sv-ten");
+    return {
+      svg: s, aria: "Bloques 2M, X y M colgando de dos poleas fijas y una polea móvil pequeña",
+      steps: [
+        { name: "Paso 1 · M", bd: [196, 146, 234, 192], cx: [[214, 146, "T₃"]], eq: ["T₃ = Mg"] },
+        { name: "Paso 2 · Polea pequeña", bd: [84, 92, 124, 132], cx: [[104, 92, "T₁"], [92, 132, "T₂ ↓", true], [116, 132, "T₂ ↓", true]], eq: ["T₁ = 2T₂"] },
+        { name: "Paso 3 · 2M", bd: [54, 148, 106, 206], cx: [[76, 148, "T₁"], [92, 148, "T₂"]], eq: ["T₁ + T₂ = 2Mg"] },
+        { name: "Paso 4 · X", bd: [102, 176, 202, 232], cx: [[116, 176, "T₂"], [186, 176, "T₃"]], eq: ["T₂ + T₃ = Xg"] }
+      ]
+    };
+  },
+  T2: (st = {}) => {
+    const lp = st.lp || "M", lt = st.lt || "M";
+    let s = Ceil(20, 300, 14);
+    s += Brk(60, 14, 60, 36) + Pul(60, 36, 14) + Brk(200, 14, 200, 36) + Pul(200, 36, 14);
+    s += L(46, 36, 46, 210) + L(60, 22, 200, 22) + L(214, 36, 214, 110, "sv-brk");
+    s += Pul(214, 110, 34) + L(180, 110, 180, 210) + L(248, 110, 248, 172);
+    s += Board(30, 300, 210, "") + Tx(34, 236, lt + " (tabla)", "sv-lab");
+    s += Person(258, 210, [[248, 172]], lp);
+    s += Floor(244);
+    s += Tx(40, 120, "2T", "sv-ten", "end") + Tx(174, 170, "T", "sv-ten", "end") + Tx(242, 150, "T", "sv-ten", "end");
+    return {
+      svg: s, aria: "Persona sobre una tabla, sostenida por una cuerda que pasa por dos poleas fijas y una polea móvil grande",
+      steps: [{ name: "Persona + tabla", bd: [22, 150, 306, 226], cx: [[46, 150, "2T"], [180, 150, "T"], [248, 150, "T"]], eq: ["2T + T + T = 4T"] }]
+    };
+  },
+  T3: () => {
+    let s = Ceil(10, 310, 14);
+    const side = (m) => {
+      const X = (x) => (m ? 320 - x : x);
+      let t = Brk(X(50), 14, X(50), 40) + Pul(X(50), 40, 26);
+      t += L(X(24), 40, X(24), 210) + L(X(76), 40, X(76), 100, "sv-brk") + Pul(X(76), 100, 20);
+      t += L(X(56), 100, X(56), 210) + L(X(96), 100, X(96), 148, "sv-brk") + Pul(X(96), 148, 14);
+      t += L(X(82), 148, X(82), 210) + L(X(110), 148, X(110), 180);
+      return t;
+    };
+    s += side(false) + side(true);
+    s += Board(12, 308, 210, "") + Person(160, 210, [[110, 180], [210, 180]], "M");
+    s += Floor(244) + Tx(16, 236, "M (tabla)", "sv-lab");
+    s += Tx(20, 120, "4T", "sv-ten", "end") + Tx(52, 160, "2T", "sv-ten", "end") + Tx(78, 190, "T", "sv-ten", "end") + Tx(116, 168, "T", "sv-ten");
+    return {
+      svg: s, aria: "Persona sobre una tabla sostenida por dos sistemas simétricos de tres poleas",
+      steps: [{ name: "Persona + tabla", bd: [6, 166, 314, 226], cx: [[24, 166, "4T"], [56, 166, "2T"], [82, 166, "T"], [110, 166, "T"], [210, 166, "T"], [238, 166, "T"], [264, 166, "2T"], [296, 166, "4T"]], eq: ["2(4T + 2T + T + T) = 16T"] }]
+    };
+  }
+};
+function figSvg(id, st, showSteps) {
+  const f = FIGS[id](st || {});
+  let inner = f.svg;
+  (showSteps || []).forEach((i) => { inner += Boundary(f.steps[i]); });
+  return svgWrap(inner, f.aria);
+}
+
+/* ---------- Lab ---------- */
+const LAB = { fig: "L1", step: null, d: 0 };
+function renderLab() {
+  const f = FIGS[LAB.fig]({ d: LAB.d });
+  let inner = f.svg;
+  if (LAB.step != null && f.steps[LAB.step]) inner += Boundary(f.steps[LAB.step]);
+  $("#lab-fig").innerHTML = svgWrap(inner, f.aria);
+  $("#lab-fig").classList.toggle("stepped", LAB.step != null);
+  $("#lab-name").textContent = { L1: "Polea móvil", L2: "Aparejo doble", L3: "Tabla del parcial 2026-1" }[LAB.fig];
+  $("#lab-desc").textContent = f.desc;
+  $("#pull-ctl").hidden = LAB.fig !== "L1";
+  $("#pull-lab").textContent = `Jala la cuerda: ${LAB.d} cm · la carga sube ${f1(LAB.d / 2)} cm`;
+  const sb = $("#stepbtns"); sb.textContent = "";
+  f.steps.forEach((st, i) => {
+    const b = el("button", "stepbtn", st.name); b.type = "button"; b.id = `step-${LAB.fig}-${i}`;
+    b.setAttribute("aria-pressed", LAB.step === i ? "true" : "false");
+    b.addEventListener("click", () => { LAB.step = LAB.step === i ? null : i; renderLab(); });
+    sb.appendChild(b);
+  });
+  const eq = $("#lab-eq"); eq.textContent = "";
+  if (LAB.step == null) eq.appendChild(el("p", "muted", "Toca un paso para ver la frontera y las cuerdas que la cruzan."));
+  else f.steps[LAB.step].eq.forEach((t) => { const p = el("p"); p.innerHTML = t; eq.appendChild(p); });
+}
+["L1", "L2", "L3"].forEach((id) => $("#tab-" + id).addEventListener("click", () => {
+  LAB.fig = id; LAB.step = null;
+  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", t.id === "tab-" + id ? "true" : "false"));
+  renderLab();
+}));
+$("#pull").addEventListener("input", (e) => { LAB.d = Number(e.target.value); renderLab(); });
+renderLab();
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Tres bloques y una polea móvil", src: "Parcial 2025-2 · SM1 (10 pts)", fig: "T1",
+    txt: "Todas las poleas y cuerdas son ideales. El valor de la masa X para que el sistema se mantenga en equilibrio, por encima del piso, es: A) 3M  B) 5M/3  C) M  D) 2M/3  E) M/3.",
+    hints: ["Hay tres cuerdas distintas, cada una con su tensión: T₁ (la que pasa por la polea fija izquierda), T₂ (la que rodea la polea pequeña) y T₃ (la de la derecha). Empieza por la más fácil: la que sostiene a M.",
+      "La polea pequeña no tiene masa: la sostiene T₁ hacia arriba y la jalan dos tramos de T₂ hacia abajo. Después encierra el bloque 2M: lo sostienen T₁ y T₂."],
+    sol: ["Bloque M: T₃ = Mg.", "Polea pequeña: T₁ = 2T₂.", "Bloque 2M: T₁ + T₂ = 2Mg, o sea 3T₂ = 2Mg, así que T₂ = 2Mg/3.", "Bloque X: T₂ + T₃ = Xg, así que X = 2M/3 + M = <b>5M/3</b> (opción B)."],
+    solFig: [3],
+    checks: [{ q: "¿Cuánto vale X?", opts: ["3M", "5M/3", "M", "2M/3", "M/3"], a: 1 }] },
+  { n: "T2", t: "Persona sobre una tabla con polea móvil", src: "Parcial 2025-1 · Abierto 1 (20 pts)", fig: "T2",
+    txt: "La tabla y la persona tienen la misma masa M. Las cuerdas y poleas son ideales. Determina la fuerza que debe hacer la persona, en términos de M y g, para que el sistema esté en equilibrio por encima del piso. Extra: halla la normal entre la persona y la tabla.",
+    hints: ["La polea grande es móvil: la cuerda de la que cuelga (la que pasa por las dos poleas del techo) tiene tensión 2T, si la persona jala con T.",
+      "Encierra persona y tabla juntas: ¿cuántos tramos cruzan la frontera y con qué tensión cada uno?"],
+    sol: ["Si la persona jala con T, la polea grande recibe 2T de la cuerda que pasa por el techo, y esa cuerda tiene tensión 2T en toda su longitud, incluido el extremo amarrado a la tabla.",
+      "Sistema persona + tabla: cruzan 2T (extremo izquierdo de la tabla), T (tramo de la polea grande a la tabla) y T (la mano). Entonces 4T = 2Mg, así que <b>T = Mg/2</b>.",
+      "Persona sola: T + N − Mg = 0, así que <b>N = Mg/2</b>.",
+      "La solución oficial llega al mismo resultado, pero mezcla la notación (escribe m y M). Guíate por este desarrollo."],
+    solFig: [0],
+    checks: [{ q: "¿Con qué fuerza jala la persona?", opts: ["Mg/4", "Mg/3", "Mg/2", "2Mg/3", "Mg"], a: 2 },
+      { q: "¿Cuánto vale la normal entre persona y tabla?", opts: ["0", "Mg/4", "Mg/2", "Mg", "3Mg/2"], a: 2 }] },
+  { n: "T3", t: "Persona con seis poleas", src: "Parcial 2024-2 · Abierto 3 (20 pts)", fig: "T3",
+    txt: "La figura muestra un sistema en equilibrio con poleas y cuerdas ideales, donde la persona y la tabla tienen cada una masa M. Determina la fuerza que debe hacer la persona en cada brazo para mantenerse en equilibrio por encima del piso. Da tu respuesta en términos de M y g.",
+    hints: ["Cada lado es una cascada: si la mano jala con T, la polea pequeña cuelga de una cuerda con 2T y la mediana de una con 4T.",
+      "Encierra persona + tabla: en cada lado cruzan 4T, 2T, T (a la tabla) y T (la mano)."],
+    sol: ["Polea pequeña: la cuerda de la que cuelga tiene 2T. Polea mediana: la de la que cuelga tiene 4T.",
+      "Sistema persona + tabla: 2(4T + 2T + T + T) = 16T = 2Mg, así que <b>T = Mg/8</b> en cada brazo.",
+      "Persona sola: 2T + N = Mg, así que N = 3Mg/4."],
+    solFig: [0],
+    checks: [{ q: "¿Con qué fuerza jala cada brazo?", opts: ["Mg/4", "Mg/6", "Mg/8", "Mg/16", "Mg/2"], a: 2 }] },
+  { n: "T4", t: "Variante: ¿cuándo se despega la persona?", src: "Problema nuevo (sistema de 2025-1)", fig: "T2", figSt: { lp: "m", lt: "M" },
+    txt: "Mismo sistema de T2, pero ahora la persona tiene masa m y la tabla masa M. A) Halla la fuerza F que hace la persona. B) Halla la normal entre la persona y la tabla. C) ¿Para qué valores de M puede la persona sostener el sistema sin despegarse de la tabla?",
+    hints: ["La parte A es igual que en T2, cambiando 2M por m + M.",
+      "Para B, diagrama de la persona sola. Para C, la condición de seguir apoyada es N ≥ 0."],
+    sol: ["A) 4F = (m + M)g, así que <b>F = (m + M)g/4</b>.",
+      "B) Persona sola: F + N = mg, así que N = mg − (m + M)g/4 = <b>(3m − M)g/4</b>.",
+      "C) N ≥ 0 exige 3m − M ≥ 0, o sea <b>M ≤ 3m</b>. Si la tabla pesa más del triple que la persona, al jalar lo suficiente para sostenerla, la persona se levanta de la tabla.",
+      "Chequeo: con m = M sale F = Mg/2 y N = Mg/2, igual que en T2."],
+    solFig: [],
+    checks: [{ q: "B) ¿Cuánto vale la normal?", opts: ["mg", "(m + M)g/4", "(3m − M)g/4", "(M − 3m)g/4", "(m − M)g/2"], a: 2 },
+      { q: "C) ¿Cuál es la condición?", opts: ["M ≤ m", "M ≤ 2m", "M ≤ 3m", "M ≤ 4m"], a: 2 }] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = figSvg(p.fig, p.figSt); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(el("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body");
+    if (p.solFig.length) {
+      const f = FIGS[p.fig](p.figSt || {});
+      const wrap = el("div", "solwrap");
+      const sf = el("div", "solfig stepped");
+      const eqs = el("p", "soleq");
+      const btns = el("div", "stepbtns");
+      const show = (i) => {
+        sf.innerHTML = figSvg(p.fig, p.figSt, [i]);
+        btns.querySelectorAll(".stepbtn").forEach((b, j) => b.setAttribute("aria-pressed", j === i ? "true" : "false"));
+        eqs.innerHTML = "<b>" + f.steps[i].eq.join(" · ") + "</b>";
+      };
+      if (f.steps.length > 1) f.steps.forEach((st, i) => { const b = el("button", "stepbtn", st.name); b.type = "button"; b.id = `sol-${p.n}-${i}`; b.addEventListener("click", () => show(i)); btns.appendChild(b); });
+      wrap.appendChild(btns); wrap.appendChild(sf); wrap.appendChild(eqs); sb.appendChild(wrap);
+      show(p.solFig[p.solFig.length - 1]);
+    }
+    p.sol.forEach((s) => { const pp = el("p"); pp.innerHTML = s; sb.appendChild(pp); }); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M2", NEXT = "Aprobado. Pasas a M3 · Fricción y equilibrio con desigualdades.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "Una polea móvil ideal sostiene una carga de peso W. La cuerda que la rodea tiene un extremo amarrado al techo y el otro lo jalas tú; los dos tramos son verticales. ¿Con qué fuerza jalas?",
+      o: ["W", "W/2", "2W", "W/4"], a: 1,
+      e: "Encierra la polea con la carga: cruzan dos tramos de la misma cuerda, 2T = W, así que T = W/2." },
+    { k: "Conceptual", q: "Un tramo de cuerda horizontal une dos poleas que están fijadas a la misma tabla. ¿Cuánto aporta a la fuerza vertical neta sobre la tabla?",
+      o: ["T", "2T", "Nada", "Depende de lo largo que sea"], a: 2,
+      e: "Es horizontal, así que no tiene componente vertical. Además jala las dos poleas de la tabla en sentidos opuestos: es interno y se cancela. Es la trampa de 2026-1." },
+    { k: "Conceptual", q: "Una persona parada sobre una tabla jala una cuerda que sostiene el conjunto. Si encierras persona y tabla en una sola frontera, ¿qué pasa con la normal entre ellas?",
+      o: ["Se suma al peso total", "Se resta del peso total", "No aparece: es una fuerza interna", "Vale el peso de la persona y se suma a las tensiones"], a: 2,
+      e: "La normal es un par de la 3.ª ley entre dos cuerpos que están dentro de la frontera: se cancela. Por eso conviene encerrarlos juntos." },
+    { k: "Tipo parcial", q: "Un bloque de peso W cuelga de una polea móvil A. La cuerda de A tiene un extremo en el techo y el otro sube al eje de una segunda polea móvil B. La cuerda de B tiene un extremo en el techo y el otro lo jalas tú. Todos los tramos son verticales. ¿Con qué fuerza jalas?",
+      o: ["W/2", "W/3", "W/4", "W/8"], a: 2,
+      e: "Polea A: 2T(A) = W, así que T(A) = W/2. Polea B: 2T(B) = T(A), así que T(B) = W/4. Es el aparejo doble del lab." },
+    { k: "Tipo parcial", q: "Una persona de masa m está parada sobre una tabla de masa 3m. La tabla cuelga de 5 tramos verticales de una cuerda y la persona agarra con la mano un sexto tramo de esa misma cuerda (todos con tensión T). ¿Cuánto vale la normal entre la persona y la tabla?",
+      o: ["mg", "2mg/3", "mg/3", "0", "4mg/3"], a: 2,
+      e: "Persona + tabla: 6T = 4mg, así que T = 2mg/3. Persona sola: T + N = mg, así que N = mg/3." }
+  ],
+  B: [
+    { k: "Conceptual", q: "Una polea fija ideal, ¿qué le hace a la fuerza que transmite la cuerda?",
+      o: ["La duplica", "La reduce a la mitad", "Solo le cambia la dirección", "La reduce según el radio de la polea"], a: 2,
+      e: "La polea fija ideal no gana ni pierde fuerza: la tensión es la misma a los dos lados." },
+    { k: "Conceptual", q: "Una cuerda con tensión T pasa por una polea fija del techo, con sus dos tramos verticales hacia abajo. ¿Con qué fuerza jala el soporte del techo a la polea?",
+      o: ["T", "2T", "T/2", "0"], a: 1,
+      e: "La polea no tiene masa: dos tramos jalan hacia abajo con T cada uno, así que el soporte jala hacia arriba con 2T." },
+    { k: "Conceptual", q: "Te preguntan si la persona puede sostener el sistema sin despegarse de la tabla. ¿Qué condición revisas?",
+      o: ["T ≥ 0", "N ≥ 0", "T ≤ mg", "N ≤ mg"], a: 1,
+      e: "Mientras la normal entre persona y tabla sea mayor o igual a cero, la persona sigue apoyada. Si sale negativa, la persona se levanta." },
+    { k: "Tipo parcial", q: "Como en 2025-2 SM1, pero el bloque de la izquierda tiene masa 3M (lo sostienen T₁ y T₂, con T₁ = 2T₂ por la polea pequeña), X cuelga de T₂ y T₃, y M cuelga de T₃. ¿Cuánto vale X?",
+      o: ["M", "2M", "3M", "4M/3", "5M/3"], a: 1,
+      e: "3M: 3T₂ = 3Mg, así que T₂ = Mg. M: T₃ = Mg. X: Xg = T₂ + T₃ = 2Mg, así que X = 2M." },
+    { k: "Tipo parcial", q: "Un bloque αM cuelga de un extremo de una cuerda. La cuerda sube a una polea del techo, baja y rodea la polea 1 de una tabla de masa M, sube a otra polea del techo, baja a la polea 2 de la tabla, sigue horizontal por debajo hasta la polea 3 de la tabla y sube a amarrarse al techo. ¿Qué α da equilibrio?",
+      o: ["1/2", "1/3", "1/4", "1/5", "1/6"], a: 2,
+      e: "Tramos verticales que sostienen la tabla: 2 en la polea 1, 1 en la polea 2 y 1 en la polea 3. El horizontal no cuenta. 4T = Mg y T = αMg, así que α = 1/4." }
+  ]
+};
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+$("#quizb-wrap").hidden = true;
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
