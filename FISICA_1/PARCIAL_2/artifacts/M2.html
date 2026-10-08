@@ -238,6 +238,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 .solwrap{display:grid; gap:8px}
 .soleq b{font-family:var(--f-mono); font-weight:500}
 [hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
 </style>
 
 <nav class="nav" aria-label="Secciones del módulo">
@@ -471,12 +472,12 @@ const FIGS = {
       ]
     };
   },
-  T1: () => {
+  T1: (st = {}) => {
     let s = Ceil(40, 260, 14);
     s += Brk(90, 14, 90, 40) + Pul(90, 40, 14) + Brk(200, 14, 200, 40) + Pul(200, 40, 14);
     s += L(76, 40, 76, 170) + L(104, 40, 104, 110, "sv-brk") + Pul(104, 110, 12);
     s += L(92, 110, 92, 170) + L(116, 110, 116, 196) + L(186, 40, 186, 196) + L(214, 40, 214, 160);
-    s += Blk(60, 170, 42, 28, "2M") + Blk(108, 196, 88, 30, "X") + Blk(202, 160, 26, 26, "M");
+    s += Blk(60, 170, 42, 28, st.big || "2M") + Blk(108, 196, 88, 30, "X") + Blk(202, 160, 26, 26, "M");
     s += Tx(70, 100, "T₁", "sv-ten", "end") + Tx(110, 80, "T₁", "sv-ten") + Tx(88, 152, "T₂", "sv-ten", "end") + Tx(122, 160, "T₂", "sv-ten") + Tx(180, 120, "T₃", "sv-ten", "end") + Tx(220, 110, "T₃", "sv-ten");
     return {
       svg: s, aria: "Bloques 2M, X y M colgando de dos poleas fijas y una polea móvil pequeña",
@@ -521,7 +522,51 @@ const FIGS = {
       svg: s, aria: "Persona sobre una tabla sostenida por dos sistemas simétricos de tres poleas",
       steps: [{ name: "Persona + tabla", bd: [6, 166, 314, 226], cx: [[24, 166, "4T"], [56, 166, "2T"], [82, 166, "T"], [110, 166, "T"], [210, 166, "T"], [238, 166, "T"], [264, 166, "2T"], [296, 166, "4T"]], eq: ["2(4T + 2T + T + T) = 16T"] }]
     };
-  }
+  },
+  QH: () => {
+    let s = Ceil(40, 280, 14);
+    s += L(70, 14, 70, 150) + Pul(90, 150, 20) + L(90, 170, 230, 170, "sv-rope-h") + Pul(230, 150, 20) + L(250, 150, 250, 14);
+    s += Brk(90, 150, 90, 190) + Brk(230, 150, 230, 190) + Board(50, 280, 190, "");
+    s += Tx(64, 90, "T", "sv-ten", "end") + Tx(256, 90, "T", "sv-ten") + Tx(160, 162, "T (horizontal)", "sv-ten", "middle") + Tx(282, 214, "tabla", "sv-lab", "end");
+    return { svg: s, aria: "Tabla con dos poleas unidas por un tramo horizontal de cuerda", steps: [] };
+  },
+  Q3: () => {
+    let s = Ceil(130, 290, 14);
+    s += Brk(256, 14, 256, 36) + Pul(256, 36, 14);
+    s += L(198, 14, 198, 70) + L(242, 70, 242, 36) + L(270, 36, 270, 150) + Pul(220, 70, 22);
+    s += `<circle cx="270" cy="156" r="6" class="sv-hand"/>` + Tx(280, 160, "F", "sv-lab");
+    s += L(180, 14, 180, 125) + L(220, 125, 220, 70, "sv-brk") + Pul(200, 125, 20);
+    s += L(164, 14, 164, 180) + L(200, 180, 200, 125, "sv-brk") + Pul(182, 180, 18);
+    s += Brk(182, 180, 182, 208) + Blk(162, 208, 40, 26, "W");
+    s += Tx(234, 98, "C", "sv-lab") + Tx(208, 154, "B", "sv-lab") + Tx(140, 196, "A", "sv-lab");
+    return { svg: s, aria: "Tres poleas móviles en cascada, A, B y C, sosteniendo una carga W", steps: [] };
+  },
+  Q6: () => {
+    let s = Ceil(20, 300, 14);
+    [60, 130, 200].forEach((x) => { s += Brk(x, 14, x, 40) + Pul(x, 40, 14); });
+    s += L(46, 40, 46, 205) + L(74, 40, 74, 160) + L(116, 160, 116, 40) + L(144, 40, 144, 160) + L(186, 160, 186, 40) + L(214, 40, 214, 172);
+    s += Pul(95, 160, 21) + Brk(95, 160, 95, 205) + Pul(165, 160, 21) + Brk(165, 160, 165, 205);
+    s += Board(30, 290, 205, "") + Person(224, 205, [[214, 172]], "m") + Tx(34, 232, "3m (tabla)", "sv-lab") + Floor(244);
+    return { svg: s, aria: "Persona sobre una tabla; una sola cuerda pasa por tres poleas del techo y dos de la tabla y la persona agarra el extremo", steps: [] };
+  },
+  QF: () => {
+    let s = Ceil(80, 240, 14);
+    s += Brk(160, 14, 160, 50) + Pul(160, 50, 22);
+    s += L(138, 50, 138, 150) + Blk(118, 150, 40, 30, "W") + L(182, 50, 182, 168);
+    s += `<circle cx="182" cy="174" r="6" class="sv-hand"/>` + Tx(192, 178, "F", "sv-lab");
+    s += Tx(132, 100, "T", "sv-ten", "end") + Tx(188, 110, "T", "sv-ten") + Tx(190, 34, "soporte", "sv-tl");
+    return { svg: s, aria: "Polea fija del techo con un bloque W en un lado y una mano jalando con F en el otro", steps: [] };
+  },
+  QB5: () => {
+    let s = Ceil(20, 300, 14);
+    [[60, 40], [116, 40]].forEach(([x, y]) => { s += Brk(x, 14, x, y) + Pul(x, y, 14); });
+    s += L(46, 40, 46, 118) + Blk(30, 118, 32, 28, "αM");
+    s += L(74, 40, 74, 170) + L(102, 170, 102, 40) + L(130, 40, 130, 170) + L(144, 184, 230, 184, "sv-rope-h") + L(244, 170, 244, 14);
+    [[88, 170], [144, 170], [230, 170]].forEach(([x, y]) => { s += Brk(x, y, x, 192) + Pul(x, y, 14); });
+    s += Board(70, 290, 192, "") + Tx(292, 216, "M", "sv-lab", "end");
+    s += Tx(187, 230, "tramo horizontal (punteado)", "sv-tl", "middle");
+    return { svg: s, aria: "Tabla de masa M con tres poleas; la cuerda sostiene un bloque alfa M en un extremo y está amarrada al techo en el otro", steps: [] };
+  },
 };
 function figSvg(id, st, showSteps) {
   const f = FIGS[id](st || {});
@@ -653,38 +698,38 @@ const PROBS = [
 const MOD = "M2", NEXT = "Aprobado. Pasas a M3 · Fricción y equilibrio con desigualdades.";
 const QUIZ = {
   A: [
-    { k: "Conceptual", q: "Una polea móvil ideal sostiene una carga de peso W. La cuerda que la rodea tiene un extremo amarrado al techo y el otro lo jalas tú; los dos tramos son verticales. ¿Con qué fuerza jalas?",
+    { k: "Conceptual", fig: () => figSvg("L1"), q: "En la figura, la polea móvil ideal sostiene una carga de peso W. Un extremo de la cuerda está amarrado al techo y el otro pasa por una polea fija y lo jalas tú con F. ¿Cuánto vale F?",
       o: ["W", "W/2", "2W", "W/4"], a: 1,
-      e: "Encierra la polea con la carga: cruzan dos tramos de la misma cuerda, 2T = W, así que T = W/2." },
-    { k: "Conceptual", q: "Un tramo de cuerda horizontal une dos poleas que están fijadas a la misma tabla. ¿Cuánto aporta a la fuerza vertical neta sobre la tabla?",
+      e: "Encierra la polea móvil con la carga: cruzan dos tramos de la misma cuerda, 2T = W, así que T = W/2. La polea fija no cambia el tamaño: F = T = W/2." },
+    { k: "Conceptual", fig: () => figSvg("QH"), q: "En la figura, una cuerda con tensión T rodea dos poleas fijadas a la misma tabla y tiene un tramo horizontal (punteado) entre ellas. ¿Cuánto aporta ese tramo horizontal a la fuerza vertical neta sobre la tabla?",
       o: ["T", "2T", "Nada", "Depende de lo largo que sea"], a: 2,
       e: "Es horizontal, así que no tiene componente vertical. Además jala las dos poleas de la tabla en sentidos opuestos: es interno y se cancela. Es la trampa de 2026-1." },
-    { k: "Conceptual", q: "Una persona parada sobre una tabla jala una cuerda que sostiene el conjunto. Si encierras persona y tabla en una sola frontera, ¿qué pasa con la normal entre ellas?",
+    { k: "Conceptual", fig: () => figSvg("T2"), q: "En la figura, la persona parada sobre la tabla jala la cuerda que sostiene el conjunto. Si encierras persona y tabla en una sola frontera, ¿qué pasa con la normal entre ellas?",
       o: ["Se suma al peso total", "Se resta del peso total", "No aparece: es una fuerza interna", "Vale el peso de la persona y se suma a las tensiones"], a: 2,
       e: "La normal es un par de la 3.ª ley entre dos cuerpos que están dentro de la frontera: se cancela. Por eso conviene encerrarlos juntos." },
-    { k: "Tipo parcial", q: "Un bloque de peso W cuelga de una polea móvil A. La cuerda de A tiene un extremo en el techo y el otro sube al eje de una segunda polea móvil B. La cuerda de B tiene un extremo en el techo y el otro lo jalas tú. Todos los tramos son verticales. ¿Con qué fuerza jalas?",
-      o: ["W/2", "W/3", "W/4", "W/8"], a: 2,
-      e: "Polea A: 2T(A) = W, así que T(A) = W/2. Polea B: 2T(B) = T(A), así que T(B) = W/4. Es el aparejo doble del lab." },
-    { k: "Tipo parcial", q: "Una persona de masa m está parada sobre una tabla de masa 3m. La tabla cuelga de 5 tramos verticales de una cuerda y la persona agarra con la mano un sexto tramo de esa misma cuerda (todos con tensión T). ¿Cuánto vale la normal entre la persona y la tabla?",
+    { k: "Tipo parcial", fig: () => figSvg("Q3"), q: "En la figura, la carga W cuelga de la polea A. La cuerda de A va del techo al eje de la polea B, la de B va del techo al eje de la polea C, y la de C pasa por una polea fija y la jalas con F. Todas las poleas son ideales. ¿Cuánto vale F?",
+      o: ["W/3", "W/4", "W/6", "W/8"], a: 3,
+      e: "Cada polea móvil divide entre 2: T(A) = W/2, T(B) = W/4, T(C) = W/8. Como la polea fija no cambia el tamaño, F = W/8." },
+    { k: "Tipo parcial", fig: () => figSvg("Q6"), q: "En la figura, una persona de masa m está parada sobre una tabla de masa 3m. Una sola cuerda ideal sostiene todo y la persona agarra su extremo libre. ¿Cuánto vale la normal entre la persona y la tabla?",
       o: ["mg", "2mg/3", "mg/3", "0", "4mg/3"], a: 2,
-      e: "Persona + tabla: 6T = 4mg, así que T = 2mg/3. Persona sola: T + N = mg, así que N = mg/3." }
+      e: "Persona + tabla: cruzan 5 tramos amarrados a la tabla (el extremo izquierdo y dos por cada polea de la tabla) más el de la mano: 6T = 4mg, así que T = 2mg/3. Persona sola: T + N = mg, así que N = mg/3." }
   ],
   B: [
-    { k: "Conceptual", q: "Una polea fija ideal, ¿qué le hace a la fuerza que transmite la cuerda?",
-      o: ["La duplica", "La reduce a la mitad", "Solo le cambia la dirección", "La reduce según el radio de la polea"], a: 2,
-      e: "La polea fija ideal no gana ni pierde fuerza: la tensión es la misma a los dos lados." },
-    { k: "Conceptual", q: "Una cuerda con tensión T pasa por una polea fija del techo, con sus dos tramos verticales hacia abajo. ¿Con qué fuerza jala el soporte del techo a la polea?",
-      o: ["T", "2T", "T/2", "0"], a: 1,
-      e: "La polea no tiene masa: dos tramos jalan hacia abajo con T cada uno, así que el soporte jala hacia arriba con 2T." },
-    { k: "Conceptual", q: "Te preguntan si la persona puede sostener el sistema sin despegarse de la tabla. ¿Qué condición revisas?",
+    { k: "Conceptual", fig: () => figSvg("QF"), q: "En la figura, la polea fija es ideal y el bloque W está en reposo. ¿Con qué fuerza F tienes que jalar?",
+      o: ["2W", "W/2", "W: la polea fija solo cambia la dirección", "Depende del radio de la polea"], a: 2,
+      e: "La polea fija ideal no gana ni pierde fuerza: la tensión es la misma a los dos lados, así que F = W." },
+    { k: "Conceptual", fig: () => figSvg("QF"), q: "En la misma figura, ¿con qué fuerza jala el soporte del techo a la polea?",
+      o: ["W", "2W", "W/2", "0"], a: 1,
+      e: "La polea no tiene masa: dos tramos jalan hacia abajo con T = W cada uno, así que el soporte jala hacia arriba con 2W." },
+    { k: "Conceptual", fig: () => figSvg("T2", { lp: "m", lt: "M" }), q: "En la figura, te preguntan si la persona puede sostener el sistema sin despegarse de la tabla. ¿Qué condición revisas?",
       o: ["T ≥ 0", "N ≥ 0", "T ≤ mg", "N ≤ mg"], a: 1,
       e: "Mientras la normal entre persona y tabla sea mayor o igual a cero, la persona sigue apoyada. Si sale negativa, la persona se levanta." },
-    { k: "Tipo parcial", q: "Como en 2025-2 SM1, pero el bloque de la izquierda tiene masa 3M (lo sostienen T₁ y T₂, con T₁ = 2T₂ por la polea pequeña), X cuelga de T₂ y T₃, y M cuelga de T₃. ¿Cuánto vale X?",
+    { k: "Tipo parcial", fig: () => figSvg("T1", { big: "3M" }), q: "Es el sistema de 2025-2 SM1, pero el bloque de la izquierda ahora tiene masa 3M. ¿Cuánto vale X para que haya equilibrio?",
       o: ["M", "2M", "3M", "4M/3", "5M/3"], a: 1,
-      e: "3M: 3T₂ = 3Mg, así que T₂ = Mg. M: T₃ = Mg. X: Xg = T₂ + T₃ = 2Mg, así que X = 2M." },
-    { k: "Tipo parcial", q: "Un bloque αM cuelga de un extremo de una cuerda. La cuerda sube a una polea del techo, baja y rodea la polea 1 de una tabla de masa M, sube a otra polea del techo, baja a la polea 2 de la tabla, sigue horizontal por debajo hasta la polea 3 de la tabla y sube a amarrarse al techo. ¿Qué α da equilibrio?",
+      e: "Polea pequeña: T₁ = 2T₂. Bloque 3M: T₁ + T₂ = 3Mg, así que T₂ = Mg. Bloque M: T₃ = Mg. Bloque X: Xg = T₂ + T₃ = 2Mg, así que X = 2M." },
+    { k: "Tipo parcial", fig: () => figSvg("QB5"), q: "En la figura, el bloque αM cuelga de un extremo de la cuerda y el otro extremo está amarrado al techo. La tabla tiene masa M. ¿Qué α da equilibrio?",
       o: ["1/2", "1/3", "1/4", "1/5", "1/6"], a: 2,
-      e: "Tramos verticales que sostienen la tabla: 2 en la polea 1, 1 en la polea 2 y 1 en la polea 3. El horizontal no cuenta. 4T = Mg y T = αMg, así que α = 1/4." }
+      e: "Tramos verticales que sostienen la tabla: 2 en la primera polea, 1 en la segunda y 1 en la tercera. El horizontal no cuenta. 4T = Mg y T = αMg, así que α = 1/4." }
   ]
 };
 let db = null;
@@ -695,6 +740,7 @@ function renderQuiz(key) {
     const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
     const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
     fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
     const ops = el("div", "qopts");
     it.o.forEach((o, oi) => {
       const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);

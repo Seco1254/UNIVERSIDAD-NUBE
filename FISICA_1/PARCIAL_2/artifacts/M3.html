@@ -207,6 +207,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
 /* M3: fricción */
 [hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
 .sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
 .sv-axle{fill:var(--ink)}
 .sv-hatch{stroke:var(--muted); stroke-width:1}
@@ -649,21 +650,42 @@ const PROBS = [
 
 /* ---------- Quiz ---------- */
 const MOD = "M3", NEXT = "Aprobado. Pasas a M4 · Sistemas conectados con aceleración (jueves 8).";
+function floorSvg(kind) {
+  let g = `<line x1="10" y1="160" x2="310" y2="160" class="sv-line"/>`;
+  for (let x = 16; x < 312; x += 12) g += `<line x1="${x}" y1="160" x2="${x - 6}" y2="168" class="sv-hatch"/>`;
+  g += `<rect x="120" y="110" width="70" height="50" class="sv-block"/>`;
+  if (kind === "push") {
+    g += `<text x="155" y="140" class="sv-lab" text-anchor="middle">10 kg</text>` + arrowSvg(44, 135, 118, 135, "a-f") + `<text x="44" y="127" class="sv-t t-f">F = 20 N</text>`;
+    g += `<text x="120" y="186" class="sv-t">µs = 0,5 · g = 10 m/s²</text>`;
+  } else if (kind === "slide") {
+    g += `<text x="155" y="140" class="sv-lab" text-anchor="middle">m</text>` + arrowSvg(34, 135, 118, 135, "a-f") + `<text x="34" y="127" class="sv-t t-f">F crece</text>`;
+    g += arrowSvg(130, 98, 196, 98, "a-n") + `<text x="202" y="102" class="sv-t t-n">v</text>` + `<text x="200" y="186" class="sv-t">µk</text>`;
+  } else if (kind === "rope") {
+    const ax = 190, ay = 122, c = Math.cos(Math.PI / 6), s = Math.sin(Math.PI / 6);
+    g += `<text x="155" y="140" class="sv-lab" text-anchor="middle">m</text>`;
+    g += `<line x1="${ax}" y1="${ay}" x2="${f1(ax + 70 * c)}" y2="${f1(ay - 70 * s)}" class="sv-rope"/>`;
+    g += arrowSvg(ax + 70 * c, ay - 70 * s, ax + 104 * c, ay - 104 * s, "a-f") + `<text x="${f1(ax + 108 * c)}" y="${f1(ay - 108 * s)}" class="sv-t t-f">T</text>`;
+    g += `<line x1="${ax}" y1="${ay}" x2="${ax + 74}" y2="${ay}" class="sv-dash"/>`;
+    g += `<path d="M ${ax + 36} ${ay} A 36 36 0 0 0 ${f1(ax + 36 * c)} ${f1(ay - 36 * s)}" class="sv-arc"/><text x="${ax + 42}" y="${ay - 6}" class="sv-ang">30°</text>`;
+    g += `<text x="120" y="186" class="sv-t">µs</text>`;
+  }
+  return `<svg viewBox="0 0 320 200" role="img" aria-label="Caja sobre un piso horizontal">${g}</svg>`;
+}
 const QUIZ = {
   A: [
-    { k: "Conceptual", q: "Una caja de 10 kg está en reposo sobre un piso con µs = 0,5. La empujas horizontalmente con 20 N y no se mueve (g = 10 m/s²). ¿Cuánto vale la fricción?",
+    { k: "Conceptual", fig: () => floorSvg("push"), q: "La caja de la figura está en reposo y la empujas con 20 N, pero no se mueve. ¿Cuánto vale la fricción?",
       o: ["50 N", "20 N", "0 N", "30 N"], a: 1,
       e: "La caja está quieta: la fricción estática vale lo que haga falta, 20 N. El valor µs·N = 50 N es solo el máximo." },
-    { k: "Conceptual", q: "Un bloque X en un plano inclinado está unido a una masa colgante m. Sin fricción, X subiría por el plano. ¿Hacia dónde apunta la fricción estática sobre X?",
+    { k: "Conceptual", fig: () => inclineSvg({ deg: 30, mode: "h", label: "X", pulley: "m", aria: "Bloque X en un plano unido a una masa colgante m" }), q: "En la figura, X está en reposo. Sin fricción, X subiría por el plano. ¿Hacia dónde apunta la fricción estática sobre X?",
       o: ["Plano arriba", "Plano abajo", "Perpendicular al plano", "No hay fricción porque está en reposo"], a: 1,
       e: "La fricción estática se opone a la tendencia de movimiento. Si X tiende a subir, la fricción apunta plano abajo." },
-    { k: "Conceptual", q: "Inclinas poco a poco una tabla con un bloque encima. El bloque empieza a deslizar justo cuando la tabla forma 30° con la horizontal. ¿Cuánto vale µs?",
+    { k: "Conceptual", fig: () => inclineSvg({ deg: 30, mode: "h", angLabel: "30°", label: "m", aria: "Bloque solo sobre una tabla inclinada 30 grados" }), q: "Inclinas poco a poco la tabla de la figura. El bloque empieza a deslizar justo cuando la tabla llega a 30° con la horizontal. ¿Cuánto vale µs?",
       o: ["1/2", "1/√3", "√3", "√3/2"], a: 1,
       e: "En el ángulo crítico, mg sen θ = µs mg cos θ, así que µs = tan 30° = 1/√3 ≈ 0,58." },
-    { k: "Tipo parcial", q: "Un bloque M está en un plano inclinado θ respecto a la horizontal, con coeficiente µs, unido por una cuerda paralela al plano a un bloque colgante x. ¿Cuál es la masa MÍNIMA de x para que M no se deslice hacia abajo?",
+    { k: "Tipo parcial", fig: () => inclineSvg({ deg: 30, mode: "h", label: "M", pulley: "x", aria: "Bloque M en un plano de ángulo theta unido a un bloque colgante x" }), q: "En la figura, el plano tiene coeficiente µs con M. ¿Cuál es la masa MÍNIMA de x para que M no se deslice plano abajo?",
       o: ["M(sen θ + µs cos θ)", "M(sen θ − µs cos θ)", "M(cos θ − µs sen θ)", "M sen θ", "µs M cos θ"], a: 1,
       e: "x mínimo: M a punto de bajar, fricción plano arriba. xg + µs Mg cos θ = Mg sen θ, así que x = M(sen θ − µs cos θ)." },
-    { k: "Tipo parcial", q: "Mismo sistema, con θ = 30° y µs = √3/3. ¿Para qué valores de x hay equilibrio?",
+    { k: "Tipo parcial", fig: () => inclineSvg({ deg: 30, mode: "h", angLabel: "30°", label: "M", pulley: "x", aria: "Bloque M en un plano a 30 grados unido a un bloque colgante x" }), q: "Mismo sistema, ahora con θ = 30° y µs = √3/3. ¿Para qué valores de x hay equilibrio?",
       o: ["0 ≤ x ≤ M", "M/2 ≤ x ≤ M", "0 ≤ x ≤ M/2", "M/2 ≤ x ≤ 3M/2"], a: 0,
       e: "µs cos 30° = (√3/3)(√3/2) = 1/2. Mínimo: M(1/2 − 1/2) = 0. Máximo: M(1/2 + 1/2) = M. Como µs = tan 30°, el bloque solo ya está justo en el límite." }
   ],
@@ -671,16 +693,16 @@ const QUIZ = {
     { k: "Conceptual", q: "¿Cuándo puedes escribir f = µs·N?",
       o: ["Siempre que haya fricción estática", "Solo cuando el cuerpo está a punto de deslizar", "Cuando el cuerpo se mueve con velocidad constante", "Cuando la superficie es horizontal"], a: 1,
       e: "La fricción estática es una incógnita con techo µs·N. Solo alcanza el techo en el límite, a punto de deslizar." },
-    { k: "Conceptual", q: "Una caja se desliza por un piso horizontal y la empujas horizontalmente con más fuerza. ¿Qué pasa con la fricción cinética?",
+    { k: "Conceptual", fig: () => floorSvg("slide"), q: "La caja de la figura ya se está deslizando y la empujas horizontalmente cada vez con más fuerza. ¿Qué pasa con la fricción cinética?",
       o: ["Aumenta", "No cambia", "Disminuye", "Se vuelve estática"], a: 1,
       e: "f_k = µk·N y la normal no cambió (el empuje es horizontal), así que la fricción cinética tampoco." },
-    { k: "Conceptual", q: "Un plano forma un ángulo β con la VERTICAL. Un bloque solo sobre él empieza a deslizar cuando:",
+    { k: "Conceptual", fig: () => inclineSvg({ deg: 30, mode: "v", label: "m", aria: "Bloque solo sobre un plano de ángulo beta con la vertical" }), q: "El plano de la figura forma un ángulo β con la VERTICAL. El bloque solo empieza a deslizar cuando:",
       o: ["tan β = µs", "tan β = 1/µs", "sen β = µs", "cos β = µs"], a: 1,
       e: "A lo largo: mg cos β; normal: mg sen β. Límite: mg cos β = µs mg sen β, así que tan β = 1/µs (o cot β = µs)." },
-    { k: "Tipo parcial", q: "Jalas una caja de masa m que está en un piso con coeficiente µs, con una cuerda que forma 30° hacia arriba con la horizontal. ¿Cuál es la tensión mínima para que empiece a moverse?",
+    { k: "Tipo parcial", fig: () => floorSvg("rope"), q: "Jalas la caja de la figura con una cuerda que forma 30° hacia arriba con la horizontal. ¿Cuál es la tensión mínima para que empiece a moverse?",
       o: ["µs mg", "µs mg / cos 30°", "µs mg / (cos 30° + µs sen 30°)", "µs mg / (cos 30° − µs sen 30°)"], a: 2,
       e: "La cuerda inclinada levanta un poco la caja: N = mg − T sen 30°. Límite: T cos 30° = µs(mg − T sen 30°), así que T = µs mg/(cos 30° + µs sen 30°)." },
-    { k: "Tipo parcial", q: "En el sistema de 2026-1 (M en un plano α con la horizontal, X en un plano β con la vertical, mismo µs), ¿cuál es el valor MÍNIMO de X para que haya equilibrio?",
+    { k: "Tipo parcial", fig: () => twoInclineSvg(), q: "En el sistema de 2026-1 de la figura (M en un plano α con la horizontal, X en un plano β con la vertical, mismo µs), ¿cuál es el valor MÍNIMO de X para que haya equilibrio?",
       o: ["M(sen α + µs cos α)/(cos β − µs sen β)", "M(sen α − µs cos α)/(cos β + µs sen β)", "M(sen α − µs cos α)/(cos β − µs sen β)", "M(cos α − µs sen α)/(cos β + µs sen β)"], a: 1,
       e: "X mínimo: X a punto de subir y M a punto de bajar. Las fricciones se invierten: Xg(cos β + µs sen β) = Mg(sen α − µs cos α)." }
   ]
@@ -693,6 +715,7 @@ function renderQuiz(key) {
     const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
     const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
     fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
     const ops = el("div", "qopts");
     it.o.forEach((o, oi) => {
       const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);

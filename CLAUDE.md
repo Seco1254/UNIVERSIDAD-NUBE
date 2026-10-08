@@ -16,6 +16,8 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 - **Todo se entrega como Artifact**: planes, módulos, talleres y quizzes. El HTML fuente se guarda en `<MATERIA>/<EVALUACION>/artifacts/` y los links publicados quedan anotados en la tabla de abajo.
 - **Carga semanal**: martes y jueves, **liviana** (1–1,5 h; son sus días más pesados); lunes y viernes, **suave** (~2 h); miércoles, **media** (2,5–3 h); sábado y domingo, **pesada** (4–5 h; ahí van los bloques difíciles).
 - Los temas que ya vio en clase y se le hacen más fáciles cuentan como bloques livianos (formato refuerzo: menos teoría, más taller).
+- **Toda pregunta de quiz o problema de taller que describa una situación física lleva su figura** (SVG), como en los parciales. Nada de describir montajes solo con texto.
+- En el chat, cuando pregunta algo puntual mientras resuelve un taller, responde **solo** lo que pregunta, sin pistas extra ni resolverle el resto.
 
 ## Artifacts publicados
 
