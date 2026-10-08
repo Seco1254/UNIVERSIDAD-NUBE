@@ -187,7 +187,7 @@ footer{font-size:.82rem; color:var(--muted)}
       <div class="legend" id="legend"></div>
     </div>
     <div class="days" id="days"></div>
-    <p class="note muted"><b>Si te atrasas:</b> fusiona M6 con M7. Nunca recortes M8 ni el simulacro. <b>Si vas adelantado:</b> en M1–M4 haz el quiz primero; si sacas 4/5 o más, saltas el módulo y le das ese tiempo a M8.</p>
+    <p class="note muted"><b>Ajuste del 7 de octubre:</b> M3 pasó al jueves y M4 al viernes; M6 y M7 se hacen juntos el sábado, para tener todo sólido el domingo. Nunca recortes M8 ni el simulacro. <b>Si vas adelantado:</b> en M1–M4 haz el quiz primero; si sacas 4/5 o más, saltas el módulo y le das ese tiempo a M8.</p>
   </section>
 
   <section aria-labelledby="mod-h">
@@ -252,10 +252,10 @@ const EXAM = new Date(2026, 9, 15, 12, 30);
 const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
 const DAYS = [
   {d:"2026-10-06", n:"Mar", f:"6 oct", load:1, what:"M1 Newton + diagramas de cuerpo libre", mods:["M1"], h:"1–1,5 h"},
-  {d:"2026-10-07", n:"Mié", f:"7 oct", load:3, what:"M2 Poleas + M3 Fricción", mods:["M2","M3"], h:"2,5–3 h"},
-  {d:"2026-10-08", n:"Jue", f:"8 oct", load:1, what:"M4 Sistemas con aceleración", mods:["M4"], h:"1–1,5 h"},
-  {d:"2026-10-09", n:"Vie", f:"9 oct", load:2, what:"M5 Movimiento circular", mods:["M5"], h:"2 h"},
-  {d:"2026-10-10", n:"Sáb", f:"10 oct", load:4, what:"M6 Trabajo + M7 Energía con fricción", mods:["M6","M7"], h:"4–5 h"},
+  {d:"2026-10-07", n:"Mié", f:"7 oct", load:3, what:"M2 Poleas", mods:["M2"], h:"2,5–3 h"},
+  {d:"2026-10-08", n:"Jue", f:"8 oct", load:1, what:"Quiz B de M2 + M3 Fricción", mods:["M2","M3"], h:"1,5 h"},
+  {d:"2026-10-09", n:"Vie", f:"9 oct", load:2, what:"M4 Sistemas con aceleración; M5 Circular si alcanza", mods:["M4","M5"], h:"2 h"},
+  {d:"2026-10-10", n:"Sáb", f:"10 oct", load:4, what:"M5 si quedó pendiente + M6/M7 Trabajo y energía (fusionados)", mods:["M5","M6","M7"], h:"4–5 h"},
   {d:"2026-10-11", n:"Dom", f:"11 oct", load:4, what:"M8 Circular + energía", mods:["M8"], h:"4–5 h"},
   {d:"2026-10-12", n:"Lun", f:"12 oct · festivo", load:2, what:"M9 Simulacro de 80 min + corrección", mods:["M9"], h:"2 h"},
   {d:"2026-10-13", n:"Mar", f:"13 oct", load:1, what:"Repaso de los errores del simulacro + hoja de fórmulas", mods:[], h:"1–1,5 h"},
@@ -271,19 +271,19 @@ const MODS = [
     dominar:["Polea móvil: el eje recibe 2T.","Método de encerrar el sistema y contar las cuerdas que cruzan la frontera.","Persona que jala su propia cuerda: fuerza en la mano + normal con la tabla."],
     taller:["2025-2 SM1 (X = 5M/3)","2026-1 SM1 (α = 1/5)","2025-1 A1 (F = Mg/2)","2024-2 A3 (F = Mg/8)"],
     trampas:["Olvidar la normal entre persona y tabla.","Contar un tramo horizontal: no sostiene peso."]},
-  {id:"M3", t:"Fricción y equilibrio con desigualdades", ref:true, day:"Mié 7", h:"1,5 h", libro:"5.3", extra:"3 de 4 parciales",
+  {id:"M3", t:"Fricción y equilibrio con desigualdades", ref:true, day:"Jue 8", h:"1,5 h", libro:"5.3", extra:"3 de 4 parciales",
     dominar:["La fricción estática es una incógnita que cumple f_s ≤ µ_s·N.","Casos «a punto de subir» y «a punto de bajar»: de ahí sale un rango de masas.","Ángulo crítico: tan θ = µ_s."],
     taller:["2024-2 SM1 (x_máx = M(cos θ + µ_s sen θ))","2025-1 A2 (2√2m/3 ≤ X ≤ 2√2m)","2026-1 A2 partes A y B (X_máx)","Bloque presionado contra una pared"],
     trampas:["Poner f_s = µ_s·N cuando el bloque no está a punto de deslizar.","Voltear la desigualdad al despejar."]},
-  {id:"M4", t:"Sistemas conectados con aceleración", ref:true, day:"Jue 8", h:"1–1,5 h", libro:"5.2–5.3", extra:"50 pts históricos",
+  {id:"M4", t:"Sistemas conectados con aceleración", ref:true, day:"Vie 9", h:"1–1,5 h", libro:"5.2–5.3", extra:"50 pts históricos",
     dominar:["Truco del sistema: a = (fuerzas que impulsan − fuerzas que frenan) / masa total.","Decidir hacia dónde se mueve antes de poner la fricción.","Bloque sobre bloque: a_máx = µ_s·g."],
     taller:["2025-1 SM1 (a = 2g/3)","2025-2 SM2 (X = M/4)","2024-2 SM2 (tensión máxima en la configuración I)","2025-2 A3 (µ_k = 1 − 4a/g)","2025-2 A1 (M_X = 3M)","2026-1 A2 parte C"],
     trampas:["Suponer T = mg cuando el sistema acelera.","Mezclar convenciones de signo entre bloques."]},
-  {id:"M5", t:"Dinámica del movimiento circular", day:"Vie 9", h:"2 h", libro:"5.4",
+  {id:"M5", t:"Dinámica del movimiento circular", day:"Vie 9 o Sáb 10", h:"2 h", libro:"5.4",
     dominar:["a_c = v²/R hacia el centro; la «fuerza centrípeta» es la resultante radial.","Disco: ω_máx = √(µg/R). Rotor: ω_mín = √(g/(µR)).","Ecuación radial arriba y abajo de un loop o de un péndulo."],
     taller:["2025-1 SM2 (disco giratorio)","2026-1 SM2 (rotor)","Loop con v dada","Curva peraltada, por si acaso"],
     trampas:["Dibujar una «fuerza centrífuga».","El signo de N por dentro y por fuera de la superficie."]},
-  {id:"M6", t:"Trabajo y teorema trabajo–energía", day:"Sáb 10", h:"1,5–2 h", libro:"6.1–6.4",
+  {id:"M6", t:"Trabajo y teorema trabajo–energía", day:"Sáb 10 (con M7)", h:"1–1,5 h", libro:"6.1–6.4",
     dominar:["Signo y valor del trabajo de cada fuerza.","W_total = ΔK.","El trabajo como área bajo la curva F(x)."],
     taller:["2025-2 SM3 (H = v₀²/[2g(1 + µ_k cot θ)])","Fuerza variable y resorte","Un problema de potencia"],
     trampas:["En un plano inclinado, d = H/sen θ (o H/cos β si el ángulo es con la vertical)."]},

@@ -27,6 +27,8 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | M1 · Newton, DCL y planos inclinados (intentos en `intentos/`) | https://claude.ai/artifact/RdHQeTYL9rNrrrPoWXiTMj | `FISICA_1/PARCIAL_2/artifacts/M1.html` |
 | Física 1 | M2 · Poleas y equilibrio | https://claude.ai/artifact/EqMXyQkmpP6WHALnRDwgxb | `FISICA_1/PARCIAL_2/artifacts/M2.html` |
 | Física 1 | M3 · Fricción y rangos | https://claude.ai/artifact/5CnY6wiw24huhhHCzGno4n | `FISICA_1/PARCIAL_2/artifacts/M3.html` |
+| Física 1 | M4 · Sistemas con aceleración | https://claude.ai/artifact/6fQ5K7ULHJgLiQmeRBe2dC | `FISICA_1/PARCIAL_2/artifacts/M4.html` |
+| Física 1 | M5 · Movimiento circular | https://claude.ai/artifact/QbkVzzqRuiU8tyMrPnCbUw | `FISICA_1/PARCIAL_2/artifacts/M5.html` |
 
 ## Convenciones
 

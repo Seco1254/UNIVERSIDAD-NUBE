@@ -1,0 +1,806 @@
+<title>M4 Sistemas con aceleración</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px, barra de secciones fija arriba; el lab tiene dos experimentos en pestañas (mesa animada y tres configuraciones). */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M4 */
+.bar{fill:var(--accent)}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>15 min</span></a>
+    <a href="#lab">2 Lab <span>10 min</span></a>
+    <a href="#taller">3 Taller <span>50 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Módulo 4 de 9</p>
+    <h1>Sistemas conectados con aceleración</h1>
+    <div class="meta">
+      <span class="chip-ref">Refuerzo</span>
+      <span>Viernes 9 de octubre · carga suave · 1–1,5 h</span>
+      <span>Libro: 5.2–5.3 · 50 pts en los parciales anteriores</span>
+    </div>
+    <p class="prose">Ahora los bloques se mueven. Se usan las mismas fuerzas que en M1–M3, pero con ΣF = m·a en vez de ΣF = 0. Casi todo sale con un truco: tomar el sistema completo para hallar la aceleración y después aislar un bloque para la tensión.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, saltas M4 y pasas a M5.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>La ligadura de la cuerda, el truco del sistema y los dos casos con fricción.</p></div>
+
+    <div class="block">
+      <h3>Lo que cambia cuando hay aceleración</h3>
+      <div class="laws">
+        <div class="law"><b>Ligadura</b><span>Bloques unidos por una cuerda que no se estira tienen la <b>misma aceleración en tamaño</b>.</span><span class="ex">Si hay una polea móvil, no: la polea móvil se mueve a la mitad (lo viste en M2).</span></div>
+        <div class="law"><b>Signos</b><span>Toma como positivo el sentido en que se mueve cada bloque, siguiendo la cuerda.</span><span class="ex">Así todos los bloques tienen +a, aunque uno suba y otro baje.</span></div>
+        <div class="law"><b>Tensión</b><span>Si el sistema acelera, <b>T ya no es el peso del colgante</b>.</span><span class="ex">El colgante que baja acelerando tiene T &lt; mg; uno que sube acelerando tiene T &gt; mg.</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>El truco del sistema</h3>
+      <ol class="steps">
+        <li><span><b>Decide hacia dónde se mueve</b> (compara lo que jala para cada lado).</span></li>
+        <li><span><b>Sistema completo:</b> a = (fuerzas que impulsan − fuerzas que frenan) / masa total. Las tensiones son internas y no entran.</span></li>
+        <li><span><b>Aísla el bloque más simple</b> para hallar la tensión.</span></li>
+      </ol>
+      <div class="figs">
+        <figure><div id="fig-mesa"></div><figcaption>Mesa sin fricción + colgante.</figcaption></figure>
+        <div class="prose">
+          <div class="eq"><span>Sistema: <b>a = Xg / (M + X)</b></span><span>Bloque de la mesa: <b>T = M·a = MXg / (M + X)</b></span></div>
+          <div class="eq"><span>Atwood (m₁ &lt; m₂): <b>a = (m₂ − m₁)g / (m₁ + m₂)</b></span><span><b>T = 2m₁m₂g / (m₁ + m₂)</b></span></div>
+          <p class="muted">No memorices la fórmula de la tensión: sale en una línea aislando un bloque.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Con fricción: primero, ¿se mueve?</h3>
+      <div class="callout">
+        <p><b>Antes de poner µ<sub>k</sub>,</b> revisa si lo que impulsa le gana a la fricción estática máxima. Si no le gana, el sistema queda quieto y la fricción vale lo que haga falta (M3).</p>
+        <p><b>Si se mueve,</b> la fricción es µ<sub>k</sub>·N y apunta en contra del movimiento. Entra en el truco del sistema como una fuerza que frena.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Bloque sobre bloque</h3>
+      <div class="figs">
+        <figure><div id="fig-stack"></div><figcaption>El bloque de arriba solo lo empuja la fricción con el de abajo.</figcaption></figure>
+        <div class="prose">
+          <p>Para el bloque de arriba, la única fuerza horizontal es la fricción estática del bloque de abajo:</p>
+          <div class="eq"><span><b>f<sub>s</sub> = m·a ≤ µ<sub>s</sub>·m·g  →  a ≤ µ<sub>s</sub>·g</b></span></div>
+          <p>Si el sistema necesita más aceleración que µ<sub>s</sub>·g, el de arriba se desliza. Ese es el límite que pide el parcial (2025-2, Abierto 1).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas</h3>
+      <p>Escribir T = mg para un colgante que acelera.</p>
+      <p>Mezclar convenciones de signo entre bloques: usa el sentido del movimiento para todos.</p>
+      <p>Poner µ<sub>k</sub> sin revisar si el sistema se mueve.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Suelta el sistema y mira cómo cambian la aceleración y la tensión. Después compara las tres configuraciones del parcial 2024-2.</p></div>
+
+    <div class="tabs" role="tablist" aria-label="Experimento">
+      <button type="button" role="tab" class="tab" id="tab-mesa" aria-selected="true">Mesa + colgante</button>
+      <button type="button" role="tab" class="tab" id="tab-conf" aria-selected="false">Tres configuraciones</button>
+    </div>
+
+    <div class="lab" id="lab-mesa">
+      <div class="lab-stage">
+        <div id="m-svg" class="lab-fig"></div>
+        <div id="m-graf" class="lab-fig"></div>
+      </div>
+      <div class="lab-side">
+        <div class="ctl"><label for="m-x" id="m-x-lab">X = 1,00 M</label><input type="range" id="m-x" min="0.1" max="3" step="0.05" value="1"></div>
+        <div class="ctl"><label for="m-mu" id="m-mu-lab">µ = 0,00</label><input type="range" id="m-mu" min="0" max="0.8" step="0.05" value="0"></div>
+        <div class="qrow"><button type="button" class="btn" id="m-go">Soltar</button><button type="button" class="btn ghost" id="m-reset">Reiniciar</button></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Aceleración a</span><b id="m-ro-a">0,50 g</b></div>
+          <div class="ro"><span>Tensión T</span><b id="m-ro-t">0,50 Mg</b></div>
+          <div class="ro"><span>Peso del colgante Xg</span><b id="m-ro-w">1,00 Mg</b></div>
+          <div class="status" id="m-status">Se mueve</div>
+        </div>
+        <p class="muted small">Para simplificar, aquí µ es el mismo para estática y cinética.</p>
+      </div>
+    </div>
+
+    <div class="lab" id="lab-conf" hidden>
+      <div class="lab-stage">
+        <div id="c-fig" class="lab-fig"></div>
+        <div id="c-bars" class="lab-fig"></div>
+      </div>
+      <div class="lab-side">
+        <div class="ctl"><label for="c-th" id="c-th-lab">θ del plano (II) = 30°</label><input type="range" id="c-th" min="0" max="90" step="1" value="30"></div>
+        <p class="small">Las tres usan un bloque m y uno 2m, sin fricción. La tensión sale de aislar el bloque 2m que baja: T = 2m(g − a).</p>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>I · Atwood</span><b id="c-ro-1">1,33 mg</b></div>
+          <div class="ro"><span>II · Plano inclinado</span><b id="c-ro-2">1,00 mg</b></div>
+          <div class="ro"><span>III · Mesa</span><b id="c-ro-3">0,67 mg</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Sin fricción, sube X hasta 3 M. ¿La tensión llega a ser igual al peso del colgante?</summary>
+          <div class="rev-body"><p><b>Nunca.</b> Mientras el colgante acelere hacia abajo, T = X(g − a) &lt; Xg. La tensión se acerca a Mg, pero no al peso del colgante.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Con µ = 0,5, ¿cuál es el X más pequeño con el que el sistema arranca?</summary>
+          <div class="rev-body"><p><b>X = 0,5 M.</b> Con menos, el peso del colgante no le gana a la fricción estática máxima µMg y todo queda quieto.</p></div></details>
+        <details class="rev"><summary>Reto 3 · En «Tres configuraciones», ¿con qué ángulo la II se iguala a la I? ¿Y a la III?</summary>
+          <div class="rev-body"><p>Con θ = 90° (el plano es vertical y el bloque m cuelga) se iguala a la I; con θ = 0° (el plano es la mesa) se iguala a la III. Por eso la respuesta del parcial es que la tensión máxima está en la I.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Seis problemas de parciales anteriores: tres de selección múltiple rápidos y tres abiertos.</p></div>
+    <p class="prose">Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M5 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M5 · Dinámica del movimiento circular (viernes si alcanza, si no el sábado).</p>
+    <p>Fuente de los problemas: parciales 2 de 2024-2, 2025-1, 2025-2 y 2026-1 de Física 1, Universidad de los Andes.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+/* ---------- Figuras de M4 ---------- */
+const blk = (x, y, w, h, lab) => `<rect x="${f1(x)}" y="${f1(y)}" width="${w}" height="${h}" class="sv-block"/><text x="${f1(x + w / 2)}" y="${f1(y + h / 2 + 4)}" class="sv-lab" text-anchor="middle">${lab}</text>`;
+const rope = (x1, y1, x2, y2) => `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" class="sv-rope"/>`;
+const brk = (x1, y1, x2, y2) => `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" class="sv-brk"/>`;
+const pul = (x, y, r) => `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(x)}" cy="${f1(y)}" r="2" class="sv-axle"/>`;
+function tableSvg(o) {
+  const W = 320, H = 230, ty = 112, x1 = o.x1 ?? 24, x2 = 246, r = 11, ropeY = ty - 17, sh = o.shift || 0;
+  let g = `<line x1="8" y1="${H - 8}" x2="${W - 8}" y2="${H - 8}" class="sv-floor"/>`;
+  g += `<rect x="${x1}" y="${ty}" width="${x2 - x1}" height="8" class="sv-board"/>`;
+  g += `<line x1="${x1 + 12}" y1="${ty + 8}" x2="${x1 + 12}" y2="${H - 8}" class="sv-line"/><line x1="${x2 - 12}" y1="${ty + 8}" x2="${x2 - 12}" y2="${H - 8}" class="sv-line"/>`;
+  const b = o.block, bw = b.w || 46, bh = b.h || 34, cx = (o.cx ?? (x1 + x2) / 2) + sh, bx = cx - bw / 2, bt = ty - bh;
+  g += blk(bx, bt, bw, bh, b.label);
+  let topY = bt;
+  if (o.stack) { const sw = o.stack.w || 38, shh = o.stack.h || 26; g += blk(cx - sw / 2, bt - shh, sw, shh, o.stack.label); topY = bt - shh; }
+  if (o.hangR) {
+    const pc = { x: x2 + 12, y: ty - 6 }, hy = ty + 40 + sh;
+    g += brk(x2, ty, pc.x, pc.y) + rope(bx + bw, ropeY, pc.x, ropeY) + rope(pc.x + r, pc.y, pc.x + r, hy) + pul(pc.x, pc.y, r);
+    g += blk(pc.x + r - 17, hy, 34, 34, o.hangR);
+  }
+  if (o.hangL) {
+    const pc = { x: x1 - 12, y: ty - 6 }, hy = ty + 40 - sh;
+    g += brk(x1, ty, pc.x, pc.y) + rope(pc.x, ropeY, bx, ropeY) + rope(pc.x - r, pc.y, pc.x - r, hy) + pul(pc.x, pc.y, r);
+    g += blk(pc.x - r - 17, hy, 34, 34, o.hangL);
+  }
+  if (o.pushF) g += arrowSvg(bx - 62, ty - bh / 2, bx - 2, ty - bh / 2, "a-f") + `<text x="${f1(bx - 62)}" y="${f1(ty - bh / 2 - 7)}" class="sv-t t-f">F</text>`;
+  if (o.aArrow) g += arrowSvg(cx - 22, topY - 12, cx + 22, topY - 12, "a-n") + `<text x="${f1(cx + 28)}" y="${f1(topY - 8)}" class="sv-t t-n">a</text>`;
+  if (o.mu) g += `<text x="${f1((x1 + x2) / 2)}" y="${ty + 26}" class="sv-t" text-anchor="middle">${o.mu}</text>`;
+  if (o.note) g += `<text x="${f1((x1 + x2) / 2)}" y="${ty + 42}" class="sv-tl" text-anchor="middle">${o.note}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Bloques sobre una mesa con poleas"}">${g}</svg>`;
+}
+function atwoodSvg(l, rgt) {
+  let g = `<line x1="90" y1="14" x2="230" y2="14" class="sv-line"/>`;
+  for (let x = 94; x < 230; x += 10) g += `<line x1="${x}" y1="14" x2="${x + 6}" y2="8" class="sv-hatch"/>`;
+  g += brk(160, 14, 160, 50) + rope(134, 50, 134, 120) + rope(186, 50, 186, 150) + pul(160, 50, 26);
+  g += blk(114, 120, 40, 34, l) + blk(166, 150, 40, 34, rgt);
+  return `<svg viewBox="0 0 320 230" role="img" aria-label="Máquina de Atwood con bloques ${l} y ${rgt}">${g}</svg>`;
+}
+const place = (svg, x, y, w) => { const inner = svg.slice(svg.indexOf(">") + 1, svg.lastIndexOf("</svg>")); return `<g transform="translate(${x} ${y}) scale(${w / 320})">${inner}</g>`; };
+function threeConfigSvg() {
+  let g = place(atwoodSvg("m", "2m"), 0, 0, 160);
+  g += place(inclineSvg({ deg: 30, mode: "h", label: "m", pulley: "2m" }), 160, 6, 160);
+  g += place(tableSvg({ block: { label: "m" }, hangR: "2m" }), 320, 0, 160);
+  g += `<text x="80" y="134" class="sv-ang" text-anchor="middle">I</text><text x="240" y="134" class="sv-ang" text-anchor="middle">II</text><text x="400" y="134" class="sv-ang" text-anchor="middle">III</text>`;
+  return `<svg viewBox="0 0 480 142" role="img" aria-label="Tres configuraciones: máquina de Atwood, plano inclinado con colgante y mesa con colgante">${g}</svg>`;
+}
+$("#fig-mesa").innerHTML = tableSvg({ block: { label: "M" }, hangR: "X", aArrow: true, note: "sin fricción" });
+$("#fig-stack").innerHTML = tableSvg({ block: { label: "M", w: 90 }, stack: { label: "m" }, hangR: "X", aArrow: true, mu: "µs entre los bloques", note: "mesa sin fricción" });
+
+/* ---------- Lab 1: mesa + colgante ---------- */
+const MS = { x: 1, mu: 0, shift: 0, anim: null };
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function accel(x, mu) { return x <= mu + 1e-9 ? 0 : (x - mu) / (1 + x); }
+function drawMesa() {
+  const a = accel(MS.x, MS.mu), moving = a > 0;
+  const T = moving ? MS.x * (1 - a) : MS.x;
+  $("#m-svg").innerHTML = tableSvg({ block: { label: "M" }, hangR: "X", shift: MS.shift, mu: MS.mu > 0 ? "µ = " + fmt(MS.mu) : "sin fricción", aArrow: moving });
+  /* gráfica a contra X */
+  const W = 340, H = 170, ml = 50, mr = 14, mt = 12, mb = 34, xmax = 3;
+  const X = (v) => ml + (v / xmax) * (W - ml - mr), Y = (v) => H - mb - v * (H - mt - mb);
+  let g = "";
+  [0, 0.5, 1].forEach((t) => { g += `<line x1="${ml}" y1="${f1(Y(t))}" x2="${W - mr}" y2="${f1(Y(t))}" class="gr-grid"/><text x="${ml - 6}" y="${f1(Y(t) + 4)}" class="gr-tick" text-anchor="end">${t === 1 ? "g" : t === 0.5 ? "g/2" : "0"}</text>`; });
+  [0, 1, 2, 3].forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 15}" class="gr-tick" text-anchor="middle">${t}</text>`; });
+  g += `<line x1="${ml}" y1="${H - mb}" x2="${W - mr}" y2="${H - mb}" class="gr-axis"/>`;
+  g += `<text x="${(ml + W - mr) / 2}" y="${H - 4}" class="gr-lab" text-anchor="middle">masa del colgante X (en unidades de M)</text>`;
+  let d = "";
+  for (let i = 0; i <= 120; i++) { const v = (i / 120) * xmax; d += (i ? " L " : "M ") + f1(X(v)) + " " + f1(Y(accel(v, MS.mu))); }
+  g += `<path d="${d}" class="gr-line"/>`;
+  g += `<circle cx="${f1(X(MS.x))}" cy="${f1(Y(a))}" r="6" class="gr-dot"/>`;
+  g += `<text x="${ml + 6}" y="${mt + 12}" class="gr-ann">a</text>`;
+  $("#m-graf").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aceleración del sistema contra la masa del colgante">${g}</svg>`;
+  $("#m-x-lab").textContent = "X = " + fmt(MS.x) + " M";
+  $("#m-mu-lab").textContent = "µ = " + fmt(MS.mu);
+  $("#m-ro-a").textContent = fmt(a) + " g";
+  $("#m-ro-t").textContent = fmt(T) + " Mg";
+  $("#m-ro-w").textContent = fmt(MS.x) + " Mg";
+  const st = $("#m-status");
+  if (moving) { st.textContent = "Se mueve: T es menor que el peso del colgante"; st.className = "status"; }
+  else { st.textContent = "Quieto: la fricción estática alcanza (T = Xg)"; st.className = "status ok"; }
+}
+function stopAnim() { if (MS.anim) cancelAnimationFrame(MS.anim); MS.anim = null; }
+$("#m-x").addEventListener("input", (e) => { stopAnim(); MS.x = Number(e.target.value); MS.shift = 0; drawMesa(); });
+$("#m-mu").addEventListener("input", (e) => { stopAnim(); MS.mu = Number(e.target.value); MS.shift = 0; drawMesa(); });
+$("#m-reset").addEventListener("click", () => { stopAnim(); MS.shift = 0; drawMesa(); });
+$("#m-go").addEventListener("click", () => {
+  stopAnim(); MS.shift = 0;
+  const a = accel(MS.x, MS.mu);
+  if (a <= 0) { drawMesa(); return; }
+  if (reduce) { MS.shift = 40; drawMesa(); return; }
+  const t0 = performance.now();
+  const step = (now) => {
+    const t = (now - t0) / 1000;
+    MS.shift = Math.min(40, 0.5 * 333 * a * t * t);
+    drawMesa();
+    if (MS.shift < 40) MS.anim = requestAnimationFrame(step); else MS.anim = null;
+  };
+  MS.anim = requestAnimationFrame(step);
+});
+drawMesa();
+
+/* ---------- Lab 2: tres configuraciones ---------- */
+function drawConf() {
+  const th = Number($("#c-th").value), s = Math.sin(th * Math.PI / 180);
+  const vals = [["I · Atwood", 4 / 3], ["II · Plano a " + th + "°", 2 * (1 + s) / 3], ["III · Mesa", 2 / 3]];
+  const W = 340, rowH = 34, ml = 112, mr = 46, H = vals.length * rowH + 30, vmax = 1.5;
+  const X = (v) => ml + (v / vmax) * (W - ml - mr);
+  let g = "";
+  [0, 0.5, 1, 1.5].forEach((t) => { g += `<line x1="${f1(X(t))}" y1="6" x2="${f1(X(t))}" y2="${H - 22}" class="gr-grid"/><text x="${f1(X(t))}" y="${H - 8}" class="gr-tick" text-anchor="middle">${fmt(t)}</text>`; });
+  vals.forEach(([lab, v], i) => {
+    const y = 10 + i * rowH;
+    g += `<text x="${ml - 8}" y="${y + 15}" class="gr-ann" text-anchor="end">${lab}</text>`;
+    g += `<rect x="${ml}" y="${y + 4}" width="${f1(X(v) - ml)}" height="16" rx="3" class="bar"/>`;
+    g += `<text x="${f1(X(v) + 6)}" y="${y + 16}" class="gr-ann">${fmt(v)} mg</text>`;
+  });
+  $("#c-bars").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tensión en cada configuración, en unidades de mg">${g}</svg>`;
+  $("#c-th-lab").textContent = "θ del plano (II) = " + th + "°";
+  $("#c-ro-1").textContent = fmt(4 / 3) + " mg"; $("#c-ro-2").textContent = fmt(2 * (1 + s) / 3) + " mg"; $("#c-ro-3").textContent = fmt(2 / 3) + " mg";
+}
+$("#c-fig").innerHTML = threeConfigSvg();
+$("#c-th").addEventListener("input", drawConf);
+drawConf();
+[["mesa", "conf"], ["conf", "mesa"]].forEach(([on, off]) => $("#tab-" + on).addEventListener("click", () => {
+  $("#lab-" + on).hidden = false; $("#lab-" + off).hidden = true;
+  $("#tab-" + on).setAttribute("aria-selected", "true"); $("#tab-" + off).setAttribute("aria-selected", "false");
+}));
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Mesa + colgante", src: "Parcial 2025-1 · SM1 (10 pts)",
+    fig: () => tableSvg({ block: { label: "M" }, hangR: "2M", note: "mesa sin fricción" }),
+    txt: "Un bloque de masa M sobre una mesa sin fricción está conectado a un bloque de masa 2M que cuelga. La aceleración de los bloques, en términos de g, es: A) g  B) g/2  C) g/3  D) 2g/3  E) g/4.",
+    hints: ["Truco del sistema: lo único que impulsa es el peso del colgante, y la masa total es 3M.", "Comprueba con el bloque de la mesa: T = Ma."],
+    sol: ["Sistema: 2Mg = (M + 2M)a, así que <b>a = 2g/3</b> (opción D).", "Chequeo: T = Ma = 2Mg/3, y el colgante: 2Mg − T = 2Ma → 2Mg − 2Mg/3 = 4Mg/3 = 2M·(2g/3). Cuadra."],
+    checks: [{ q: "¿Cuánto vale a?", opts: ["g", "g/2", "g/3", "2g/3", "g/4"], a: 3 }] },
+  { n: "T2", t: "¿Qué masa da una aceleración dada?", src: "Parcial 2025-2 · SM2 (10 pts)",
+    fig: () => tableSvg({ block: { label: "M" }, hangR: "X", aArrow: true, note: "mesa sin fricción · a = g/5" }),
+    txt: "La masa M está sobre una mesa sin fricción y la masa X cuelga. El valor de X para que el sistema tenga una aceleración de g/5 es: A) 5M  B) 4M  C) 3M  D) M/5  E) M/4.",
+    hints: ["Del truco del sistema: Xg = (M + X)·a. Reemplaza a = g/5.", "Despeja X: quedan X en los dos lados."],
+    sol: ["Xg = (M + X)g/5, así que 5X = M + X y <b>X = M/4</b> (opción E)."],
+    checks: [{ q: "¿Cuánto vale X?", opts: ["5M", "4M", "3M", "M/5", "M/4"], a: 4 }] },
+  { n: "T3", t: "La tensión en tres configuraciones", src: "Parcial 2024-2 · SM2 (10 pts)",
+    fig: () => threeConfigSvg(),
+    txt: "Un bloque de masa m está atado a uno de masa 2m con una cuerda y una polea, en tres configuraciones. No hay fricción en ninguna superficie. Sobre la tensión de la cuerda se puede afirmar: A) Es igual en las tres  B) Es más alta en II  C) Es más baja en I  D) Es más alta en III  E) Es más alta en I.",
+    hints: ["Aísla el bloque 2m que baja en las tres: T = 2m(g − a). La tensión es mayor donde la aceleración es menor.", "¿En cuál configuración el bloque m frena más el movimiento?"],
+    sol: ["I (Atwood): a = g/3, T = 2m(g − g/3) = 4mg/3.", "III (mesa): a = 2g/3, T = 2m(g − 2g/3) = 2mg/3.", "II (plano θ): T = 2mg(1 + sen θ)/3, que está entre las dos.", "La tensión es más alta en la I: <b>opción E</b>. En el lab puedes mover θ y ver cómo la II va de la III a la I."],
+    checks: [{ q: "¿En cuál es más alta la tensión?", opts: ["Igual en las tres", "II", "III", "I"], a: 3 }] },
+  { n: "T4", t: "Tres bloques con fricción en el centro", src: "Parcial 2025-2 · Abierto 3 (20 pts)",
+    fig: () => tableSvg({ x1: 70, block: { label: "M" }, hangL: "M", hangR: "2M", aArrow: true, mu: "µk con la mesa" }),
+    txt: "Los bloques tienen una aceleración conocida a. El bloque del centro siente fricción con la mesa. A) Dibuja los diagramas de fuerza de cada bloque (6 pts). B) Escribe las ecuaciones de Newton (6 pts). C) Halla el coeficiente de fricción cinético en términos de a, M y g (8 pts).",
+    hints: ["Se mueve hacia el lado del 2M: el M de la izquierda sube, el del centro va a la derecha y el 2M baja. La fricción sobre el del centro apunta a la izquierda.", "Hay dos cuerdas: T₁ (izquierda) y T₂ (derecha). Si sumas las tres ecuaciones, las tensiones se cancelan."],
+    sol: ["M izquierdo: T₁ − Mg = Ma.", "M centro: N = Mg y T₂ − T₁ − µk·Mg = Ma.", "2M derecho: 2Mg − T₂ = 2Ma.", "Sumando: 2Mg − Mg − µk·Mg = 4Ma, así que <b>µk = (g − 4a)/g = 1 − 4a/g</b>."],
+    checks: [{ q: "C) ¿Cuánto vale µk?", opts: ["1 − 4a/g", "1 − 2a/g", "(g − 3a)/g", "4a/g", "1 − a/g"], a: 0 }] },
+  { n: "T5", t: "Bloque sobre bloque", src: "Parcial 2025-2 · Abierto 1 (20 pts)",
+    fig: () => tableSvg({ block: { label: "2M", w: 92 }, stack: { label: "M" }, hangR: "Mx", mu: "µs = 1/2, µk = 1/3 entre bloques", note: "sin fricción con la mesa" }),
+    txt: "Hay fricción entre los bloques M y 2M, con µs = 1/2 y µk = 1/3. No hay fricción con la mesa, así que Mx desciende verticalmente. A) Dibuja los diagramas de fuerza de cada bloque. B) Escribe las ecuaciones de Newton. C) Halla el máximo valor de Mx para que el bloque M no se deslice sobre el 2M, en términos de M.",
+    hints: ["Si M no se desliza, los tres se mueven juntos con la misma a, y a M solo lo acelera la fricción estática: f = Ma ≤ µs·Mg.", "El límite es a = µs·g = g/2. Con el truco del sistema (masa total 3M + Mx) halla qué Mx da esa aceleración."],
+    sol: ["M: f = Ma, N₁ = Mg. 2M: T − f = 2Ma. Mx: Mx·g − T = Mx·a.", "Sumando: Mx·g = (3M + Mx)a.", "Límite: f = µs·Mg, o sea a = g/2. Entonces Mx·g = (3M + Mx)g/2, así que <b>Mx = 3M</b>."],
+    checks: [{ q: "C) ¿Cuál es Mx máximo?", opts: ["M", "3M/2", "2M", "3M", "6M"], a: 3 }] },
+  { n: "T6", t: "Dos planos: cuando X supera el máximo", src: "Parcial 2026-1 · Abierto 2, parte C (7 pts)",
+    fig: () => twoInclineSvg(),
+    txt: "Es el sistema de M3 (T3): M en un plano α con la horizontal, X en un plano β con la vertical, mismos µs y µk. Si X es mayor que el máximo que garantiza equilibrio, el sistema se mueve. Halla la aceleración en términos de X, M, α, β, g y un coeficiente de fricción.",
+    hints: ["X baja por su plano y M sube por el suyo. Ahora la fricción es cinética en los dos y apunta en contra del movimiento.", "Truco del sistema: impulsa la componente de Xg a lo largo de su plano; frenan la componente de Mg a lo largo del suyo y las dos fricciones."],
+    sol: ["M: T − Mg sen α − µk Mg cos α = Ma.", "X: Xg cos β − T − µk Xg sen β = Xa.", "Sumando: <b>a = g[X cos β − M sen α − µk(M cos α + X sen β)] / (X + M)</b>."],
+    checks: [{ q: "¿Cuánto vale a?", opts: ["g[X cos β − M sen α − µk(M cos α + X sen β)]/(X + M)", "g[X sen β − M sen α − µk(M cos α + X cos β)]/(X + M)", "g[X cos β − M sen α]/(X + M)", "g[X cos β − M sen α − µk(M cos α + X sen β)]/X"], a: 0 }] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(el("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => { const pp = el("p"); pp.innerHTML = s; sb.appendChild(pp); }); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M4", NEXT = "Aprobado. Pasas a M5 · Dinámica del movimiento circular.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => tableSvg({ block: { label: "M" }, hangR: "m", aArrow: true, note: "mesa sin fricción" }), q: "En la figura el sistema acelera: m baja y M va hacia la derecha. Comparada con el peso del colgante mg, la tensión es:",
+      o: ["Mayor que mg", "Igual a mg", "Menor que mg", "Cero"], a: 2,
+      e: "El colgante acelera hacia abajo: mg − T = ma, así que T = m(g − a) < mg. Solo sería igual si el sistema no acelerara." },
+    { k: "Conceptual", fig: () => atwoodSvg("m", "3m"), q: "En la máquina de Atwood de la figura (polea y cuerda ideales), ¿cuánto vale la aceleración?",
+      o: ["g/4", "g/3", "g/2", "2g/3"], a: 2,
+      e: "Truco del sistema: impulsa 3mg, frena mg, la masa total es 4m. a = 2mg/4m = g/2." },
+    { k: "Conceptual", fig: () => tableSvg({ block: { label: "M", w: 92 }, stack: { label: "m" }, pushF: true, note: "piso sin fricción" }), q: "En la figura, una fuerza F empuja el bloque de abajo y los dos se mueven juntos. ¿Qué fuerza acelera al bloque m de arriba?",
+      o: ["F, que se transmite por los bloques", "La normal que le hace el bloque de abajo", "La fricción estática que le hace el bloque de abajo", "Ninguna: se mueve por inercia"], a: 2,
+      e: "Sobre m solo hay peso y normal (verticales) y la fricción del bloque de abajo (horizontal). Es la única que puede acelerarlo hacia adelante." },
+    { k: "Tipo parcial", fig: () => tableSvg({ block: { label: "M" }, hangR: "2M", mu: "µk = 1/2" }), q: "En la figura, la mesa tiene µk = 1/2 con M y el sistema se mueve. ¿Cuánto vale la aceleración?",
+      o: ["g/2", "2g/3", "g/3", "g/6", "5g/6"], a: 0,
+      e: "Impulsa 2Mg, frena µk·Mg = Mg/2, masa total 3M: a = (2 − 1/2)Mg/3M = g/2." },
+    { k: "Tipo parcial", fig: () => tableSvg({ block: { label: "3m", w: 92 }, stack: { label: "m" }, hangR: "X", mu: "µs = 1/4 entre bloques", note: "sin fricción con la mesa" }), q: "En la figura, el bloque m está sobre el de masa 3m; la mesa no tiene fricción y entre los bloques µs = 1/4. ¿Cuál es el máximo X para que m no se deslice?",
+      o: ["m", "4m/3", "2m", "3m", "m/3"], a: 1,
+      e: "Límite: a = µs·g = g/4. Sistema: Xg = (4m + X)g/4, así que 4X = 4m + X y X = 4m/3." }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => tableSvg({ block: { label: "M" }, hangR: "m", note: "mesa sin fricción" }), q: "¿Por qué los dos bloques de la figura tienen la misma aceleración?",
+      o: ["Porque tienen la misma masa", "Porque la cuerda no se estira", "Porque la polea es fija", "Porque no hay fricción"], a: 1,
+      e: "Si la cuerda no se estira, lo que avanza un bloque es lo que baja el otro, así que sus velocidades y aceleraciones son iguales en tamaño." },
+    { k: "Conceptual", fig: () => atwoodSvg("2m", "3m"), q: "En la máquina de Atwood de la figura, ¿cuánto vale la tensión?",
+      o: ["2mg", "12mg/5", "3mg", "5mg/2", "mg"], a: 1,
+      e: "a = (3 − 2)mg/5m = g/5. Bloque 2m: T − 2mg = 2m·g/5, así que T = 12mg/5. Queda entre los dos pesos, como debe ser." },
+    { k: "Conceptual", fig: () => tableSvg({ block: { label: "M" }, hangR: "m", mu: "µs", note: "en reposo" }), q: "El sistema de la figura está en reposo porque mg es menor que µs·Mg. ¿Cuánto vale la fricción sobre M?",
+      o: ["µs·Mg", "mg", "µk·Mg", "0"], a: 1,
+      e: "No se mueve, así que la fricción es estática y vale lo que haga falta: T = mg y f = T = mg." },
+    { k: "Tipo parcial", fig: () => tableSvg({ x1: 70, block: { label: "2M" }, hangL: "M", hangR: "3M", aArrow: true, mu: "µk con la mesa" }), q: "Los bloques de la figura tienen una aceleración conocida a hacia la derecha. ¿Cuánto vale µk entre la mesa y el bloque 2M?",
+      o: ["1 − 3a/g", "1 − 6a/g", "2 − 3a/g", "(g − 3a)/(2g)", "1 − 2a/g"], a: 0,
+      e: "Sumando las tres ecuaciones: 3Mg − Mg − µk·2Mg = 6Ma, así que µk = (2g − 6a)/(2g) = 1 − 3a/g." },
+    { k: "Tipo parcial", fig: () => inclineSvg({ deg: 30, mode: "h", label: "M", pulley: "X", aria: "Bloque M en un plano unido a un bloque colgante X" }), q: "En la figura, X baja y M sube por el plano, que tiene coeficiente µk. ¿Cuánto vale la aceleración?",
+      o: ["g(X − M sen θ − µk M cos θ)/(M + X)", "g(X − M sen θ + µk M cos θ)/(M + X)", "g(X − M cos θ − µk M sen θ)/(M + X)", "g(X − M sen θ − µk M cos θ)/X"], a: 0,
+      e: "Impulsa Xg; frenan Mg sen θ y la fricción µk·Mg cos θ (M sube, la fricción apunta plano abajo). Masa total M + X." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

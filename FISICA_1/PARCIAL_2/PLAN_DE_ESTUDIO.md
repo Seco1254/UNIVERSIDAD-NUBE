@@ -181,18 +181,19 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 
 | Día | Fecha | Carga | Módulo | Tiempo |
 |---|---|---|---|---|
-| 1 | Mar 6 oct | Liviana | **M1** Newton + DCL + planos inclinados (refuerzo) | 1–1,5 h |
-| 2 | Mié 7 oct | Media | **M2** Poleas + **M3** Fricción (refuerzo) | 2,5–3 h |
-| 3 | Jue 8 oct | Liviana | **M4** Sistemas con aceleración (refuerzo) | 1–1,5 h |
-| 4 | Vie 9 oct | Suave | **M5** Movimiento circular | 2 h |
-| 5 | Sáb 10 oct | Pesada | **M6** Trabajo + **M7** Energía con fricción | 4–5 h |
+| 1 | Mar 6 oct | Liviana | **M1** Newton + DCL + planos inclinados (refuerzo) ✅ | 1–1,5 h |
+| 2 | Mié 7 oct | Media | **M2** Poleas (refuerzo) | 2,5–3 h |
+| 3 | Jue 8 oct | Liviana | Quiz B de **M2** + **M3** Fricción (refuerzo) | 1,5 h |
+| 4 | Vie 9 oct | Suave | **M4** Sistemas con aceleración (refuerzo); **M5** Movimiento circular si alcanza | 2 h |
+| 5 | Sáb 10 oct | Pesada | **M5** si quedó pendiente + **M6/M7** Trabajo y energía con fricción (fusionados) | 4–5 h |
 | 6 | Dom 11 oct | Pesada | **M8** Circular + energía (el que más pesa) | 4–5 h |
 | 7 | Lun 12 oct (festivo) | Suave | **M9** Simulacro cronometrado (80 min) + corrección | 2 h |
 | 8 | Mar 13 oct | Liviana | Repaso de los errores del simulacro + hoja de fórmulas | 1–1,5 h |
 | 9 | Mié 14 oct | Media | Quiz relámpago de las 4 familias 🔴 + refuerzo de lo que falló + **descanso temprano** | 2–2,5 h |
 | — | **Jue 15 oct** | — | **PARCIAL 2** | — |
 
-**Si te atrasas:** fusiona M6 con M7. **Nunca recortes M8 ni el simulacro.**
+**Ajuste del 7 de octubre:** M3 pasó al jueves y M4 al viernes; M6 y M7 se fusionan el sábado. La meta es tener todo sólido el domingo.
+**Si te atrasas otra vez:** recorta el lab de M6/M7 antes que el taller. **Nunca recortes M8 ni el simulacro.**
 **Si vas adelantado:** en M1–M4 haz el quiz primero; si sacas ≥ 4/5, saltas el módulo y le das ese tiempo a M8.
 
 ---

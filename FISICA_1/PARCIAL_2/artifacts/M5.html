@@ -1,0 +1,868 @@
+<title>M5 Movimiento circular</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px, barra de secciones fija arriba; el lab tiene tres máquinas en pestañas (disco, rotor, loop). */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>30 min</span></a>
+    <a href="#lab">2 Lab <span>20 min</span></a>
+    <a href="#taller">3 Taller <span>50 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Módulo 5 de 9</p>
+    <h1>Dinámica del movimiento circular</h1>
+    <div class="meta">
+      <span>Viernes 9 (si alcanza) o sábado 10 de octubre · ~2 h</span>
+      <span>Libro: 5.4 (y repaso de 3.4)</span>
+    </div>
+    <p class="prose">Este módulo es la mitad del problema que más pesa en el parcial. En M8 lo juntas con energía. Aquí aprendes a escribir bien la ecuación hacia el centro, que es donde casi todos se equivocan de signo.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, saltas M5 y pasas a M6.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es la aceleración centrípeta, cómo se escribe la 2.ª ley hacia el centro y los siete casos que salen.</p></div>
+
+    <div class="block">
+      <h3>Lo que ya sabes de cinemática</h3>
+      <div class="figs">
+        <figure><div id="fig-circ"></div><figcaption>La velocidad es tangente; la aceleración centrípeta apunta al centro.</figcaption></figure>
+        <div class="prose">
+          <div class="eq"><span><b>a<sub>c</sub> = v²/R = ω²R</b>, siempre hacia el centro</span><span><b>v = ωR</b>   ·   ω = 2π/T   ·   1 rpm = 2π/60 rad/s</span></div>
+          <p>Aunque la rapidez sea constante, la velocidad cambia de dirección todo el tiempo. Ese cambio es la aceleración centrípeta, y para producirla hace falta una fuerza neta hacia el centro.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>La 2.ª ley hacia el centro</h3>
+      <div class="eq"><span><b>Σ F<sub>hacia el centro</sub> = m·v²/R</b></span><span>Las fuerzas que apuntan al centro van con +, las que se alejan del centro van con −.</span></div>
+      <div class="callout trap">
+        <h3>No existe una «fuerza centrípeta» aparte</h3>
+        <p>«Centrípeta» es el nombre de la suma de fuerzas hacia el centro. En el diagrama solo dibujas fuerzas reales: peso, normal, tensión y fricción. Y <b>nunca</b> dibujes una «fuerza centrífuga»: en un marco inercial no existe. La solución oficial de 2025-1 SM2 la menciona; no la copies.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Receta</h3>
+      <ol class="steps">
+        <li><span><b>Ubica el centro del círculo</b> y el radio R. Ojo: radio, no diámetro.</span></li>
+        <li><span><b>Haz el diagrama de cuerpo libre</b> en el punto que te preguntan.</span></li>
+        <li><span><b>Eje radial con + hacia el centro.</b> El otro eje es el vertical o el tangencial.</span></li>
+        <li><span><b>Radial:</b> ΣF hacia el centro = mv²/R (o mω²R).</span></li>
+        <li><span><b>El otro eje:</b> si no hay aceleración en esa dirección, ΣF = 0.</span></li>
+      </ol>
+    </div>
+
+    <div class="block">
+      <h3>Los casos que salen</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Situación</th><th>Qué apunta al centro</th><th>Ecuación</th><th>Resultado típico</th></tr></thead>
+        <tbody>
+          <tr><td><b>Disco giratorio</b> (2025-1)</td><td>Fricción estática</td><td class="mono">f = mω²R ≤ µs·mg</td><td class="mono">ω<sub>máx</sub> = √(µs·g/R)</td></tr>
+          <tr><td><b>Rotor o gravitrón</b> (2026-1)</td><td>Normal de la pared</td><td class="mono">N = mω²R;  f = mg ≤ µs·N</td><td class="mono">ω<sub>mín</sub> = √(g/(µs·R))</td></tr>
+          <tr><td><b>Curva plana</b></td><td>Fricción estática</td><td class="mono">mv²/R ≤ µs·mg</td><td class="mono">v<sub>máx</sub> = √(µs·g·R)</td></tr>
+          <tr><td><b>Curva peraltada</b> sin fricción</td><td>Parte de la normal</td><td class="mono">N sen θ = mv²/R;  N cos θ = mg</td><td class="mono">tan θ = v²/(gR)</td></tr>
+          <tr><td><b>Péndulo</b>, punto más bajo</td><td>Tensión (el peso se aleja)</td><td class="mono">T − mg = mv²/L</td><td class="mono">T &gt; mg siempre</td></tr>
+          <tr><td><b>Loop por dentro</b>, punto más alto</td><td>Normal y peso (los dos)</td><td class="mono">N + mg = mv²/R</td><td class="mono">v<sub>mín</sub> = √(gR), con N = 0</td></tr>
+          <tr><td><b>Sobre una esfera</b>, en la cima</td><td>Peso (la normal se aleja)</td><td class="mono">mg − N = mv²/R</td><td class="mono">se despega si v² &gt; gR</td></tr>
+        </tbody>
+      </table></div>
+      <div class="figs">
+        <figure><div id="fig-in"></div><figcaption><b>Por dentro</b> (loop): la normal empuja hacia el centro.</figcaption></figure>
+        <figure><div id="fig-out"></div><figcaption><b>Por fuera</b> (cima de una esfera): la normal empuja hacia afuera.</figcaption></figure>
+      </div>
+      <div class="callout"><h3>¿Mínimo o máximo?</h3>
+        <p>En el <b>disco</b>, girar más rápido exige más fricción: hay un ω <b>máximo</b>. En el <b>rotor</b>, girar más rápido aumenta la normal y con ella la fricción disponible: hay un ω <b>mínimo</b>. El profesor pone las dos fórmulas como opciones.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Tres máquinas: el disco, el rotor (como el gravitrón que viste en clase) y el punto más alto de un loop.</p></div>
+
+    <div class="tabs" role="tablist" aria-label="Experimento">
+      <button type="button" role="tab" class="tab" id="tab-disco" aria-selected="true">Disco</button>
+      <button type="button" role="tab" class="tab" id="tab-rotor" aria-selected="false">Rotor</button>
+      <button type="button" role="tab" class="tab" id="tab-loop" aria-selected="false">Loop</button>
+    </div>
+
+    <div class="lab" id="lab-disco">
+      <div class="lab-stage"><div id="d-svg" class="lab-fig"></div><p class="muted small">Vista desde arriba. La flecha morada es la fricción, que apunta al centro.</p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="d-w" id="d-w-lab">ω = 4,0 rad/s</label><input type="range" id="d-w" min="0" max="12" step="0.1" value="4"></div>
+        <div class="ctl"><label for="d-r" id="d-r-lab">R = 0,30 m</label><input type="range" id="d-r" min="0.05" max="0.5" step="0.01" value="0.3"></div>
+        <div class="ctl"><label for="d-mu" id="d-mu-lab">µs = 0,60</label><input type="range" id="d-mu" min="0.05" max="1" step="0.01" value="0.6"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Fricción necesaria mω²R</span><b id="d-need">0,48 mg</b></div>
+          <div class="ro"><span>Fricción máxima µs·mg</span><b id="d-max">0,60 mg</b></div>
+          <div class="ro"><span>ω máxima √(µs·g/R)</span><b id="d-wmax">4,5 rad/s</b></div>
+          <div class="status" id="d-status">Se queda en el disco</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lab" id="lab-rotor" hidden>
+      <div class="lab-stage"><div id="r-svg" class="lab-fig"></div><p class="muted small">Vista de lado. La pared empuja al bloque hacia el eje (normal) y la fricción lo sostiene.</p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="r-w" id="r-w-lab">ω = 3,0 rad/s</label><input type="range" id="r-w" min="0" max="6" step="0.1" value="3"></div>
+        <div class="ctl"><label for="r-r" id="r-r-lab">R = 2,5 m</label><input type="range" id="r-r" min="1" max="4" step="0.1" value="2.5"></div>
+        <div class="ctl"><label for="r-mu" id="r-mu-lab">µs = 0,40</label><input type="range" id="r-mu" min="0.1" max="1" step="0.01" value="0.4"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Normal N = mω²R</span><b id="r-n">2,25 mg</b></div>
+          <div class="ro"><span>Fricción máxima µs·N</span><b id="r-max">0,90 mg</b></div>
+          <div class="ro"><span>Fricción necesaria (el peso)</span><b>1,00 mg</b></div>
+          <div class="ro"><span>ω mínima √(g/(µs·R))</span><b id="r-wmin">3,2 rad/s</b></div>
+          <div class="status" id="r-status">Resbala hacia abajo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lab" id="lab-loop" hidden>
+      <div class="lab-stage"><div id="l-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="l-v" id="l-v-lab">v en la cima = 1,50 √(gR)</label><input type="range" id="l-v" min="0" max="2.5" step="0.01" value="1.5"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Hace falta hacia el centro mv²/R</span><b id="l-need">2,25 mg</b></div>
+          <div class="ro"><span>Pone el peso</span><b>1,00 mg</b></div>
+          <div class="ro"><span>Pone la normal N</span><b id="l-n">1,25 mg</b></div>
+          <div class="status" id="l-status">Da la vuelta</div>
+        </div>
+        <p class="small muted">Si la normal sale negativa, el riel tendría que jalar el carro hacia abajo, y no puede: el carro se despega y cae.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · En el disco, si duplicas R con el mismo ω, ¿la fricción necesaria se duplica o se cuadruplica?</summary>
+          <div class="rev-body"><p><b>Se duplica.</b> f = mω²R es proporcional a R. Lo que va al cuadrado es ω: duplicar ω cuadruplica la fricción necesaria.</p></div></details>
+        <details class="rev"><summary>Reto 2 · En el rotor, con R = 2,5 m y µs = 0,4, ¿desde qué ω se queda pegado el bloque?</summary>
+          <div class="rev-body"><p><b>ω = √(g/(µs·R)) = √(10/1) ≈ 3,2 rad/s.</b> Por encima de eso la normal es tan grande que la fricción alcanza para sostener el peso.</p></div></details>
+        <details class="rev"><summary>Reto 3 · En el loop, ¿qué rapidez hace que la normal valga el doble del peso?</summary>
+          <div class="rev-body"><p><b>v = √(3gR).</b> N + mg = mv²/R con N = 2mg da v² = 3gR. Es la parte C del Abierto 2 de 2025-2; en M8 le sumas la energía del resorte.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Dos problemas de parciales, dos partes de problemas de parciales (la parte radial) y uno nuevo de curva peraltada.</p></div>
+    <p class="prose">Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M6 con 4/5 o más. Usa g = 10 m/s².</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M6/M7 · Trabajo y energía con fricción, el sábado 10. Después, en M8, juntas este módulo con energía.</p>
+    <p>Fuente de los problemas: parciales 2 de 2024-2, 2025-1, 2025-2 y 2026-1 de Física 1, Universidad de los Andes.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+/* ---------- Figuras de M5 ---------- */
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+const notes = (list) => (list || []).map((t, i) => T(12, 20 + i * 15, t, "sv-tl")).join("");
+function curvedArrow(cx, cy, r, a0, a1, cls) {
+  const p = (a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1);
+  const t = [-Math.sin(a1), Math.cos(a1)];
+  const h = 8, w = 4.5, bx = x1 - t[0] * h, by = y1 - t[1] * h;
+  return `<path d="M ${f1(x0)} ${f1(y0)} A ${r} ${r} 0 0 1 ${f1(x1)} ${f1(y1)}" class="arc-v"/>` +
+    `<polygon points="${f1(x1 + t[0] * 2)},${f1(y1 + t[1] * 2)} ${f1(bx - t[1] * w)},${f1(by + t[0] * w)} ${f1(bx + t[1] * w)},${f1(by - t[0] * w)}" class="${cls}"/>`;
+}
+function circSvg(o = {}) {
+  const cx = 160, cy = 112, R = 82, px = cx, py = cy - R;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-dash"/><circle cx="${cx}" cy="${cy}" r="3" class="sv-axle"/>` + T(cx + 7, cy + 16, "centro", "sv-tl");
+  g += curvedArrow(cx, cy, R + 14, -2.4, -1.9, "a-v");
+  g += `<circle cx="${px}" cy="${py}" r="8" class="sv-ball"/>`;
+  if (o.v) g += arrowSvg(px + 10, py, px + 72, py, "a-v") + T(px + 76, py + 4, "v", "sv-t t-v");
+  if (o.a) g += arrowSvg(px, py + 10, px, py + 58, "a-f") + T(px + 6, py + 50, "a<tspan class='sub' dy='3'>c</tspan>", "sv-t t-f");
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Objeto moviéndose en un círculo">${g}</svg>`;
+}
+function diskSvg(o = {}) {
+  const cx = 160, cy = 112, Rd = 90, phi = o.phi ?? 0, r = o.rpx ?? 62;
+  let g = notes(o.notes);
+  g += `<circle cx="${cx}" cy="${cy}" r="${Rd}" class="sv-ground"/><circle cx="${cx}" cy="${cy}" r="3" class="sv-axle"/>`;
+  g += curvedArrow(cx, cy, Rd + 10, -2.5, -1.8, "a-v") + T(cx - 40, cy - Rd - 14, "ω", "sv-ang");
+  const bx = cx + r * Math.cos(phi), by = cy + r * Math.sin(phi);
+  g += `<line x1="${cx}" y1="${cy}" x2="${f1(bx)}" y2="${f1(by)}" class="sv-dash"/>` + T((cx + bx) / 2 - 4, (cy + by) / 2 - 6, "R", "sv-tl");
+  g += `<g transform="rotate(${f1(phi * 180 / Math.PI)} ${f1(bx)} ${f1(by)})"><rect x="${f1(bx - 9)}" y="${f1(by - 9)}" width="18" height="18" class="${o.slip ? "sv-block bad" : "sv-block"}"/></g>`;
+  if (o.slip) { const tx = -Math.sin(phi), ty = Math.cos(phi); g += `<line x1="${f1(bx)}" y1="${f1(by)}" x2="${f1(bx + tx * 90)}" y2="${f1(by + ty * 90)}" class="sv-dash bad"/>`; }
+  if (o.fLen) { const ux = (cx - bx) / r, uy = (cy - by) / r; g += arrowSvg(bx + ux * 10, by + uy * 10, bx + ux * (10 + o.fLen), by + uy * (10 + o.fLen), o.slip ? "a-fric-bad" : "a-fric") + T(bx + ux * (14 + o.fLen) - 4, by + uy * (14 + o.fLen) - 6, "f", "sv-t t-fric"); }
+  return `<svg viewBox="0 0 320 214" role="img" aria-label="Disco giratorio visto desde arriba con un bloque">${g}</svg>`;
+}
+function rotorSvg(o = {}) {
+  let g = notes(o.notes);
+  g += `<path d="M 80 190 A 80 14 0 0 1 240 190" class="sv-dash"/>`;
+  g += `<line x1="80" y1="40" x2="80" y2="190" class="sv-line"/><line x1="240" y1="40" x2="240" y2="190" class="sv-line"/>`;
+  g += `<ellipse cx="160" cy="40" rx="80" ry="14" class="sv-cyl"/><path d="M 80 190 A 80 14 0 0 0 240 190" class="sv-line"/>`;
+  g += `<line x1="160" y1="18" x2="160" y2="206" class="sv-dash"/>` + curvedArrow(160, 10, 26, 2.6, 0.55, "a-v") + T(194, 22, "ω", "sv-ang");
+  const by = o.drop ? 128 : 108;
+  g += `<rect x="82" y="${by}" width="18" height="20" class="${o.slip ? "sv-block bad" : "sv-block"}"/>`;
+  g += `<line x1="82" y1="160" x2="160" y2="160" class="sv-dash"/>` + T(118, 156, "R", "sv-tl", "middle");
+  if (o.arrows !== false) {
+    const nL = o.nLen ?? 44, fL = o.fLen ?? 36;
+    g += arrowSvg(100, by + 10, 100 + nL, by + 10, "a-n") + T(104 + nL, by + 14, "N", "sv-t t-n");
+    g += arrowSvg(91, by, 91, by - fL, o.slip ? "a-fric-bad" : "a-fric") + T(97, by - fL + 6, "f", "sv-t t-fric");
+    g += arrowSvg(91, by + 20, 91, by + 58, "a-peso") + T(97, by + 56, "mg", "sv-t t-peso");
+  }
+  return `<svg viewBox="0 0 320 214" role="img" aria-label="Rotor visto de lado con un bloque pegado a la pared interior">${g}</svg>`;
+}
+function loopSvg(o = {}) {
+  const cx = 160, cy = 116, R = 80, top = cy - R;
+  let g = notes(o.notes);
+  g += `<line x1="12" y1="${cy + R + 2}" x2="308" y2="${cy + R + 2}" class="sv-line"/><circle cx="${cx}" cy="${cy}" r="${R}" class="sv-track"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/><line x1="${cx}" y1="${cy}" x2="${f1(cx + R * 0.7)}" y2="${f1(cy + R * 0.7)}" class="sv-dash"/>` + T(cx + 30, cy + 22, "R", "sv-tl");
+  const drop = o.detached ? 16 : 0, ct = top + 3 + drop;
+  g += `<rect x="${cx - 13}" y="${ct}" width="26" height="14" rx="3" class="${o.detached ? "sv-block bad" : "sv-block"}"/>`;
+  g += arrowSvg(cx + 15, ct + 7, cx + 64, ct + 7, "a-v") + T(cx + 68, ct + 11, "v", "sv-t t-v");
+  if (o.arrows) {
+    g += arrowSvg(cx - 6, ct + 14, cx - 6, ct + 56, "a-peso") + T(cx - 10, ct + 54, "mg", "sv-t t-peso", "end");
+    if (o.nLen > 0) g += arrowSvg(cx + 6, ct + 14, cx + 6, ct + 14 + o.nLen, "a-n") + T(cx + 10, ct + 12 + o.nLen, "N", "sv-t t-n");
+  }
+  if (o.label) g += T(cx, cy + 6, o.label, "sv-t", "middle");
+  return `<svg viewBox="0 0 320 206" role="img" aria-label="Carro en el punto más alto de un loop vertical">${g}</svg>`;
+}
+function sphereSvg() {
+  let g = `<line x1="20" y1="190" x2="300" y2="190" class="sv-line"/><path d="M 50 190 A 110 110 0 0 1 270 190 Z" class="sv-ground"/>`;
+  g += `<circle cx="160" cy="190" r="2.5" class="sv-axle"/>` + T(166, 184, "centro", "sv-tl");
+  g += `<rect x="149" y="66" width="22" height="14" rx="2" class="sv-block"/>`;
+  g += arrowSvg(156, 66, 156, 30, "a-n") + T(146, 36, "N", "sv-t t-n", "end");
+  g += arrowSvg(164, 80, 164, 118, "a-peso") + T(170, 116, "mg", "sv-t t-peso");
+  g += arrowSvg(173, 72, 222, 72, "a-v") + T(226, 76, "v", "sv-t t-v");
+  return `<svg viewBox="0 0 320 206" role="img" aria-label="Bloque en la cima de una esfera, por fuera">${g}</svg>`;
+}
+function pendSvg(o = {}) {
+  let g = notes(o.notes) + `<line x1="110" y1="14" x2="210" y2="14" class="sv-line"/>`;
+  for (let x = 114; x < 210; x += 10) g += `<line x1="${x}" y1="14" x2="${x + 6}" y2="8" class="sv-hatch"/>`;
+  g += `<path d="M ${f1(160 - 140 * Math.sin(0.5))} ${f1(14 + 140 * Math.cos(0.5))} A 140 140 0 0 0 ${f1(160 + 140 * Math.sin(0.5))} ${f1(14 + 140 * Math.cos(0.5))}" class="sv-dash"/>`;
+  g += `<line x1="160" y1="14" x2="160" y2="143" class="sv-rope"/>` + T(166, 80, "L", "sv-tl");
+  g += `<circle cx="160" cy="154" r="11" class="sv-ball"/>`;
+  if (o.arrows !== false) {
+    g += arrowSvg(150, 143, 150, 100, "a-f") + T(144, 106, "T", "sv-t t-f", "end");
+    g += arrowSvg(160, 166, 160, 204, "a-peso") + T(166, 202, "mg", "sv-t t-peso");
+  }
+  g += arrowSvg(173, 154, 228, 154, "a-v") + T(232, 158, "v", "sv-t t-v");
+  return `<svg viewBox="0 0 320 214" role="img" aria-label="Péndulo pasando por el punto más bajo">${g}</svg>`;
+}
+function bankSvg() {
+  const th = 22 * Math.PI / 180, A = { x: 30, y: 180 }, L = 260, u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + L * u.x, y: A.y + L * u.y };
+  let g = `<line x1="10" y1="180" x2="310" y2="180" class="sv-line"/><polygon points="${A.x},${A.y} ${f1(C.x)},${A.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  g += `<path d="M ${A.x + 40} ${A.y} A 40 40 0 0 0 ${f1(A.x + 40 * u.x)} ${f1(A.y + 40 * u.y)}" class="sv-arc"/>` + T(A.x + 46, A.y - 5, "θ", "sv-ang");
+  const s = 0.55, c = { x: A.x + s * L * u.x + n.x * 12, y: A.y + s * L * u.y + n.y * 12 };
+  g += `<g transform="rotate(${f1(-22)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - 20)}" y="${f1(c.y - 12)}" width="40" height="24" rx="4" class="sv-block"/></g>`;
+  g += arrowSvg(c.x, c.y, c.x + n.x * 62, c.y + n.y * 62, "a-n") + T(c.x + n.x * 66 - 4, c.y + n.y * 66, "N", "sv-t t-n", "end");
+  g += arrowSvg(c.x, c.y, c.x, c.y + 56, "a-peso") + T(c.x + 6, c.y + 54, "mg", "sv-t t-peso");
+  g += arrowSvg(c.x - 30, c.y - 62, c.x - 100, c.y - 62, "a-v") + T(c.x - 100, c.y - 70, "hacia el centro de la curva", "sv-tl");
+  return `<svg viewBox="0 0 320 200" role="img" aria-label="Carro en una curva peraltada vista de frente">${g}</svg>`;
+}
+function flatCurveSvg(o = {}) {
+  const cx = 160, cy = 214, R = 150;
+  let g = notes(o.notes);
+  g += `<path d="M ${f1(cx - R * Math.cos(0.75))} ${f1(cy - R * Math.sin(0.75))} A ${R} ${R} 0 0 1 ${f1(cx + R * Math.cos(0.75))} ${f1(cy - R * Math.sin(0.75))}" class="sv-road"/>`;
+  g += `<circle cx="${cx}" cy="${cy - 6}" r="2.5" class="sv-axle"/>` + T(cx + 6, cy - 10, "centro", "sv-tl");
+  g += `<line x1="${cx}" y1="${cy - 6}" x2="${cx}" y2="${cy - R + 14}" class="sv-dash"/>` + T(cx + 6, cy - 50, "R", "sv-tl");
+  g += `<rect x="${cx - 14}" y="${cy - R - 8}" width="28" height="16" rx="3" class="sv-block"/>`;
+  g += arrowSvg(cx + 16, cy - R, cx + 66, cy - R, "a-v") + T(cx + 70, cy - R + 4, "v", "sv-t t-v");
+  g += arrowSvg(cx - 4, cy - R + 10, cx - 4, cy - R + 50, "a-fric") + T(cx - 9, cy - R + 46, "f", "sv-t t-fric", "end");
+  return `<svg viewBox="0 0 320 214" role="img" aria-label="Carro tomando una curva plana vista desde arriba">${g}</svg>`;
+}
+$("#fig-circ").innerHTML = circSvg({ v: true, a: true });
+$("#fig-in").innerHTML = loopSvg({ arrows: true, nLen: 30 });
+$("#fig-out").innerHTML = sphereSvg();
+
+/* ---------- Lab ---------- */
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const D = { w: 4, R: 0.3, mu: 0.6, phi: 0, last: null };
+function drawDisk() {
+  const need = D.w * D.w * D.R / 10, slip = need > D.mu;
+  const fLen = Math.max(4, Math.min(need, D.mu) * 60);
+  $("#d-svg").innerHTML = diskSvg({ phi: D.phi, rpx: 22 + (D.R / 0.5) * 60, fLen, slip });
+}
+function diskReadout() {
+  const need = D.w * D.w * D.R / 10, slip = need > D.mu;
+  $("#d-w-lab").textContent = "ω = " + D.w.toFixed(1).replace(".", ",") + " rad/s";
+  $("#d-r-lab").textContent = "R = " + fmt(D.R) + " m";
+  $("#d-mu-lab").textContent = "µs = " + fmt(D.mu);
+  $("#d-need").textContent = fmt(need) + " mg"; $("#d-max").textContent = fmt(D.mu) + " mg";
+  $("#d-wmax").textContent = Math.sqrt(D.mu * 10 / D.R).toFixed(1).replace(".", ",") + " rad/s";
+  const st = $("#d-status");
+  if (slip) { st.textContent = "Se desliza: sale por la tangente (línea punteada)"; st.className = "status bad"; }
+  else { st.textContent = "Se queda en el disco: la fricción alcanza"; st.className = "status ok"; }
+}
+function tick(now) {
+  if (D.last != null && !$("#lab-disco").hidden && !document.hidden) { D.phi += D.w * 0.35 * (now - D.last) / 1000; drawDisk(); }
+  D.last = now; requestAnimationFrame(tick);
+}
+["d-w", "d-r", "d-mu"].forEach((id) => $("#" + id).addEventListener("input", (e) => { const k = { "d-w": "w", "d-r": "R", "d-mu": "mu" }[id]; D[k] = Number(e.target.value); diskReadout(); drawDisk(); }));
+diskReadout(); drawDisk();
+if (!reduce) requestAnimationFrame(tick);
+
+const Rt = { w: 3, R: 2.5, mu: 0.4 };
+function drawRotor() {
+  const N = Rt.w * Rt.w * Rt.R / 10, max = Rt.mu * N, hold = max >= 1 - 1e-9;
+  $("#r-svg").innerHTML = rotorSvg({ nLen: Math.max(6, Math.min(N, 4) * 22), fLen: hold ? 40 : Math.max(4, max * 40), slip: !hold, drop: !hold });
+  $("#r-w-lab").textContent = "ω = " + Rt.w.toFixed(1).replace(".", ",") + " rad/s";
+  $("#r-r-lab").textContent = "R = " + Rt.R.toFixed(1).replace(".", ",") + " m";
+  $("#r-mu-lab").textContent = "µs = " + fmt(Rt.mu);
+  $("#r-n").textContent = fmt(N) + " mg"; $("#r-max").textContent = fmt(max) + " mg";
+  $("#r-wmin").textContent = Math.sqrt(10 / (Rt.mu * Rt.R)).toFixed(1).replace(".", ",") + " rad/s";
+  const st = $("#r-status");
+  if (hold) { st.textContent = "Se queda pegado: la fricción sostiene el peso"; st.className = "status ok"; }
+  else { st.textContent = "Resbala hacia abajo: µs·N no alcanza para el peso"; st.className = "status bad"; }
+}
+["r-w", "r-r", "r-mu"].forEach((id) => $("#" + id).addEventListener("input", (e) => { const k = { "r-w": "w", "r-r": "R", "r-mu": "mu" }[id]; Rt[k] = Number(e.target.value); drawRotor(); }));
+drawRotor();
+
+function drawLoop() {
+  const v = Number($("#l-v").value), need = v * v, N = need - 1;
+  $("#l-svg").innerHTML = loopSvg({ arrows: true, nLen: N > 0 ? Math.min(N, 3) * 24 : 0, detached: N < 0 });
+  $("#l-v-lab").textContent = "v en la cima = " + fmt(v) + " √(gR)";
+  $("#l-need").textContent = fmt(need) + " mg";
+  $("#l-n").textContent = fmt(N) + " mg";
+  const st = $("#l-status");
+  if (N >= 0) { st.textContent = Math.abs(N) < 0.01 ? "Justo en el límite: N = 0, v = √(gR)" : "Da la vuelta: el riel empuja hacia el centro"; st.className = "status ok"; }
+  else { st.textContent = "Se despega: el peso solo ya es más de lo que hace falta"; st.className = "status bad"; }
+}
+$("#l-v").addEventListener("input", drawLoop);
+drawLoop();
+const TABS = ["disco", "rotor", "loop"];
+TABS.forEach((on) => $("#tab-" + on).addEventListener("click", () => {
+  TABS.forEach((t) => { $("#lab-" + t).hidden = t !== on; $("#tab-" + t).setAttribute("aria-selected", t === on ? "true" : "false"); });
+}));
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Disco giratorio", src: "Parcial 2025-1 · SM2 (10 pts)",
+    fig: () => diskSvg({ fLen: 0 }),
+    txt: "Un bloque de masa m está sobre un disco giratorio a una distancia R del eje. El disco tiene un coeficiente de fricción estático µ con el bloque. La máxima frecuencia angular ω a la que puede girar el disco sin que el bloque se deslice es: A) √(µg/2R)  B) √(µg/R)  C) √(2µg/R)  D) √(gR/µ)  E) √(µ/gR).",
+    hints: ["Vista desde arriba: la única fuerza horizontal sobre el bloque es la fricción estática, y apunta al centro.", "Radial: f = mω²R. Vertical: N = mg. Máximo: f ≤ µN."],
+    sol: ["Radial: f = mω²R. Vertical: N = mg.", "Condición: mω²R ≤ µmg, así que ω² ≤ µg/R y <b>ω<sub>máx</sub> = √(µg/R)</b> (opción B).", "La solución oficial habla de «fuerza centrífuga». En un marco inercial esa fuerza no existe: la que hace de centrípeta es la fricción."],
+    checks: [{ q: "¿Cuál es ω máxima?", opts: ["√(µg/2R)", "√(µg/R)", "√(2µg/R)", "√(gR/µ)", "√(µ/gR)"], a: 1 }] },
+  { n: "T2", t: "Rotor", src: "Parcial 2026-1 · SM2 (10 pts)",
+    fig: () => rotorSvg({ arrows: false }),
+    txt: "Un cilindro hueco de radio R gira alrededor de la vertical con velocidad angular ω. Sobre la pared interna se coloca un bloque de masa m, con coeficiente de fricción estático µ. La mínima velocidad angular para que el bloque no se deslice es: A) g/µR  B) √(g/µR)  C) √(µR/g)  D) √(gR/µ)  E) √(µ/gR).",
+    hints: ["Aquí la que apunta al centro es la normal de la pared. La fricción es vertical y sostiene el peso.", "Radial: N = mω²R. Vertical: f = mg, con f ≤ µN."],
+    sol: ["Radial: N = mω²R. Vertical: f = mg.", "Condición: mg ≤ µmω²R, así que ω² ≥ g/(µR) y <b>ω<sub>mín</sub> = √(g/(µR))</b> (opción B).", "Trampa: la opción A es lo mismo sin la raíz."],
+    checks: [{ q: "¿Cuál es ω mínima?", opts: ["g/µR", "√(g/µR)", "√(µR/g)", "√(gR/µ)", "√(µ/gR)"], a: 1 }] },
+  { n: "T3", t: "Normal en lo más alto de un loop", src: "Parcial 2025-2 · Abierto 2, parte C (5 pts)",
+    fig: () => loopSvg({ arrows: true, nLen: 44, label: "N = 2mg" }),
+    txt: "Un bloque pasa por la parte más alta de la sección circular (radio R) de un riel sin fricción, por dentro, sintiendo una normal igual al doble de su peso. Halla la velocidad del bloque en ese punto, en términos de R y g.",
+    hints: ["En lo más alto, por dentro, la normal y el peso apuntan los dos hacia abajo, o sea hacia el centro.", "N + mg = mv²/R con N = 2mg."],
+    sol: ["Radial (hacia el centro = hacia abajo): N + mg = mv²/R.", "Con N = 2mg: 3mg = mv²/R, así que <b>v = √(3gR)</b>.", "En el parcial, este resultado alimenta la parte D: la energía del resorte. Eso lo haces en M8."],
+    checks: [{ q: "¿Cuánto vale v?", opts: ["√(gR)", "√(2gR)", "√(3gR)", "√(5gR)"], a: 2 }] },
+  { n: "T4", t: "Tensión en el punto más bajo de un péndulo", src: "Parcial 2024-2 · Abierto 1, parte radial",
+    fig: () => pendSvg(),
+    txt: "Un péndulo de masa m y longitud L pasa por el punto más bajo de su trayectoria con una tensión igual a 2mg. ¿Cuánto vale v² en ese punto?",
+    hints: ["En el punto más bajo el centro está arriba: la tensión apunta al centro y el peso se aleja.", "T − mg = mv²/L."],
+    sol: ["Radial: T − mg = mv²/L. Con T = 2mg: mg = mv²/L, así que <b>v² = gL</b>.", "En el parcial te piden el ángulo desde el que hay que soltarlo: eso sale con energía (M8) y da θ = 60°."],
+    checks: [{ q: "¿Cuánto vale v²?", opts: ["gL/2", "gL", "2gL", "3gL"], a: 1 }] },
+  { n: "T5", t: "Curva peraltada sin fricción", src: "Problema nuevo (sección 5.4 del libro)",
+    fig: () => bankSvg(),
+    txt: "Un carro toma una curva de radio R peraltada un ángulo θ, sin fricción. ¿Con qué rapidez tiene que ir para no deslizarse ni hacia arriba ni hacia abajo del peralte?",
+    hints: ["El centro de la curva está en horizontal, hacia el lado bajo del peralte. Usa ejes horizontal y vertical, no los del plano.", "Horizontal: N sen θ = mv²/R. Vertical: N cos θ = mg. Divide una entre otra."],
+    sol: ["Horizontal (hacia el centro): N sen θ = mv²/R.", "Vertical: N cos θ = mg.", "Dividiendo: tan θ = v²/(gR), así que <b>v = √(gR·tan θ)</b>.", "Ojo: aquí no se usan los ejes del plano inclinado, porque la aceleración es horizontal."],
+    checks: [{ q: "¿Cuánto vale v?", opts: ["√(gR sen θ)", "√(gR cos θ)", "√(gR tan θ)", "√(gR / tan θ)"], a: 2 }] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(el("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => { const pp = el("p"); pp.innerHTML = s; sb.appendChild(pp); }); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M5", NEXT = "Aprobado. Pasas a M6/M7 · Trabajo y energía con fricción.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => circSvg({ v: true }), q: "El objeto de la figura gira con rapidez constante. ¿Hacia dónde apunta su aceleración en el punto marcado?",
+      o: ["En la dirección de v", "Hacia el centro", "Hacia afuera del círculo", "Es cero, porque la rapidez es constante"], a: 1,
+      e: "La rapidez no cambia, pero la dirección de v sí. Ese cambio es la aceleración centrípeta, que apunta al centro: a = v²/R." },
+    { k: "Conceptual", fig: () => diskSvg({ fLen: 0 }), q: "El bloque de la figura gira con el disco sin deslizarse. ¿Qué fuerza hace de centrípeta?",
+      o: ["La normal", "El peso", "La fricción estática", "La fuerza centrífuga"], a: 2,
+      e: "Vista desde arriba, la única fuerza horizontal es la fricción estática, y apunta al centro. La normal y el peso son verticales, y la centrífuga no existe en un marco inercial." },
+    { k: "Conceptual", fig: () => loopSvg({}), q: "El carro de la figura pasa por lo más alto del loop, por dentro. ¿Cuál es la ecuación radial?",
+      o: ["N − mg = mv²/R", "N + mg = mv²/R", "mg − N = mv²/R", "N = mv²/R"], a: 1,
+      e: "En lo más alto, por dentro, el riel empuja hacia abajo (hacia el centro) y el peso también apunta hacia abajo. Las dos van con +." },
+    { k: "Tipo parcial", fig: () => diskSvg({ fLen: 0, notes: ["R = 0,20 m", "µs = 0,5"] }), q: "En la figura, el bloque está a 0,20 m del eje y µs = 0,5. ¿Cuál es la ω máxima para que no se deslice? (g = 10 m/s²)",
+      o: ["2,5 rad/s", "5 rad/s", "10 rad/s", "25 rad/s"], a: 1,
+      e: "ω_máx = √(µs·g/R) = √(0,5·10/0,2) = √25 = 5 rad/s." },
+    { k: "Tipo parcial", fig: () => rotorSvg({ arrows: false, notes: ["R = 2,5 m", "µs = 0,4"] }), q: "En el rotor de la figura, R = 2,5 m y µs = 0,4. ¿Cuál es la ω mínima para que la persona no resbale? (g = 10 m/s²)",
+      o: ["√10 rad/s ≈ 3,2 rad/s", "10 rad/s", "2,5 rad/s", "4 rad/s"], a: 0,
+      e: "ω_mín = √(g/(µs·R)) = √(10/(0,4·2,5)) = √10 ≈ 3,2 rad/s." }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => circSvg({}), q: "El objeto de la figura gira en el círculo punteado. ¿Hacia dónde apunta su velocidad en el punto marcado?",
+      o: ["Hacia el centro", "Tangente al círculo", "Hacia afuera", "Depende de la rapidez"], a: 1,
+      e: "La velocidad siempre es tangente a la trayectoria. Lo que apunta al centro es la aceleración." },
+    { k: "Conceptual", fig: () => diskSvg({ fLen: 0 }), q: "Si de pronto el bloque de la figura dejara de tener fricción con el disco, ¿cómo saldría?",
+      o: ["En línea recta hacia afuera, siguiendo el radio", "En línea recta, tangente al círculo", "En espiral hacia afuera", "Seguiría girando con el disco"], a: 1,
+      e: "Sin fuerza neta, sigue con la velocidad que tenía (1.ª ley), y esa velocidad es tangente. No sale «empujado hacia afuera»." },
+    { k: "Conceptual", fig: () => pendSvg({ arrows: false }), q: "La masa del péndulo de la figura pasa por el punto más bajo con rapidez v. Comparada con el peso, la tensión es:",
+      o: ["Menor", "Igual", "Mayor", "Cero"], a: 2,
+      e: "T − mg = mv²/L > 0, así que T > mg. La cuerda tiene que sostener el peso y además dar la fuerza hacia el centro." },
+    { k: "Tipo parcial", fig: () => loopSvg({}), q: "¿Cuál es la rapidez mínima que debe tener el carro de la figura en lo más alto del loop para no despegarse?",
+      o: ["0", "√(gR)", "√(2gR)", "√(5gR)"], a: 1,
+      e: "En el límite N = 0: mg = mv²/R, así que v = √(gR). Con menos, el peso solo ya es más fuerza hacia el centro de la que hace falta y el carro cae." },
+    { k: "Tipo parcial", fig: () => flatCurveSvg({ notes: ["R = 40 m", "µs = 0,9"] }), q: "El carro de la figura toma una curva plana de 40 m de radio con µs = 0,9. ¿Cuál es la rapidez máxima sin derrapar? (g = 10 m/s²)",
+      o: ["6 m/s", "19 m/s", "36 m/s", "360 m/s"], a: 1,
+      e: "v_máx = √(µs·g·R) = √(0,9·10·40) = √360 ≈ 19 m/s." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
