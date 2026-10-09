@@ -58,6 +58,7 @@ a{color:var(--accent)}
 .muted{color:var(--muted)}
 .mono{font-family:var(--f-mono)}
 .prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
 section{display:grid; gap:22px; min-width:0}
 .block{display:grid; gap:12px; min-width:0}
 
@@ -234,12 +235,14 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 .nl-dot.bad{fill:var(--red)}
 .status.bad{background:var(--red-soft); color:var(--red)}
 .qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
 </style>
 
 <nav class="nav" aria-label="Secciones del módulo">
   <div class="nav-in">
     <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
-    <a href="#teoria">1 Teoría <span>15 min</span></a>
+    <a href="#teoria">1 Teoría <span>35 min</span></a>
     <a href="#lab">2 Lab <span>15 min</span></a>
     <a href="#taller">3 Taller <span>45 min</span></a>
     <a href="#quiz">4 Quiz <span>10 min</span></a>
@@ -251,8 +254,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <p class="eyebrow">Física 1 · Parcial 2 · Módulo 3 de 9</p>
     <h1>Fricción y equilibrio con desigualdades</h1>
     <div class="meta">
-      <span class="chip-ref">Refuerzo</span>
-      <span>Miércoles 7 de octubre · carga media (con M2) · ~1,5 h</span>
+      <span>Jueves 8 de octubre · ~2 h</span>
       <span>Libro: 5.3 · Salió en 3 de 4 parciales</span>
     </div>
     <p class="prose">El profesor casi nunca pregunta «¿cuánto vale la fricción?». Pregunta por la masa máxima, la mínima o el rango de masas para que haya equilibrio. Eso se resuelve siempre igual: dos casos límite y una desigualdad en cada uno.</p>
@@ -264,53 +266,127 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 1. TEORÍA ============ -->
   <section id="teoria" aria-labelledby="t-h">
-    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Estática contra cinética, hacia dónde apunta la fricción y la receta de los rangos.</p></div>
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Desde cero: qué es la fricción, sus dos tipos, cómo se calcula y cómo se resuelven los problemas de masa máxima, mínima y rango.</p></div>
 
     <div class="block">
-      <h3>Fricción estática y cinética</h3>
-      <div class="laws">
-        <div class="law"><b>Estática</b><span><span class="mono">f<sub>s</sub> ≤ µ<sub>s</sub>·N</span>. Es una incógnita: vale lo que haga falta para que el bloque no se mueva, hasta un máximo de µ<sub>s</sub>·N.</span><span class="ex">Solo puedes escribir f<sub>s</sub> = µ<sub>s</sub>·N cuando el bloque está a punto de deslizar.</span></div>
-        <div class="law"><b>Cinética</b><span><span class="mono">f<sub>k</sub> = µ<sub>k</sub>·N</span>. Vale eso siempre que haya deslizamiento, sin importar la rapidez.</span><span class="ex">Apunta en contra del movimiento relativo entre las superficies.</span></div>
-        <div class="law"><b>µ<sub>s</sub> &gt; µ<sub>k</sub></b><span>Cuesta más arrancar que mantener el movimiento.</span><span class="ex">Por eso la gráfica de fricción contra fuerza aplicada tiene un salto (lo ves en el lab).</span></div>
-      </div>
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">f</td><td>«efe»</td><td>Fuerza de fricción (también se llama rozamiento).</td><td>N (newtons)</td></tr>
+          <tr><td class="mono">fₛ</td><td>«efe sub ese»</td><td>Fricción <b>estática</b>: la que actúa cuando el objeto <b>no</b> se desliza. La «s» viene de <i>static</i>.</td><td>N</td></tr>
+          <tr><td class="mono">fₖ</td><td>«efe sub ka»</td><td>Fricción <b>cinética</b>: la que actúa cuando el objeto <b>sí</b> se está deslizando. La «k» viene de <i>kinetic</i> (movimiento).</td><td>N</td></tr>
+          <tr><td class="mono">N</td><td>«ene»</td><td>Fuerza normal: la que hace la superficie, perpendicular a ella (M1). No la confundas con la unidad N de newtons.</td><td>N</td></tr>
+          <tr><td class="mono">µ</td><td>«mu» (letra griega)</td><td>Coeficiente de fricción: un número sin unidades que dice qué tan «pegajosas» son dos superficies. Cerca de 0 es hielo; cerca de 1, caucho sobre asfalto.</td><td>sin unidades</td></tr>
+          <tr><td class="mono">µₛ</td><td>«mu sub ese»</td><td>Coeficiente de fricción <b>estática</b>.</td><td>sin unidades</td></tr>
+          <tr><td class="mono">µₖ</td><td>«mu sub ka»</td><td>Coeficiente de fricción <b>cinética</b>. Casi siempre µₖ &lt; µₛ.</td><td>sin unidades</td></tr>
+          <tr><td class="mono">θ, β</td><td>«theta», «beta»</td><td>Ángulos del plano inclinado: θ con la horizontal, β con la vertical (M1).</td><td>grados</td></tr>
+          <tr><td class="mono">m, M, X</td><td>—</td><td>Masas de los bloques. X suele ser la masa que te piden hallar.</td><td>kg</td></tr>
+          <tr><td class="mono">g</td><td>—</td><td>Aceleración de la gravedad. En el parcial, g = 10 m/s².</td><td>m/s²</td></tr>
+          <tr><td class="mono">≤</td><td>«menor o igual que»</td><td>fₛ ≤ 50 N quiere decir que fₛ puede valer cualquier cosa desde 0 hasta 50 N, pero no más.</td><td>—</td></tr>
+        </tbody>
+      </table></div>
     </div>
 
     <div class="block">
-      <h3>¿Hacia dónde apunta la fricción estática?</h3>
-      <div class="callout">
-        <p><b>Quítala mentalmente.</b> Mira hacia dónde se movería el bloque si no hubiera fricción. La fricción estática apunta al revés.</p>
-        <p>Ejemplo: un bloque X en un plano, unido a una masa colgante m. Si mg &gt; Xg·sen θ, sin fricción X subiría por el plano, así que la fricción apunta plano abajo.</p>
-      </div>
-    </div>
-
-    <div class="block">
-      <h3>Receta para masa máxima, mínima o rango</h3>
-      <ol class="steps">
-        <li><span><b>Identifica los dos casos límite:</b> a punto de subir y a punto de bajar (o de moverse a la derecha y a la izquierda).</span></li>
-        <li><span><b>En cada caso, f = µ<sub>s</sub>·N</b> y apunta en contra de ese movimiento.</span></li>
-        <li><span><b>Escribe el equilibrio de cada caso.</b> Sale una desigualdad por caso.</span></li>
-        <li><span><b>Une las dos desigualdades:</b> ese es el rango. La masa máxima sale de un caso y la mínima del otro.</span></li>
-      </ol>
+      <h3>¿Qué es la fricción?</h3>
       <div class="figs">
-        <figure>
-          <div id="fig-rango"></div>
-          <figcaption>Bloque X en un plano de ángulo θ con la horizontal, unido a una masa colgante m. Coeficiente µ<sub>s</sub>.</figcaption>
-        </figure>
+        <figure><div id="fig-caja"></div><figcaption>Empujas una caja con F. La fricción f aparece en la superficie de contacto y apunta al revés.</figcaption></figure>
         <div class="prose">
-          <div class="eq"><span>X a punto de <b>subir</b> (f plano abajo):</span><span><b>m ≤ X(sen θ + µ<sub>s</sub> cos θ)</b></span></div>
-          <div class="eq"><span>X a punto de <b>bajar</b> (f plano arriba):</span><span><b>X(sen θ − µ<sub>s</sub> cos θ) ≤ m</b></span></div>
-          <div class="callout trap"><h3>Trampas</h3>
-            <p>Si sen θ − µ<sub>s</sub> cos θ ≤ 0, X nunca se desliza hacia abajo: no hay límite superior.</p>
-            <p>Revisa el sentido de la desigualdad al despejar. La solución oficial de 2025-1 (Abierto 2, parte A) lo tiene volteado.</p>
-          </div>
+          <p>Ninguna superficie es perfectamente lisa. Vistas al microscopio, las dos superficies tienen montañitas que se traban entre sí. Esa traba es la <b>fricción</b>: una fuerza que hace la superficie sobre el objeto.</p>
+          <p>Tiene tres características:</p>
+          <ul>
+            <li>Es <b>paralela a la superficie</b>, a diferencia de la normal, que es perpendicular.</li>
+            <li>Apunta <b>en contra del deslizamiento</b>, o en contra de hacia dónde el objeto <i>quiere</i> deslizarse.</li>
+            <li>Es más grande mientras más apretadas estén las superficies, o sea, mientras más grande sea la normal N.</li>
+          </ul>
         </div>
       </div>
     </div>
 
     <div class="block">
-      <h3>El ángulo crítico</h3>
-      <div class="eq"><span>Bloque solo en un plano: empieza a deslizar cuando mg·sen θ = µ<sub>s</sub>·mg·cos θ</span><span><b>tan θ<sub>crítico</sub> = µ<sub>s</sub></b>  (con el ángulo desde la vertical: tan β = 1/µ<sub>s</sub>)</span></div>
-      <p class="prose muted">Con el ángulo desde la vertical cambia todo a la vez: la normal es mg·sen β, la componente a lo largo es mg·cos β y la fricción máxima es µ<sub>s</sub>·mg·sen β.</p>
+      <h3>Tipo 1: fricción estática (fₛ), cuando el objeto NO se mueve</h3>
+      <p class="prose">Piensa en empujar un mueble pesado. Empujas un poco y no se mueve. Empujas más fuerte y sigue sin moverse. Eso pasa porque la fricción estática <b>se ajusta</b>: vale exactamente lo necesario para cancelar tu empujón. Pero tiene un tope. Si empujas más que ese tope, el mueble arranca.</p>
+      <div class="eq"><span><b>fₛ ≤ µₛ · N</b></span><span>«La fricción estática vale lo que haga falta, hasta un máximo de µₛ por N».</span></div>
+      <div class="callout">
+        <h3>Ejemplo resuelto</h3>
+        <p>Una caja de 10 kg está en un piso con µₛ = 0,5. Su peso es mg = 10 · 10 = 100 N. En un piso horizontal, sin más fuerzas verticales, la normal es N = 100 N. El tope de la fricción estática es µₛ · N = 0,5 · 100 = <b>50 N</b>.</p>
+        <div class="tw"><table>
+          <thead><tr><th>Empujas con</th><th>¿Se mueve?</th><th>Fricción estática fₛ</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">10 N</td><td>No</td><td class="mono">10 N (cancela tu empujón)</td></tr>
+            <tr><td class="mono">30 N</td><td>No</td><td class="mono">30 N</td></tr>
+            <tr><td class="mono">50 N</td><td>Justo a punto</td><td class="mono">50 N = µₛ · N (el tope)</td></tr>
+            <tr><td class="mono">60 N</td><td>Sí: arranca</td><td>Ya no es estática (mira el tipo 2)</td></tr>
+          </tbody>
+        </table></div>
+        <p>Fíjate: con 10 N la fricción <b>no</b> vale 50 N. Si valiera 50 N, la caja se movería hacia atrás, hacia ti, y eso no pasa.</p>
+      </div>
+      <div class="callout trap"><h3>La regla de oro</h3><p>Solo puedes escribir <b>fₛ = µₛ · N</b> (con igual) cuando el problema dice que el objeto está <b>a punto de deslizar</b>, o cuando buscas una masa máxima o mínima. En cualquier otro caso, fₛ es una incógnita que sale de las ecuaciones de equilibrio.</p></div>
+    </div>
+
+    <div class="block">
+      <h3>Tipo 2: fricción cinética (fₖ), cuando el objeto SÍ se desliza</h3>
+      <p class="prose">Cuando el objeto ya se está deslizando, la fricción deja de ajustarse y tiene un valor fijo:</p>
+      <div class="eq"><span><b>fₖ = µₖ · N</b></span><span>Apunta en contra del movimiento, sin importar qué tan rápido vaya el objeto ni qué tan fuerte lo empujes.</span></div>
+      <p class="prose">Siguiendo el ejemplo, si µₖ = 0,4, una vez que la caja arranca la fricción baja a 0,4 · 100 = <b>40 N</b>. Por eso cuesta más arrancar un mueble que mantenerlo en movimiento: µₖ suele ser menor que µₛ. Lo vas a ver como un salto en la gráfica del lab.</p>
+    </div>
+
+    <div class="block">
+      <h3>Primero la normal, después la fricción</h3>
+      <p class="prose">La fricción depende de <b>N</b>, no directamente del peso. Solo en un piso horizontal, sin otras fuerzas verticales, N = mg. En un plano inclinado, N = mg·cos θ (M1). Si alguien empuja el bloque contra la superficie, N es más grande. Por eso el orden siempre es: <b>1) sacas N del eje perpendicular; 2) calculas la fricción con ese N.</b></p>
+    </div>
+
+    <div class="block">
+      <h3>¿Hacia dónde apunta la fricción estática?</h3>
+      <div class="callout">
+        <p><b>Truco: quítala mentalmente.</b> Imagina que no hay fricción y pregúntate hacia dónde se movería el objeto. La fricción estática apunta exactamente al revés.</p>
+        <p>Ejemplo: un bloque X en un plano inclinado, unido por una cuerda a un bloque m que cuelga. Si m pesa mucho, sin fricción X subiría por el plano, así que la fricción apunta <b>plano abajo</b>. Si X pesa mucho, X bajaría, así que la fricción apunta <b>plano arriba</b>.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Un bloque solo en un plano: ¿se queda o se desliza?</h3>
+      <div class="figs">
+        <figure><div id="fig-solo"></div><figcaption>Bloque solo en un plano de ángulo θ. El peso lo jala plano abajo, así que la fricción apunta plano arriba.</figcaption></figure>
+        <div class="prose">
+          <p><b>Eje perpendicular:</b> N = mg·cos θ.</p>
+          <p><b>Eje a lo largo del plano:</b> el peso jala plano abajo con mg·sen θ y la fricción lo sostiene: fₛ = mg·sen θ.</p>
+          <p><b>¿Alcanza la fricción?</b> Se queda quieto si fₛ ≤ µₛ·N, o sea, mg·sen θ ≤ µₛ·mg·cos θ. Simplificando: <b>tan θ ≤ µₛ</b>.</p>
+          <div class="eq"><span>Ángulo crítico (empieza a deslizar): <b>tan θ = µₛ</b></span><span>Ejemplo: si µₛ = 0,58, desliza a partir de θ = 30°, porque tan 30° ≈ 0,58.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>La receta del parcial: masa máxima, mínima o rango</h3>
+      <p class="prose">El profesor casi nunca pregunta «¿cuánto vale la fricción?». Pregunta: «¿cuál es la masa máxima para que haya equilibrio?», o la mínima, o el rango entre las dos. Se resuelve así:</p>
+      <ol class="steps">
+        <li><span><b>Identifica los dos casos límite:</b> el bloque a punto de subir y el bloque a punto de bajar (o a punto de moverse a la derecha y a la izquierda).</span></li>
+        <li><span><b>En cada caso, la fricción vale su tope µₛ·N</b> y apunta en contra de ese movimiento.</span></li>
+        <li><span><b>Escribe el equilibrio de cada caso.</b> De cada uno sale un límite.</span></li>
+        <li><span><b>Junta los dos límites:</b> ese es el rango. La masa máxima sale de un caso y la mínima del otro.</span></li>
+      </ol>
+      <div class="figs">
+        <figure><div id="fig-caso1"></div><figcaption><b>Caso 1: X a punto de subir.</b> La fricción apunta plano abajo.</figcaption></figure>
+        <figure><div id="fig-caso2"></div><figcaption><b>Caso 2: X a punto de bajar.</b> La fricción apunta plano arriba.</figcaption></figure>
+      </div>
+      <div class="callout">
+        <h3>Ejemplo resuelto: θ = 30°, µₛ = 0,2</h3>
+        <p>La cuerda es la misma de los dos lados, así que T = mg (el bloque m cuelga quieto). Para X: N = Xg·cos 30° = 0,866·Xg.</p>
+        <p><b>Caso 1 (X a punto de subir, f plano abajo):</b> lo que jala hacia arriba es igual a lo que jala hacia abajo: mg = Xg·sen 30° + 0,2·0,866·Xg = 0,673·Xg. Entonces X = m/0,673 ≈ <b>1,49 m</b>. Si X es más liviano que eso, X sube: necesitas X ≥ 1,49 m.</p>
+        <p><b>Caso 2 (X a punto de bajar, f plano arriba):</b> Xg·sen 30° = mg + 0,2·0,866·Xg, o sea, 0,327·Xg = mg. Entonces X = m/0,327 ≈ <b>3,06 m</b>. Si X es más pesado que eso, X baja: necesitas X ≤ 3,06 m.</p>
+        <p><b>Rango: 1,49 m ≤ X ≤ 3,06 m.</b> En el lab puedes poner θ = 30° y µₛ = 0,2 y ver la misma banda.</p>
+      </div>
+      <div class="eq"><span>En general, con θ medido desde la horizontal:</span><span>Caso 1: <b>m ≤ X(sen θ + µₛ cos θ)</b>   ·   Caso 2: <b>X(sen θ − µₛ cos θ) ≤ m</b></span></div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas que pone el profesor</h3>
+      <p>Usar fₛ = µₛ·N cuando el bloque no está a punto de deslizar.</p>
+      <p>Usar N = mg en un plano inclinado (es mg·cos θ) o cuando hay fuerzas que aprietan el bloque contra la superficie.</p>
+      <p>Medir el ángulo desde la vertical (β) y no cambiar seno por coseno: con β, la normal es mg·sen β y la componente a lo largo es mg·cos β (M1).</p>
+      <p>Si sen θ − µₛ cos θ ≤ 0, el bloque X nunca se desliza hacia abajo: no hay límite superior.</p>
+      <p>Revisar el sentido de la desigualdad al despejar. La solución oficial de 2025-1 (Abierto 2, parte A) la tiene volteada.</p>
     </div>
   </section>
 
@@ -484,7 +560,20 @@ function wallSvg() {
   g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
   return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
 }
-$("#fig-rango").innerHTML = inclineSvg({ deg: 30, mode: "h", label: "X", pulley: "m", aria: "Bloque X en un plano inclinado unido a una masa colgante m" });
+function boxSvg() {
+  let g = `<line x1="10" y1="160" x2="310" y2="160" class="sv-line"/>`;
+  for (let x = 16; x < 312; x += 12) g += `<line x1="${x}" y1="160" x2="${x - 6}" y2="168" class="sv-hatch"/>`;
+  g += `<rect x="125" y="105" width="70" height="55" class="sv-block"/><text x="160" y="137" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(40, 122, 123, 122, "a-f") + `<text x="40" y="114" class="sv-t t-f">F (tu empujón)</text>`;
+  g += arrowSvg(124, 153, 70, 153, "a-fric") + `<text x="66" y="150" class="sv-t t-fric" text-anchor="end">f</text>`;
+  g += arrowSvg(150, 104, 150, 50, "a-n") + `<text x="144" y="58" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(172, 134, 172, 200, "a-peso") + `<text x="178" y="198" class="sv-t t-peso">mg</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Caja empujada con una fuerza F; la fricción f apunta al revés">${g}</svg>`;
+}
+$("#fig-caja").innerHTML = boxSvg();
+$("#fig-solo").innerHTML = inclineSvg({ deg: 30, mode: "h", label: "m", fric: { dir: 1, len: 40 }, aria: "Bloque solo en un plano inclinado con la fricción apuntando plano arriba" });
+$("#fig-caso1").innerHTML = inclineSvg({ deg: 30, mode: "h", label: "X", pulley: "m", fric: { dir: -1, len: 40 }, aria: "Caso 1: X a punto de subir, fricción plano abajo" });
+$("#fig-caso2").innerHTML = inclineSvg({ deg: 30, mode: "h", label: "X", pulley: "m", fric: { dir: 1, len: 40 }, aria: "Caso 2: X a punto de bajar, fricción plano arriba" });
 
 /* ---------- Lab 1: fricción contra fuerza ---------- */
 const G = { F: 0.3, ms: 0.6, mk: 0.4 };

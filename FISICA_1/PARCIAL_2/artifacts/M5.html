@@ -58,6 +58,7 @@ a{color:var(--accent)}
 .muted{color:var(--muted)}
 .mono{font-family:var(--f-mono)}
 .prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
 section{display:grid; gap:22px; min-width:0}
 .block{display:grid; gap:12px; min-width:0}
 
@@ -245,12 +246,14 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 .sv-block.bad{stroke:var(--red)}
 .sv-dash.bad{stroke:var(--red)}
 .sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
 </style>
 
 <nav class="nav" aria-label="Secciones del módulo">
   <div class="nav-in">
     <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
-    <a href="#teoria">1 Teoría <span>30 min</span></a>
+    <a href="#teoria">1 Teoría <span>45 min</span></a>
     <a href="#lab">2 Lab <span>20 min</span></a>
     <a href="#taller">3 Taller <span>50 min</span></a>
     <a href="#quiz">4 Quiz <span>10 min</span></a>
@@ -262,7 +265,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <p class="eyebrow">Física 1 · Parcial 2 · Módulo 5 de 9</p>
     <h1>Dinámica del movimiento circular</h1>
     <div class="meta">
-      <span>Viernes 9 (si alcanza) o sábado 10 de octubre · ~2 h</span>
+      <span>Viernes 9 (si alcanza) o sábado 10 de octubre · ~2,5 h</span>
       <span>Libro: 5.4 (y repaso de 3.4)</span>
     </div>
     <p class="prose">Este módulo es la mitad del problema que más pesa en el parcial. En M8 lo juntas con energía. Aquí aprendes a escribir bien la ecuación hacia el centro, que es donde casi todos se equivocan de signo.</p>
@@ -274,60 +277,159 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 1. TEORÍA ============ -->
   <section id="teoria" aria-labelledby="t-h">
-    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es la aceleración centrípeta, cómo se escribe la 2.ª ley hacia el centro y los siete casos que salen.</p></div>
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Desde cero: qué es moverse en círculo, por qué eso necesita una fuerza hacia el centro y cómo se escribe la ecuación en cada caso del parcial.</p></div>
 
     <div class="block">
-      <h3>Lo que ya sabes de cinemática</h3>
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">R</td><td>«erre»</td><td>Radio del círculo: la distancia del centro al objeto. Cuidado, no es el diámetro.</td><td>m</td></tr>
+          <tr><td class="mono">v</td><td>«ve»</td><td>Rapidez: qué tan rápido va el objeto.</td><td>m/s</td></tr>
+          <tr><td class="mono">rad</td><td>«radián»</td><td>Unidad para medir ángulos. Una vuelta completa son 2π rad ≈ 6,28 rad (lo mismo que 360°).</td><td>—</td></tr>
+          <tr><td class="mono">ω</td><td>«omega» (letra griega)</td><td>Velocidad angular: cuántos radianes gira el objeto cada segundo.</td><td>rad/s</td></tr>
+          <tr><td class="mono">a<sub>c</sub></td><td>«a sub ce»</td><td>Aceleración centrípeta: la aceleración que apunta hacia el centro del círculo.</td><td>m/s²</td></tr>
+          <tr><td class="mono">rpm</td><td>«erre pe eme»</td><td>Revoluciones (vueltas) por minuto. 60 rpm = 1 vuelta por segundo.</td><td>—</td></tr>
+          <tr><td class="mono">T</td><td>«te»</td><td>Tensión de una cuerda (M2). En otros libros T es también el tiempo de una vuelta; aquí a ese tiempo le decimos «tiempo de una vuelta» para no confundirlos.</td><td>N</td></tr>
+          <tr><td class="mono">L</td><td>«ele»</td><td>Largo de la cuerda de un péndulo. Es el radio de su círculo.</td><td>m</td></tr>
+          <tr><td class="mono">N, fₛ, µₛ</td><td>«ene», «efe sub ese», «mu sub ese»</td><td>Normal (M1), fricción estática y su coeficiente (M3).</td><td>N, N, sin unidades</td></tr>
+          <tr><td class="mono">θ</td><td>«theta»</td><td>Ángulo de inclinación de una curva peraltada.</td><td>grados</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>Moverse en círculo: la velocidad es tangente</h3>
       <div class="figs">
-        <figure><div id="fig-circ"></div><figcaption>La velocidad es tangente; la aceleración centrípeta apunta al centro.</figcaption></figure>
+        <figure><div id="fig-circ"></div><figcaption>La velocidad v es tangente al círculo; la aceleración centrípeta a<sub>c</sub> apunta al centro.</figcaption></figure>
         <div class="prose">
-          <div class="eq"><span><b>a<sub>c</sub> = v²/R = ω²R</b>, siempre hacia el centro</span><span><b>v = ωR</b>   ·   ω = 2π/T   ·   1 rpm = 2π/60 rad/s</span></div>
-          <p>Aunque la rapidez sea constante, la velocidad cambia de dirección todo el tiempo. Ese cambio es la aceleración centrípeta, y para producirla hace falta una fuerza neta hacia el centro.</p>
+          <p>Un objeto en movimiento circular da vueltas alrededor de un centro, siempre a la misma distancia R. Si la rapidez no cambia, se llama <b>movimiento circular uniforme</b>.</p>
+          <p>La <b>velocidad</b> tiene tamaño (la rapidez v) y dirección. En el círculo, la dirección es siempre <b>tangente</b>: «rozando» el círculo. Si haces girar una piedra amarrada a una cuerda y la sueltas, sale disparada en línea recta por la tangente, no hacia afuera.</p>
         </div>
       </div>
     </div>
 
     <div class="block">
-      <h3>La 2.ª ley hacia el centro</h3>
-      <div class="eq"><span><b>Σ F<sub>hacia el centro</sub> = m·v²/R</b></span><span>Las fuerzas que apuntan al centro van con +, las que se alejan del centro van con −.</span></div>
-      <div class="callout trap">
-        <h3>No existe una «fuerza centrípeta» aparte</h3>
-        <p>«Centrípeta» es el nombre de la suma de fuerzas hacia el centro. En el diagrama solo dibujas fuerzas reales: peso, normal, tensión y fricción. Y <b>nunca</b> dibujes una «fuerza centrífuga»: en un marco inercial no existe. La solución oficial de 2025-1 SM2 la menciona; no la copies.</p>
+      <h3>¿Por qué hay aceleración si la rapidez no cambia?</h3>
+      <p class="prose">La aceleración mide cuánto cambia la velocidad, y la velocidad incluye su dirección. En el círculo la dirección cambia todo el tiempo, así que hay aceleración aunque la rapidez sea constante. Esa aceleración apunta <b>hacia el centro</b> y se llama <b>centrípeta</b> («que busca el centro»):</p>
+      <div class="eq"><span><b>a<sub>c</sub> = v² / R</b>   (siempre hacia el centro)</span><span>Ejemplo: un carro a 20 m/s en una curva de radio 50 m tiene a<sub>c</sub> = 20²/50 = 400/50 = 8 m/s².</span></div>
+    </div>
+
+    <div class="block">
+      <h3>Radianes y velocidad angular ω</h3>
+      <p class="prose">Muchas veces el problema no te da v sino qué tan rápido gira algo (un disco, un cilindro). Para eso se usa la velocidad angular ω: cuántos radianes gira por segundo. Una vuelta completa son 2π rad.</p>
+      <div class="eq"><span><b>v = ω · R</b>   y por lo tanto   <b>a<sub>c</sub> = ω² · R</b></span><span>ω = 2π / (tiempo de una vuelta)</span></div>
+      <div class="callout"><h3>Ejemplo resuelto</h3>
+        <p>Un disco da 1 vuelta por segundo (60 rpm). Entonces ω = 2π/1 ≈ <b>6,28 rad/s</b>.</p>
+        <p>Un punto a R = 0,2 m del centro va a v = ω·R = 6,28 · 0,2 ≈ <b>1,26 m/s</b>, y su aceleración centrípeta es a<sub>c</sub> = ω²·R = 6,28² · 0,2 ≈ <b>7,9 m/s²</b>.</p>
       </div>
     </div>
 
     <div class="block">
-      <h3>Receta</h3>
+      <h3>La 2.ª ley hacia el centro</h3>
+      <p class="prose">Para que haya aceleración hacia el centro, tiene que haber una <b>fuerza neta hacia el centro</b> (2.ª ley de Newton, ΣF = m·a):</p>
+      <div class="eq"><span><b>Σ F<sub>hacia el centro</sub> = m · v² / R</b>   (o m · ω² · R)</span><span>Las fuerzas que apuntan al centro van con +; las que se alejan del centro, con −.</span></div>
+      <div class="figs">
+        <figure><div id="fig-cuerda"></div><figcaption>Piedra girando amarrada a una cuerda, vista desde arriba: la tensión es la que apunta al centro.</figcaption></figure>
+        <div class="prose">
+          <p><b>«Fuerza centrípeta» no es una fuerza nueva.</b> Es el nombre que se le da a la suma de las fuerzas reales que apuntan al centro. Según la situación, la hace una fuerza distinta:</p>
+          <ul>
+            <li>Piedra con cuerda: la <b>tensión</b>.</li>
+            <li>Carro en una curva: la <b>fricción</b> de las llantas.</li>
+            <li>Persona en el gravitrón: la <b>normal</b> de la pared.</li>
+            <li>La Luna alrededor de la Tierra: la <b>gravedad</b>.</li>
+          </ul>
+          <div class="callout trap"><h3>No existe la «fuerza centrífuga»</h3><p>Cuando un carro gira, sientes que algo te tira hacia afuera. No es una fuerza: es tu cuerpo, que quiere seguir derecho (1.ª ley). Nunca la dibujes en un diagrama. La solución oficial de 2025-1 SM2 la menciona; no la copies.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Receta para cualquier problema circular</h3>
       <ol class="steps">
-        <li><span><b>Ubica el centro del círculo</b> y el radio R. Ojo: radio, no diámetro.</span></li>
-        <li><span><b>Haz el diagrama de cuerpo libre</b> en el punto que te preguntan.</span></li>
-        <li><span><b>Eje radial con + hacia el centro.</b> El otro eje es el vertical o el tangencial.</span></li>
-        <li><span><b>Radial:</b> ΣF hacia el centro = mv²/R (o mω²R).</span></li>
-        <li><span><b>El otro eje:</b> si no hay aceleración en esa dirección, ΣF = 0.</span></li>
+        <li><span><b>Ubica el centro del círculo y el radio R.</b></span></li>
+        <li><span><b>Dibuja el diagrama de cuerpo libre</b> en el punto que te preguntan, solo con fuerzas reales.</span></li>
+        <li><span><b>Eje radial:</b> positivo hacia el centro.</span></li>
+        <li><span><b>Escribe</b> ΣF<sub>hacia el centro</sub> = m·v²/R (o m·ω²·R).</span></li>
+        <li><span><b>El otro eje</b> (vertical o tangencial): si no hay aceleración en esa dirección, ΣF = 0.</span></li>
       </ol>
     </div>
 
     <div class="block">
-      <h3>Los casos que salen</h3>
+      <h3>Ejemplo resuelto 1: el disco giratorio (parcial 2025-1)</h3>
+      <div class="figs">
+        <figure><div id="fig-disco"></div><figcaption>Bloque sobre un disco que gira, visto desde arriba. La fricción apunta al centro.</figcaption></figure>
+        <div class="prose">
+          <p>Un bloque está a R = 0,2 m del eje, con µₛ = 0,5. ¿Qué tan rápido puede girar el disco sin que el bloque se deslice?</p>
+          <p><b>Vertical:</b> N = mg. <b>Hacia el centro:</b> lo único horizontal es la fricción estática, así que fₛ = m·ω²·R.</p>
+          <p><b>Tope de la fricción (M3):</b> fₛ ≤ µₛ·N, o sea, m·ω²·R ≤ µₛ·m·g. La m se cancela: ω² ≤ µₛ·g/R = 0,5 · 10 / 0,2 = 25.</p>
+          <div class="eq"><span><b>ω<sub>máx</sub> = √(µₛ·g/R) = 5 rad/s</b></span><span>Si gira más rápido, la fricción no alcanza y el bloque sale por la tangente.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto 2: el rotor o gravitrón (parcial 2026-1)</h3>
+      <div class="figs">
+        <figure><div id="fig-rotor-t"></div><figcaption>Persona (bloque) contra la pared de un cilindro que gira, visto de lado.</figcaption></figure>
+        <div class="prose">
+          <p>Cilindro de radio R = 2,5 m, con µₛ = 0,4 entre la pared y la persona. ¿Qué tan rápido tiene que girar para que la persona no resbale hacia abajo?</p>
+          <p><b>Hacia el centro:</b> ahora lo que apunta al centro es la <b>normal</b> de la pared: N = m·ω²·R.</p>
+          <p><b>Vertical:</b> la fricción sostiene el peso: fₛ = mg, y necesita fₛ ≤ µₛ·N. Entonces mg ≤ µₛ·m·ω²·R, o sea, ω² ≥ g/(µₛ·R) = 10/(0,4 · 2,5) = 10.</p>
+          <div class="eq"><span><b>ω<sub>mín</sub> = √(g/(µₛ·R)) ≈ 3,2 rad/s</b></span><span>Si gira más despacio, la normal es pequeña, la fricción no alcanza y la persona resbala.</span></div>
+        </div>
+      </div>
+      <div class="callout"><h3>¿Por qué uno da un máximo y el otro un mínimo?</h3>
+        <p>En el <b>disco</b>, girar más rápido <b>exige</b> más fricción: hay un ω <b>máximo</b>. En el <b>rotor</b>, girar más rápido aumenta la normal y con ella la fricción <b>disponible</b>: hay un ω <b>mínimo</b>. El profesor pone las dos fórmulas como opciones.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Círculos verticales: péndulo y loop (la base de M8)</h3>
+      <div class="figs">
+        <figure><div id="fig-pend"></div><figcaption><b>Péndulo en el punto más bajo.</b> El centro está arriba: la tensión apunta al centro y el peso se aleja.</figcaption></figure>
+        <div class="prose">
+          <div class="eq"><span><b>T − mg = m·v²/L</b></span></div>
+          <p><b>Ejemplo:</b> m = 1 kg, L = 1 m, v = 3 m/s. T − 10 = 1 · 9/1, así que <b>T = 19 N</b>. La tensión es mayor que el peso: la cuerda sostiene el peso y además tiene que dar la fuerza hacia el centro.</p>
+        </div>
+      </div>
+      <div class="figs">
+        <figure><div id="fig-in"></div><figcaption><b>Loop, en lo más alto, por dentro.</b> El riel empuja hacia abajo (hacia el centro) y el peso también.</figcaption></figure>
+        <div class="prose">
+          <div class="eq"><span><b>N + mg = m·v²/R</b></span></div>
+          <p>Si el carro va más lento, la normal baja. En el límite N = 0 el carro apenas toca el riel: mg = m·v²/R, así que <b>v<sub>mín</sub> = √(g·R)</b>. Ejemplo: con R = 2,5 m, v<sub>mín</sub> = √25 = 5 m/s.</p>
+        </div>
+      </div>
+      <div class="figs">
+        <figure><div id="fig-out"></div><figcaption><b>Encima de una esfera, por fuera.</b> La normal empuja hacia afuera, lejos del centro.</figcaption></figure>
+        <div class="prose">
+          <div class="eq"><span><b>mg − N = m·v²/R</b></span></div>
+          <p>Aquí la normal va con signo menos porque se aleja del centro. Si v² &gt; g·R, la normal saldría negativa: el bloque se despega de la superficie. Es la idea de «pierde contacto» que verás en M8 con la semiesfera.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Resumen: los casos que salen</h3>
       <div class="tw"><table>
         <thead><tr><th>Situación</th><th>Qué apunta al centro</th><th>Ecuación</th><th>Resultado típico</th></tr></thead>
         <tbody>
-          <tr><td><b>Disco giratorio</b> (2025-1)</td><td>Fricción estática</td><td class="mono">f = mω²R ≤ µs·mg</td><td class="mono">ω<sub>máx</sub> = √(µs·g/R)</td></tr>
-          <tr><td><b>Rotor o gravitrón</b> (2026-1)</td><td>Normal de la pared</td><td class="mono">N = mω²R;  f = mg ≤ µs·N</td><td class="mono">ω<sub>mín</sub> = √(g/(µs·R))</td></tr>
-          <tr><td><b>Curva plana</b></td><td>Fricción estática</td><td class="mono">mv²/R ≤ µs·mg</td><td class="mono">v<sub>máx</sub> = √(µs·g·R)</td></tr>
-          <tr><td><b>Curva peraltada</b> sin fricción</td><td>Parte de la normal</td><td class="mono">N sen θ = mv²/R;  N cos θ = mg</td><td class="mono">tan θ = v²/(gR)</td></tr>
+          <tr><td><b>Disco giratorio</b> (2025-1)</td><td>Fricción estática</td><td class="mono">fₛ = mω²R ≤ µₛ·mg</td><td class="mono">ω<sub>máx</sub> = √(µₛ·g/R)</td></tr>
+          <tr><td><b>Rotor o gravitrón</b> (2026-1)</td><td>Normal de la pared</td><td class="mono">N = mω²R;  mg ≤ µₛ·N</td><td class="mono">ω<sub>mín</sub> = √(g/(µₛ·R))</td></tr>
+          <tr><td><b>Curva plana</b></td><td>Fricción estática</td><td class="mono">mv²/R ≤ µₛ·mg</td><td class="mono">v<sub>máx</sub> = √(µₛ·g·R)</td></tr>
+          <tr><td><b>Curva peraltada</b> sin fricción</td><td>Parte horizontal de la normal</td><td class="mono">N sen θ = mv²/R;  N cos θ = mg</td><td class="mono">tan θ = v²/(gR)</td></tr>
           <tr><td><b>Péndulo</b>, punto más bajo</td><td>Tensión (el peso se aleja)</td><td class="mono">T − mg = mv²/L</td><td class="mono">T &gt; mg siempre</td></tr>
           <tr><td><b>Loop por dentro</b>, punto más alto</td><td>Normal y peso (los dos)</td><td class="mono">N + mg = mv²/R</td><td class="mono">v<sub>mín</sub> = √(gR), con N = 0</td></tr>
           <tr><td><b>Sobre una esfera</b>, en la cima</td><td>Peso (la normal se aleja)</td><td class="mono">mg − N = mv²/R</td><td class="mono">se despega si v² &gt; gR</td></tr>
         </tbody>
       </table></div>
-      <div class="figs">
-        <figure><div id="fig-in"></div><figcaption><b>Por dentro</b> (loop): la normal empuja hacia el centro.</figcaption></figure>
-        <figure><div id="fig-out"></div><figcaption><b>Por fuera</b> (cima de una esfera): la normal empuja hacia afuera.</figcaption></figure>
-      </div>
-      <div class="callout"><h3>¿Mínimo o máximo?</h3>
-        <p>En el <b>disco</b>, girar más rápido exige más fricción: hay un ω <b>máximo</b>. En el <b>rotor</b>, girar más rápido aumenta la normal y con ella la fricción disponible: hay un ω <b>mínimo</b>. El profesor pone las dos fórmulas como opciones.</p>
-      </div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas que pone el profesor</h3>
+      <p>Dibujar una «fuerza centrífuga» o una «fuerza centrípeta» como si fuera una fuerza más.</p>
+      <p>El signo de la normal: por dentro del círculo apunta al centro (+); por fuera se aleja (−).</p>
+      <p>Confundir el ω mínimo del rotor con el ω máximo del disco.</p>
+      <p>Usar el diámetro en vez del radio, o rpm sin pasarlas a rad/s.</p>
     </div>
   </section>
 
@@ -621,6 +723,21 @@ function flatCurveSvg(o = {}) {
 $("#fig-circ").innerHTML = circSvg({ v: true, a: true });
 $("#fig-in").innerHTML = loopSvg({ arrows: true, nLen: 30 });
 $("#fig-out").innerHTML = sphereSvg();
+function cuerdaSvg() {
+  const cx = 160, cy = 108, R = 82, bx = cx + R * Math.cos(-0.5), by = cy + R * Math.sin(-0.5);
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-dash"/><circle cx="${cx}" cy="${cy}" r="4" class="sv-axle"/>` + T(cx - 8, cy + 18, "centro (tu mano)", "sv-tl", "middle");
+  g += `<line x1="${cx}" y1="${cy}" x2="${f1(bx)}" y2="${f1(by)}" class="sv-rope"/>`;
+  g += `<circle cx="${f1(bx)}" cy="${f1(by)}" r="9" class="sv-ball"/>`;
+  const ux = (cx - bx) / R, uy = (cy - by) / R;
+  g += arrowSvg(bx + ux * 11, by + uy * 11, bx + ux * 52, by + uy * 52, "a-f") + T(bx + ux * 56 + 4, by + uy * 56 + 14, "T", "sv-t t-f");
+  const tx = Math.sin(0.5), ty = Math.cos(0.5);
+  g += arrowSvg(bx + tx * 11, by + ty * 11, bx + tx * 62, by + ty * 62, "a-v") + T(bx + tx * 66 + 4, by + ty * 66, "v", "sv-t t-v");
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Piedra girando amarrada a una cuerda, vista desde arriba">${g}</svg>`;
+}
+$("#fig-cuerda").innerHTML = cuerdaSvg();
+$("#fig-disco").innerHTML = diskSvg({ fLen: 40, notes: ["R = 0,2 m", "µs = 0,5"] });
+$("#fig-rotor-t").innerHTML = rotorSvg({ notes: ["R = 2,5 m", "µs = 0,4"] });
+$("#fig-pend").innerHTML = pendSvg();
 
 /* ---------- Lab ---------- */
 const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

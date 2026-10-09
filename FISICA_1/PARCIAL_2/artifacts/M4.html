@@ -58,6 +58,7 @@ a{color:var(--accent)}
 .muted{color:var(--muted)}
 .mono{font-family:var(--f-mono)}
 .prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
 section{display:grid; gap:22px; min-width:0}
 .block{display:grid; gap:12px; min-width:0}
 
@@ -237,12 +238,15 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
 /* M4 */
 .bar{fill:var(--accent)}
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
 </style>
 
 <nav class="nav" aria-label="Secciones del módulo">
   <div class="nav-in">
     <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
-    <a href="#teoria">1 Teoría <span>15 min</span></a>
+    <a href="#teoria">1 Teoría <span>35 min</span></a>
     <a href="#lab">2 Lab <span>10 min</span></a>
     <a href="#taller">3 Taller <span>50 min</span></a>
     <a href="#quiz">4 Quiz <span>10 min</span></a>
@@ -254,11 +258,10 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <p class="eyebrow">Física 1 · Parcial 2 · Módulo 4 de 9</p>
     <h1>Sistemas conectados con aceleración</h1>
     <div class="meta">
-      <span class="chip-ref">Refuerzo</span>
-      <span>Viernes 9 de octubre · carga suave · 1–1,5 h</span>
+      <span>Viernes 9 de octubre · ~2 h</span>
       <span>Libro: 5.2–5.3 · 50 pts en los parciales anteriores</span>
     </div>
-    <p class="prose">Ahora los bloques se mueven. Se usan las mismas fuerzas que en M1–M3, pero con ΣF = m·a en vez de ΣF = 0. Casi todo sale con un truco: tomar el sistema completo para hallar la aceleración y después aislar un bloque para la tensión.</p>
+    <p class="prose">Hasta ahora todo estaba quieto. En este módulo los bloques se mueven: aparecen la aceleración y la 2.ª ley de Newton con aceleración. Usas las mismas fuerzas de M1 a M3 (peso, normal, tensión y fricción), solo que ahora no se cancelan.</p>
     <div class="shortcut">
       <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, saltas M4 y pasas a M5.</p>
       <a class="btn" href="#quiz">Ir al quiz</a>
@@ -267,58 +270,106 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 1. TEORÍA ============ -->
   <section id="teoria" aria-labelledby="t-h">
-    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>La ligadura de la cuerda, el truco del sistema y los dos casos con fricción.</p></div>
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Desde cero: qué cambia cuando los bloques se mueven, cómo se resuelve paso a paso y el atajo que usa todo el mundo en el parcial.</p></div>
 
     <div class="block">
-      <h3>Lo que cambia cuando hay aceleración</h3>
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">a</td><td>«a»</td><td>Aceleración: cuánto cambia la velocidad cada segundo. Si a = 2 m/s², cada segundo el bloque va 2 m/s más rápido.</td><td>m/s²</td></tr>
+          <tr><td class="mono">ΣF</td><td>«sumatoria de efe»</td><td>La suma de todas las fuerzas en un eje, cada una con su signo (+ o −). La Σ es la letra griega sigma, que significa «suma».</td><td>N</td></tr>
+          <tr><td class="mono">T, T₁, T₂</td><td>«te», «te uno»…</td><td>Tensión de una cuerda (M2). Cada cuerda distinta tiene su propia tensión.</td><td>N</td></tr>
+          <tr><td class="mono">m, M, X, m₁, m₂</td><td>—</td><td>Masas de los bloques.</td><td>kg</td></tr>
+          <tr><td class="mono">g</td><td>—</td><td>Gravedad: 10 m/s² en el parcial. El peso de una masa m es mg.</td><td>m/s²</td></tr>
+          <tr><td class="mono">N</td><td>«ene»</td><td>Fuerza normal (M1).</td><td>N</td></tr>
+          <tr><td class="mono">fₛ, µₛ</td><td>«efe sub ese», «mu sub ese»</td><td>Fricción estática y su coeficiente (M3): cuando no hay deslizamiento, fₛ ≤ µₛ·N.</td><td>N, sin unidades</td></tr>
+          <tr><td class="mono">fₖ, µₖ</td><td>«efe sub ka», «mu sub ka»</td><td>Fricción cinética y su coeficiente (M3): cuando hay deslizamiento, fₖ = µₖ·N.</td><td>N, sin unidades</td></tr>
+          <tr><td class="mono">sistema</td><td>—</td><td>Un grupo de bloques que tomas juntos como si fueran uno solo (el «encierra y cuenta» de M2).</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>De equilibrio a movimiento</h3>
       <div class="laws">
-        <div class="law"><b>Ligadura</b><span>Bloques unidos por una cuerda que no se estira tienen la <b>misma aceleración en tamaño</b>.</span><span class="ex">Si hay una polea móvil, no: la polea móvil se mueve a la mitad (lo viste en M2).</span></div>
-        <div class="law"><b>Signos</b><span>Toma como positivo el sentido en que se mueve cada bloque, siguiendo la cuerda.</span><span class="ex">Así todos los bloques tienen +a, aunque uno suba y otro baje.</span></div>
-        <div class="law"><b>Tensión</b><span>Si el sistema acelera, <b>T ya no es el peso del colgante</b>.</span><span class="ex">El colgante que baja acelerando tiene T &lt; mg; uno que sube acelerando tiene T &gt; mg.</span></div>
+        <div class="law"><b>Antes</b><span>En M1, M2 y M3 todo estaba quieto: <b>ΣF = 0</b> en cada eje.</span><span class="ex">Las fuerzas se cancelaban.</span></div>
+        <div class="law"><b>Ahora</b><span>Los bloques aceleran: <b>ΣF = m·a</b> (2.ª ley de Newton).</span><span class="ex">Las fuerzas no se cancelan: lo que sobra es lo que acelera al bloque.</span></div>
+        <div class="law"><b>Signos</b><span>En cada bloque, toma como <b>positivo el sentido en el que se mueve</b>.</span><span class="ex">Si un bloque baja, «hacia abajo» es positivo para él; si otro va a la derecha, «a la derecha» es positivo para ese.</span></div>
       </div>
     </div>
 
     <div class="block">
-      <h3>El truco del sistema</h3>
-      <ol class="steps">
-        <li><span><b>Decide hacia dónde se mueve</b> (compara lo que jala para cada lado).</span></li>
-        <li><span><b>Sistema completo:</b> a = (fuerzas que impulsan − fuerzas que frenan) / masa total. Las tensiones son internas y no entran.</span></li>
-        <li><span><b>Aísla el bloque más simple</b> para hallar la tensión.</span></li>
-      </ol>
+      <h3>La cuerda obliga a que todos tengan la misma aceleración</h3>
+      <p class="prose">Si una cuerda no se estira, cuando el bloque de la mesa avanza 10 cm, el que cuelga baja exactamente 10 cm, en el mismo tiempo. Entonces van igual de rápido y aceleran igual. A esto se le llama <b>ligadura</b>: todos los bloques unidos por la misma cuerda tienen la misma aceleración <b>a</b>. La única excepción son las poleas móviles: ahí un bloque recorre la mitad (lo viste en el extra de M2).</p>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto, paso a paso: mesa + colgante</h3>
       <div class="figs">
-        <figure><div id="fig-mesa"></div><figcaption>Mesa sin fricción + colgante.</figcaption></figure>
+        <figure><div id="fig-mesa"></div><figcaption>Un bloque M = 2 kg en una mesa sin fricción, unido a un bloque X = 3 kg que cuelga.</figcaption></figure>
+        <figure><div id="fig-dcl"></div><figcaption>Diagramas de cuerpo libre de cada bloque, con el sentido de la aceleración.</figcaption></figure>
+      </div>
+      <ol class="steps">
+        <li><span><b>¿Hacia dónde se mueve?</b> El bloque que cuelga baja y el de la mesa va a la derecha. Ese es el sentido positivo de cada uno.</span></li>
+        <li><span><b>Bloque de la mesa, eje horizontal:</b> solo lo jala la tensión. ΣF = M·a, así que <b>T = 2·a</b>. En vertical, N = Mg = 20 N, pero esa ecuación aquí no la necesitamos.</span></li>
+        <li><span><b>Bloque que cuelga, eje vertical (positivo hacia abajo):</b> el peso lo jala hacia abajo y la tensión hacia arriba. ΣF = X·a, así que <b>30 − T = 3·a</b> (su peso es Xg = 3 · 10 = 30 N).</span></li>
+        <li><span><b>Resuelve el sistema de dos ecuaciones.</b> Si las sumas, la T se cancela: 30 = 5·a, así que <b>a = 6 m/s²</b>. Reemplazando en la primera: <b>T = 2 · 6 = 12 N</b>.</span></li>
+        <li><span><b>Chequeo:</b> T = 12 N es menor que el peso del colgante (30 N). Tiene sentido: si fueran iguales, el colgante no aceleraría.</span></li>
+      </ol>
+    </div>
+
+    <div class="block">
+      <h3>El atajo: el truco del sistema</h3>
+      <p class="prose">En el paso 4, al sumar las dos ecuaciones, la tensión desapareció. Eso pasa siempre, porque la tensión es una fuerza <b>interna</b>: jala a un bloque hacia un lado y al otro hacia el otro lado. Así que puedes ir directo a:</p>
+      <div class="eq"><span><b>a = (fuerzas que impulsan − fuerzas que frenan) / (masa total)</b></span><span>En el ejemplo: a = 30 N / (2 + 3) kg = 6 m/s², en una línea.</span></div>
+      <p class="prose">Después, para la tensión, aíslas el bloque más sencillo: el de la mesa da T = M·a = 12 N.</p>
+    </div>
+
+    <div class="block">
+      <h3>Máquina de Atwood: dos bloques colgando de una polea</h3>
+      <div class="figs">
+        <figure><div id="fig-atw"></div><figcaption>m₁ = 2 kg a la izquierda, m₂ = 3 kg a la derecha.</figcaption></figure>
         <div class="prose">
-          <div class="eq"><span>Sistema: <b>a = Xg / (M + X)</b></span><span>Bloque de la mesa: <b>T = M·a = MXg / (M + X)</b></span></div>
-          <div class="eq"><span>Atwood (m₁ &lt; m₂): <b>a = (m₂ − m₁)g / (m₁ + m₂)</b></span><span><b>T = 2m₁m₂g / (m₁ + m₂)</b></span></div>
-          <p class="muted">No memorices la fórmula de la tensión: sale en una línea aislando un bloque.</p>
+          <p>El más pesado (m₂) baja y el más liviano (m₁) sube.</p>
+          <p><b>Atajo:</b> impulsa el peso de m₂ (30 N), frena el peso de m₁ (20 N), la masa total es 5 kg:</p>
+          <div class="eq"><span>a = (30 − 20) / 5 = <b>2 m/s²</b></span></div>
+          <p><b>Tensión:</b> aísla m₁, que sube (positivo hacia arriba): T − 20 = 2 · 2, así que <b>T = 24 N</b>.</p>
+          <p class="muted">Chequeo: la tensión queda entre los dos pesos (20 N &lt; 24 N &lt; 30 N), como debe ser.</p>
         </div>
       </div>
     </div>
 
     <div class="block">
-      <h3>Con fricción: primero, ¿se mueve?</h3>
-      <div class="callout">
-        <p><b>Antes de poner µ<sub>k</sub>,</b> revisa si lo que impulsa le gana a la fricción estática máxima. Si no le gana, el sistema queda quieto y la fricción vale lo que haga falta (M3).</p>
-        <p><b>Si se mueve,</b> la fricción es µ<sub>k</sub>·N y apunta en contra del movimiento. Entra en el truco del sistema como una fuerza que frena.</p>
+      <h3>Con fricción: primero pregúntate si se mueve</h3>
+      <div class="figs">
+        <figure><div id="fig-fric"></div><figcaption>M = 4 kg en una mesa con µₛ = 0,5 y µₖ = 0,4, unido a un bloque X que cuelga.</figcaption></figure>
+        <div class="prose">
+          <p>La normal del bloque de la mesa es N = Mg = 40 N. La fricción estática puede llegar hasta µₛ·N = 0,5 · 40 = <b>20 N</b>.</p>
+          <p><b>Si X = 1 kg:</b> su peso es 10 N, menos que los 20 N que aguanta la fricción. <b>No se mueve.</b> La fricción vale 10 N (lo que haga falta, M3) y T = 10 N.</p>
+          <p><b>Si X = 3 kg:</b> su peso es 30 N, más que 20 N. <b>Se mueve</b>, y ahora la fricción es cinética: fₖ = µₖ·N = 0,4 · 40 = 16 N, en contra del movimiento.</p>
+          <div class="eq"><span>a = (30 − 16) / (4 + 3) = <b>2 m/s²</b></span><span>Colgante: 30 − T = 3·2, así que T = <b>24 N</b>.</span></div>
+        </div>
       </div>
     </div>
 
     <div class="block">
       <h3>Bloque sobre bloque</h3>
       <div class="figs">
-        <figure><div id="fig-stack"></div><figcaption>El bloque de arriba solo lo empuja la fricción con el de abajo.</figcaption></figure>
+        <figure><div id="fig-stack"></div><figcaption>El bloque de arriba solo lo puede empujar la fricción con el de abajo.</figcaption></figure>
         <div class="prose">
-          <p>Para el bloque de arriba, la única fuerza horizontal es la fricción estática del bloque de abajo:</p>
-          <div class="eq"><span><b>f<sub>s</sub> = m·a ≤ µ<sub>s</sub>·m·g  →  a ≤ µ<sub>s</sub>·g</b></span></div>
-          <p>Si el sistema necesita más aceleración que µ<sub>s</sub>·g, el de arriba se desliza. Ese es el límite que pide el parcial (2025-2, Abierto 1).</p>
+          <p>El bloque de arriba (m) no está amarrado a nada. Lo único que lo puede acelerar hacia adelante es la <b>fricción estática</b> que le hace el bloque de abajo. Pero esa fricción tiene un tope: µₛ·N = µₛ·mg.</p>
+          <div class="eq"><span>m·a = fₛ ≤ µₛ·m·g   →   <b>a ≤ µₛ·g</b></span></div>
+          <p><b>Ejemplo:</b> si µₛ = 0,5 entre los bloques, el de arriba aguanta hasta a = 0,5 · 10 = 5 m/s². Si el sistema necesita acelerar más que eso, el de arriba se queda atrás y se desliza. Ese límite es el que pide el parcial 2025-2 (Abierto 1).</p>
         </div>
       </div>
     </div>
 
-    <div class="callout trap"><h3>Trampas</h3>
-      <p>Escribir T = mg para un colgante que acelera.</p>
-      <p>Mezclar convenciones de signo entre bloques: usa el sentido del movimiento para todos.</p>
-      <p>Poner µ<sub>k</sub> sin revisar si el sistema se mueve.</p>
+    <div class="callout trap"><h3>Trampas que pone el profesor</h3>
+      <p>Escribir T = mg para un bloque que cuelga y acelera. Solo vale si está quieto.</p>
+      <p>Mezclar los signos: usa en cada bloque el sentido de su movimiento como positivo.</p>
+      <p>Poner fₖ = µₖ·N sin revisar primero si el sistema se mueve.</p>
+      <p>En bloque sobre bloque, olvidar que la fricción entre los bloques actúa sobre los dos: hacia adelante sobre el de arriba y hacia atrás sobre el de abajo (3.ª ley).</p>
     </div>
   </section>
 
@@ -534,7 +585,23 @@ function threeConfigSvg() {
   g += `<text x="80" y="134" class="sv-ang" text-anchor="middle">I</text><text x="240" y="134" class="sv-ang" text-anchor="middle">II</text><text x="400" y="134" class="sv-ang" text-anchor="middle">III</text>`;
   return `<svg viewBox="0 0 480 142" role="img" aria-label="Tres configuraciones: máquina de Atwood, plano inclinado con colgante y mesa con colgante">${g}</svg>`;
 }
-$("#fig-mesa").innerHTML = tableSvg({ block: { label: "M" }, hangR: "X", aArrow: true, note: "sin fricción" });
+function dclMesaSvg() {
+  let g = `<text x="80" y="22" class="sv-tl" text-anchor="middle">En la mesa (2 kg)</text><text x="240" y="22" class="sv-tl" text-anchor="middle">Colgando (3 kg)</text>`;
+  g += `<rect x="50" y="90" width="60" height="40" class="sv-block"/><text x="80" y="114" class="sv-lab" text-anchor="middle">M</text>`;
+  g += arrowSvg(110, 110, 168, 110, "a-f") + `<text x="172" y="114" class="sv-t t-f">T</text>`;
+  g += arrowSvg(72, 89, 72, 40, "a-n") + `<text x="66" y="48" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(88, 131, 88, 186, "a-peso") + `<text x="94" y="184" class="sv-t t-peso">Mg = 20 N</text>`;
+  g += arrowSvg(52, 146, 98, 146, "a-v") + `<text x="40" y="150" class="sv-t t-v" text-anchor="end">a</text>`;
+  g += `<rect x="220" y="90" width="40" height="40" class="sv-block"/><text x="240" y="114" class="sv-lab" text-anchor="middle">X</text>`;
+  g += arrowSvg(240, 89, 240, 40, "a-f") + `<text x="246" y="48" class="sv-t t-f">T</text>`;
+  g += arrowSvg(240, 131, 240, 192, "a-peso") + `<text x="246" y="190" class="sv-t t-peso">Xg = 30 N</text>`;
+  g += arrowSvg(280, 96, 280, 142, "a-v") + `<text x="286" y="124" class="sv-t t-v">a</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Diagramas de cuerpo libre del bloque de la mesa y del bloque que cuelga">${g}</svg>`;
+}
+$("#fig-mesa").innerHTML = tableSvg({ block: { label: "2 kg" }, hangR: "3 kg", aArrow: true, note: "sin fricción" });
+$("#fig-dcl").innerHTML = dclMesaSvg();
+$("#fig-atw").innerHTML = atwoodSvg("2 kg", "3 kg");
+$("#fig-fric").innerHTML = tableSvg({ block: { label: "4 kg" }, hangR: "X", mu: "µs = 0,5 · µk = 0,4" });
 $("#fig-stack").innerHTML = tableSvg({ block: { label: "M", w: 90 }, stack: { label: "m" }, hangR: "X", aArrow: true, mu: "µs entre los bloques", note: "mesa sin fricción" });
 
 /* ---------- Lab 1: mesa + colgante ---------- */
