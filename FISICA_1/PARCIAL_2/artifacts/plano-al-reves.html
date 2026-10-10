@@ -1,0 +1,337 @@
+<title>¿Y si el plano está al revés?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: ficha de refuerzo del cuaderno de laboratorio (mismo sistema de M1). Columna ≤ 980px, barra de β fija arriba; figura del T3 centrada y tarjetas lado a lado que se apilan en el teléfono. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --c-peso:#c23b3b; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-rope:#5b6476;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --c-peso:#ff8a8a; --c-comp:#f2a955; --c-ground:#253041; --c-rope:#9aa4b6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --c-peso:#ff8a8a; --c-comp:#f2a955; --c-ground:#253041; --c-rope:#9aa4b6;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:980px; margin:0 auto; padding-inline:16px; padding-block:28px 72px; display:grid; gap:44px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.ang{color:var(--accent); font-weight:700}
+.peso{color:var(--c-peso); font-weight:700}
+.cos{color:var(--c-comp); font-weight:700}
+section{display:grid; gap:20px; min-width:0}
+.sec-head{display:grid; gap:8px}
+.sec-head p{max-width:68ch; color:var(--muted)}
+.tag{justify-self:start; font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 7px; border-radius:4px}
+
+/* Encabezado */
+.head{display:grid; gap:16px}
+.lede{font-size:1.08rem; max-width:62ch}
+.answer{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:16px}
+.ans{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:grid; gap:8px; align-content:start}
+.ans dl{margin:0; display:grid; gap:2px}
+.ans dl div{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.ans dt{color:var(--muted)}
+.ans dd{margin:0; font-family:var(--f-mono); font-weight:600}
+.back{justify-self:start; font-weight:600; text-decoration:none}
+.back:hover{text-decoration:underline}
+
+/* Barra de β */
+.control{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; display:flex; flex-wrap:wrap; align-items:center; gap:6px 16px; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px 16px; box-shadow:0 6px 16px -12px rgba(0,0,0,.35)}
+.control label{font-family:var(--f-mono); font-size:1.05rem; min-width:7.5ch}
+.control input[type=range]{flex:1 1 200px; min-width:0; accent-color:var(--accent)}
+.control .hint{font-size:.85rem; color:var(--muted)}
+
+/* Tarjetas y figuras */
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0; align-content:start}
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr)); gap:16px}
+.card-h{display:grid; gap:6px}
+figure{margin:0; display:grid; gap:6px; min-width:0}
+figure svg{display:block; width:100%; height:auto}
+.fig-main{max-width:640px; width:100%; justify-self:center}
+figcaption{font-size:.88rem; color:var(--muted); max-width:72ch}
+.card p{max-width:62ch}
+.rule{background:var(--hi); color:var(--hi-ink); border-radius:8px; padding:10px 12px; font-size:.95rem}
+.steps{list-style:none; padding:0; display:grid; gap:12px; counter-reset:s}
+.steps li{display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:start; counter-increment:s}
+.steps li::before{content:counter(s); width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font-family:var(--f-mono); font-size:.8rem; display:grid; place-items:center; margin-top:1px}
+.steps li > span{min-width:0; max-width:68ch}
+footer{display:grid; gap:6px; font-size:.88rem; color:var(--muted); border-top:1px solid var(--rule); padding-top:16px}
+
+/* SVG */
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-thin{stroke:var(--ink); stroke-width:1.1; fill:none}
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5; stroke-linejoin:round}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.6}
+.sv-ref{stroke:var(--c-comp); stroke-width:1.6; stroke-dasharray:5 4; fill:none}
+.sv-vert{stroke:var(--muted); stroke-width:1.3; stroke-dasharray:5 4; fill:none}
+.sv-rope{stroke:var(--c-rope); stroke-width:2; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.6}
+.sv-post{stroke:var(--ink); stroke-width:3; stroke-linecap:round; fill:none}
+.sv-dot{fill:var(--ink)}
+.w-ang{fill:var(--accent); fill-opacity:.2; stroke:none}
+.arc-ang{stroke:var(--accent); stroke-width:2.2; fill:none}
+.arc-co{stroke:var(--muted); stroke-width:1.5; fill:none}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)}
+.t{font-family:var(--f-mono); font-size:14px; fill:var(--ink); paint-order:stroke; stroke:var(--surface); stroke-width:4px; stroke-linejoin:round}
+.t-ang{fill:var(--accent); font-size:17px; font-weight:600}
+.t-peso{fill:var(--c-peso); font-weight:600}
+.t-comp{fill:var(--c-comp); font-weight:600}
+.t-mut{fill:var(--muted); font-size:12px}
+.t-co{fill:var(--muted); font-weight:600}
+.t-blk{font-weight:600; stroke-width:0}
+.big .t{font-size:16px}
+.big .t-ang{font-size:19px}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · M3 · Taller T3</p>
+    <h1>¿Y si el plano está al revés?</h1>
+    <p class="lede">Que el plano de X baje hacia la derecha no cambia nada. Lo único que decide dónde va el coseno es contra qué línea se mide el ángulo: el piso o la vertical.</p>
+    <div class="answer">
+      <div class="ans">
+        <span class="tag">Bloque M · α desde la horizontal</span>
+        <dl><div><dt>A lo largo del plano</dt><dd>Mg·sen α</dd></div><div><dt>Normal</dt><dd>Mg·cos α</dd></div></dl>
+      </div>
+      <div class="ans">
+        <span class="tag">Bloque X · β desde la vertical</span>
+        <dl><div><dt>A lo largo del plano</dt><dd>Xg·cos β</dd></div><div><dt>Normal</dt><dd>Xg·sen β</dd></div></dl>
+      </div>
+    </div>
+    <a class="back" href="https://claude.ai/artifact/5CnY6wiw24huhhHCzGno4n">← Volver a M3 · Fricción y rangos</a>
+  </header>
+
+  <div class="control">
+    <label for="beta">β = <b id="b-val">25°</b></label>
+    <input type="range" id="beta" min="10" max="40" step="1" value="25">
+    <span class="hint">Mueve β: los azules cambian juntos y las etiquetas nunca se cambian.</span>
+  </div>
+
+  <section id="t3">
+    <div class="sec-head">
+      <h2>El T3 completo</h2>
+      <p>El ángulo que te dan en la esquina reaparece en el bloque, entre el peso y la línea punteada naranja. Esa línea marca el lado que se lleva el coseno: para M es la normal, para X es el plano.</p>
+    </div>
+    <div class="card">
+      <figure class="fig-main big"><div id="scene"></div>
+        <figcaption>M está en un plano con α medido desde el piso. X está en un plano con β medido desde la vertical que baja de la polea. Por eso cada bloque tiene su regla.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="triangulo">
+    <div class="sec-head">
+      <h2>Tu triangulito, bloque por bloque</h2>
+      <p>Los dos triángulos están armados como tú los armas: el peso es la hipotenusa y la normal sale de la esquina de arriba. En la esquina de arriba siempre queda el ángulo del plano con el <b>piso</b>. En la de abajo queda el ángulo del plano con la <b>vertical</b>.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="card-h"><span class="tag">Bloque M · desde la horizontal</span><h3>α va arriba, pegado a la normal</h3></div>
+        <figure><div id="tri-m"></div></figure>
+        <p>Es lo que tú pensaste: α es el ángulo con el piso, así que va en la esquina de arriba y su adyacente es la normal. Normal <b>Mg·cos α</b>, a lo largo <b>Mg·sen α</b>.</p>
+      </article>
+      <article class="card">
+        <div class="card-h"><span class="tag">Bloque X · desde la vertical</span><h3>β va abajo, pegado al lado paralelo</h3></div>
+        <figure><div id="tri-x"></div></figure>
+        <p>El triángulo queda a la izquierda del peso, como dijiste. Pero β es el ángulo con la vertical, no con el piso: arriba va 90° − β y β baja a la esquina de abajo. Ahí el cateto pegado a β es el paralelo. A lo largo <b>Xg·cos β</b>, normal <b>Xg·sen β</b>.</p>
+      </article>
+    </div>
+    <p class="rule"><b>No te guíes por si la esquina está arriba o abajo del plano.</b> Guíate por las dos líneas que forman el ángulo. β está entre la vertical y el plano. En el triángulo de fuerzas, la vertical es el peso y el plano es el cateto paralelo. Entonces β queda entre el peso y el cateto paralelo, que es su adyacente.</p>
+  </section>
+
+  <section id="espejo">
+    <div class="sec-head">
+      <h2>El espejo</h2>
+      <p>A la izquierda, un plano con β desde la vertical como los que sueles ver. A la derecha, el mismo plano en un espejo, que es como está el plano de X en el T3. Ningún ángulo cambia y ninguna etiqueta cambia.</p>
+    </div>
+    <div class="cards">
+      <article class="card"><span class="tag">Como en tus ejercicios</span><figure><div id="pn-a"></div></figure></article>
+      <article class="card"><span class="tag">Como en el T3 (en espejo)</span><figure><div id="pn-b"></div></figure></article>
+    </div>
+  </section>
+
+  <section id="regla">
+    <div class="sec-head"><h2>La regla para el parcial</h2></div>
+    <div class="card">
+      <ol class="steps">
+        <li><span><b>Ignora hacia dónde baja el plano.</b> Un plano al revés es el mismo plano visto en un espejo. Si te confunde, voltea la hoja y míralo por detrás, contra la luz.</span></li>
+        <li><span><b>Mira contra qué línea está el arco del ángulo.</b> Contra el piso: el coseno va en la normal. Contra la vertical: el coseno va a lo largo del plano.</span></li>
+        <li><span><b>Si dudas, prueba el límite.</b> β = 0 desde la vertical es una pared: todo el peso va a lo largo del plano. Por eso a lo largo lleva coseno (cos 0 = 1).</span></li>
+      </ol>
+      <p class="rule"><b>Para la fricción de X</b> usa su normal: fs = µs·Xg·sen β. Si cambias seno por coseno en la normal, también te queda mal la fricción.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Refuerzo de M3 · Fricción y rangos. Taller T3, parcial 2026-1 (Abierto 2). No incluye las ecuaciones de equilibrio: esas son tuyas.</p>
+  </footer>
+</div>
+
+<script>
+const D = Math.PI / 180;
+const $ = (s) => document.querySelector(s);
+const n1 = (v) => v.toFixed(1);
+const pt = (o, ang, r) => ({ x: o.x + r * Math.cos(ang * D), y: o.y + r * Math.sin(ang * D) });
+const svg = (W, H, inner, aria) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">${inner}</svg>`;
+
+/* Dibujo con espejo opcional: F(p) refleja los puntos; las etiquetas se reubican pero no se reflejan. */
+function pen(W, flip) {
+  const F = (p) => (flip ? { x: W - p.x, y: p.y } : p);
+  const A = (a) => (a === "middle" ? a : flip ? (a === "start" ? "end" : "start") : a);
+  const o = {};
+  o.line = (a, b, cls) => { const p = F(a), q = F(b); return `<line x1="${n1(p.x)}" y1="${n1(p.y)}" x2="${n1(q.x)}" y2="${n1(q.y)}" class="${cls}"/>`; };
+  o.poly = (pts, cls) => `<polygon points="${pts.map((p) => { const q = F(p); return n1(q.x) + "," + n1(q.y); }).join(" ")}" class="${cls}"/>`;
+  o.pline = (pts, cls) => `<polyline points="${pts.map((p) => { const q = F(p); return n1(q.x) + "," + n1(q.y); }).join(" ")}" class="${cls}"/>`;
+  o.text = (p, s, cls, anchor = "middle") => { const q = F(p); return `<text x="${n1(q.x)}" y="${n1(q.y)}" dy=".35em" text-anchor="${A(anchor)}" class="t ${cls}">${s}</text>`; };
+  o.dot = (p) => { const q = F(p); return `<circle cx="${n1(q.x)}" cy="${n1(q.y)}" r="2.6" class="sv-dot"/>`; };
+  o.circle = (p, r, cls) => { const q = F(p); return `<circle cx="${n1(q.x)}" cy="${n1(q.y)}" r="${r}" class="${cls}"/>`; };
+  o.arrow = (a, b, cls) => {
+    const p = F(a), q = F(b), dx = q.x - p.x, dy = q.y - p.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = 9, w = 4.6;
+    const bx = q.x - ux * h, by = q.y - uy * h;
+    return `<line x1="${n1(p.x)}" y1="${n1(p.y)}" x2="${n1(bx)}" y2="${n1(by)}" class="${cls}" stroke-width="2.4"/>` +
+      `<polygon points="${n1(q.x)},${n1(q.y)} ${n1(bx - uy * w)},${n1(by + ux * w)} ${n1(bx + uy * w)},${n1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+  };
+  o.block = (c, size, rot, label) => {
+    const q = F(c), r = flip ? -rot : rot;
+    return `<rect x="${n1(q.x - size / 2)}" y="${n1(q.y - size / 2)}" width="${size}" height="${size}" transform="rotate(${n1(r)} ${n1(q.x)} ${n1(q.y)})" class="sv-block"/>` +
+      (label ? `<text x="${n1(q.x)}" y="${n1(q.y)}" dy=".35em" text-anchor="middle" class="t t-blk">${label}</text>` : "");
+  };
+  // Ángulo azul entre las direcciones a1 < a2 (grados SVG). Etiqueta a un lado de la vertical que pasa por c.
+  o.angle = (c, a1, a2, r, label, lr, mode = "auto", kind = "th", lm = null) => {
+    const p1 = F(pt(c, a1, r)), p2 = F(pt(c, a2, r)), q = F(c), sw = flip ? 0 : 1, th = kind === "th";
+    const arc = `A ${r} ${r} 0 0 ${sw} ${n1(p2.x)} ${n1(p2.y)}`;
+    let g = (th ? `<path d="M ${n1(q.x)} ${n1(q.y)} L ${n1(p1.x)} ${n1(p1.y)} ${arc} Z" class="w-ang"/>` : "") + `<path d="M ${n1(p1.x)} ${n1(p1.y)} ${arc}" class="${th ? "arc-ang" : "arc-co"}"/>`;
+    const m = lm ?? (a1 + a2) / 2, p = pt(c, m, lr), cx = Math.cos(m * D);
+    let an = "middle";
+    if (mode === "auto") { if (cx > 0.02) { an = "start"; p.x = Math.max(p.x, c.x + 6); } else if (cx < -0.02) { an = "end"; p.x = Math.min(p.x, c.x - 6); } }
+    return g + o.text(p, label, th ? "t-ang" : "t-co", an);
+  };
+  return o;
+}
+
+/* 1. El T3: M a la izquierda (α = 35° desde el piso), X a la derecha (β desde la vertical), polea en la cima. */
+function sceneT3(b) {
+  const W = 480, H = 290, Gy = 270, P = { x: 290, y: 84 }, h = Gy - P.y, al = 35, d = pen(W, false);
+  const sa = Math.sin(al * D), ca = Math.cos(al * D), sb = Math.sin(b * D), cb = Math.cos(b * D);
+  const A = { x: P.x - h / Math.tan(al * D), y: Gy }, B = { x: P.x + h * Math.tan(b * D), y: Gy };
+  const uL = { x: ca, y: -sa }, nL = { x: -sa, y: -ca }, uR = { x: -sb, y: -cb }, nR = { x: cb, y: -sb };
+  const LL = h / sa, LR = h / cb, s = 32;
+  const cM = { x: A.x + 0.5 * LL * uL.x + s / 2 * nL.x, y: A.y + 0.5 * LL * uL.y + s / 2 * nL.y };
+  const cX = { x: B.x + 0.45 * LR * uR.x + s / 2 * nR.x, y: B.y + 0.45 * LR * uR.y + s / 2 * nR.y };
+  const Q = { x: P.x, y: P.y - 17 }, r = 11;
+  let g = `<line x1="8" y1="${Gy}" x2="${W - 8}" y2="${Gy}" class="sv-line"/>`;
+  g += d.poly([A, P, B], "sv-ground");
+  g += d.angle(A, -al, 0, 44, "α", 58, "mid");
+  g += d.line(P, { x: P.x, y: P.y + 118 }, "sv-vert");
+  g += d.angle(P, 90 - b, 90, 46, "β", 60, "auto");
+  g += d.line(P, Q, "sv-post");
+  g += d.line({ x: cM.x + uL.x * s / 2, y: cM.y + uL.y * s / 2 }, { x: Q.x + nL.x * r, y: Q.y + nL.y * r }, "sv-rope");
+  g += d.line({ x: cX.x + uR.x * s / 2, y: cX.y + uR.y * s / 2 }, { x: Q.x + nR.x * r, y: Q.y + nR.y * r }, "sv-rope");
+  g += d.circle(Q, r, "sv-pulley") + d.dot(Q);
+  // en cada bloque: línea del lado que lleva coseno + el ángulo que reaparece
+  g += d.line(cM, pt(cM, 90 - al, 72), "sv-ref") + d.angle(cM, 90 - al, 90, 30, "α", 44);
+  g += d.line(cX, pt(cX, 90 - b, 72), "sv-ref") + d.angle(cX, 90 - b, 90, 30, "β", 44);
+  g += d.block(cM, s, -al, "M") + d.block(cX, s, -b, "X");
+  g += d.arrow(cM, { x: cM.x, y: cM.y + 58 }, "a-peso") + d.text({ x: cM.x - 7, y: cM.y + 52 }, "Mg", "t-peso", "end");
+  g += d.arrow(cX, { x: cX.x, y: cX.y + 58 }, "a-peso") + d.text({ x: cX.x - 7, y: cX.y + 52 }, "Xg", "t-peso", "end");
+  return svg(W, H, g, `Dos planos unidos en una cima con polea. M a la izquierda, plano con α desde la horizontal; α reaparece entre Mg y la normal. X a la derecha, plano con β = ${b} grados desde la vertical; β reaparece entre Xg y el plano.`);
+}
+
+/* 2. El triangulito del peso, armado como lo arma el estudiante: la normal sale de la esquina de arriba.
+   Arriba queda siempre el ángulo del plano con el PISO; abajo, el ángulo del plano con la VERTICAL. */
+function triangle(kind, b) {
+  const W = 320, H = 304, O = { x: 120, y: 70 }, Lw = 200, isM = kind === "M", d = pen(W, !isM);
+  const t = isM ? 35 : 90 - b, w = isM ? "Mg" : "Xg";
+  const K = pt(O, 90 - t, Lw * Math.cos(t * D)), E = { x: O.x, y: O.y + Lw };
+  let g = "";
+  // icono del plano al que pertenece (el de X se dibuja y luego se refleja)
+  if (isM) {
+    const p0 = { x: 232, y: 60 }, p1 = { x: 306, y: 60 }, p2 = { x: 306, y: 60 - 74 * Math.tan(35 * D) };
+    g += d.poly([p0, p1, p2], "sv-ground") + d.angle(p0, -35, 0, 22, "α", 32, "mid");
+  } else {
+    const top = { x: 290, y: 10 }, bot = { x: 290, y: 62 }, left = { x: 290 - 52 * Math.tan(b * D), y: 62 };
+    g += d.poly([top, bot, left], "sv-ground") + d.angle(top, 90, 90 + b, 24, "β", 34, "auto");
+  }
+  // esquina de arriba (ángulo con el piso) y esquina de abajo (ángulo con la vertical)
+  g += isM ? d.angle(O, 90 - t, 90, 40, "α", 54) : d.angle(O, 90 - t, 90, 40, "90°−β", 50, "auto", "co", 76);
+  g += isM ? d.angle(E, -90, -t, 34, "90°−α", 52, "auto", "co") : d.angle(E, -90, -t, 34, "β", 48);
+  const k1 = pt(K, 270 - t, 11), k2 = pt(K, 180 - t, 11), k3 = pt(k1, 180 - t, 11);
+  g += d.pline([k1, k3, k2], "sv-thin");
+  g += d.arrow(O, K, "a-comp") + d.arrow(K, E, "a-comp") + d.arrow(O, E, "a-peso");
+  g += d.text({ x: O.x - 8, y: O.y + Lw / 2 }, w, "t-peso", "end");
+  const m1 = pt({ x: (O.x + K.x) / 2, y: (O.y + K.y) / 2 }, -t, 14), m2 = pt({ x: (K.x + E.x) / 2, y: (K.y + E.y) / 2 }, 90 - t, 14);
+  const l1 = isM ? "Mg·cos α" : "Xg·sen β", l2 = isM ? "Mg·sen α" : "Xg·cos β";
+  g += d.text(m1, l1, "t-comp", "start") + d.text({ x: m1.x, y: m1.y + 17 }, "normal", "t-mut", "start");
+  g += d.text(m2, l2, "t-comp", "start") + d.text({ x: m2.x, y: m2.y + 17 }, "a lo largo", "t-mut", "start");
+  g += d.dot(O);
+  return svg(W, H, g, isM
+    ? "Triángulo del peso de M con la normal saliendo de arriba: alfa queda arriba y su cateto adyacente es la normal, Mg cos alfa."
+    : "Triángulo del peso de X con la normal saliendo de arriba: arriba queda 90 menos beta; beta queda en la esquina de abajo y su cateto adyacente es el que va a lo largo del plano, Xg cos beta.");
+}
+
+/* 3. Plano con β desde la vertical, normal y en espejo. */
+function panel(b, flip) {
+  const W = 340, H = 250, Gy = 232, a = 90 - b, ca = Math.cos(a * D), sa = Math.sin(a * D), d = pen(W, flip);
+  const L = Math.min(296 / ca, 184 / sa), base = L * ca, hg = L * sa;
+  const A = { x: (W - base) / 2, y: Gy }, B = { x: A.x + base, y: Gy }, C = { x: B.x, y: Gy - hg };
+  const u = { x: ca, y: -sa }, n = { x: -sa, y: -ca }, s = 30, f = 0.55;
+  const c = { x: A.x + f * L * u.x + s / 2 * n.x, y: A.y + f * L * u.y + s / 2 * n.y }, M = 64;
+  let g = `<line x1="8" y1="${Gy}" x2="${W - 8}" y2="${Gy}" class="sv-line"/>`;
+  g += d.poly([A, B, C], "sv-ground") + d.pline([{ x: B.x - 10, y: Gy }, { x: B.x - 10, y: Gy - 10 }, { x: B.x, y: Gy - 10 }], "sv-thin");
+  g += d.angle(C, 90, 180 - a, 34, "β", 48, "mid");
+  g += d.angle(c, 90, 180 - a, 30, "β", 44);
+  g += d.block(c, s, -a, "X");
+  const T1 = pt(c, 180 - a, M * sa), T2 = pt(c, 90 - a, M * ca);
+  g += d.arrow(c, T1, "a-comp") + d.arrow(c, T2, "a-comp") + d.arrow(c, { x: c.x, y: c.y + M }, "a-peso");
+  g += d.text(pt(T1, 180 - a, 13), "Xg·cos β", "t-comp", "end") + d.text(pt(T2, 90 - a, 13), "Xg·sen β", "t-comp", "start");
+  g += d.text({ x: c.x + 7, y: c.y + M - 2 }, "Xg", "t-peso", "start");
+  g += d.dot(c);
+  return svg(W, H, g, `Plano con beta = ${b} grados desde la vertical${flip ? ", dibujado en espejo" : ""}. A lo largo del plano Xg cos beta; contra el plano Xg sen beta.`);
+}
+
+function render(b) {
+  $("#b-val").textContent = b + "°";
+  $("#scene").innerHTML = sceneT3(b);
+  $("#tri-m").innerHTML = triangle("M", b);
+  $("#tri-x").innerHTML = triangle("X", b);
+  $("#pn-a").innerHTML = panel(b, false);
+  $("#pn-b").innerHTML = panel(b, true);
+}
+$("#beta").addEventListener("input", (e) => render(+e.target.value));
+render(+$("#beta").value);
+</script>

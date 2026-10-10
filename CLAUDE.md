@@ -25,6 +25,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | M1 · Newton, DCL y planos inclinados (intentos en `intentos/`) | https://claude.ai/artifact/RdHQeTYL9rNrrrPoWXiTMj | `FISICA_1/PARCIAL_2/artifacts/M1.html` |
 | Física 1 | Refuerzo M1 · ¿Dónde queda θ en el DCL? (θ desde la horizontal vs. la vertical) | https://claude.ai/artifact/3FkrwVR7q7GWQ5pYPHsRbS | `FISICA_1/PARCIAL_2/artifacts/angulo-theta.html` |
 | Física 1 | Refuerzo M1 · ¿Qué sostiene la cuerda de arriba? (2m y m colgados en un plano, quiz B #5) | https://claude.ai/artifact/ScGMxFNhzosY8EXvYqFcba | `FISICA_1/PARCIAL_2/artifacts/cuerdas-2m-m.html` |
+| Física 1 | Refuerzo M3 · ¿Y si el plano está al revés? (taller T3: β desde la vertical en un plano que baja a la derecha) | https://claude.ai/artifact/Q5A8gM7PWBjrs3iZj7gZoo | `FISICA_1/PARCIAL_2/artifacts/plano-al-reves.html` |
 
 ## Convenciones
 
