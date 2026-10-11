@@ -30,6 +30,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | M3 · Fricción y rangos | https://claude.ai/artifact/5CnY6wiw24huhhHCzGno4n | `FISICA_1/PARCIAL_2/artifacts/M3.html` |
 | Física 1 | M4 · Sistemas con aceleración | https://claude.ai/artifact/6fQ5K7ULHJgLiQmeRBe2dC | `FISICA_1/PARCIAL_2/artifacts/M4.html` |
 | Física 1 | M5 · Movimiento circular | https://claude.ai/artifact/QbkVzzqRuiU8tyMrPnCbUw | `FISICA_1/PARCIAL_2/artifacts/M5.html` |
+| Física 1 | M6–M7 · Trabajo y energía (un solo artifact; progreso en docs `M6` y `M7`) | https://claude.ai/artifact/LAXsJHjUXs6ZQQHD7LbsEF | `FISICA_1/PARCIAL_2/artifacts/M6-M7.html` |
 
 ## Convenciones
 
