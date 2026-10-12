@@ -186,7 +186,7 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | 3 | Jue 8 oct | Liviana | Quiz B de **M2** ✅ | 30 min |
 | 4–5 | Vie 9 – Sáb 10 | — | (sin quiz registrado) | — |
 | 6 | Dom 11 oct | Pesada | **M3** ✅ + **M4** ✅ | 4–5 h |
-| 7 | Lun 12 oct (festivo) | Pesada | **M5** + **M6–M7** Trabajo y energía | ~5 h |
+| 7 | Lun 12 oct (festivo) | Pesada | **M5** ✅ + **M6–M7** Trabajo y energía | ~5 h |
 | 8 | Mar 13 oct | Liviana | **M8** Circular + energía: teoría y lab | 1,5 h |
 | 9 | Mié 14 oct | Media | **M8**: taller y quiz + mini-simulacro de 40 min | 2,5–3 h |
 | — | **Jue 15 oct** | — | 30 min con la clave de parciales, y **PARCIAL 2** (12:30) | — |
@@ -201,12 +201,12 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 
 | Módulo | Teoría | Lab | Taller | Quiz (nota) | Estado |
 |---|---|---|---|---|---|
-| M1 Newton + DCL | ☐ | ☐ | ☐ | — | ⏳ |
-| M2 Poleas | ☐ | ☐ | ☐ | — | 🔒 |
-| M3 Fricción | ☐ | ☐ | ☐ | — | 🔒 |
-| M4 Sistemas con aceleración | ☐ | ☐ | ☐ | — | 🔒 |
-| M5 Circular | ☐ | ☐ | ☐ | — | 🔒 |
-| M6 Trabajo | ☐ | ☐ | ☐ | — | 🔒 |
+| M1 Newton + DCL | ☐ | ☐ | ☐ | 5/5 (Quiz B) | ✅ |
+| M2 Poleas | ☐ | ☐ | ☐ | 4/5 (Quiz B) | ✅ |
+| M3 Fricción | ☐ | ☐ | ☐ | 4/5 | ✅ |
+| M4 Sistemas con aceleración | ☐ | ☐ | ☐ | 5/5 | ✅ |
+| M5 Circular | ☐ | ☐ | ☐ | 5/5 | ✅ |
+| M6 Trabajo | ☐ | ☐ | ☐ | — | ⏳ |
 | M7 Energía | ☐ | ☐ | ☐ | — | 🔒 |
 | M8 Circular + energía | ☐ | ☐ | ☐ | — | 🔒 |
 | M9 Simulacro | — | — | — | —/100 | 🔒 |
