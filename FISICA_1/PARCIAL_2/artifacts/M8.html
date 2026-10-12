@@ -1,0 +1,987 @@
+<title>M8 Circular + energía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px, barra de secciones fija arriba; el lab tiene la semiesfera y el péndulo animados con la normal y la tensión en vivo. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>50 min</span></a>
+    <a href="#lab">2 Lab <span>15 min</span></a>
+    <a href="#taller">3 Taller <span>75 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Módulo 8 de 9</p>
+    <h1>Circular + energía</h1>
+    <div class="meta">
+      <span class="chip-hot">El que más pesa</span>
+      <span>Martes 13 y miércoles 14 de octubre · ~2,5 h</span>
+      <span>Salió en los 4 parciales · 26 % de los puntos</span>
+    </div>
+    <p class="prose">Este es el problema estrella del profesor: un bloque que se desliza por una semiesfera, un péndulo o un loop, y te preguntan dónde se despega, cuánto vale la normal o desde dónde hay que soltarlo. Se resuelve juntando dos cosas que ya sabes: la <b>ecuación hacia el centro del M5</b> y la <b>conservación de la energía del M6–M7</b>.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas al simulacro.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Por qué se necesitan las dos herramientas, la receta de 3 pasos, la geometría del ángulo y cuatro ejemplos resueltos de parciales.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">R</td><td>«erre»</td><td>Radio de la superficie circular (semiesfera, cuenco o loop).</td><td>m</td></tr>
+          <tr><td class="mono">L</td><td>«ele»</td><td>Largo de la cuerda del péndulo: es el radio de su círculo.</td><td>m</td></tr>
+          <tr><td class="mono">θ, φ</td><td>«theta», «fi»</td><td>Ángulo que marca dónde está el bloque, medido desde el centro del círculo. Cada problema dice desde dónde se mide (la vertical o la horizontal). Míralo siempre en la figura.</td><td>grados</td></tr>
+          <tr><td class="mono">θ₀</td><td>«theta sub cero»</td><td>Ángulo desde el que se suelta el péndulo.</td><td>grados</td></tr>
+          <tr><td class="mono">v</td><td>«ve»</td><td>Rapidez del bloque en el punto que te preguntan.</td><td>m/s</td></tr>
+          <tr><td class="mono">N, T</td><td>«ene», «te»</td><td>Normal de la superficie (M1) y tensión de la cuerda (M2).</td><td>N</td></tr>
+          <tr><td class="mono">h, H, y</td><td>—</td><td>Alturas, siempre medidas desde una referencia que tú escoges (el piso, el fondo o el centro).</td><td>m</td></tr>
+          <tr><td class="mono">cos θ, sen θ</td><td>«coseno», «seno»</td><td>Sirven aquí para dos cosas: la altura del bloque y la parte del peso que apunta al centro.</td><td>—</td></tr>
+          <tr><td class="mono">k, x</td><td>«ka», «equis»</td><td>Constante del resorte y cuánto está apretado (M6–M7).</td><td>N/m, m</td></tr>
+          <tr><td class="mono">«pierde contacto»</td><td>—</td><td>El bloque deja de tocar la superficie: la normal llega a <b>N = 0</b>.</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>¿Por qué hacen falta dos herramientas?</h3>
+      <div class="laws">
+        <div class="law"><b>Radial (M5)</b><span>Tiene la normal (o la tensión) y la rapidez v.</span><span class="ex">Pero no sabes cuánto vale v en ese punto.</span></div>
+        <div class="law"><b>Energía</b><span>Te da v a partir de cuánto bajó o subió el bloque.</span><span class="ex">Pero no dice nada de la normal: la normal no hace trabajo.</span></div>
+        <div class="law"><b>Juntas</b><span>La energía te da v² y la ecuación radial te da N.</span><span class="ex">Por eso el profesor divide el problema en partes: «halla v», «halla la normal», «halla el ángulo».</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>La receta</h3>
+      <ol class="steps">
+        <li><span><b>Geometría:</b> escribe la altura del bloque en función del ángulo (mira la sección siguiente).</span></li>
+        <li><span><b>Ecuación radial</b> en el punto que te preguntan: ΣF<sub>hacia el centro</sub> = m·v²/R. Si dice «pierde contacto», pon N = 0.</span></li>
+        <li><span><b>Energía</b> entre el punto donde se suelta y ese punto: te da v² en función del ángulo.</span></li>
+        <li><span><b>Reemplaza</b> el v² de la energía en la ecuación radial y despeja lo que te piden.</span></li>
+      </ol>
+    </div>
+
+    <div class="block">
+      <h3>Paso 1: la geometría del ángulo</h3>
+      <div class="figs">
+        <figure><div id="fig-geo"></div><figcaption>Bloque sobre una semiesfera, a un ángulo θ <b>desde la vertical</b>, medido en el centro.</figcaption></figure>
+        <div class="prose">
+          <p>El radio que va del centro al bloque mide R. Si el ángulo se mide <b>desde la vertical</b>, el bloque está a una altura <b>R·cos θ</b> sobre el centro (el cateto pegado al ángulo).</p>
+          <p>Como arriba del todo la altura es R, lo que ya <b>bajó</b> el bloque es <b>R − R·cos θ = R(1 − cos θ)</b>.</p>
+          <p class="muted">Chequeo: con θ = 0 (arriba del todo) no ha bajado nada: R(1 − 1) = 0. Bien.</p>
+        </div>
+      </div>
+      <div class="tw"><table>
+        <thead><tr><th>Situación</th><th>Ángulo desde</th><th>Altura que te sirve</th></tr></thead>
+        <tbody>
+          <tr><td>Semiesfera por fuera (2024-2, 2025-1)</td><td>la vertical</td><td class="mono">bajó R(1 − cos θ)</td></tr>
+          <tr><td>Péndulo (2024-2)</td><td>la vertical</td><td class="mono">altura sobre el punto más bajo: L(1 − cos θ)</td></tr>
+          <tr><td>Cuenco por dentro, soltado desde el borde (2024-2)</td><td>la vertical (hacia abajo)</td><td class="mono">bajó R·cos φ; altura sobre el fondo: R(1 − cos φ)</td></tr>
+          <tr><td>Estructura sobre columnas de altura R (2026-1)</td><td>la horizontal</td><td class="mono">altura sobre el piso: R + R·sen θ</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>Paso 2: qué parte del peso apunta al centro</h3>
+      <div class="figs">
+        <figure><div id="fig-rad"></div><figcaption>Por fuera de la semiesfera: el peso tiene una parte mg·cos θ hacia el centro; la normal empuja hacia afuera.</figcaption></figure>
+        <div class="prose">
+          <p>El peso mg apunta hacia abajo. Se descompone igual que en un plano inclinado (M1): una parte en la dirección del radio y otra tangente al círculo.</p>
+          <p>Con el ángulo desde la vertical, la parte del peso <b>hacia el centro</b> es <b>mg·cos θ</b>.</p>
+          <div class="eq"><span>Por fuera (semiesfera): <b>mg·cos θ − N = m·v²/R</b></span><span>Por dentro (cuenco, péndulo): <b>N − mg·cos φ = m·v²/R</b>  (o T − mg·cos φ para el péndulo)</span></div>
+          <p class="muted">Por fuera, la normal se aleja del centro y va con −. Por dentro, la normal apunta al centro y el peso se aleja, así que el que va con − es el peso.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto 1: ¿dónde se despega de la semiesfera? (2024-2 SM3)</h3>
+      <p class="prose">Se suelta un bloque desde el reposo en lo más alto de una semiesfera sin fricción. ¿Cuánto baja antes de perder contacto?</p>
+      <ol class="steps">
+        <li><span><b>Radial con N = 0:</b> mg·cos θ = m·v²/R, así que <b>v² = g·R·cos θ</b>.</span></li>
+        <li><span><b>Energía</b> (desde arriba, quieto, hasta el ángulo θ): bajó R(1 − cos θ), así que ½mv² = mg·R(1 − cos θ), o sea, <b>v² = 2gR(1 − cos θ)</b>.</span></li>
+        <li><span><b>Igualando:</b> gR·cos θ = 2gR(1 − cos θ), así que 3·cos θ = 2 y <b>cos θ = 2/3</b> (θ ≈ 48°).</span></li>
+        <li><span><b>Lo que bajó:</b> R(1 − 2/3) = <b>R/3</b>. Esa era la opción B del parcial.</span></li>
+      </ol>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto 2: el péndulo (2024-2 Abierto 1)</h3>
+      <div class="figs">
+        <figure><div id="fig-pend"></div><figcaption>Péndulo soltado desde un ángulo θ₀. En el punto más bajo, la tensión apunta al centro (arriba) y el peso se aleja.</figcaption></figure>
+        <div class="prose">
+          <p>¿Desde qué ángulo θ₀ hay que soltarlo para que la tensión en el punto más bajo sea 2mg?</p>
+          <p><b>Radial abajo:</b> T − mg = m·v²/L. Con T = 2mg: <b>v² = g·L</b>.</p>
+          <p><b>Energía</b> (soltado quieto desde θ₀ hasta abajo): bajó L(1 − cos θ₀), así que <b>v² = 2gL(1 − cos θ₀)</b>.</p>
+          <p><b>Igualando:</b> gL = 2gL(1 − cos θ₀), así que cos θ₀ = 1/2 y <b>θ₀ = 60°</b>.</p>
+          <div class="eq"><span>Fórmula general: <b>T<sub>abajo</sub> = mg(3 − 2·cos θ₀)</b></span><span>Soltado desde la horizontal (θ₀ = 90°): T = 3mg.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto 3: resorte + loop (2025-2 Abierto 2)</h3>
+      <div class="figs">
+        <figure><div id="fig-loop"></div><figcaption>Un resorte apretado x lanza el bloque, que entra a un loop de radio R. En lo más alto la normal debe ser 2mg.</figcaption></figure>
+        <div class="prose">
+          <p><b>Radial arriba (por dentro):</b> N + mg = m·v²/R. Con N = 2mg: <b>v² = 3gR</b>.</p>
+          <p><b>Energía</b> (con el piso como referencia): al principio todo está en el resorte, ½kx². Arriba del loop la altura es 2R (el diámetro): E = ½mv² + mg·2R.</p>
+          <p><b>Igualando:</b> ½kx² = ½m·3gR + 2mgR = (7/2)·mgR, así que <b>x = √(7mgR/k)</b>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto 4: el cuenco por dentro (2024-2 Abierto 2)</h3>
+      <div class="figs">
+        <figure><div id="fig-bowl"></div><figcaption>Bloque soltado desde el borde de un cuenco (altura R sobre el fondo), sin fricción. φ se mide desde la vertical que baja del centro.</figcaption></figure>
+        <div class="prose">
+          <p>¿A qué altura sobre el fondo la normal vale un tercio del peso?</p>
+          <p><b>Energía:</b> desde el borde (a la altura del centro) bajó R·cos φ, así que <b>v² = 2gR·cos φ</b>.</p>
+          <p><b>Radial (por dentro):</b> N − mg·cos φ = m·v²/R = 2mg·cos φ, así que <b>N = 3mg·cos φ</b>.</p>
+          <p>Con N = mg/3: cos φ = 1/9. Altura sobre el fondo: R(1 − cos φ) = <b>8R/9</b>.</p>
+          <div class="callout trap"><h3>Ojo</h3><p>La solución oficial de este problema dice R/3, y está mal. Verifícalo: con h = R/3 la normal daría 2mg, no mg/3.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Resultados que conviene reconocer en el examen</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Situación (soltado desde el reposo)</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td>Semiesfera por fuera, desde arriba: se despega</td><td class="mono">cos θ = 2/3; baja R/3</td></tr>
+          <tr><td>Semiesfera por fuera: normal en función del ángulo</td><td class="mono">N = mg(3·cos θ − 2)</td></tr>
+          <tr><td>Cuenco por dentro, soltado desde el borde</td><td class="mono">N = 3mg·cos φ</td></tr>
+          <tr><td>Péndulo soltado desde θ₀, punto más bajo</td><td class="mono">T = mg(3 − 2·cos θ₀)</td></tr>
+          <tr><td>Loop, en lo más alto, con N = n·mg</td><td class="mono">v² = (n + 1)·gR</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas que pone el profesor</h3>
+      <p>Medir el ángulo desde un lado distinto al de la figura: revisa siempre si es desde la vertical o desde la horizontal.</p>
+      <p>Usar la altura sobre el piso en un lado de la energía y la altura sobre el centro en el otro: escoge una referencia y úsala en los dos.</p>
+      <p>El signo de N: por fuera va con −, por dentro con +.</p>
+      <p>En el loop, la altura de arriba es 2R (el diámetro), no R.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Mira en vivo cómo cambia la normal mientras el bloque baja por la semiesfera, y la tensión mientras el péndulo oscila.</p></div>
+    <div class="tabs" role="tablist" aria-label="Experimento">
+      <button type="button" role="tab" class="tab" id="tab-semi" aria-selected="true">Semiesfera</button>
+      <button type="button" role="tab" class="tab" id="tab-pend" aria-selected="false">Péndulo</button>
+    </div>
+    <div class="lab" id="lab-semi">
+      <div class="lab-stage"><div id="s-svg" class="lab-fig"></div><div id="s-graf" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="s-v0" id="s-v0-lab">Rapidez inicial arriba = 0,00 √(gR)</label><input type="range" id="s-v0" min="0" max="1" step="0.05" value="0"></div>
+        <div class="qrow"><button type="button" class="btn" id="s-go">Soltar</button><button type="button" class="btn ghost" id="s-reset">Reiniciar</button></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Ángulo θ</span><b id="s-th">0°</b></div>
+          <div class="ro"><span>Lo que ha bajado</span><b id="s-drop">0,00 R</b></div>
+          <div class="ro"><span>v² / (gR)</span><b id="s-v2">0,00</b></div>
+          <div class="ro"><span>Normal N / mg</span><b id="s-n">1,00</b></div>
+          <div class="status" id="s-status">Listo para soltar</div>
+        </div>
+      </div>
+    </div>
+    <div class="lab" id="lab-pend" hidden>
+      <div class="lab-stage"><div id="q-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="q-th" id="q-th-lab">Se suelta desde θ₀ = 60°</label><input type="range" id="q-th" min="10" max="90" step="1" value="60"></div>
+        <div class="qrow"><button type="button" class="btn" id="q-go">Soltar</button><button type="button" class="btn ghost" id="q-stop">Detener</button></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Ángulo ahora</span><b id="q-now">60°</b></div>
+          <div class="ro"><span>Tensión ahora T / mg</span><b id="q-t">0,50</b></div>
+          <div class="ro"><span>Tensión abajo mg(3 − 2cos θ₀)</span><b id="q-tb">2,00 mg</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Suelta el bloque desde el reposo. ¿En qué ángulo se despega?</summary>
+          <div class="rev-body"><p><b>θ ≈ 48°</b>, donde cos θ = 2/3. En la gráfica es justo donde la curva de N cruza el cero.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Dale rapidez inicial arriba. ¿Se despega antes o después?</summary>
+          <div class="rev-body"><p><b>Antes.</b> Con rapidez inicial, v² es más grande en cada punto y la normal llega a cero más pronto: N/mg = 3cos θ − 2 − v₀²/(gR). Con v₀ = √(gR) se despega de inmediato.</p></div></details>
+        <details class="rev"><summary>Reto 3 · En el péndulo, ¿desde qué ángulo la tensión abajo vale exactamente 2mg?</summary>
+          <div class="rev-body"><p><b>θ₀ = 60°</b>: 3 − 2·cos 60° = 3 − 1 = 2. Es el Abierto 1 de 2024-2.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Dos problemas de parciales que no están en la teoría y cuatro variantes de los ejemplos resueltos, como las cambia el profesor de un semestre a otro.</p></div>
+    <p class="prose">Usa la receta en cada uno: geometría, radial, energía y reemplazar. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas al simulacro con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: el simulacro, un parcial nuevo al estilo del profesor.</p>
+    <p>Fuente de los problemas: parciales 2 de 2024-2, 2025-1, 2025-2 y 2026-1 de Física 1, Universidad de los Andes.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+/* ---------- Figuras de M8 ---------- */
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+const DEG = Math.PI / 180;
+function domeSvg(o = {}) {
+  const cx = o.cx ?? 150, cy = 186, R = o.R ?? 110, th = (o.theta ?? 35) * DEG;
+  let g = `<line x1="8" y1="${cy}" x2="332" y2="${cy}" class="sv-line"/><path d="M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy} Z" class="sv-ground"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  if (o.ghostTop !== false) g += `<rect x="${cx - 8}" y="${cy - R - 15}" width="16" height="14" class="sv-ghost"/>`;
+  if (o.block !== false && o.pos == null) {
+    const px = cx + R * Math.sin(th), py = cy - R * Math.cos(th), nx = Math.sin(th), ny = -Math.cos(th);
+    const bx = px + nx * 8, by = py + ny * 8;
+    g += `<g transform="rotate(${f1(o.theta ?? 35)} ${f1(bx)} ${f1(by)})"><rect x="${f1(bx - 8)}" y="${f1(by - 7)}" width="16" height="14" class="sv-block"/></g>`;
+    if (o.angle) {
+      g += `<line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - R - 26}" class="sv-dash"/><line x1="${cx}" y1="${cy}" x2="${f1(px)}" y2="${f1(py)}" class="sv-dash"/>`;
+      g += `<path d="M ${cx} ${cy - 34} A 34 34 0 0 1 ${f1(cx + 34 * Math.sin(th))} ${f1(cy - 34 * Math.cos(th))}" class="sv-arc"/>` + T(cx + 6, cy - 40, "θ", "sv-ang");
+      g += T((cx + px) / 2 + 8, (cy + py) / 2 + 8, "R", "sv-tl");
+    }
+    if (o.heights) {
+      g += `<line x1="${f1(px + 24)}" y1="${f1(py)}" x2="${f1(px + 24)}" y2="${cy}" class="sv-dim"/>` + T(px + 28, (py + cy) / 2 + 4, "R·cos θ", "sv-t");
+      g += `<line x1="${f1(px + 24)}" y1="${cy - R}" x2="${f1(px + 24)}" y2="${f1(py)}" class="sv-dim2"/><line x1="${cx + 10}" y1="${cy - R}" x2="${f1(px + 30)}" y2="${cy - R}" class="sv-dash"/>` + T(px + 28, (py + cy - R) / 2 + 4, "R(1 − cos θ)", "sv-t t-fric");
+    }
+    if (o.arrows) {
+      g += arrowSvg(bx + nx * 9, by + ny * 9, bx + nx * 50, by + ny * 50, "a-n") + T(bx + nx * 54, by + ny * 54, "N", "sv-t t-n");
+      g += arrowSvg(bx, by, bx, by + 62, "a-peso") + T(bx + 5, by + 62, "mg", "sv-t t-peso");
+      const c = Math.cos(th) * 62;
+      g += `<line x1="${f1(bx)}" y1="${f1(by)}" x2="${f1(bx - nx * c)}" y2="${f1(by - ny * c)}" class="sv-comp"/>` + T(bx - nx * c - 6, by - ny * c + 4, "mg·cos θ", "sv-t t-comp", "end");
+    }
+  }
+  if (o.pos) g += `<rect x="${f1(o.pos.x - 8)}" y="${f1(o.pos.y - 7)}" width="16" height="14" class="sv-block${o.flying ? " bad" : ""}"/>`;
+  if (o.label) g += T(12, 20, o.label, "sv-tl");
+  return `<svg viewBox="0 0 340 200" role="img" aria-label="Bloque sobre una semiesfera, por fuera">${g}</svg>`;
+}
+function pendFig(o = {}) {
+  const px = 160, py = 22, L = 140, th0 = (o.theta0 ?? 60) * DEG;
+  let g = `<line x1="110" y1="${py}" x2="210" y2="${py}" class="sv-line"/>`;
+  for (let x = 114; x < 210; x += 10) g += `<line x1="${x}" y1="${py}" x2="${x + 6}" y2="${py - 6}" class="sv-hatch"/>`;
+  const gx = px - L * Math.sin(th0), gy = py + L * Math.cos(th0);
+  g += `<line x1="${px}" y1="${py}" x2="${f1(gx)}" y2="${f1(gy)}" class="sv-dash"/><circle cx="${f1(gx)}" cy="${f1(gy)}" r="10" class="sv-ghost"/>`;
+  g += `<path d="M ${px} ${py + 40} A 40 40 0 0 1 ${f1(px - 40 * Math.sin(th0))} ${f1(py + 40 * Math.cos(th0))}" class="sv-arc"/>` + T(px - 18, py + 58, o.thLab || "θ₀", "sv-ang", "end");
+  g += `<path d="M ${f1(gx)} ${f1(gy)} A ${L} ${L} 0 0 0 ${px} ${py + L}" class="sv-dash"/>`;
+  g += `<line x1="${px}" y1="${py}" x2="${px}" y2="${py + L - 11}" class="sv-rope"/><circle cx="${px}" cy="${py + L}" r="11" class="sv-ball"/>` + T(px + 6, py + 70, "L", "sv-tl");
+  if (o.arrows !== false) { g += arrowSvg(px + 16, py + L - 6, px + 16, py + L - 50, "a-f") + T(px + 21, py + L - 40, "T", "sv-t t-f"); g += arrowSvg(px, py + L + 12, px, py + L + 46, "a-peso") + T(px + 6, py + L + 44, "mg", "sv-t t-peso"); }
+  if (o.height) { g += `<line x1="${f1(gx - 18)}" y1="${f1(gy)}" x2="${f1(gx - 18)}" y2="${py + L}" class="sv-dim"/><line x1="${f1(gx - 24)}" y1="${py + L}" x2="${px}" y2="${py + L}" class="sv-dash"/>` + T(gx - 22, (gy + py + L) / 2 + 4, o.height, "sv-t", "end"); }
+  return `<svg viewBox="0 0 320 214" role="img" aria-label="Péndulo soltado desde un ángulo, pasando por el punto más bajo">${g}</svg>`;
+}
+function loopSpringFig(o = {}) {
+  const cy = 190, lc = { x: 236, y: 120 }, R = 70;
+  let g = `<line x1="8" y1="${cy}" x2="312" y2="${cy}" class="sv-line"/><line x1="14" y1="140" x2="14" y2="${cy}" class="sv-line"/>`;
+  let z = `M 14 ${cy - 12}`; for (let i = 0; i < 8; i++) z += ` L ${20 + i * 6} ${i % 2 ? cy - 18 : cy - 6}`; z += ` L 70 ${cy - 12}`;
+  g += `<path d="${z}" class="sv-spring"/>` + T(42, cy - 26, "k", "sv-t", "middle") + `<rect x="70" y="${cy - 22}" width="22" height="22" class="sv-block"/>` + T(81, cy - 7, "m", "sv-lab", "middle");
+  g += `<circle cx="${lc.x}" cy="${lc.y}" r="${R}" class="sv-track"/>` + `<line x1="${lc.x}" y1="${lc.y}" x2="${f1(lc.x + R * 0.7)}" y2="${f1(lc.y + R * 0.7)}" class="sv-dash"/>` + T(lc.x + 30, lc.y + 26, "R", "sv-tl");
+  g += `<rect x="${lc.x - 12}" y="${lc.y - R + 3}" width="24" height="13" rx="2" class="sv-block"/>`;
+  if (o.label) g += T(lc.x, lc.y + 4, o.label, "sv-t", "middle");
+  g += T(42, cy + 14, "apretado x", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 206" role="img" aria-label="Resorte que lanza un bloque hacia un loop de radio R">${g}</svg>`;
+}
+function bowlFig(o = {}) {
+  const cx = 160, cy = 46, R = 120, ph = (o.phi ?? 50) * DEG;
+  let g = `<line x1="8" y1="${cy + R}" x2="312" y2="${cy + R}" class="sv-line"/><path d="M ${cx - R} ${cy} A ${R} ${R} 0 0 0 ${cx + R} ${cy}" class="sv-track"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>` + T(cx + 6, cy - 6, "centro", "sv-tl");
+  g += `<rect x="${cx - R}" y="${cy - 15}" width="16" height="14" class="sv-ghost"/>`;
+  const px = cx + R * Math.sin(ph), py = cy + R * Math.cos(ph), nx = -Math.sin(ph), ny = -Math.cos(ph);
+  const bx = px + nx * 8, by = py + ny * 8;
+  g += `<g transform="rotate(${f1(-(o.phi ?? 50))} ${f1(bx)} ${f1(by)})"><rect x="${f1(bx - 8)}" y="${f1(by - 7)}" width="16" height="14" class="sv-block"/></g>`;
+  g += `<line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy + R}" class="sv-dash"/><line x1="${cx}" y1="${cy}" x2="${f1(px)}" y2="${f1(py)}" class="sv-dash"/>`;
+  g += `<path d="M ${cx} ${cy + 38} A 38 38 0 0 0 ${f1(cx + 38 * Math.sin(ph))} ${f1(cy + 38 * Math.cos(ph))}" class="sv-arc"/>` + T(cx + 8, cy + 56, "φ", "sv-ang");
+  if (o.arrows) { g += arrowSvg(bx + nx * 9, by + ny * 9, bx + nx * 52, by + ny * 52, "a-n") + T(bx + nx * 56 - 4, by + ny * 56, "N", "sv-t t-n", "end"); g += arrowSvg(bx, by + 8, bx, by + 50, "a-peso") + T(bx + 6, by + 48, "mg", "sv-t t-peso"); }
+  if (o.h) g += `<line x1="${f1(px + 26)}" y1="${f1(py)}" x2="${f1(px + 26)}" y2="${cy + R}" class="sv-dim"/>` + T(px + 30, (py + cy + R) / 2 + 4, o.h, "sv-t");
+  return `<svg viewBox="0 0 320 176" role="img" aria-label="Bloque dentro de un cuenco semiesférico">${g}</svg>`;
+}
+function columnsFig(o = {}) {
+  const fy = 196, R = 80, cx = 160, cy = fy - R, th = (o.theta ?? 40) * DEG;
+  let g = `<line x1="8" y1="${fy}" x2="312" y2="${fy}" class="sv-line"/>`;
+  g += `<rect x="${cx - R - 8}" y="${cy}" width="8" height="${R}" class="sv-board"/><rect x="${cx + R}" y="${cy}" width="8" height="${R}" class="sv-board"/>`;
+  g += `<path d="M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}" class="sv-track"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/><line x1="${cx}" y1="${cy}" x2="${cx + R}" y2="${cy}" class="sv-dash"/>` + T(cx + R / 2, cy + 14, "R", "sv-tl", "middle");
+  g += `<rect x="${cx - 8}" y="${cy - R - 15}" width="16" height="14" class="sv-ghost"/>`;
+  const px = cx + R * Math.cos(th), py = cy - R * Math.sin(th);
+  g += `<line x1="${cx}" y1="${cy}" x2="${f1(px)}" y2="${f1(py)}" class="sv-dash"/><path d="M ${cx + 30} ${cy} A 30 30 0 0 0 ${f1(cx + 30 * Math.cos(th))} ${f1(cy - 30 * Math.sin(th))}" class="sv-arc"/>` + T(cx + 36, cy - 8, "θ", "sv-ang");
+  const nx = Math.cos(th), ny = -Math.sin(th), bx = px + nx * 8, by = py + ny * 8;
+  g += `<g transform="rotate(${f1(90 - (o.theta ?? 40))} ${f1(bx)} ${f1(by)})"><rect x="${f1(bx - 8)}" y="${f1(by - 7)}" width="16" height="14" class="sv-block"/></g>`;
+  g += `<line x1="${f1(px + 34)}" y1="${f1(py)}" x2="${f1(px + 34)}" y2="${fy}" class="sv-dim"/>` + T(px + 38, (py + fy) / 2 + 4, "H = ?", "sv-t");
+  g += T(cx - R - 14, cy + R / 2, "R", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 206" role="img" aria-label="Estructura semicircular de radio R sobre dos columnas de altura R">${g}</svg>`;
+}
+function loopRampFig(o = {}) {
+  const fy = 190, lc = { x: 236, y: 128 }, R = 62;
+  let g = `<line x1="8" y1="${fy}" x2="312" y2="${fy}" class="sv-line"/>`;
+  g += `<path d="M 20 40 Q 40 ${fy} 140 ${fy}" class="sv-track"/>`;
+  g += `<rect x="16" y="24" width="18" height="14" class="sv-block"/>`;
+  g += `<line x1="12" y1="40" x2="12" y2="${fy}" class="sv-dim"/>` + T(8, 120, o.hLab || "h", "sv-t", "end");
+  g += `<circle cx="${lc.x}" cy="${lc.y}" r="${R}" class="sv-track"/><line x1="${lc.x}" y1="${lc.y}" x2="${f1(lc.x + R * 0.7)}" y2="${f1(lc.y + R * 0.7)}" class="sv-dash"/>` + T(lc.x + 26, lc.y + 24, "R", "sv-tl");
+  g += `<rect x="${lc.x - 11}" y="${lc.y - R + 3}" width="22" height="12" rx="2" class="sv-ghost"/>` + T(lc.x, lc.y - R - 6, o.topLab || "", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 206" role="img" aria-label="Rampa sin fricción que termina en un loop de radio R">${g}</svg>`;
+}
+$("#fig-geo").innerHTML = domeSvg({ theta: 40, angle: true, heights: true });
+$("#fig-rad").innerHTML = domeSvg({ theta: 40, angle: true, arrows: true });
+$("#fig-pend").innerHTML = pendFig({ theta0: 60 });
+$("#fig-loop").innerHTML = loopSpringFig({ label: "N = 2mg arriba" });
+$("#fig-bowl").innerHTML = bowlFig({ phi: 55, arrows: true, h: "h" });
+
+/* ---------- Lab 1: semiesfera ---------- */
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SM = { v0: 0, th: 0, phase: "idle", x: 0, y: 1, vx: 0, vy: 0, last: null, sepTh: null };
+const SC = { cx: 140, cy: 186, R: 110 };
+function nOverMg(th) { return 3 * Math.cos(th) - 2 - SM.v0 * SM.v0; }
+function drawSemi() {
+  let pos = null, flying = SM.phase === "flight" || SM.phase === "done";
+  if (flying) pos = { x: SC.cx + SM.x * SC.R, y: SC.cy - SM.y * SC.R - 7 };
+  const domeOpts = { cx: SC.cx, R: SC.R, theta: SM.th / DEG, ghostTop: false };
+  if (flying) { domeOpts.block = false; domeOpts.pos = pos; domeOpts.flying = true; }
+  $("#s-svg").innerHTML = domeSvg(domeOpts);
+  /* gráfica N/mg contra θ */
+  const W = 340, H = 160, ml = 46, mr = 14, mt = 12, mb = 32;
+  const X = (d) => ml + (d / 90) * (W - ml - mr), Y = (v) => mt + (1 - v) / 2 * (H - mt - mb);
+  let g = "";
+  [-1, 0, 1].forEach((t) => { g += `<line x1="${ml}" y1="${f1(Y(t))}" x2="${W - mr}" y2="${f1(Y(t))}" class="${t === 0 ? "gr-axis" : "gr-grid"}"/><text x="${ml - 6}" y="${f1(Y(t) + 4)}" class="gr-tick" text-anchor="end">${t}</text>`; });
+  [0, 30, 60, 90].forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 15}" class="gr-tick" text-anchor="middle">${t}°</text>`; });
+  g += `<text x="${(ml + W - mr) / 2}" y="${H - 4}" class="gr-lab" text-anchor="middle">ángulo θ desde la vertical</text>`;
+  let d = ""; for (let i = 0; i <= 90; i++) { const v = Math.max(-1, nOverMg(i * DEG)); d += (i ? " L " : "M ") + f1(X(i)) + " " + f1(Y(v)); }
+  g += `<path d="${d}" class="gr-line"/>` + `<text x="${ml + 6}" y="${mt + 10}" class="gr-ann">N / mg</text>`;
+  const c = (2 + SM.v0 * SM.v0) / 3;
+  if (c <= 1) { const ts = Math.acos(c) / DEG; g += `<line x1="${f1(X(ts))}" y1="${f1(Y(0) - 6)}" x2="${f1(X(ts))}" y2="${f1(Y(0) + 6)}" class="gr-axis"/><text x="${f1(X(ts) + 5)}" y="${f1(Y(0) + 16)}" class="gr-ann">se despega: ${ts.toFixed(1).replace(".", ",")}°</text>`; }
+  const thNow = Math.min(90, SM.th / DEG);
+  if (!flying) g += `<circle cx="${f1(X(thNow))}" cy="${f1(Y(Math.max(-1, nOverMg(SM.th))))}" r="6" class="gr-dot"/>`;
+  $("#s-graf").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Normal dividida por el peso en función del ángulo">${g}</svg>`;
+  const th = SM.phase === "flight" || SM.phase === "done" ? SM.sepTh : SM.th;
+  $("#s-v0-lab").textContent = "Rapidez inicial arriba = " + fmt(SM.v0) + " √(gR)";
+  $("#s-th").textContent = (th / DEG).toFixed(1).replace(".", ",") + "°";
+  $("#s-drop").textContent = fmt(1 - Math.cos(th)) + " R";
+  $("#s-v2").textContent = fmt(SM.v0 * SM.v0 + 2 * (1 - Math.cos(th)));
+  $("#s-n").textContent = fmt(Math.max(0, nOverMg(th)));
+}
+function semiStep(dt) {
+  if (SM.phase === "contact") {
+    const v = Math.sqrt(SM.v0 * SM.v0 * 10 + 2 * 10 * (1 - Math.cos(SM.th)));
+    SM.th += (v / 1) * dt;
+    if (nOverMg(SM.th) <= 0) {
+      SM.sepTh = SM.th; SM.phase = "flight";
+      SM.x = Math.sin(SM.th); SM.y = Math.cos(SM.th); SM.vx = v * Math.cos(SM.th); SM.vy = -v * Math.sin(SM.th);
+      $("#s-status").textContent = "Se despegó en θ = " + (SM.th / DEG).toFixed(1).replace(".", ",") + "°, después de bajar " + fmt(1 - Math.cos(SM.th)) + " R";
+      $("#s-status").className = "status bad";
+    }
+  } else if (SM.phase === "flight") {
+    SM.x += SM.vx * dt; SM.y += SM.vy * dt; SM.vy -= 10 * dt;
+    if (SM.y <= 0.064) { SM.y = 0.064; SM.phase = "done"; }
+  }
+}
+function semiFrame(now) {
+  if (SM.phase !== "contact" && SM.phase !== "flight") return;
+  const dt = Math.min(0.05, (now - (SM.last ?? now)) / 1000); SM.last = now;
+  for (let i = 0; i < 30; i++) semiStep(dt / 30);
+  drawSemi();
+  requestAnimationFrame(semiFrame);
+}
+function semiReset() { SM.phase = "idle"; SM.th = 0; SM.last = null; SM.sepTh = null; $("#s-status").textContent = "Listo para soltar"; $("#s-status").className = "status"; drawSemi(); }
+$("#s-go").addEventListener("click", () => {
+  semiReset(); SM.th = SM.v0 > 0 ? 0 : 0.03; SM.phase = "contact"; $("#s-status").textContent = "Bajando en contacto con la superficie"; $("#s-status").className = "status ok";
+  if (reduce) { let k = 0; while ((SM.phase === "contact" || SM.phase === "flight") && k++ < 200000) semiStep(1 / 2000); drawSemi(); return; }
+  requestAnimationFrame(semiFrame);
+});
+$("#s-reset").addEventListener("click", semiReset);
+$("#s-v0").addEventListener("input", (e) => { SM.v0 = Number(e.target.value); semiReset(); });
+semiReset();
+
+/* ---------- Lab 2: péndulo ---------- */
+const PD = { th0: 60 * DEG, th: -60 * DEG, w: 0, run: false, last: null };
+function drawPend() {
+  const px = 170, py = 18, L = 150, th = PD.th;
+  const bx = px + L * Math.sin(th), by = py + L * Math.cos(th);
+  const Tm = 3 * Math.cos(th) - 2 * Math.cos(PD.th0);
+  let g = `<line x1="120" y1="${py}" x2="220" y2="${py}" class="sv-line"/>`;
+  for (let x = 124; x < 220; x += 10) g += `<line x1="${x}" y1="${py}" x2="${x + 6}" y2="${py - 6}" class="sv-hatch"/>`;
+  g += `<path d="M ${f1(px - L * Math.sin(PD.th0))} ${f1(py + L * Math.cos(PD.th0))} A ${L} ${L} 0 0 0 ${f1(px + L * Math.sin(PD.th0))} ${f1(py + L * Math.cos(PD.th0))}" class="sv-dash"/>`;
+  g += `<line x1="${px}" y1="${py}" x2="${f1(bx)}" y2="${f1(by)}" class="sv-rope"/><circle cx="${f1(bx)}" cy="${f1(by)}" r="11" class="sv-ball"/>`;
+  const ux = (px - bx) / L, uy = (py - by) / L, tl = Math.max(4, Tm * 26);
+  g += arrowSvg(bx + ux * 13, by + uy * 13, bx + ux * (13 + tl), by + uy * (13 + tl), "a-f") + T(bx + ux * (17 + tl) + 6, by + uy * (17 + tl), "T", "sv-t t-f");
+  g += arrowSvg(bx, by + 13, bx, by + 13 + 26, "a-peso") + T(bx + 6, by + 38, "mg", "sv-t t-peso");
+  $("#q-svg").innerHTML = `<svg viewBox="0 0 340 214" role="img" aria-label="Péndulo oscilando con la flecha de la tensión">${g}</svg>`;
+  $("#q-th-lab").textContent = "Se suelta desde θ₀ = " + Math.round(PD.th0 / DEG) + "°";
+  $("#q-now").textContent = Math.round(th / DEG) + "°";
+  $("#q-t").textContent = fmt(Tm);
+  $("#q-tb").textContent = fmt(3 - 2 * Math.cos(PD.th0)) + " mg";
+}
+function pendFrame(now) {
+  if (!PD.run) return;
+  const dt = Math.min(0.05, (now - (PD.last ?? now)) / 1000); PD.last = now;
+  for (let i = 0; i < 20; i++) { PD.w += -(10 / 1) * Math.sin(PD.th) * dt / 20; PD.th += PD.w * dt / 20; }
+  drawPend(); requestAnimationFrame(pendFrame);
+}
+$("#q-th").addEventListener("input", (e) => { PD.run = false; PD.th0 = Number(e.target.value) * DEG; PD.th = -PD.th0; PD.w = 0; drawPend(); });
+$("#q-go").addEventListener("click", () => { PD.th = -PD.th0; PD.w = 0; if (reduce) { PD.th = 0; drawPend(); return; } PD.run = true; PD.last = null; requestAnimationFrame(pendFrame); });
+$("#q-stop").addEventListener("click", () => { PD.run = false; });
+drawPend();
+const TABS = ["semi", "pend"];
+TABS.forEach((on) => $("#tab-" + on).addEventListener("click", () => {
+  TABS.forEach((t) => { $("#lab-" + t).hidden = t !== on; $("#tab-" + t).setAttribute("aria-selected", t === on ? "true" : "false"); });
+}));
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Semiesfera: ¿dónde la normal vale un tercio del peso?", src: "Parcial 2025-1 · SM3 (10 pts)",
+    fig: () => domeSvg({ theta: 35, angle: true }),
+    txt: "Se suelta un bloque de masa m, desde el reposo, en lo más alto de una superficie semicircular de radio R sin fricción. El bloque se desliza sobre la superficie. El ángulo θ (desde la vertical) en el que la normal es un tercio del peso es: A) cos⁻¹(1/2)  B) cos⁻¹(2/3)  C) cos⁻¹(3/4)  D) cos⁻¹(5/7)  E) cos⁻¹(7/9).",
+    hints: ["Es el ejemplo resuelto 1, pero ahora N = mg/3 en vez de N = 0.", "Radial: mg cos θ − mg/3 = mv²/R. Energía: v² = 2gR(1 − cos θ)."],
+    sol: ["Radial: mg cos θ − mg/3 = mv²/R.", "Energía: v² = 2gR(1 − cos θ).", "Reemplazando: cos θ − 1/3 = 2 − 2cos θ, así que 3cos θ = 7/3 y <b>cos θ = 7/9</b>: opción E.", "La solución oficial escribe cos θ = 2/3 a mitad del cálculo: es un error de transcripción, la respuesta E sí es la correcta."],
+    checks: [{ q: "¿Cuál es θ?", opts: ["cos⁻¹(1/2)", "cos⁻¹(2/3)", "cos⁻¹(3/4)", "cos⁻¹(5/7)", "cos⁻¹(7/9)"], a: 4 }] },
+  { n: "T2", t: "Estructura semicircular sobre columnas", src: "Parcial 2026-1 · Abierto 3 (20 pts)",
+    fig: () => columnsFig({ theta: 42 }),
+    txt: "Una estructura tiene una parte semicircular de radio R sobre dos columnas verticales de altura R. Está cubierta de aceite (sin fricción) y se coloca un bloque en la parte superior, que se desliza. A) Halla la velocidad del bloque, en términos de g, R y θ, en el instante en que se desprende (6 pts). B) Halla el ángulo θ en el que se desprende (9 pts). C) Halla la altura H sobre el piso, solo en términos de R, en la que pierde contacto (5 pts).",
+    hints: ["Aquí θ se mide <b>desde la horizontal</b>: la parte del peso hacia el centro es mg·sen θ y la altura sobre el piso es R + R·sen θ.", "Energía desde arriba del todo (altura 2R sobre el piso, quieto) hasta el ángulo θ."],
+    sol: ["<b>A)</b> Radial con N = 0: mg·sen θ = mv²/R, así que <b>v² = gR·sen θ</b>.", "<b>B)</b> Energía con el piso como referencia: mg·2R = mg(R + R·sen θ) + ½mv². Reemplazando v²: 2R = R + R·sen θ + ½R·sen θ, así que <b>sen θ = 2/3</b>.", "<b>C)</b> H = R + R·sen θ = R + 2R/3 = <b>5R/3</b>.", "Es el mismo resultado del ejemplo 1 (baja R/3), visto con otra referencia y otro ángulo."],
+    checks: [{ q: "B) ¿Cuánto vale sen θ?", opts: ["1/3", "1/2", "2/3", "3/4"], a: 2 }, { q: "C) ¿Cuánto vale H?", opts: ["4R/3", "3R/2", "5R/3", "2R"], a: 2 }] },
+  { n: "T3", t: "Variante: péndulo con tensión 5mg/2 abajo", src: "Variante de 2024-2 · Abierto 1",
+    fig: () => pendFig({ theta0: 70 }),
+    txt: "Determina el ángulo θ₀ desde el que se debe soltar un péndulo de masa m y longitud L para que la tensión en el punto más bajo de su trayectoria sea 5mg/2.",
+    hints: ["Radial abajo: T − mg = mv²/L.", "Energía: v² = 2gL(1 − cos θ₀). O usa la fórmula T = mg(3 − 2cos θ₀) si la sabes deducir."],
+    sol: ["Radial: 5mg/2 − mg = mv²/L, así que v² = 3gL/2.", "Energía: 3gL/2 = 2gL(1 − cos θ₀), así que 1 − cos θ₀ = 3/4 y <b>cos θ₀ = 1/4</b> (θ₀ ≈ 75,5°)."],
+    checks: [{ q: "¿Cuánto vale cos θ₀?", opts: ["1/4", "1/3", "1/2", "3/4"], a: 0 }] },
+  { n: "T4", t: "Variante: resorte + loop con N = mg arriba", src: "Variante de 2025-2 · Abierto 2",
+    fig: () => loopSpringFig({ label: "N = mg arriba" }),
+    txt: "Un riel sin fricción tiene una sección circular de radio R. Determina la compresión x del resorte para que, en lo más alto del círculo, el bloque sienta una normal igual a su peso. A) Halla la energía mecánica con el resorte comprimido. B) Halla la energía mecánica en lo más alto. C) Halla la velocidad en lo más alto. D) Halla x en términos de m, g, R y k.",
+    hints: ["C) Radial arriba (por dentro): N + mg = mv²/R con N = mg.", "B) Arriba la altura es 2R, no R."],
+    sol: ["<b>A)</b> E = ½kx² (piso como referencia, bloque quieto).", "<b>C)</b> mg + mg = mv²/R, así que <b>v² = 2gR</b>.", "<b>B)</b> E = ½mv² + mg·2R = mgR + 2mgR = 3mgR.", "<b>D)</b> ½kx² = 3mgR, así que <b>x = √(6mgR/k)</b>."],
+    checks: [{ q: "D) ¿Cuánto vale x?", opts: ["√(5mgR/k)", "√(6mgR/k)", "√(7mgR/k)", "√(3mgR/k)"], a: 1 }] },
+  { n: "T5", t: "Variante: el cuenco por dentro", src: "Variante de 2024-2 · Abierto 2",
+    fig: () => bowlFig({ phi: 48, arrows: true, h: "h = ?" }),
+    txt: "Se suelta un bloque desde el reposo en el borde de un cuenco semiesférico sin fricción de radio R (el borde está a la altura del centro). A) ¿Cuánto vale la normal en el fondo? B) ¿A qué altura sobre el fondo la normal es igual al peso?",
+    hints: ["Del ejemplo resuelto 4: N = 3mg·cos φ, con φ desde la vertical que baja del centro.", "En el fondo φ = 0. Para la parte B, pon N = mg y halla cos φ; la altura sobre el fondo es R(1 − cos φ)."],
+    sol: ["<b>A)</b> En el fondo φ = 0: <b>N = 3mg</b>.", "<b>B)</b> mg = 3mg·cos φ, así que cos φ = 1/3. Altura sobre el fondo: R(1 − 1/3) = <b>2R/3</b>."],
+    checks: [{ q: "B) ¿A qué altura N = mg?", opts: ["R/3", "R/2", "2R/3", "8R/9"], a: 2 }] },
+  { n: "T6", t: "Rampa + loop: altura mínima para dar la vuelta", src: "Problema nuevo (clásico del capítulo 7)",
+    fig: () => loopRampFig({ hLab: "h = ?" }),
+    txt: "Un bloque se suelta desde el reposo a una altura h en una rampa sin fricción que termina en un loop de radio R. ¿Cuál es la altura mínima h para que el bloque dé la vuelta completa sin despegarse?",
+    hints: ["«Dar la vuelta sin despegarse» en el caso límite: en lo más alto, N = 0.", "Radial arriba: mg = mv²/R. Energía: mgh = mg·2R + ½mv²."],
+    sol: ["Radial arriba con N = 0: <b>v² = gR</b> (la rapidez mínima del M5).", "Energía: mgh = 2mgR + ½mgR, así que <b>h = 5R/2</b>.", "Con menos altura, el bloque llega arriba demasiado lento y se cae antes de completar la vuelta."],
+    checks: [{ q: "¿Cuánto vale h mínima?", opts: ["2R", "5R/2", "3R", "7R/2"], a: 1 }] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => { const pp = el("p"); pp.innerHTML = s; sb.appendChild(pp); }); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M8", NEXT = "Aprobado. Pasas al simulacro.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => domeSvg({ theta: 35 }), q: "El bloque de la figura se desliza por fuera de la semiesfera. ¿Qué condición dice que «pierde contacto»?",
+      o: ["v = 0", "N = 0", "N = mg", "θ = 90°"], a: 1,
+      e: "Perder contacto significa que la superficie ya no empuja al bloque: la normal llega a cero." },
+    { k: "Conceptual", fig: () => domeSvg({ theta: 40, angle: true }), q: "El ángulo θ se mide desde la vertical, en el centro. ¿A qué altura sobre el centro está el bloque?",
+      o: ["R·sen θ", "R·cos θ", "R(1 − cos θ)", "R·tan θ"], a: 1,
+      e: "El radio mide R y el lado vertical pegado al ángulo es R·cos θ. R(1 − cos θ) es lo que ya bajó desde arriba." },
+    { k: "Conceptual", fig: () => domeSvg({ theta: 40, angle: true, arrows: true }), q: "En la figura, ¿cuál es la ecuación hacia el centro?",
+      o: ["N − mg·cos θ = mv²/R", "mg·cos θ − N = mv²/R", "mg − N = mv²/R", "N + mg·cos θ = mv²/R"], a: 1,
+      e: "Hacia el centro apunta la parte mg·cos θ del peso (+). La normal empuja hacia afuera (−)." },
+    { k: "Tipo parcial", fig: () => pendFig({ theta0: 90, thLab: "90°" }), q: "Un péndulo se suelta desde la horizontal (θ₀ = 90°). ¿Cuánto vale la tensión en el punto más bajo?",
+      o: ["mg", "2mg", "3mg", "5mg"], a: 2,
+      e: "Energía: v² = 2gL(1 − cos 90°) = 2gL. Radial: T − mg = m·2gL/L = 2mg, así que T = 3mg." },
+    { k: "Tipo parcial", fig: () => loopRampFig({ hLab: "h = 3R", topLab: "N = ?" }), q: "Un bloque se suelta desde el reposo a una altura 3R en la rampa sin fricción de la figura. ¿Cuánto vale la normal en lo más alto del loop?",
+      o: ["0", "mg", "2mg", "3mg"], a: 1,
+      e: "Energía: mg·3R = mg·2R + ½mv², así que v² = 2gR. Radial arriba: N + mg = m·2gR/R = 2mg, así que N = mg." }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => domeSvg({ theta: 35 }), q: "¿Por qué la conservación de la energía sola no te da la normal sobre el bloque?",
+      o: ["Porque la normal es muy pequeña", "Porque la normal no hace trabajo, así que no aparece en la energía", "Porque la energía no se conserva", "Porque la normal cambia de dirección"], a: 1,
+      e: "La normal es perpendicular al movimiento: su trabajo es cero. Por eso hace falta la ecuación radial." },
+    { k: "Conceptual", fig: () => bowlFig({ phi: 50, arrows: true }), q: "El bloque de la figura se desliza por dentro del cuenco, a un ángulo φ de la vertical que baja del centro. ¿Cuál es la ecuación hacia el centro?",
+      o: ["mg·cos φ − N = mv²/R", "N − mg·cos φ = mv²/R", "N + mg·cos φ = mv²/R", "N = mv²/R"], a: 1,
+      e: "Por dentro, la normal apunta al centro (+) y la parte radial del peso se aleja del centro (−)." },
+    { k: "Conceptual", fig: () => pendFig({ theta0: 50, thLab: "θ", arrows: false, height: "?" }), q: "El péndulo de la figura está a un ángulo θ de la vertical. ¿A qué altura está la masa sobre el punto más bajo?",
+      o: ["L·cos θ", "L·sen θ", "L(1 − cos θ)", "L(1 − sen θ)"], a: 2,
+      e: "Debajo del punto de amarre baja L·cos θ; el punto más bajo está a L. La diferencia es L − L·cos θ." },
+    { k: "Tipo parcial", fig: () => domeSvg({ theta: 48 }), q: "Un bloque se suelta desde el reposo en lo más alto de la semiesfera sin fricción. ¿Cuánto vale v² en el instante en que se despega?",
+      o: ["gR/3", "2gR/3", "gR", "2gR"], a: 1,
+      e: "Se despega en cos θ = 2/3 y ahí, con N = 0, v² = gR·cos θ = 2gR/3." },
+    { k: "Tipo parcial", fig: () => loopRampFig({ hLab: "h = ?", topLab: "N = mg" }), q: "¿Desde qué altura h hay que soltar el bloque en la rampa sin fricción para que la normal en lo más alto del loop sea igual a su peso?",
+      o: ["5R/2", "3R", "7R/2", "4R"], a: 1,
+      e: "Radial arriba: mg + mg = mv²/R, así que v² = 2gR. Energía: mgh = 2mgR + ½m·2gR = 3mgR, así que h = 3R." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
