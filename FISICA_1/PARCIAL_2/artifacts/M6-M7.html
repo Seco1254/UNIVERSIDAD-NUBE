@@ -257,6 +257,44 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 .bar-track{fill:var(--rule)}
 .bar{fill:var(--accent)}
 .bar-heat{fill:var(--orange)}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+.sv-dot{fill:var(--ink)}
+.sv-x{stroke:var(--c-fric); stroke-width:2.2; fill:none}
+.sv-dim{stroke:var(--muted); stroke-width:1.2}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
 </style>
 
 <nav class="nav" aria-label="Secciones del módulo">
@@ -287,7 +325,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 1. TEORÍA ============ -->
   <section id="teoria" aria-labelledby="t-h">
-    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Desde cero: trabajo, energía cinética, energía potencial, conservación y qué pasa cuando hay fricción.</p></div>
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Desde cero: trabajo, energía cinética, energía potencial, conservación y qué pasa cuando hay fricción. Siete ejemplos resueltos paso a paso, solo con letras.</p></div>
 
     <div class="block">
       <h3>Símbolos de este módulo</h3>
@@ -299,6 +337,8 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
           <tr><td class="mono">d</td><td>«de»</td><td>Distancia que recorre el objeto.</td><td>m</td></tr>
           <tr><td class="mono">M</td><td>«eme» mayúscula</td><td>Masa del objeto. En este módulo va en mayúscula para no confundirla con la <b>m</b> minúscula de <b>metros</b>. En el parcial la masa sale como m minúscula: ahí la reconoces porque los metros siempre van después de un número (5&nbsp;m).</td><td>kg</td></tr>
           <tr><td class="mono">φ</td><td>«fi» (letra griega)</td><td>Ángulo entre la fuerza y la dirección en que se mueve el objeto.</td><td>grados</td></tr>
+          <tr><td class="mono">θ</td><td>«theta» (letra griega)</td><td>Ángulo de un plano inclinado con la horizontal (lo viste en M1).</td><td>grados</td></tr>
+          <tr><td class="mono">cot θ</td><td>«cotangente de theta»</td><td>Es cos θ dividido entre sen θ. Aparece cuando calculas la fricción en un plano inclinado.</td><td>—</td></tr>
           <tr><td class="mono">K</td><td>«ka»</td><td>Energía cinética: la energía que tiene un objeto por estar moviéndose.</td><td>J</td></tr>
           <tr><td class="mono">U</td><td>«u»</td><td>Energía potencial: energía «guardada» por la posición (altura) o por un resorte apretado.</td><td>J</td></tr>
           <tr><td class="mono">U<sub>g</sub>, U<sub>e</sub></td><td>«u sub ge», «u sub e»</td><td>Potencial gravitacional (por la altura) y potencial elástica (por el resorte).</td><td>J</td></tr>
@@ -309,18 +349,24 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
           <tr><td class="mono">v₀</td><td>«ve sub cero»</td><td>Rapidez inicial.</td><td>m/s</td></tr>
           <tr><td class="mono">Δ</td><td>«delta»</td><td>«Cambio de»: ΔK = K<sub>final</sub> − K<sub>inicial</sub>.</td><td>—</td></tr>
           <tr><td class="mono">µₖ, fₖ</td><td>«mu sub ka», «efe sub ka»</td><td>Coeficiente y fuerza de fricción cinética (M3).</td><td>—, N</td></tr>
+          <tr><td class="mono">n</td><td>«ene»</td><td>Número de pasadas por un tramo rugoso. Puede tener decimales: 2,5 pasadas son dos completas y media más.</td><td>—</td></tr>
         </tbody>
       </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo va paso a paso. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). No hay números: todo se resuelve con letras, como en los parciales. Si una letra se cancela, aparece <span class="cx">tachada</span>.</p>
     </div>
 
     <div class="block">
       <h3>1. El trabajo de una fuerza</h3>
       <div class="figs">
-        <figure><div id="fig-trabajo"></div><figcaption>Una fuerza F jala un bloque formando un ángulo φ con el camino. Solo la parte de F que va a lo largo del camino hace trabajo.</figcaption></figure>
+        <figure><div data-fig="trabajo"></div><figcaption>Una fuerza F jala un bloque formando un ángulo φ con el camino. Solo la parte de F que va a lo largo del camino hace trabajo.</figcaption></figure>
         <div class="prose">
           <p>Una fuerza hace <b>trabajo</b> cuando empuja o jala un objeto a lo largo de su camino. Es la forma de medir cuánta energía le pasa.</p>
-          <div class="eq"><span><b>W = F · d · cos φ</b></span><span>Si la fuerza va en la misma dirección del movimiento, φ = 0 y W = F·d.</span></div>
-          <p><b>Ejemplo:</b> empujas una caja con 10 N, en la dirección del movimiento, a lo largo de 3 m. W = 10 · 3 = <b>30 J</b>.</p>
+          <div class="eq"><span><b>W = F · d · cos φ</b></span><span>F es la fuerza, d la distancia recorrida y φ el ángulo entre la fuerza y el camino.</span></div>
+          <p>El cos φ se queda solo con la parte de la fuerza que va a lo largo del camino, F·cos φ. Si la fuerza va justo en la dirección del movimiento, φ = 0°, cos 0° = 1 y queda W = F·d.</p>
         </div>
       </div>
       <div class="laws">
@@ -328,6 +374,27 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <div class="law"><b>W &lt; 0</b><span>La fuerza va en contra del movimiento.</span><span class="ex">Le quita energía. Ejemplo: la fricción, siempre.</span></div>
         <div class="law"><b>W = 0</b><span>La fuerza es perpendicular al movimiento (φ = 90°).</span><span class="ex">No le da ni le quita energía. Ejemplo: la normal; la tensión de un péndulo.</span></div>
       </div>
+
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1</span>
+            <h4 id="wx1-h">El trabajo de cada fuerza</h4>
+            <p>Una caja de masa M se mueve una distancia d por un piso horizontal sin fricción. La jalas con una fuerza F que forma un ángulo φ con el piso, como en la figura.</p>
+            <p><b>Pregunta:</b> ¿cuánto trabajo hace cada fuerza (F, el peso y la normal) y cuánto es el trabajo total?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="trabajo"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Identifica el camino.</p><p class="why">La caja se mueve en línea recta por el piso, una distancia d. Todos los ángulos se miden contra esa dirección.</p><div class="mx">camino: horizontal, de largo d</div></li>
+          <li><p class="what">Trabajo de F.</p><p class="why">F forma el ángulo φ con el camino. Reemplazas directo en la fórmula.</p><div class="mx">W<sub>F</sub> = F · d · cos φ</div></li>
+          <li><p class="what">Trabajo del peso.</p><p class="why">El peso, M·g, apunta hacia abajo y el camino es horizontal: forman 90°. Y cos 90° = 0.</p><div class="mx">W<sub>peso</sub> = M·g · d · cos 90° = M·g · d · 0 = 0</div></li>
+          <li><p class="what">Trabajo de la normal.</p><p class="why">La normal N apunta hacia arriba: también forma 90° con el camino. No importa cuánto valga N (aquí N = M·g − F·sen φ, porque F ayuda a levantar la caja); igual se multiplica por cero.</p><div class="mx">W<sub>N</sub> = N · d · cos 90° = 0</div></li>
+          <li><p class="what">Suma los trabajos.</p><p class="why">El trabajo total es la suma del trabajo de cada fuerza.</p><div class="mx">W<sub>total</sub> = W<sub>F</sub> + W<sub>peso</sub> + W<sub>N</sub> = F·d·cos φ + 0 + 0 = F·d·cos φ</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> solo F hace trabajo. W<sub>total</sub> = F·d·cos φ.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si jalas horizontal (φ = 0°), W = F·d: todo tu esfuerzo empuja hacia adelante. Si jalas hacia arriba (φ = 90°), W = 0: la caja no avanza gracias a ti.</p>
+      </article>
     </div>
 
     <div class="block">
@@ -335,44 +402,145 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <div class="tw"><table>
         <thead><tr><th>Fuerza</th><th>Trabajo</th><th>Por qué</th></tr></thead>
         <tbody>
-          <tr><td><b>Peso</b></td><td class="mono">W = M·g·(h<sub>inicial</sub> − h<sub>final</sub>)</td><td>Positivo si el objeto baja, negativo si sube. Solo importa cuánto cambió la altura, no el camino.</td></tr>
+          <tr><td><b>Peso</b></td><td class="mono">W = M·g·(h<sub>inicial</sub> − h<sub>final</sub>)</td><td>Positivo si el objeto baja, negativo si sube. Solo importa cuánto cambió la altura, no el camino. Lo demuestra el ejemplo 2.</td></tr>
           <tr><td><b>Normal</b></td><td class="mono">W = 0</td><td>Siempre es perpendicular a la superficie por la que se mueve el objeto.</td></tr>
           <tr><td><b>Fricción cinética</b></td><td class="mono">W = −fₖ · d = −µₖ · N · d</td><td>Siempre va en contra del movimiento. d es la distancia <b>total</b> recorrida sobre la superficie rugosa.</td></tr>
         </tbody>
       </table></div>
+
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2</span>
+            <h4 id="wx2-h">¿Por qué el trabajo del peso es M·g·h?</h4>
+            <p>Un bloque de masa M baja una distancia d por un plano inclinado de ángulo θ. En ese recorrido baja una altura h.</p>
+            <p><b>Pregunta:</b> demuestra que el trabajo del peso es M·g·h, sin importar el ángulo θ.</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="pesoPlano"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Relaciona d con h.</p><p class="why">El camino d y la altura h forman un triángulo rectángulo (las líneas punteadas de la figura). d es la hipotenusa y h es el lado opuesto al ángulo θ. Por definición de seno: seno = opuesto ÷ hipotenusa.</p><div class="mx">sen θ = <span class="frac"><span>h</span><span>d</span></span><span class="ar">→</span>h = d · sen θ<span class="ar">o también</span>d = <span class="frac"><span>h</span><span>sen θ</span></span></div></li>
+          <li><p class="what">Encuentra el ángulo entre el peso y el camino.</p><p class="why">El peso apunta hacia abajo (vertical). El camino está inclinado θ respecto a la horizontal, así que respecto a la vertical está inclinado 90° − θ. Es el ángulo marcado en la figura.</p><div class="mx">ángulo entre M·g y el camino = 90° − θ</div></li>
+          <li><p class="what">Aplica la fórmula del trabajo.</p><p class="why">W = fuerza · distancia · cos(ángulo entre ellas).</p><div class="mx">W<sub>peso</sub> = M·g · d · cos(90° − θ)</div></li>
+          <li><p class="what">Cambia cos(90° − θ) por sen θ.</p><p class="why">Es una identidad de trigonometría: cos(90° − θ) = sen θ. Es la misma razón por la que en el M1 la parte del peso a lo largo del plano era M·g·sen θ.</p><div class="mx">W<sub>peso</sub> = M·g · d · sen θ</div></li>
+          <li><p class="what">Reemplaza d·sen θ por h.</p><p class="why">En el paso 1 viste que d·sen θ = h.</p><div class="mx">W<sub>peso</sub> = M·g · (d · sen θ) = M·g · h</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> W<sub>peso</sub> = M·g·h. El ángulo θ desapareció: solo importa cuánto bajó.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si el bloque sube una altura h, el peso va en contra del movimiento y W<sub>peso</sub> = −M·g·h. Las dos cosas juntas se escriben W<sub>peso</sub> = M·g·(h<sub>inicial</sub> − h<sub>final</sub>), como en la tabla.</p>
+      </article>
     </div>
 
     <div class="block">
       <h3>2. Energía cinética y el teorema trabajo–energía</h3>
       <p class="prose">Todo objeto que se mueve tiene <b>energía cinética</b>, más grande mientras más masa y, sobre todo, mientras más rápido vaya, porque depende de la rapidez al cuadrado:</p>
-      <div class="eq"><span><b>K = ½ · M · v²</b></span><span>Ejemplo: un bloque de 2 kg a 3 m/s tiene K = ½ · 2 · 9 = 9 J. Si va al doble de rapidez (6 m/s), K = 36 J: cuatro veces más.</span></div>
+      <div class="eq"><span><b>K = ½ · M · v²</b></span><span>Si la rapidez se duplica, v pasa a ser 2v: K<sub>nueva</sub> = ½·M·(2v)² = ½·M·4v² = 4·(½·M·v²) = 4K. Cuatro veces más energía.</span></div>
       <p class="prose">El trabajo de todas las fuerzas juntas es exactamente lo que cambia la energía cinética. Es el <b>teorema trabajo–energía</b>:</p>
       <div class="eq"><span><b>W<sub>total</sub> = K<sub>final</sub> − K<sub>inicial</sub></b></span></div>
-      <div class="callout"><h3>Ejemplo resuelto</h3>
-        <p>Un bloque de 2 kg parte del reposo en un piso sin fricción. Lo empujas con 10 N, horizontal, a lo largo de 4 m. ¿Con qué rapidez termina?</p>
-        <p>Trabajo de tu fuerza: 10 · 4 = 40 J. El peso y la normal no hacen trabajo (son perpendiculares al movimiento). Entonces 40 = ½ · 2 · v² − 0, así que v² = 40 y <b>v ≈ 6,3 m/s</b>.</p>
-      </div>
+
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · continúa el 1</span>
+            <h4 id="wx3-h">Rapidez final con el teorema trabajo–energía</h4>
+            <p>La caja del ejemplo 1 (masa M) parte del reposo. La jalas con la fuerza F, con ángulo φ, a lo largo de una distancia d. El piso no tiene fricción.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez v termina?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="trabajo"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Trae el trabajo total.</p><p class="why">Lo calculaste en el ejemplo 1: solo F hace trabajo.</p><div class="mx">W<sub>total</sub> = F·d·cos φ</div></li>
+          <li><p class="what">Energía cinética al inicio.</p><p class="why">Parte del reposo: su rapidez inicial es 0.</p><div class="mx">K<sub>inicial</sub> = ½·M·0² = 0</div></li>
+          <li><p class="what">Energía cinética al final.</p><p class="why">Termina con la rapidez v que buscamos.</p><div class="mx">K<sub>final</sub> = ½·M·v²</div></li>
+          <li><p class="what">Plantea el teorema.</p><p class="why">W<sub>total</sub> = K<sub>final</sub> − K<sub>inicial</sub>. Reemplazas lo de los pasos 1, 2 y 3.</p><div class="mx">F·d·cos φ = ½·M·v² − 0</div></li>
+          <li><p class="what">Quita el ½.</p><p class="why">Multiplicas los dos lados por 2: el ½ se vuelve 1.</p><div class="mx">2·F·d·cos φ = M·v²</div></li>
+          <li><p class="what">Deja v² sola.</p><p class="why">La M está multiplicando a v²: divides los dos lados entre M.</p><div class="mx">v² = <span class="frac"><span>2·F·d·cos φ</span><span>M</span></span></div></li>
+          <li><p class="what">Saca la raíz cuadrada.</p><p class="why">Tienes v² y quieres v.</p><div class="mx">v = √<span class="rad"><span class="frac"><span>2·F·d·cos φ</span><span>M</span></span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = √(2·F·d·cos φ / M).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Más fuerza o más distancia: termina más rápido. Más masa: más lento. Aquí la M <b>no</b> se cancela, porque la fuerza F no depende de la masa.</p>
+      </article>
     </div>
 
     <div class="block">
       <h3>3. Energía potencial: energía guardada</h3>
       <div class="laws">
-        <div class="law"><b>Gravitacional</b><span><b>U<sub>g</sub> = M · g · y</b>, con y la altura sobre tu referencia.</span><span class="ex">Tú escoges la referencia (y = 0); casi siempre conviene el piso o el punto más bajo. Ejemplo: 2 kg a 5 m de altura → U<sub>g</sub> = 2·10·5 = 100 J.</span></div>
-        <div class="law"><b>Elástica</b><span><b>U<sub>e</sub> = ½ · k · x²</b>, con x lo que está apretado o estirado el resorte.</span><span class="ex">El resorte hace una fuerza F = k·x (ley de Hooke). Ejemplo: k = 200 N/m apretado x = 0,1 m → U<sub>e</sub> = ½·200·0,01 = 1 J.</span></div>
+        <div class="law"><b>Gravitacional</b><span><b>U<sub>g</sub> = M · g · y</b>, con y la altura sobre tu referencia.</span><span class="ex">Tú escoges la referencia (y = 0); casi siempre conviene el piso. Ejemplo: un bloque en lo alto de una rampa de altura H tiene U<sub>g</sub> = M·g·H; cuando llega al piso, U<sub>g</sub> = M·g·0 = 0.</span></div>
+        <div class="law"><b>Elástica</b><span><b>U<sub>e</sub> = ½ · k · x²</b>, con x lo que está apretado o estirado el resorte.</span><span class="ex">El resorte hace una fuerza F = k·x (ley de Hooke). Ejemplo: si lo aprietas el doble, 2x, guarda U<sub>e</sub> = ½·k·(2x)² = 4·(½·k·x²): cuatro veces más energía.</span></div>
       </div>
-      <p class="prose">La idea: cuando subes un objeto, el trabajo que hiciste queda «guardado» como energía potencial. Cuando lo sueltas, esa energía se convierte en energía cinética.</p>
+      <p class="prose">La idea: cuando subes un objeto, el trabajo que hiciste queda «guardado» como energía potencial. Cuando lo sueltas, esa energía se convierte en energía cinética. Fíjate que M·g·y es justo el trabajo que hace el peso cuando el objeto baja desde la altura y hasta el piso (ejemplo 2).</p>
     </div>
 
     <div class="block">
       <h3>4. Conservación de la energía mecánica</h3>
       <div class="figs">
-        <figure><div id="fig-rampas"></div><figcaption>Soltado desde la misma altura H, sin fricción, llega abajo con la misma rapidez por cualquiera de las dos rampas.</figcaption></figure>
+        <figure><div data-fig="rampas"></div><figcaption>Soltado desde la misma altura H, sin fricción, llega abajo con la misma rapidez por cualquiera de las dos rampas.</figcaption></figure>
         <div class="prose">
           <p>La <b>energía mecánica</b> es la suma E = K + U. Si las únicas fuerzas que hacen trabajo son el peso y los resortes (y las demás, como la normal, no hacen trabajo), la energía mecánica <b>no cambia</b>:</p>
           <div class="eq"><span><b>K<sub>inicial</sub> + U<sub>inicial</sub> = K<sub>final</sub> + U<sub>final</sub></b></span></div>
-          <p><b>Ejemplo:</b> sueltas un bloque desde 5 m de altura por una rampa sin fricción. Arriba: K = 0, U = M·g·5. Abajo: U = 0, K = ½Mv². Igualando: M·10·5 = ½·M·v², la masa se cancela y <b>v = 10 m/s</b>. No importa la forma de la rampa: v = √(2gH).</p>
+          <p>Para no perder nada, en los ejemplos que siguen se arma una <b>tabla de energías</b>: una columna para el inicio y otra para el final, con K y U en cada una.</p>
         </div>
       </div>
+
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4</span>
+            <h4 id="wx4-h">Un bloque baja por una rampa sin fricción</h4>
+            <p>Sueltas un bloque de masa M, desde el reposo, en lo alto de una rampa sin fricción de altura H.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez v llega al piso?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="rampas"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Revisa si la energía se conserva.</p><p class="why">Las fuerzas son el peso (su efecto ya está en U<sub>g</sub>) y la normal (es perpendicular a la rampa, así que W = 0). No hay fricción. Entonces sí se conserva: E<sub>inicial</sub> = E<sub>final</sub>.</p></li>
+          <li><p class="what">Escoge la referencia de altura.</p><p class="why">y = 0 en el piso. Así, arriba la altura es H y abajo es 0.</p></li>
+          <li><p class="what">Llena la tabla de energías.</p><p class="why">Arriba lo sueltas (rapidez 0) a altura H. Abajo va con la rapidez v que buscas, a altura 0.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (arriba)</th><th>Final (abajo)</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>M·g·H</td><td>0</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>M·g·H</td><td>½·M·v²</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Iguala la energía del inicio con la del final.</p><div class="mx">M·g·H = ½·M·v²</div></li>
+          <li><p class="what">Cancela la masa.</p><p class="why">M está multiplicando en los dos lados: divides los dos lados entre M y desaparece.</p><div class="mx"><span class="cx">M</span>·g·H = ½·<span class="cx">M</span>·v²<span class="ar">→</span>g·H = ½·v²</div></li>
+          <li><p class="what">Despeja v.</p><p class="why">Multiplicas los dos lados por 2 para quitar el ½ y después sacas raíz cuadrada.</p><div class="mx">v² = 2·g·H<span class="ar">→</span>v = √<span class="rad">2·g·H</span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = √(2·g·H).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> No depende de M ni de la forma de la rampa: por eso en la figura los dos bloques llegan igual de rápido. Mientras más alta la rampa, más rápido llega.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5</span>
+            <h4 id="wx5-h">Un resorte lanza un bloque</h4>
+            <p>Un resorte de constante k está apretado una distancia x. Lo sueltas y lanza un bloque de masa M por un piso sin fricción.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez v sale el bloque cuando el resorte vuelve a su largo natural?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="resorte"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Revisa si la energía se conserva.</p><p class="why">Las fuerzas son el resorte (su efecto está en U<sub>e</sub>), el peso y la normal (los dos perpendiculares al piso: W = 0). No hay fricción. Sí se conserva.</p></li>
+          <li><p class="what">Llena la tabla de energías.</p><p class="why">Al inicio el bloque está quieto y el resorte apretado x. Al final el resorte ya no está apretado y el bloque va con rapidez v. Todo pasa en el piso, así que la altura no cambia y U<sub>g</sub> no aporta nada.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (apretado)</th><th>Final (suelto)</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>e</sub> = ½·k·x²</td><td>½·k·x²</td><td>0</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>0</td><td>0</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>½·k·x²</td><td>½·M·v²</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Iguala.</p><div class="mx">½·k·x² = ½·M·v²</div></li>
+          <li><p class="what">Cancela el ½.</p><p class="why">Está en los dos lados: multiplicas los dos lados por 2.</p><div class="mx"><span class="cx">½</span>·k·x² = <span class="cx">½</span>·M·v²<span class="ar">→</span>k·x² = M·v²</div></li>
+          <li><p class="what">Deja v² sola.</p><p class="why">Divides los dos lados entre M.</p><div class="mx">v² = <span class="frac"><span>k·x²</span><span>M</span></span></div></li>
+          <li><p class="what">Saca la raíz cuadrada.</p><p class="why">√(x²) = x, así que la x puede salir de la raíz.</p><div class="mx">v = √<span class="rad"><span class="frac"><span>k·x²</span><span>M</span></span></span> = x·√<span class="rad"><span class="frac"><span>k</span><span>M</span></span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = x·√(k / M).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Un resorte más duro (k grande) o más apretado (x grande) lo lanza más rápido. Un bloque más pesado sale más lento: aquí la M no se cancela, porque la energía del resorte no depende de la masa.</p>
+      </article>
     </div>
 
     <div class="block">
@@ -382,37 +550,78 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <h3>Receta</h3>
       <ol class="steps">
         <li><span><b>Escoge la referencia de altura</b> (y = 0), casi siempre el piso.</span></li>
-        <li><span><b>Escribe E<sub>inicial</sub> y E<sub>final</sub></b>: K = ½Mv² de cada uno, U<sub>g</sub> = Mgy y U<sub>e</sub> = ½kx² si hay resorte.</span></li>
-        <li><span><b>Calcula el trabajo de la fricción:</b> primero N en la zona rugosa (M3), después −µₖ·N·d con d la distancia total recorrida ahí.</span></li>
-        <li><span><b>Junta todo</b> en E<sub>i</sub> + W<sub>fricción</sub> = E<sub>f</sub> y despeja.</span></li>
+        <li><span><b>Arma la tabla de energías</b>: K = ½·M·v² y U<sub>g</sub> = M·g·y al inicio y al final, y U<sub>e</sub> = ½·k·x² si hay resorte.</span></li>
+        <li><span><b>Calcula el trabajo de la fricción:</b> primero N en la zona rugosa (M1 y M3), después −µₖ·N·d con d la distancia total recorrida ahí.</span></li>
+        <li><span><b>Junta todo</b> en E<sub>i</sub> + W<sub>fricción</sub> = E<sub>f</sub>, cancela lo que se repite y despeja.</span></li>
       </ol>
-    </div>
 
-    <div class="block">
-      <h3>Ejemplo resuelto 1: la rampa con tramo rugoso (salió 3 veces)</h3>
-      <div class="figs">
-        <figure><div id="fig-pista"></div><figcaption>Se suelta desde la altura H. Solo hay fricción en el tramo horizontal AB, de largo D. Las rampas no tienen fricción.</figcaption></figure>
-        <div class="prose">
-          <p>Datos: H = 1 m, D = 0,6 m, µₖ = 0,5. En el tramo horizontal N = Mg, así que <b>cada pasada completa por AB le quita</b> µₖ·M·g·D = 0,5·M·g·0,6 = <b>M·g·0,3</b>. Es como si perdiera 0,3 m de altura en cada pasada.</p>
-          <p><b>¿Cuántas pasadas aguanta?</b> Tiene M·g·1 de energía. Pasadas = 1 / 0,3 = <b>3,33</b>. O sea, 3 pasadas completas y un tercio de la cuarta.</p>
-          <p><b>¿Dónde queda?</b> Pasada 1: A→B. Pasada 2: B→A. Pasada 3: A→B (termina en B, sube la rampa derecha y vuelve). Pasada 4: sale de B hacia A y se detiene a ⅓ de D, o sea, a 0,2 m de B: a <b>0,4 m de A</b>.</p>
+      <article class="wx" aria-labelledby="wx6-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 6 · salió 3 veces</span>
+            <h4 id="wx6-h">La rampa con tramo rugoso</h4>
+            <p>Sueltas un bloque de masa M, desde el reposo, a una altura H. Las rampas no tienen fricción. Solo el tramo horizontal AB, de largo D, tiene fricción, con coeficiente µₖ.</p>
+            <p><b>Pregunta:</b> ¿qué distancia total recorre sobre AB antes de detenerse? ¿Cuántas veces pasa por AB y dónde queda?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="pista"></div></figure>
         </div>
-      </div>
-      <div class="eq"><span>Receta de las pasadas: <b>n = H / (µₖ · D)</b></span><span>La parte entera dice cuántas pasadas completas (si es par termina en A; si es impar, en B). La parte decimal dice qué fracción de la siguiente pasada alcanza a recorrer.</span></div>
-    </div>
+        <ol class="wx-steps">
+          <li><p class="what">Mira dónde se pierde energía.</p><p class="why">En las rampas actúan el peso (está en U<sub>g</sub>) y la normal (W = 0): ahí la energía no cambia. En AB, además, está la fricción. Toda la energía se pierde en AB.</p></li>
+          <li><p class="what">Calcula la normal en AB.</p><p class="why">El piso es horizontal y el bloque no sube ni baja: las fuerzas verticales se equilibran. Hacia arriba está N; hacia abajo, M·g.</p><div class="mx">N − M·g = 0<span class="ar">→</span>N = M·g</div></li>
+          <li><p class="what">Calcula la fricción en AB.</p><p class="why">fₖ = µₖ·N. Es la misma en todo el tramo.</p><div class="mx">fₖ = µₖ · M·g</div></li>
+          <li><p class="what">Escribe el trabajo de la fricción.</p><p class="why">Llama d<sub>total</sub> a la distancia total que recorre sobre AB, sumando todas las pasadas. Todavía no la sabes: es la incógnita. La fricción siempre va en contra del movimiento, vaya hacia donde vaya, así que siempre resta.</p><div class="mx">W<sub>fricción</sub> = −fₖ · d<sub>total</sub> = −µₖ·M·g·d<sub>total</sub></div></li>
+          <li><p class="what">Llena la tabla de energías.</p><p class="why">Al inicio lo sueltas quieto a altura H. Al final está quieto en algún punto de AB, en el piso.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (arriba)</th><th>Final (quieto en AB)</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>0</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>M·g·H</td><td>0</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>M·g·H</td><td>0</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Plantea la ecuación del profesor.</p><p class="why">E<sub>i</sub> + W<sub>fricción</sub> = E<sub>f</sub>.</p><div class="mx">M·g·H − µₖ·M·g·d<sub>total</sub> = 0</div></li>
+          <li><p class="what">Cancela M·g.</p><p class="why">Los dos términos tienen M·g: divides toda la ecuación entre M·g.</p><div class="mx"><span class="cx">M·g</span>·H − µₖ·<span class="cx">M·g</span>·d<sub>total</sub> = 0<span class="ar">→</span>H − µₖ·d<sub>total</sub> = 0</div></li>
+          <li><p class="what">Despeja la distancia total.</p><p class="why">Pasas µₖ·d<sub>total</sub> al otro lado y divides entre µₖ.</p><div class="mx">H = µₖ·d<sub>total</sub><span class="ar">→</span>d<sub>total</sub> = <span class="frac"><span>H</span><span>µₖ</span></span></div></li>
+          <li><p class="what">Cuenta las pasadas.</p><p class="why">Cada pasada completa por AB mide D. ¿Cuántas D caben en la distancia total? Divides.</p><div class="mx">n = <span class="frac"><span>d<sub>total</sub></span><span>D</span></span> = <span class="frac"><span>H</span><span>µₖ·D</span></span></div></li>
+          <li><p class="what">Interpreta n: ¿dónde queda?</p><p class="why">Separa n en su parte entera p (las pasadas completas) y su parte decimal r (un número entre 0 y 1). Las pasadas se alternan: la 1 va de A a B, la 2 de B a A, la 3 de A a B… Si p es <b>par</b>, termina las pasadas completas en A; si es <b>impar</b>, en B. Después alcanza a recorrer r·D más y se detiene.</p>
+            <figure class="wx-fig wide"><div data-fig="pasadas"></div><figcaption>Con p = 3 (impar): termina la pasada 3 en B y en la 4 solo recorre r·D hacia A.</figcaption></figure>
+            <div class="mx">n = p + r<br>p par<span class="ar">→</span>se detiene a r·D de A<br>p impar<span class="ar">→</span>se detiene a r·D de B, o sea, a (1 − r)·D de A</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> d<sub>total</sub> = H / µₖ y n = H / (µₖ·D). No depende de M ni del ángulo de las rampas.</div>
+        <p class="wx-chk"><b>Pruébalo:</b> en el lab, mueve H, D y µₖ y compara n con lo que hace el bloque (Reto 1).</p>
+      </article>
 
-    <div class="block">
-      <h3>Ejemplo resuelto 2: un bloque que sube un plano con fricción</h3>
-      <div class="figs">
-        <figure><div id="fig-sube"></div><figcaption>El bloque empieza a subir con rapidez v₀ por un plano de ángulo θ con fricción µₖ. ¿Hasta qué altura H llega?</figcaption></figure>
-        <div class="prose">
-          <p>Datos: v₀ = 6 m/s, θ = 30°, µₖ = 0,2.</p>
-          <p><b>Energías:</b> abajo, E<sub>i</sub> = ½·M·36 = 18·M. Arriba se detiene: E<sub>f</sub> = M·10·H.</p>
-          <p><b>Fricción:</b> en el plano N = Mg·cos 30°, como viste en el módulo 1. Para subir una altura H recorre a lo largo del plano d = H/sen 30° = 2H. Entonces W<sub>fricción</sub> = −0,2 · M·10·0,866 · 2H = −3,46·M·H.</p>
-          <p><b>Juntando:</b> 18·M − 3,46·M·H = 10·M·H. La masa se cancela: 18 = 13,46·H, así que <b>H ≈ 1,34 m</b>. Sin fricción habría llegado a 1,8 m.</p>
-          <p class="muted">En el taller (T2) haces este mismo problema con letras, como lo pidió el parcial 2025-2.</p>
+      <article class="wx" aria-labelledby="wx7-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 7</span>
+            <h4 id="wx7-h">Un bloque baja por un plano con fricción</h4>
+            <p>Un bloque de masa M se suelta desde el reposo a una altura H sobre un plano inclinado de ángulo θ, con fricción cinética µₖ.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez v llega abajo?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="baja"></div></figure>
         </div>
-      </div>
+        <ol class="wx-steps">
+          <li><p class="what">Llena la tabla de energías.</p><p class="why">Referencia y = 0 en el piso. Arriba lo sueltas quieto a altura H; abajo va con la rapidez v que buscas.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (arriba)</th><th>Final (abajo)</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>M·g·H</td><td>0</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>M·g·H</td><td>½·M·v²</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Calcula la normal en el plano.</p><p class="why">Es lo del M1: el bloque no se despega ni se hunde en el plano, así que las fuerzas perpendiculares al plano se equilibran. La parte del peso perpendicular al plano es M·g·cos θ.</p><div class="mx">N = M·g·cos θ</div></li>
+          <li><p class="what">Calcula la fricción.</p><div class="mx">fₖ = µₖ·N = µₖ·M·g·cos θ</div></li>
+          <li><p class="what">Encuentra la distancia que recorre sobre el plano.</p><p class="why">No es H: H es la altura. Lo que recorre es la hipotenusa del triángulo. Del ejemplo 2: d = h / sen θ, aquí con h = H.</p><div class="mx">d = <span class="frac"><span>H</span><span>sen θ</span></span></div></li>
+          <li><p class="what">Escribe el trabajo de la fricción.</p><p class="why">W = −fₖ·d. Después juntas cos θ con sen θ: cos θ / sen θ es la cotangente, cot θ.</p><div class="mx">W<sub>fricción</sub> = −µₖ·M·g·cos θ · <span class="frac"><span>H</span><span>sen θ</span></span> = −µₖ·M·g·H·<span class="frac"><span>cos θ</span><span>sen θ</span></span> = −µₖ·M·g·H·cot θ</div></li>
+          <li><p class="what">Plantea la ecuación del profesor.</p><p class="why">E<sub>i</sub> + W<sub>fricción</sub> = E<sub>f</sub>, con lo de la tabla y el paso 5.</p><div class="mx">M·g·H − µₖ·M·g·H·cot θ = ½·M·v²</div></li>
+          <li><p class="what">Saca factor común.</p><p class="why">Los dos términos de la izquierda tienen M·g·H.</p><div class="mx">M·g·H·(1 − µₖ·cot θ) = ½·M·v²</div></li>
+          <li><p class="what">Cancela M y despeja v.</p><p class="why">Divides los dos lados entre M, multiplicas por 2 y sacas raíz.</p><div class="mx"><span class="cx">M</span>·g·H·(1 − µₖ·cot θ) = ½·<span class="cx">M</span>·v²<br>v² = 2·g·H·(1 − µₖ·cot θ)<br>v = √<span class="rad">2·g·H·(1 − µₖ·cot θ)</span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = √(2·g·H·(1 − µₖ·cot θ)).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Sin fricción (µₖ = 0) queda √(2·g·H), igual que el ejemplo 4. Si µₖ·cot θ = 1, la fricción se come todo lo que da el peso y v = 0. En el taller (T2) el bloque <b>sube</b> en vez de bajar: usa estos mismos pasos.</p>
+      </article>
     </div>
 
     <div class="block">
@@ -422,7 +631,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
     <div class="callout trap"><h3>Trampas que pone el profesor</h3>
       <p>Usar como d solo un tramo cuando el bloque pasa varias veces por la zona rugosa.</p>
-      <p>Usar N = Mg en un plano inclinado: allí N = Mg·cos θ, o Mg·sen β si el ángulo se mide desde la vertical.</p>
+      <p>Usar N = M·g en un plano inclinado: allí N = M·g·cos θ, o M·g·sen β si el ángulo se mide desde la vertical.</p>
       <p>En un plano, confundir la altura H con la distancia recorrida d = H/sen θ.</p>
       <p>Olvidar que la energía potencial depende de dónde pusiste y = 0: usa la misma referencia al principio y al final.</p>
     </div>
@@ -636,13 +845,17 @@ function subeSvg(o = {}) {
   return `<svg viewBox="0 0 320 200" role="img" aria-label="Bloque que sube por un plano inclinado con rapidez inicial v cero">${g}</svg>`;
 }
 function resorteSvg(o = {}) {
-  let g = floorLine(170).replace('x2="310"', 'x2="190"');
+  let g = o.flat ? floorLine(170) : floorLine(170).replace('x2="310"', 'x2="190"');
   g += `<line x1="20" y1="110" x2="20" y2="170" class="sv-line"/>`;
   let z = "M 20 156"; for (let i = 0; i < 8; i++) z += ` L ${26 + i * 6} ${i % 2 ? 150 : 162}`; z += " L 76 156";
   g += `<path d="${z}" class="sv-spring"/>` + T(48, 142, "k", "sv-t", "middle");
   g += `<rect x="76" y="144" width="26" height="26" class="sv-block"/>` + T(89, 161, "M", "sv-lab", "middle");
-  g += `<path d="M 190 170 Q 270 170 300 70" class="sv-track-th"/>`;
-  g += `<line x1="200" y1="70" x2="312" y2="70" class="sv-dash"/>` + `<line x1="206" y1="70" x2="206" y2="170" class="sv-dash"/>` + T(200, 124, o.hLab || "h", "sv-t", "end");
+  if (o.flat) {
+    g += `<rect x="212" y="144" width="26" height="26" class="sv-ghost"/>` + arrowSvg(244, 157, 292, 157, "a-v") + T(268, 146, "v = ?", "sv-t t-v", "middle");
+  } else {
+    g += `<path d="M 190 170 Q 270 170 300 70" class="sv-track-th"/>`;
+    g += `<line x1="200" y1="70" x2="312" y2="70" class="sv-dash"/>` + `<line x1="206" y1="70" x2="206" y2="170" class="sv-dash"/>` + T(200, 124, o.hLab || "h", "sv-t", "end");
+  }
   g += T(48, 186, "apretado x", "sv-tl", "middle");
   return `<svg viewBox="0 0 320 200" role="img" aria-label="Resorte comprimido que lanza un bloque hacia una rampa sin fricción">${g}</svg>`;
 }
@@ -655,10 +868,78 @@ function deslizaSvg(o = {}) {
   if (o.note) g += T(150, 184, o.note, "sv-tl", "middle");
   return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque deslizándose por un piso">${g}</svg>`;
 }
-$("#fig-trabajo").innerHTML = trabajoSvg();
-$("#fig-rampas").innerHTML = rampasSvg();
-$("#fig-pista").innerHTML = pistaSvg({ D: 0.6, Hmax: 1.4, H: 1, Hlab: "H" });
-$("#fig-sube").innerHTML = subeSvg({ mu: "µₖ" });
+/* Plano que baja hacia la derecha: why = demostración de W = M·g·h; si no, bloque que baja con fricción */
+function bajaSvg(o = {}) {
+  const deg = 30, th = deg * Math.PI / 180, L = 250, A = { x: 292, y: 182 };
+  const u = { x: Math.cos(th), y: Math.sin(th) }, n = { x: Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x - L * u.x, y: A.y - L * u.y };
+  const P = (s, off) => ({ x: C.x + s * L * u.x + off * n.x, y: C.y + s * L * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="312" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${f1(C.x)},${f1(C.y)} ${A.x},${A.y} ${f1(C.x)},${A.y}" class="sv-ground"/>`;
+  const R = 34, mid = (195 * Math.PI) / 180;
+  g += `<path d="M ${A.x - R} ${A.y} A ${R} ${R} 0 0 1 ${f1(A.x - R * u.x)} ${f1(A.y - R * u.y)}" class="sv-arc"/>`;
+  g += T(A.x + Math.cos(mid) * (R + 12), A.y + Math.sin(mid) * (R + 12) + 4, "θ", "sv-ang", "middle");
+  const b = 22, s0 = o.why ? 0.2 : 0.1;
+  const blk = (c, cls) => `<g transform="rotate(${deg} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="${cls}"/></g>`;
+  const c0 = P(s0, b / 2);
+  if (o.why) {
+    const S = P(s0 + b / 2 / L, 0), E = P(0.86, 0);
+    g += `<line x1="${f1(S.x)}" y1="${f1(S.y)}" x2="${f1(E.x)}" y2="${f1(S.y)}" class="sv-dash"/>`;
+    g += `<line x1="${f1(E.x)}" y1="${f1(S.y)}" x2="${f1(E.x)}" y2="${f1(E.y)}" class="sv-dash"/>`;
+    g += `<circle cx="${f1(E.x)}" cy="${f1(E.y)}" r="3" class="sv-dot"/>`;
+    g += T(E.x + 6, (S.y + E.y) / 2 + 4, "h", "sv-t");
+    const md = P(0.66, 12);
+    g += T(md.x, md.y + 4, "d", "sv-t", "middle");
+    const r = 32, a1 = th, a2 = Math.PI / 2;
+    g += arrowSvg(c0.x, c0.y, c0.x, c0.y + 66, "a-peso") + T(c0.x - 6, c0.y + 66, "M·g", "sv-t t-peso", "end");
+    g += arrowSvg(c0.x, c0.y, c0.x + 66 * u.x, c0.y + 66 * u.y, "a-v") + T(c0.x + 66 * u.x + 4, c0.y + 66 * u.y - 10, "camino", "sv-tl");
+    g += `<path d="M ${f1(c0.x + r * Math.cos(a1))} ${f1(c0.y + r * Math.sin(a1))} A ${r} ${r} 0 0 1 ${f1(c0.x + r * Math.cos(a2))} ${f1(c0.y + r * Math.sin(a2))}" class="sv-arc"/>`;
+    g += T(c0.x + 8, c0.y + 78, "90° − θ", "sv-ang");
+    g += blk(c0, "sv-block") + T(c0.x, c0.y + 4, "M", "sv-lab", "middle");
+    return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque que baja una distancia d por un plano de ángulo theta; baja una altura h; el peso forma un ángulo de 90 grados menos theta con el camino">${g}</svg>`;
+  }
+  const c1 = P(0.84, b / 2), top = P(s0, 0);
+  g += `<line x1="${f1(C.x - 14)}" y1="${f1(top.y)}" x2="${f1(C.x - 14)}" y2="${A.y}" class="sv-dash"/>`;
+  g += `<line x1="${f1(C.x - 20)}" y1="${f1(top.y)}" x2="${f1(top.x)}" y2="${f1(top.y)}" class="sv-dash"/>`;
+  g += T(C.x - 20, (top.y + A.y) / 2 + 4, "H", "sv-t", "end");
+  g += blk(c1, "sv-ghost") + blk(c0, "sv-block") + T(c0.x, c0.y + 4, "M", "sv-lab", "middle");
+  g += T(c0.x + 4, c0.y - 20, "reposo", "sv-tl", "middle");
+  g += arrowSvg(c1.x + 14 * n.x + 6 * u.x, c1.y + 14 * n.y + 6 * u.y, c1.x + 14 * n.x + 34 * u.x, c1.y + 14 * n.y + 34 * u.y, "a-v");
+  g += T(c1.x - 4, c1.y - 24, "v = ?", "sv-t t-v", "middle");
+  const mm = P(0.5, -16);
+  g += T(mm.x, mm.y + 4, "µₖ", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque que se suelta desde el reposo a una altura H en un plano de ángulo theta con fricción y llega abajo con rapidez v">${g}</svg>`;
+}
+/* Esquema de pasadas por el tramo AB */
+function pasadasSvg() {
+  const xa = 104, xb = 284, y0 = 40, dy = 30;
+  let g = `<line x1="${xa}" y1="22" x2="${xa}" y2="140" class="sv-dash"/><line x1="${xb}" y1="22" x2="${xb}" y2="140" class="sv-dash"/>`;
+  g += T(xa, 16, "A", "sv-t", "middle") + T(xb, 16, "B", "sv-t", "middle");
+  for (let i = 0; i < 3; i++) {
+    const y = y0 + i * dy, r = i % 2 === 0;
+    g += T(10, y + 4, "pasada " + (i + 1), "sv-tl");
+    g += arrowSvg(r ? xa + 4 : xb - 4, y, r ? xb - 6 : xa + 6, y, "a-v");
+  }
+  const y4 = y0 + 3 * dy, xs = xb - (xb - xa) / 3;
+  g += T(10, y4 + 4, "pasada 4", "sv-tl");
+  g += arrowSvg(xb - 4, y4, xs, y4, "a-fric");
+  g += `<path d="M ${f1(xs - 5)} ${y4 - 5} L ${f1(xs + 5)} ${y4 + 5} M ${f1(xs - 5)} ${y4 + 5} L ${f1(xs + 5)} ${y4 - 5}" class="sv-x"/>`;
+  g += T((xs + xb) / 2, y4 - 7, "r·D", "sv-t t-fric", "middle");
+  const yd = 160;
+  g += `<line x1="${xa}" y1="${yd}" x2="${f1(xs)}" y2="${yd}" class="sv-dim"/><line x1="${xa}" y1="${yd - 5}" x2="${xa}" y2="${yd + 5}" class="sv-dim"/><line x1="${f1(xs)}" y1="${yd - 5}" x2="${f1(xs)}" y2="${yd + 5}" class="sv-dim"/>`;
+  g += T((xa + xs) / 2, yd + 16, "(1 − r)·D desde A", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 184" role="img" aria-label="Pasadas por el tramo AB: la 1 de A a B, la 2 de B a A, la 3 de A a B y en la 4 se detiene después de recorrer r por D desde B">${g}</svg>`;
+}
+const TFIGS = {
+  trabajo: () => trabajoSvg(),
+  rampas: () => rampasSvg(),
+  pista: () => pistaSvg({ D: 0.6, Hmax: 1.4, H: 1, Hlab: "H" }),
+  pesoPlano: () => bajaSvg({ why: true }),
+  baja: () => bajaSvg(),
+  resorte: () => resorteSvg({ flat: true }),
+  pasadas: () => pasadasSvg(),
+};
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = TFIGS[n.dataset.fig](); });
 
 /* ---------- Lab: pista con tramo rugoso ---------- */
 const P = { H: 1, D: 0.6, mu: 0.5, M: 1, u: null, v: 0, run: false, passes: 0, stopped: false, last: null };
