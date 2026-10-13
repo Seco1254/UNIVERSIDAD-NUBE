@@ -297,6 +297,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
           <tr><td class="mono">W</td><td>«doble ve»</td><td>Trabajo que hace una fuerza: cuánta energía le da (o le quita) a un objeto al empujarlo a lo largo de un camino. Viene de <i>work</i>.</td><td>J (joules)</td></tr>
           <tr><td class="mono">J</td><td>«joule» o «julio»</td><td>Unidad de energía y de trabajo. 1 J = 1 N·m: empujar con 1 newton a lo largo de 1 metro.</td><td>—</td></tr>
           <tr><td class="mono">d</td><td>«de»</td><td>Distancia que recorre el objeto.</td><td>m</td></tr>
+          <tr><td class="mono">M</td><td>«eme» mayúscula</td><td>Masa del objeto. En este módulo va en mayúscula para no confundirla con la <b>m</b> minúscula de <b>metros</b>. En el parcial la masa sale como m minúscula: ahí la reconoces porque los metros siempre van después de un número (5&nbsp;m).</td><td>kg</td></tr>
           <tr><td class="mono">φ</td><td>«fi» (letra griega)</td><td>Ángulo entre la fuerza y la dirección en que se mueve el objeto.</td><td>grados</td></tr>
           <tr><td class="mono">K</td><td>«ka»</td><td>Energía cinética: la energía que tiene un objeto por estar moviéndose.</td><td>J</td></tr>
           <tr><td class="mono">U</td><td>«u»</td><td>Energía potencial: energía «guardada» por la posición (altura) o por un resorte apretado.</td><td>J</td></tr>
@@ -334,7 +335,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <div class="tw"><table>
         <thead><tr><th>Fuerza</th><th>Trabajo</th><th>Por qué</th></tr></thead>
         <tbody>
-          <tr><td><b>Peso</b></td><td class="mono">W = m·g·(h<sub>inicial</sub> − h<sub>final</sub>)</td><td>Positivo si el objeto baja, negativo si sube. Solo importa cuánto cambió la altura, no el camino.</td></tr>
+          <tr><td><b>Peso</b></td><td class="mono">W = M·g·(h<sub>inicial</sub> − h<sub>final</sub>)</td><td>Positivo si el objeto baja, negativo si sube. Solo importa cuánto cambió la altura, no el camino.</td></tr>
           <tr><td><b>Normal</b></td><td class="mono">W = 0</td><td>Siempre es perpendicular a la superficie por la que se mueve el objeto.</td></tr>
           <tr><td><b>Fricción cinética</b></td><td class="mono">W = −fₖ · d = −µₖ · N · d</td><td>Siempre va en contra del movimiento. d es la distancia <b>total</b> recorrida sobre la superficie rugosa.</td></tr>
         </tbody>
@@ -344,7 +345,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <div class="block">
       <h3>2. Energía cinética y el teorema trabajo–energía</h3>
       <p class="prose">Todo objeto que se mueve tiene <b>energía cinética</b>, más grande mientras más masa y, sobre todo, mientras más rápido vaya, porque depende de la rapidez al cuadrado:</p>
-      <div class="eq"><span><b>K = ½ · m · v²</b></span><span>Ejemplo: un bloque de 2 kg a 3 m/s tiene K = ½ · 2 · 9 = 9 J. Si va al doble de rapidez (6 m/s), K = 36 J: cuatro veces más.</span></div>
+      <div class="eq"><span><b>K = ½ · M · v²</b></span><span>Ejemplo: un bloque de 2 kg a 3 m/s tiene K = ½ · 2 · 9 = 9 J. Si va al doble de rapidez (6 m/s), K = 36 J: cuatro veces más.</span></div>
       <p class="prose">El trabajo de todas las fuerzas juntas es exactamente lo que cambia la energía cinética. Es el <b>teorema trabajo–energía</b>:</p>
       <div class="eq"><span><b>W<sub>total</sub> = K<sub>final</sub> − K<sub>inicial</sub></b></span></div>
       <div class="callout"><h3>Ejemplo resuelto</h3>
@@ -356,7 +357,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <div class="block">
       <h3>3. Energía potencial: energía guardada</h3>
       <div class="laws">
-        <div class="law"><b>Gravitacional</b><span><b>U<sub>g</sub> = m · g · y</b>, con y la altura sobre tu referencia.</span><span class="ex">Tú escoges la referencia (y = 0); casi siempre conviene el piso o el punto más bajo. Ejemplo: 2 kg a 5 m de altura → U<sub>g</sub> = 2·10·5 = 100 J.</span></div>
+        <div class="law"><b>Gravitacional</b><span><b>U<sub>g</sub> = M · g · y</b>, con y la altura sobre tu referencia.</span><span class="ex">Tú escoges la referencia (y = 0); casi siempre conviene el piso o el punto más bajo. Ejemplo: 2 kg a 5 m de altura → U<sub>g</sub> = 2·10·5 = 100 J.</span></div>
         <div class="law"><b>Elástica</b><span><b>U<sub>e</sub> = ½ · k · x²</b>, con x lo que está apretado o estirado el resorte.</span><span class="ex">El resorte hace una fuerza F = k·x (ley de Hooke). Ejemplo: k = 200 N/m apretado x = 0,1 m → U<sub>e</sub> = ½·200·0,01 = 1 J.</span></div>
       </div>
       <p class="prose">La idea: cuando subes un objeto, el trabajo que hiciste queda «guardado» como energía potencial. Cuando lo sueltas, esa energía se convierte en energía cinética.</p>
@@ -369,7 +370,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <div class="prose">
           <p>La <b>energía mecánica</b> es la suma E = K + U. Si las únicas fuerzas que hacen trabajo son el peso y los resortes (y las demás, como la normal, no hacen trabajo), la energía mecánica <b>no cambia</b>:</p>
           <div class="eq"><span><b>K<sub>inicial</sub> + U<sub>inicial</sub> = K<sub>final</sub> + U<sub>final</sub></b></span></div>
-          <p><b>Ejemplo:</b> sueltas un bloque desde 5 m de altura por una rampa sin fricción. Arriba: K = 0, U = m·g·5. Abajo: U = 0, K = ½mv². Igualando: m·10·5 = ½·m·v², la masa se cancela y <b>v = 10 m/s</b>. No importa la forma de la rampa: v = √(2gH).</p>
+          <p><b>Ejemplo:</b> sueltas un bloque desde 5 m de altura por una rampa sin fricción. Arriba: K = 0, U = M·g·5. Abajo: U = 0, K = ½Mv². Igualando: M·10·5 = ½·M·v², la masa se cancela y <b>v = 10 m/s</b>. No importa la forma de la rampa: v = √(2gH).</p>
         </div>
       </div>
     </div>
@@ -381,7 +382,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <h3>Receta</h3>
       <ol class="steps">
         <li><span><b>Escoge la referencia de altura</b> (y = 0), casi siempre el piso.</span></li>
-        <li><span><b>Escribe E<sub>inicial</sub> y E<sub>final</sub></b>: K = ½mv² de cada uno, U<sub>g</sub> = mgy y U<sub>e</sub> = ½kx² si hay resorte.</span></li>
+        <li><span><b>Escribe E<sub>inicial</sub> y E<sub>final</sub></b>: K = ½Mv² de cada uno, U<sub>g</sub> = Mgy y U<sub>e</sub> = ½kx² si hay resorte.</span></li>
         <li><span><b>Calcula el trabajo de la fricción:</b> primero N en la zona rugosa (M3), después −µₖ·N·d con d la distancia total recorrida ahí.</span></li>
         <li><span><b>Junta todo</b> en E<sub>i</sub> + W<sub>fricción</sub> = E<sub>f</sub> y despeja.</span></li>
       </ol>
@@ -392,8 +393,8 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <div class="figs">
         <figure><div id="fig-pista"></div><figcaption>Se suelta desde la altura H. Solo hay fricción en el tramo horizontal AB, de largo D. Las rampas no tienen fricción.</figcaption></figure>
         <div class="prose">
-          <p>Datos: H = 1 m, D = 0,6 m, µₖ = 0,5. En el tramo horizontal N = mg, así que <b>cada pasada completa por AB le quita</b> µₖ·m·g·D = 0,5·m·g·0,6 = <b>m·g·0,3</b>. Es como si perdiera 0,3 m de altura en cada pasada.</p>
-          <p><b>¿Cuántas pasadas aguanta?</b> Tiene m·g·1 de energía. Pasadas = 1 / 0,3 = <b>3,33</b>. O sea, 3 pasadas completas y un tercio de la cuarta.</p>
+          <p>Datos: H = 1 m, D = 0,6 m, µₖ = 0,5. En el tramo horizontal N = Mg, así que <b>cada pasada completa por AB le quita</b> µₖ·M·g·D = 0,5·M·g·0,6 = <b>M·g·0,3</b>. Es como si perdiera 0,3 m de altura en cada pasada.</p>
+          <p><b>¿Cuántas pasadas aguanta?</b> Tiene M·g·1 de energía. Pasadas = 1 / 0,3 = <b>3,33</b>. O sea, 3 pasadas completas y un tercio de la cuarta.</p>
           <p><b>¿Dónde queda?</b> Pasada 1: A→B. Pasada 2: B→A. Pasada 3: A→B (termina en B, sube la rampa derecha y vuelve). Pasada 4: sale de B hacia A y se detiene a ⅓ de D, o sea, a 0,2 m de B: a <b>0,4 m de A</b>.</p>
         </div>
       </div>
@@ -406,9 +407,9 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <figure><div id="fig-sube"></div><figcaption>El bloque empieza a subir con rapidez v₀ por un plano de ángulo θ con fricción µₖ. ¿Hasta qué altura H llega?</figcaption></figure>
         <div class="prose">
           <p>Datos: v₀ = 6 m/s, θ = 30°, µₖ = 0,2.</p>
-          <p><b>Energías:</b> abajo, E<sub>i</sub> = ½·m·36 = 18·m. Arriba se detiene: E<sub>f</sub> = m·10·H.</p>
-          <p><b>Fricción:</b> en el plano N = mg·cos 30° (M1). Para subir una altura H recorre a lo largo del plano d = H/sen 30° = 2H. Entonces W<sub>fricción</sub> = −0,2 · m·10·0,866 · 2H = −3,46·m·H.</p>
-          <p><b>Juntando:</b> 18·m − 3,46·m·H = 10·m·H. La masa se cancela: 18 = 13,46·H, así que <b>H ≈ 1,34 m</b>. Sin fricción habría llegado a 1,8 m.</p>
+          <p><b>Energías:</b> abajo, E<sub>i</sub> = ½·M·36 = 18·M. Arriba se detiene: E<sub>f</sub> = M·10·H.</p>
+          <p><b>Fricción:</b> en el plano N = Mg·cos 30°, como viste en el módulo 1. Para subir una altura H recorre a lo largo del plano d = H/sen 30° = 2H. Entonces W<sub>fricción</sub> = −0,2 · M·10·0,866 · 2H = −3,46·M·H.</p>
+          <p><b>Juntando:</b> 18·M − 3,46·M·H = 10·M·H. La masa se cancela: 18 = 13,46·H, así que <b>H ≈ 1,34 m</b>. Sin fricción habría llegado a 1,8 m.</p>
           <p class="muted">En el taller (T2) haces este mismo problema con letras, como lo pidió el parcial 2025-2.</p>
         </div>
       </div>
@@ -421,7 +422,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
     <div class="callout trap"><h3>Trampas que pone el profesor</h3>
       <p>Usar como d solo un tramo cuando el bloque pasa varias veces por la zona rugosa.</p>
-      <p>Usar N = mg en un plano inclinado: allí N = mg·cos θ, o mg·sen β si el ángulo se mide desde la vertical.</p>
+      <p>Usar N = Mg en un plano inclinado: allí N = Mg·cos θ, o Mg·sen β si el ángulo se mide desde la vertical.</p>
       <p>En un plano, confundir la altura H con la distancia recorrida d = H/sen θ.</p>
       <p>Olvidar que la energía potencial depende de dónde pusiste y = 0: usa la misma referencia al principio y al final.</p>
     </div>
@@ -576,7 +577,7 @@ const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${
 function floorLine(y) { let g = `<line x1="10" y1="${y}" x2="310" y2="${y}" class="sv-line"/>`; for (let x = 16; x < 312; x += 12) g += `<line x1="${x}" y1="${y}" x2="${x - 6}" y2="${y + 8}" class="sv-hatch"/>`; return g; }
 function trabajoSvg() {
   let g = floorLine(160);
-  g += `<rect x="110" y="110" width="60" height="50" class="sv-block"/>` + T(140, 140, "m", "sv-lab", "middle");
+  g += `<rect x="110" y="110" width="60" height="50" class="sv-block"/>` + T(140, 140, "M", "sv-lab", "middle");
   const fx = 170, fy = 122, L = 90, ph = Math.PI / 6;
   g += arrowSvg(fx, fy, fx + L * Math.cos(ph), fy - L * Math.sin(ph), "a-f") + T(fx + L * Math.cos(ph) + 4, fy - L * Math.sin(ph), "F", "sv-t t-f");
   g += `<line x1="${fx}" y1="${fy}" x2="${f1(fx + L * Math.cos(ph))}" y2="${fy}" class="sv-dash"/>` + T(fx + 44, fy + 16, "F·cos φ", "sv-tl", "middle");
@@ -633,7 +634,7 @@ function resorteSvg(o = {}) {
   g += `<line x1="20" y1="110" x2="20" y2="170" class="sv-line"/>`;
   let z = "M 20 156"; for (let i = 0; i < 8; i++) z += ` L ${26 + i * 6} ${i % 2 ? 150 : 162}`; z += " L 76 156";
   g += `<path d="${z}" class="sv-spring"/>` + T(48, 142, "k", "sv-t", "middle");
-  g += `<rect x="76" y="144" width="26" height="26" class="sv-block"/>` + T(89, 161, "m", "sv-lab", "middle");
+  g += `<rect x="76" y="144" width="26" height="26" class="sv-block"/>` + T(89, 161, "M", "sv-lab", "middle");
   g += `<path d="M 190 170 Q 270 170 300 70" class="sv-track-th"/>`;
   g += `<line x1="200" y1="70" x2="312" y2="70" class="sv-dash"/>` + `<line x1="206" y1="70" x2="206" y2="170" class="sv-dash"/>` + T(200, 124, o.hLab || "h", "sv-t", "end");
   g += T(48, 186, "apretado x", "sv-tl", "middle");
@@ -641,10 +642,10 @@ function resorteSvg(o = {}) {
 }
 function deslizaSvg(o = {}) {
   let g = floorLine(160);
-  g += `<rect x="120" y="112" width="60" height="48" class="sv-block"/>` + T(150, 140, o.label || "m", "sv-lab", "middle");
+  g += `<rect x="120" y="112" width="60" height="48" class="sv-block"/>` + T(150, 140, o.label || "M", "sv-lab", "middle");
   g += arrowSvg(186, 100, 246, 100, "a-v") + T(250, 104, "v", "sv-t t-v");
   if (o.fric) g += arrowSvg(118, 154, 70, 154, "a-fric") + T(66, 151, "f", "sv-t t-fric", "end");
-  if (o.forces) { g += arrowSvg(140, 111, 140, 60, "a-n") + T(134, 68, "N", "sv-t t-n", "end"); g += arrowSvg(160, 136, 160, 200, "a-peso") + T(166, 198, "mg", "sv-t t-peso"); }
+  if (o.forces) { g += arrowSvg(140, 111, 140, 60, "a-n") + T(134, 68, "N", "sv-t t-n", "end"); g += arrowSvg(160, 136, 160, 200, "a-peso") + T(166, 198, "Mg", "sv-t t-peso"); }
   if (o.note) g += T(150, 184, o.note, "sv-tl", "middle");
   return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque deslizándose por un piso">${g}</svg>`;
 }
@@ -718,25 +719,25 @@ const PROBS = [
   { n: "T1", t: "Calentamiento: ¿cuánto recorre hasta detenerse?", src: "Problema nuevo",
     fig: () => deslizaSvg({ label: "4 kg", fric: true, note: "v = 5 m/s · µₖ = 0,25" }),
     txt: "Un bloque de 4 kg se desliza a 5 m/s por un piso horizontal con µₖ = 0,25. ¿Qué distancia recorre hasta detenerse? (g = 10 m/s²)",
-    hints: ["Al principio tiene solo energía cinética; al final, nada. La fricción se la come toda.", "En el piso N = mg = 40 N, así que la fricción es fₖ = 0,25 · 40 = 10 N. Su trabajo es −10·d."],
+    hints: ["Al principio tiene solo energía cinética; al final, nada. La fricción se la come toda.", "En el piso N = Mg = 40 N, así que la fricción es fₖ = 0,25 · 40 = 10 N. Su trabajo es −10·d."],
     sol: ["E<sub>i</sub> = ½ · 4 · 25 = 50 J. E<sub>f</sub> = 0 (se detiene, y la altura no cambia).", "W<sub>fricción</sub> = −µₖ·N·d = −0,25 · 40 · d = −10·d.", "50 − 10·d = 0, así que <b>d = 5 m</b>."],
     checks: [{ q: "¿Cuánto recorre?", opts: ["2,5 m", "5 m", "10 m", "20 m"], a: 1 }] },
   { n: "T2", t: "Altura máxima subiendo un plano con fricción", src: "Parcial 2025-2 · SM3 (10 pts)",
     fig: () => subeSvg({ mu: "µₖ", hLab: "H = ?" }),
-    txt: "Un bloque de masa m empieza a subir con velocidad v₀ por un plano inclinado (ángulo θ con la horizontal) que tiene coeficiente de fricción cinética µₖ. La máxima altura que sube es: A) v₀²/(2gµₖ)  B) v₀²/[2g(1 + µₖ)]  C) v₀²/[2g(1 + µₖ cot θ)]  D) v₀²/[2g(1 + µₖ cos θ)]  E) v₀²/[2g(1 + µₖ tan θ)].",
-    hints: ["Es el ejemplo resuelto 2 con letras: E<sub>i</sub> = ½mv₀², E<sub>f</sub> = mgH.", "La distancia a lo largo del plano es d = H/sen θ y la normal es mg cos θ. cos θ / sen θ = cot θ."],
-    sol: ["W<sub>fricción</sub> = −µₖ · mg cos θ · H/sen θ = −µₖ·mg·H·cot θ.", "½mv₀² − µₖ·mg·H·cot θ = mgH.", "<b>H = v₀² / [2g(1 + µₖ cot θ)]</b>: opción C."],
+    txt: "Un bloque de masa M empieza a subir con velocidad v₀ por un plano inclinado (ángulo θ con la horizontal) que tiene coeficiente de fricción cinética µₖ. La máxima altura que sube es: A) v₀²/(2gµₖ)  B) v₀²/[2g(1 + µₖ)]  C) v₀²/[2g(1 + µₖ cot θ)]  D) v₀²/[2g(1 + µₖ cos θ)]  E) v₀²/[2g(1 + µₖ tan θ)].",
+    hints: ["Es el ejemplo resuelto 2 con letras: E<sub>i</sub> = ½Mv₀², E<sub>f</sub> = MgH.", "La distancia a lo largo del plano es d = H/sen θ y la normal es Mg cos θ. cos θ / sen θ = cot θ."],
+    sol: ["W<sub>fricción</sub> = −µₖ · Mg cos θ · H/sen θ = −µₖ·Mg·H·cot θ.", "½Mv₀² − µₖ·Mg·H·cot θ = MgH.", "<b>H = v₀² / [2g(1 + µₖ cot θ)]</b>: opción C."],
     checks: [{ q: "¿Cuál es H?", opts: ["v₀²/(2gµₖ)", "v₀²/[2g(1 + µₖ)]", "v₀²/[2g(1 + µₖ cot θ)]", "v₀²/[2g(1 + µₖ cos θ)]", "v₀²/[2g(1 + µₖ tan θ)]"], a: 2 }] },
   { n: "T3", t: "Riel que solo sube hasta H/4", src: "Parcial 2026-1 · SM3 (10 pts)",
     fig: () => pistaSvg({ D: 1, Hmax: 1.2, H: 1, Hlab: "H", Dlab: "ancho H (rugoso)", rightMark: { h: 0.25, lab: "H/4" } }),
     txt: "El riel solo tiene fricción en la parte horizontal, cuyo ancho es H. Se suelta un bloque desde el reposo y desde una altura H. Después de pasar por la parte horizontal, solo alcanza una altura H/4 en el otro extremo. ¿Cuál es el coeficiente de fricción cinético de la parte horizontal? A) 1/3  B) 1/4  C) 1/2  D) 2/3  E) 3/4.",
-    hints: ["Toma el estado inicial (arriba a la izquierda, quieto) y el final (arriba a la derecha, quieto). Solo cambia la energía potencial.", "La fricción actúa sobre una distancia H con N = mg."],
-    sol: ["E<sub>i</sub> = mgH. E<sub>f</sub> = mg·H/4. W<sub>fricción</sub> = −µ·mg·H.", "mgH − µ·mgH = mgH/4, así que µ = 1 − 1/4 = <b>3/4</b>: opción E."],
+    hints: ["Toma el estado inicial (arriba a la izquierda, quieto) y el final (arriba a la derecha, quieto). Solo cambia la energía potencial.", "La fricción actúa sobre una distancia H con N = Mg."],
+    sol: ["E<sub>i</sub> = MgH. E<sub>f</sub> = Mg·H/4. W<sub>fricción</sub> = −µ·Mg·H.", "MgH − µ·MgH = MgH/4, así que µ = 1 − 1/4 = <b>3/4</b>: opción E."],
     checks: [{ q: "¿Cuánto vale µ?", opts: ["1/3", "1/4", "1/2", "2/3", "3/4"], a: 4 }] },
   { n: "T4", t: "¿Dónde se detiene? (versión 2024-2)", src: "Parcial 2024-2 · SM4 (10 pts)",
     fig: () => pistaSvg({ D: 0.75, Hmax: 1.2, H: 1, Hlab: "H", Dlab: "D = 3H/4" }),
     txt: "Un bloque se suelta desde el reposo a una altura H. Solo hay fricción en la región horizontal AB, de largo 3H/4, con µₖ = 1/4. ¿A qué distancia de A se detiene finalmente? A) H/4  B) H/3  C) H/2  D) 2H/3  E) 3H/4.",
-    hints: ["Cada pasada completa por AB le quita µₖ·mg·D = (1/4)·mg·(3H/4) = 3mgH/16.", "n = H/(µₖD) = 16/3 = 5,33. Cinco pasadas completas: ¿en qué extremo queda? ¿Hacia dónde va la sexta?"],
+    hints: ["Cada pasada completa por AB le quita µₖ·Mg·D = (1/4)·Mg·(3H/4) = 3MgH/16.", "n = H/(µₖD) = 16/3 = 5,33. Cinco pasadas completas: ¿en qué extremo queda? ¿Hacia dónde va la sexta?"],
     sol: ["n = H / [(1/4)(3H/4)] = 16/3 ≈ 5,33.", "Cinco pasadas completas (impar): termina la quinta en B. La sexta va de B hacia A y solo alcanza 1/3 de D.", "Queda a D/3 de B, o sea a 2D/3 = (2/3)(3H/4) = <b>H/2 de A</b>: opción C."],
     checks: [{ q: "¿A qué distancia de A se detiene?", opts: ["H/4", "H/3", "H/2", "2H/3", "3H/4"], a: 2 }] },
   { n: "T5", t: "¿Dónde se detiene? (versión 2025-1)", src: "Parcial 2025-1 · SM4 (10 pts)",
@@ -747,15 +748,15 @@ const PROBS = [
     checks: [{ q: "¿A qué distancia de A se detiene?", opts: ["H/3", "H/4", "H/5", "2H/3", "3H/5"], a: 2 }] },
   { n: "T6", t: "Resorte que lanza un bloque", src: "Problema nuevo (base del Abierto 2 de 2025-2)",
     fig: () => resorteSvg({ hLab: "h = ?" }),
-    txt: "Un resorte de constante k está apretado una distancia x y lanza un bloque de masa m por una pista sin fricción que sube. ¿Hasta qué altura h llega el bloque? Después, con números: k = 400 N/m, x = 0,1 m, m = 0,2 kg.",
-    hints: ["Al principio toda la energía está en el resorte: ½kx². Arriba, el bloque se detiene un instante: toda está en la altura, mgh.", "No hay fricción, así que E<sub>i</sub> = E<sub>f</sub>."],
-    sol: ["½kx² = mgh, así que <b>h = kx²/(2mg)</b>.", "Con números: ½ · 400 · 0,01 = 2 J = 0,2 · 10 · h, así que <b>h = 1 m</b>."],
+    txt: "Un resorte de constante k está apretado una distancia x y lanza un bloque de masa M por una pista sin fricción que sube. ¿Hasta qué altura h llega el bloque? Después, con números: k = 400 N/m, x = 0,1 m, M = 0,2 kg.",
+    hints: ["Al principio toda la energía está en el resorte: ½kx². Arriba, el bloque se detiene un instante: toda está en la altura, Mgh.", "No hay fricción, así que E<sub>i</sub> = E<sub>f</sub>."],
+    sol: ["½kx² = Mgh, así que <b>h = kx²/(2Mg)</b>.", "Con números: ½ · 400 · 0,01 = 2 J = 0,2 · 10 · h, así que <b>h = 1 m</b>."],
     checks: [{ q: "Con los números, ¿cuánto vale h?", opts: ["0,5 m", "1 m", "2 m", "10 m"], a: 1 }] },
   { n: "T7", t: "Reto: el enunciado imposible", src: "Parcial 2025-1 · Abierto 3",
     fig: () => subeSvg({ mu: "µₖ", hLab: "H" }),
     txt: "El parcial decía: «se suelta un bloque desde el reposo a una altura H sobre un plano con fricción; la velocidad a una altura H/4 es un tercio de la que llevaba a H/2. Halla µₖ». Demuestra que con µₖ constante eso es imposible: calcula v² a cualquier altura y compara v(H/4) con v(H/2).",
-    hints: ["Al bajar una altura Δh, el peso hace trabajo mgΔh y la fricción −µₖ·mg cos θ·Δh/sen θ. Las dos son proporcionales a Δh.", "Entonces v² es proporcional a lo que ha bajado: a H/2 bajó H/2 y a H/4 bajó 3H/4."],
-    sol: ["½mv² = mg·Δh·(1 − µₖ cot θ), con Δh lo que ha bajado.", "v²(H/2) ∝ H/2 y v²(H/4) ∝ 3H/4, así que v(H/4)/v(H/2) = √(3/2) ≈ 1,22, para cualquier µₖ.", "El bloque siempre va <b>más rápido</b> más abajo. Que fuera un tercio exigiría que frenara, y entonces nunca habría arrancado. La «respuesta» oficial µ = cot β significa que el bloque ni se mueve."],
+    hints: ["Al bajar una altura Δh, el peso hace trabajo MgΔh y la fricción −µₖ·Mg cos θ·Δh/sen θ. Las dos son proporcionales a Δh.", "Entonces v² es proporcional a lo que ha bajado: a H/2 bajó H/2 y a H/4 bajó 3H/4."],
+    sol: ["½Mv² = Mg·Δh·(1 − µₖ cot θ), con Δh lo que ha bajado.", "v²(H/2) ∝ H/2 y v²(H/4) ∝ 3H/4, así que v(H/4)/v(H/2) = √(3/2) ≈ 1,22, para cualquier µₖ.", "El bloque siempre va <b>más rápido</b> más abajo. Que fuera un tercio exigiría que frenara, y entonces nunca habría arrancado. La «respuesta» oficial µ = cot β significa que el bloque ni se mueve."],
     checks: [{ q: "¿Cuánto vale siempre v(H/4)/v(H/2)?", opts: ["1/3", "1/2", "√(3/2)", "3"], a: 2 }] }
 ];
 (function renderProblems() {
@@ -794,37 +795,37 @@ const MOD = "M6-M7", NEXT = "Aprobado. Pasas a M8 · Circular + energía.";
 const QUIZ = {
   A: [
     { k: "Conceptual", fig: () => deslizaSvg({ forces: true, note: "piso horizontal" }), q: "El bloque de la figura se desliza por el piso. ¿Cuánto trabajo hace la normal sobre él?",
-      o: ["N · d", "−N · d", "Cero", "m · g · d"], a: 2,
+      o: ["N · d", "−N · d", "Cero", "M · g · d"], a: 2,
       e: "La normal es perpendicular al movimiento (φ = 90°, cos 90° = 0), así que no hace trabajo." },
     { k: "Conceptual", fig: () => rampasSvg(), q: "Sueltas un bloque desde la altura H por cada rampa, sin fricción. ¿De qué depende la rapidez con que llega abajo?",
       o: ["De la forma de la rampa", "De la masa del bloque", "Solo de la altura H", "Del ángulo de la rampa"], a: 2,
-      e: "Por conservación: mgH = ½mv², así que v = √(2gH). La masa se cancela y la forma no importa." },
+      e: "Por conservación: MgH = ½Mv², así que v = √(2gH). La masa se cancela y la forma no importa." },
     { k: "Conceptual", fig: () => pistaSvg({ D: 0.6, Hmax: 1.4, H: 1, Hlab: "H" }), q: "El bloque pasa varias veces por el tramo rugoso AB antes de detenerse. ¿Qué distancia usas en el trabajo de la fricción?",
       o: ["Solo D, el largo del tramo", "La distancia total recorrida sobre AB, sumando todas las pasadas", "La altura H", "La distancia en línea recta desde donde se soltó"], a: 1,
-      e: "La fricción actúa en cada pasada, así que su trabajo es −µₖ·mg·(D + D + …): la distancia total recorrida sobre la zona rugosa." },
+      e: "La fricción actúa en cada pasada, así que su trabajo es −µₖ·Mg·(D + D + …): la distancia total recorrida sobre la zona rugosa." },
     { k: "Tipo parcial", fig: () => pistaSvg({ D: 0.5, Hmax: 1.2, H: 1, Hlab: "H", Dlab: "D = H/2" }), q: "Se suelta el bloque desde H. Solo hay fricción en AB, de largo H/2, con µₖ = 3/4. ¿A qué distancia de A se detiene?",
       o: ["H/6", "H/3", "H/2", "2H/3"], a: 1,
       e: "n = H/[(3/4)(H/2)] = 8/3 ≈ 2,67. Dos pasadas completas (par): termina en A. La tercera va de A hacia B y recorre 2/3 de D = (2/3)(H/2) = H/3." },
     { k: "Tipo parcial", fig: () => resorteSvg({ hLab: "h = ?" }), q: "El resorte de la figura (k = 400 N/m) está apretado 0,1 m y lanza un bloque de 0,2 kg por una pista sin fricción. ¿Hasta qué altura sube?",
       o: ["0,5 m", "1 m", "2 m", "10 m"], a: 1,
-      e: "½kx² = ½·400·0,01 = 2 J = mgh = 0,2·10·h, así que h = 1 m." }
+      e: "½kx² = ½·400·0,01 = 2 J = Mgh = 0,2·10·h, así que h = 1 m." }
   ],
   B: [
     { k: "Conceptual", fig: () => subeSvg({ hLab: "2 m" }), q: "El bloque de la figura sube 2 m de altura. ¿Qué signo tiene el trabajo que hace el peso?",
       o: ["Positivo", "Negativo", "Cero", "Depende del ángulo"], a: 1,
-      e: "El peso apunta hacia abajo y el bloque sube: va en contra, así que W = mg(h_i − h_f) = −mg·2 < 0." },
+      e: "El peso apunta hacia abajo y el bloque sube: va en contra, así que W = Mg(h_i − h_f) = −Mg·2 < 0." },
     { k: "Conceptual", fig: () => deslizaSvg({ note: "v → 2v" }), q: "Si el bloque de la figura duplica su rapidez, ¿qué pasa con su energía cinética?",
       o: ["Se duplica", "Se cuadruplica", "No cambia", "Se reduce a la mitad"], a: 1,
-      e: "K = ½mv²: si v se duplica, v² se multiplica por 4." },
+      e: "K = ½Mv²: si v se duplica, v² se multiplica por 4." },
     { k: "Conceptual", q: "¿Cuándo se conserva la energía mecánica (K + U)?",
       o: ["Siempre", "Cuando solo hacen trabajo el peso y los resortes (no hay fricción)", "Cuando el objeto está quieto", "Cuando la normal es cero"], a: 1,
       e: "La fricción convierte energía mecánica en calor. Si no hay fricción (y las demás fuerzas no hacen trabajo), K + U no cambia." },
     { k: "Tipo parcial", fig: () => pistaSvg({ D: 1, Hmax: 1.2, H: 1, Hlab: "H", Dlab: "ancho H (rugoso)", rightMark: { h: 0.5, lab: "H/2" } }), q: "Como en 2026-1: el riel solo tiene fricción en el tramo horizontal de ancho H. Soltado desde H, el bloque sube solo hasta H/2 del otro lado. ¿Cuánto vale µₖ?",
       o: ["1/4", "1/3", "1/2", "2/3"], a: 2,
-      e: "mgH − µ·mgH = mg·H/2, así que µ = 1/2." },
+      e: "MgH − µ·MgH = Mg·H/2, así que µ = 1/2." },
     { k: "Tipo parcial", fig: () => subeSvg({ mu: "µₖ", hLab: "" }), q: "El bloque sube por el plano con rapidez inicial v₀ y coeficiente µₖ. ¿Qué distancia recorre a lo largo del plano antes de detenerse?",
       o: ["v₀²/(2g sen θ)", "v₀²/[2g(sen θ + µₖ cos θ)]", "v₀²/[2g(sen θ − µₖ cos θ)]", "v₀²/[2g(1 + µₖ cot θ)]"], a: 1,
-      e: "½mv₀² = mg·d·sen θ + µₖ·mg cos θ·d, así que d = v₀²/[2g(sen θ + µₖ cos θ)]. La opción D es la altura H, no la distancia: d = H/sen θ." }
+      e: "½Mv₀² = Mg·d·sen θ + µₖ·Mg cos θ·d, así que d = v₀²/[2g(sen θ + µₖ cos θ)]. La opción D es la altura H, no la distancia: d = H/sen θ." }
   ]
 };
 

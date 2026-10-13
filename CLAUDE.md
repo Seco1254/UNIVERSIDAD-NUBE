@@ -17,6 +17,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 - **Carga semanal**: martes y jueves, **liviana** (1–1,5 h; son sus días más pesados); lunes y viernes, **suave** (~2 h); miércoles, **media** (2,5–3 h); sábado y domingo, **pesada** (4–5 h; ahí van los bloques difíciles).
 - Los temas que ya vio en clase pueden ir en días livianos, pero **la teoría nunca se recorta**.
 - **Asume que no sabe nada** más allá de lo que se explicó en los módulos anteriores (pidió esto el 8 de octubre). Cada módulo abre con una tabla «Símbolos de este módulo» (símbolo, cómo se lee, qué significa, unidades) y cada símbolo se explica en palabras la primera vez que aparece. Nada de fₛ, µ, ω, etc. sin definir. La teoría va desde la intuición, con al menos un ejemplo resuelto con números por idea clave.
+- **La masa se escribe M mayúscula** (pidió esto el 13 de octubre, desde M6–M7): la m minúscula queda solo para metros. La tabla de símbolos lo aclara y recuerda que en el parcial la masa sale como m minúscula.
 - **Toda pregunta de quiz o problema de taller que describa una situación física lleva su figura** (SVG), como en los parciales. Nada de describir montajes solo con texto.
 - En el chat, cuando pregunta algo puntual mientras resuelve un taller, responde **solo** lo que pregunta, sin pistas extra ni resolverle el resto.
 

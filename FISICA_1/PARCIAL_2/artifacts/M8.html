@@ -302,6 +302,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <tbody>
           <tr><td class="mono">R</td><td>«erre»</td><td>Radio de la superficie circular (semiesfera, cuenco o loop).</td><td>m</td></tr>
           <tr><td class="mono">L</td><td>«ele»</td><td>Largo de la cuerda del péndulo: es el radio de su círculo.</td><td>m</td></tr>
+          <tr><td class="mono">M</td><td>«eme» mayúscula</td><td>Masa del bloque. Va en mayúscula para no confundirla con la <b>m</b> minúscula de <b>metros</b>. En el parcial la masa sale como m minúscula: ahí la reconoces porque los metros siempre van después de un número (5&nbsp;m).</td><td>kg</td></tr>
           <tr><td class="mono">θ, φ</td><td>«theta», «fi»</td><td>Ángulo que marca dónde está el bloque, medido desde el centro del círculo. Cada problema dice desde dónde se mide (la vertical o la horizontal). Míralo siempre en la figura.</td><td>grados</td></tr>
           <tr><td class="mono">θ₀</td><td>«theta sub cero»</td><td>Ángulo desde el que se suelta el péndulo.</td><td>grados</td></tr>
           <tr><td class="mono">v</td><td>«ve»</td><td>Rapidez del bloque en el punto que te preguntan.</td><td>m/s</td></tr>
@@ -327,7 +328,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <h3>La receta</h3>
       <ol class="steps">
         <li><span><b>Geometría:</b> escribe la altura del bloque en función del ángulo (mira la sección siguiente).</span></li>
-        <li><span><b>Ecuación radial</b> en el punto que te preguntan: ΣF<sub>hacia el centro</sub> = m·v²/R. Si dice «pierde contacto», pon N = 0.</span></li>
+        <li><span><b>Ecuación radial</b> en el punto que te preguntan: ΣF<sub>hacia el centro</sub> = M·v²/R. Si dice «pierde contacto», pon N = 0.</span></li>
         <li><span><b>Energía</b> entre el punto donde se suelta y ese punto: te da v² en función del ángulo.</span></li>
         <li><span><b>Reemplaza</b> el v² de la energía en la ecuación radial y despeja lo que te piden.</span></li>
       </ol>
@@ -357,11 +358,11 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <div class="block">
       <h3>Paso 2: qué parte del peso apunta al centro</h3>
       <div class="figs">
-        <figure><div id="fig-rad"></div><figcaption>Por fuera de la semiesfera: el peso tiene una parte mg·cos θ hacia el centro; la normal empuja hacia afuera.</figcaption></figure>
+        <figure><div id="fig-rad"></div><figcaption>Por fuera de la semiesfera: el peso tiene una parte Mg·cos θ hacia el centro; la normal empuja hacia afuera.</figcaption></figure>
         <div class="prose">
-          <p>El peso mg apunta hacia abajo. Se descompone igual que en un plano inclinado (M1): una parte en la dirección del radio y otra tangente al círculo.</p>
-          <p>Con el ángulo desde la vertical, la parte del peso <b>hacia el centro</b> es <b>mg·cos θ</b>.</p>
-          <div class="eq"><span>Por fuera (semiesfera): <b>mg·cos θ − N = m·v²/R</b></span><span>Por dentro (cuenco, péndulo): <b>N − mg·cos φ = m·v²/R</b>  (o T − mg·cos φ para el péndulo)</span></div>
+          <p>El peso Mg apunta hacia abajo. Se descompone igual que en un plano inclinado (M1): una parte en la dirección del radio y otra tangente al círculo.</p>
+          <p>Con el ángulo desde la vertical, la parte del peso <b>hacia el centro</b> es <b>Mg·cos θ</b>.</p>
+          <div class="eq"><span>Por fuera (semiesfera): <b>Mg·cos θ − N = M·v²/R</b></span><span>Por dentro (cuenco, péndulo): <b>N − Mg·cos φ = M·v²/R</b>  (o T − Mg·cos φ para el péndulo)</span></div>
           <p class="muted">Por fuera, la normal se aleja del centro y va con −. Por dentro, la normal apunta al centro y el peso se aleja, así que el que va con − es el peso.</p>
         </div>
       </div>
@@ -371,8 +372,8 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <h3>Ejemplo resuelto 1: ¿dónde se despega de la semiesfera? (2024-2 SM3)</h3>
       <p class="prose">Se suelta un bloque desde el reposo en lo más alto de una semiesfera sin fricción. ¿Cuánto baja antes de perder contacto?</p>
       <ol class="steps">
-        <li><span><b>Radial con N = 0:</b> mg·cos θ = m·v²/R, así que <b>v² = g·R·cos θ</b>.</span></li>
-        <li><span><b>Energía</b> (desde arriba, quieto, hasta el ángulo θ): bajó R(1 − cos θ), así que ½mv² = mg·R(1 − cos θ), o sea, <b>v² = 2gR(1 − cos θ)</b>.</span></li>
+        <li><span><b>Radial con N = 0:</b> Mg·cos θ = M·v²/R, así que <b>v² = g·R·cos θ</b>.</span></li>
+        <li><span><b>Energía</b> (desde arriba, quieto, hasta el ángulo θ): bajó R(1 − cos θ), así que ½Mv² = Mg·R(1 − cos θ), o sea, <b>v² = 2gR(1 − cos θ)</b>.</span></li>
         <li><span><b>Igualando:</b> gR·cos θ = 2gR(1 − cos θ), así que 3·cos θ = 2 y <b>cos θ = 2/3</b> (θ ≈ 48°).</span></li>
         <li><span><b>Lo que bajó:</b> R(1 − 2/3) = <b>R/3</b>. Esa era la opción B del parcial.</span></li>
       </ol>
@@ -383,11 +384,11 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <div class="figs">
         <figure><div id="fig-pend"></div><figcaption>Péndulo soltado desde un ángulo θ₀. En el punto más bajo, la tensión apunta al centro (arriba) y el peso se aleja.</figcaption></figure>
         <div class="prose">
-          <p>¿Desde qué ángulo θ₀ hay que soltarlo para que la tensión en el punto más bajo sea 2mg?</p>
-          <p><b>Radial abajo:</b> T − mg = m·v²/L. Con T = 2mg: <b>v² = g·L</b>.</p>
+          <p>¿Desde qué ángulo θ₀ hay que soltarlo para que la tensión en el punto más bajo sea 2Mg?</p>
+          <p><b>Radial abajo:</b> T − Mg = M·v²/L. Con T = 2Mg: <b>v² = g·L</b>.</p>
           <p><b>Energía</b> (soltado quieto desde θ₀ hasta abajo): bajó L(1 − cos θ₀), así que <b>v² = 2gL(1 − cos θ₀)</b>.</p>
           <p><b>Igualando:</b> gL = 2gL(1 − cos θ₀), así que cos θ₀ = 1/2 y <b>θ₀ = 60°</b>.</p>
-          <div class="eq"><span>Fórmula general: <b>T<sub>abajo</sub> = mg(3 − 2·cos θ₀)</b></span><span>Soltado desde la horizontal (θ₀ = 90°): T = 3mg.</span></div>
+          <div class="eq"><span>Fórmula general: <b>T<sub>abajo</sub> = Mg(3 − 2·cos θ₀)</b></span><span>Soltado desde la horizontal (θ₀ = 90°): T = 3Mg.</span></div>
         </div>
       </div>
     </div>
@@ -395,11 +396,11 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <div class="block">
       <h3>Ejemplo resuelto 3: resorte + loop (2025-2 Abierto 2)</h3>
       <div class="figs">
-        <figure><div id="fig-loop"></div><figcaption>Un resorte apretado x lanza el bloque, que entra a un loop de radio R. En lo más alto la normal debe ser 2mg.</figcaption></figure>
+        <figure><div id="fig-loop"></div><figcaption>Un resorte apretado x lanza el bloque, que entra a un loop de radio R. En lo más alto la normal debe ser 2Mg.</figcaption></figure>
         <div class="prose">
-          <p><b>Radial arriba (por dentro):</b> N + mg = m·v²/R. Con N = 2mg: <b>v² = 3gR</b>.</p>
-          <p><b>Energía</b> (con el piso como referencia): al principio todo está en el resorte, ½kx². Arriba del loop la altura es 2R (el diámetro): E = ½mv² + mg·2R.</p>
-          <p><b>Igualando:</b> ½kx² = ½m·3gR + 2mgR = (7/2)·mgR, así que <b>x = √(7mgR/k)</b>.</p>
+          <p><b>Radial arriba (por dentro):</b> N + Mg = M·v²/R. Con N = 2Mg: <b>v² = 3gR</b>.</p>
+          <p><b>Energía</b> (con el piso como referencia): al principio todo está en el resorte, ½kx². Arriba del loop la altura es 2R (el diámetro): E = ½Mv² + Mg·2R.</p>
+          <p><b>Igualando:</b> ½kx² = ½M·3gR + 2MgR = (7/2)·MgR, así que <b>x = √(7MgR/k)</b>.</p>
         </div>
       </div>
     </div>
@@ -411,9 +412,9 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <div class="prose">
           <p>¿A qué altura sobre el fondo la normal vale un tercio del peso?</p>
           <p><b>Energía:</b> desde el borde (a la altura del centro) bajó R·cos φ, así que <b>v² = 2gR·cos φ</b>.</p>
-          <p><b>Radial (por dentro):</b> N − mg·cos φ = m·v²/R = 2mg·cos φ, así que <b>N = 3mg·cos φ</b>.</p>
-          <p>Con N = mg/3: cos φ = 1/9. Altura sobre el fondo: R(1 − cos φ) = <b>8R/9</b>.</p>
-          <div class="callout trap"><h3>Ojo</h3><p>La solución oficial de este problema dice R/3, y está mal. Verifícalo: con h = R/3 la normal daría 2mg, no mg/3.</p></div>
+          <p><b>Radial (por dentro):</b> N − Mg·cos φ = M·v²/R = 2Mg·cos φ, así que <b>N = 3Mg·cos φ</b>.</p>
+          <p>Con N = Mg/3: cos φ = 1/9. Altura sobre el fondo: R(1 − cos φ) = <b>8R/9</b>.</p>
+          <div class="callout trap"><h3>Ojo</h3><p>La solución oficial de este problema dice R/3, y está mal. Verifícalo: con h = R/3 la normal daría 2Mg, no Mg/3.</p></div>
         </div>
       </div>
     </div>
@@ -424,10 +425,10 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <thead><tr><th>Situación (soltado desde el reposo)</th><th>Resultado</th></tr></thead>
         <tbody>
           <tr><td>Semiesfera por fuera, desde arriba: se despega</td><td class="mono">cos θ = 2/3; baja R/3</td></tr>
-          <tr><td>Semiesfera por fuera: normal en función del ángulo</td><td class="mono">N = mg(3·cos θ − 2)</td></tr>
-          <tr><td>Cuenco por dentro, soltado desde el borde</td><td class="mono">N = 3mg·cos φ</td></tr>
-          <tr><td>Péndulo soltado desde θ₀, punto más bajo</td><td class="mono">T = mg(3 − 2·cos θ₀)</td></tr>
-          <tr><td>Loop, en lo más alto, con N = n·mg</td><td class="mono">v² = (n + 1)·gR</td></tr>
+          <tr><td>Semiesfera por fuera: normal en función del ángulo</td><td class="mono">N = Mg(3·cos θ − 2)</td></tr>
+          <tr><td>Cuenco por dentro, soltado desde el borde</td><td class="mono">N = 3Mg·cos φ</td></tr>
+          <tr><td>Péndulo soltado desde θ₀, punto más bajo</td><td class="mono">T = Mg(3 − 2·cos θ₀)</td></tr>
+          <tr><td>Loop, en lo más alto, con N = n·Mg</td><td class="mono">v² = (n + 1)·gR</td></tr>
         </tbody>
       </table></div>
     </div>
@@ -456,7 +457,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
           <div class="ro"><span>Ángulo θ</span><b id="s-th">0°</b></div>
           <div class="ro"><span>Lo que ha bajado</span><b id="s-drop">0,00 R</b></div>
           <div class="ro"><span>v² / (gR)</span><b id="s-v2">0,00</b></div>
-          <div class="ro"><span>Normal N / mg</span><b id="s-n">1,00</b></div>
+          <div class="ro"><span>Normal N / Mg</span><b id="s-n">1,00</b></div>
           <div class="status" id="s-status">Listo para soltar</div>
         </div>
       </div>
@@ -468,8 +469,8 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <div class="qrow"><button type="button" class="btn" id="q-go">Soltar</button><button type="button" class="btn ghost" id="q-stop">Detener</button></div>
         <div class="readout" aria-live="polite">
           <div class="ro"><span>Ángulo ahora</span><b id="q-now">60°</b></div>
-          <div class="ro"><span>Tensión ahora T / mg</span><b id="q-t">0,50</b></div>
-          <div class="ro"><span>Tensión abajo mg(3 − 2cos θ₀)</span><b id="q-tb">2,00 mg</b></div>
+          <div class="ro"><span>Tensión ahora T / Mg</span><b id="q-t">0,50</b></div>
+          <div class="ro"><span>Tensión abajo Mg(3 − 2cos θ₀)</span><b id="q-tb">2,00 Mg</b></div>
         </div>
       </div>
     </div>
@@ -480,8 +481,8 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <details class="rev"><summary>Reto 1 · Suelta el bloque desde el reposo. ¿En qué ángulo se despega?</summary>
           <div class="rev-body"><p><b>θ ≈ 48°</b>, donde cos θ = 2/3. En la gráfica es justo donde la curva de N cruza el cero.</p></div></details>
         <details class="rev"><summary>Reto 2 · Dale rapidez inicial arriba. ¿Se despega antes o después?</summary>
-          <div class="rev-body"><p><b>Antes.</b> Con rapidez inicial, v² es más grande en cada punto y la normal llega a cero más pronto: N/mg = 3cos θ − 2 − v₀²/(gR). Con v₀ = √(gR) se despega de inmediato.</p></div></details>
-        <details class="rev"><summary>Reto 3 · En el péndulo, ¿desde qué ángulo la tensión abajo vale exactamente 2mg?</summary>
+          <div class="rev-body"><p><b>Antes.</b> Con rapidez inicial, v² es más grande en cada punto y la normal llega a cero más pronto: N/Mg = 3cos θ − 2 − v₀²/(gR). Con v₀ = √(gR) se despega de inmediato.</p></div></details>
+        <details class="rev"><summary>Reto 3 · En el péndulo, ¿desde qué ángulo la tensión abajo vale exactamente 2Mg?</summary>
           <div class="rev-body"><p><b>θ₀ = 60°</b>: 3 − 2·cos 60° = 3 − 1 = 2. Es el Abierto 1 de 2024-2.</p></div></details>
       </div>
     </div>
@@ -619,9 +620,9 @@ function domeSvg(o = {}) {
     }
     if (o.arrows) {
       g += arrowSvg(bx + nx * 9, by + ny * 9, bx + nx * 50, by + ny * 50, "a-n") + T(bx + nx * 54, by + ny * 54, "N", "sv-t t-n");
-      g += arrowSvg(bx, by, bx, by + 62, "a-peso") + T(bx + 5, by + 62, "mg", "sv-t t-peso");
+      g += arrowSvg(bx, by, bx, by + 62, "a-peso") + T(bx + 5, by + 62, "Mg", "sv-t t-peso");
       const c = Math.cos(th) * 62;
-      g += `<line x1="${f1(bx)}" y1="${f1(by)}" x2="${f1(bx - nx * c)}" y2="${f1(by - ny * c)}" class="sv-comp"/>` + T(bx - nx * c - 6, by - ny * c + 4, "mg·cos θ", "sv-t t-comp", "end");
+      g += `<line x1="${f1(bx)}" y1="${f1(by)}" x2="${f1(bx - nx * c)}" y2="${f1(by - ny * c)}" class="sv-comp"/>` + T(bx - nx * c - 6, by - ny * c + 4, "Mg·cos θ", "sv-t t-comp", "end");
     }
   }
   if (o.pos) g += `<rect x="${f1(o.pos.x - 8)}" y="${f1(o.pos.y - 7)}" width="16" height="14" class="sv-block${o.flying ? " bad" : ""}"/>`;
@@ -637,7 +638,7 @@ function pendFig(o = {}) {
   g += `<path d="M ${px} ${py + 40} A 40 40 0 0 1 ${f1(px - 40 * Math.sin(th0))} ${f1(py + 40 * Math.cos(th0))}" class="sv-arc"/>` + T(px - 18, py + 58, o.thLab || "θ₀", "sv-ang", "end");
   g += `<path d="M ${f1(gx)} ${f1(gy)} A ${L} ${L} 0 0 0 ${px} ${py + L}" class="sv-dash"/>`;
   g += `<line x1="${px}" y1="${py}" x2="${px}" y2="${py + L - 11}" class="sv-rope"/><circle cx="${px}" cy="${py + L}" r="11" class="sv-ball"/>` + T(px + 6, py + 70, "L", "sv-tl");
-  if (o.arrows !== false) { g += arrowSvg(px + 16, py + L - 6, px + 16, py + L - 50, "a-f") + T(px + 21, py + L - 40, "T", "sv-t t-f"); g += arrowSvg(px, py + L + 12, px, py + L + 46, "a-peso") + T(px + 6, py + L + 44, "mg", "sv-t t-peso"); }
+  if (o.arrows !== false) { g += arrowSvg(px + 16, py + L - 6, px + 16, py + L - 50, "a-f") + T(px + 21, py + L - 40, "T", "sv-t t-f"); g += arrowSvg(px, py + L + 12, px, py + L + 46, "a-peso") + T(px + 6, py + L + 44, "Mg", "sv-t t-peso"); }
   if (o.height) { g += `<line x1="${f1(gx - 18)}" y1="${f1(gy)}" x2="${f1(gx - 18)}" y2="${py + L}" class="sv-dim"/><line x1="${f1(gx - 24)}" y1="${py + L}" x2="${px}" y2="${py + L}" class="sv-dash"/>` + T(gx - 22, (gy + py + L) / 2 + 4, o.height, "sv-t", "end"); }
   return `<svg viewBox="0 0 320 214" role="img" aria-label="Péndulo soltado desde un ángulo, pasando por el punto más bajo">${g}</svg>`;
 }
@@ -645,7 +646,7 @@ function loopSpringFig(o = {}) {
   const cy = 190, lc = { x: 236, y: 120 }, R = 70;
   let g = `<line x1="8" y1="${cy}" x2="312" y2="${cy}" class="sv-line"/><line x1="14" y1="140" x2="14" y2="${cy}" class="sv-line"/>`;
   let z = `M 14 ${cy - 12}`; for (let i = 0; i < 8; i++) z += ` L ${20 + i * 6} ${i % 2 ? cy - 18 : cy - 6}`; z += ` L 70 ${cy - 12}`;
-  g += `<path d="${z}" class="sv-spring"/>` + T(42, cy - 26, "k", "sv-t", "middle") + `<rect x="70" y="${cy - 22}" width="22" height="22" class="sv-block"/>` + T(81, cy - 7, "m", "sv-lab", "middle");
+  g += `<path d="${z}" class="sv-spring"/>` + T(42, cy - 26, "k", "sv-t", "middle") + `<rect x="70" y="${cy - 22}" width="22" height="22" class="sv-block"/>` + T(81, cy - 7, "M", "sv-lab", "middle");
   g += `<circle cx="${lc.x}" cy="${lc.y}" r="${R}" class="sv-track"/>` + `<line x1="${lc.x}" y1="${lc.y}" x2="${f1(lc.x + R * 0.7)}" y2="${f1(lc.y + R * 0.7)}" class="sv-dash"/>` + T(lc.x + 30, lc.y + 26, "R", "sv-tl");
   g += `<rect x="${lc.x - 12}" y="${lc.y - R + 3}" width="24" height="13" rx="2" class="sv-block"/>`;
   if (o.label) g += T(lc.x, lc.y + 4, o.label, "sv-t", "middle");
@@ -662,7 +663,7 @@ function bowlFig(o = {}) {
   g += `<g transform="rotate(${f1(-(o.phi ?? 50))} ${f1(bx)} ${f1(by)})"><rect x="${f1(bx - 8)}" y="${f1(by - 7)}" width="16" height="14" class="sv-block"/></g>`;
   g += `<line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy + R}" class="sv-dash"/><line x1="${cx}" y1="${cy}" x2="${f1(px)}" y2="${f1(py)}" class="sv-dash"/>`;
   g += `<path d="M ${cx} ${cy + 38} A 38 38 0 0 0 ${f1(cx + 38 * Math.sin(ph))} ${f1(cy + 38 * Math.cos(ph))}" class="sv-arc"/>` + T(cx + 8, cy + 56, "φ", "sv-ang");
-  if (o.arrows) { g += arrowSvg(bx + nx * 9, by + ny * 9, bx + nx * 52, by + ny * 52, "a-n") + T(bx + nx * 56 - 4, by + ny * 56, "N", "sv-t t-n", "end"); g += arrowSvg(bx, by + 8, bx, by + 50, "a-peso") + T(bx + 6, by + 48, "mg", "sv-t t-peso"); }
+  if (o.arrows) { g += arrowSvg(bx + nx * 9, by + ny * 9, bx + nx * 52, by + ny * 52, "a-n") + T(bx + nx * 56 - 4, by + ny * 56, "N", "sv-t t-n", "end"); g += arrowSvg(bx, by + 8, bx, by + 50, "a-peso") + T(bx + 6, by + 48, "Mg", "sv-t t-peso"); }
   if (o.h) g += `<line x1="${f1(px + 26)}" y1="${f1(py)}" x2="${f1(px + 26)}" y2="${cy + R}" class="sv-dim"/>` + T(px + 30, (py + cy + R) / 2 + 4, o.h, "sv-t");
   return `<svg viewBox="0 0 320 176" role="img" aria-label="Bloque dentro de un cuenco semiesférico">${g}</svg>`;
 }
@@ -694,7 +695,7 @@ function loopRampFig(o = {}) {
 $("#fig-geo").innerHTML = domeSvg({ theta: 40, angle: true, heights: true });
 $("#fig-rad").innerHTML = domeSvg({ theta: 40, angle: true, arrows: true });
 $("#fig-pend").innerHTML = pendFig({ theta0: 60 });
-$("#fig-loop").innerHTML = loopSpringFig({ label: "N = 2mg arriba" });
+$("#fig-loop").innerHTML = loopSpringFig({ label: "N = 2Mg arriba" });
 $("#fig-bowl").innerHTML = bowlFig({ phi: 55, arrows: true, h: "h" });
 
 /* ---------- Lab 1: semiesfera ---------- */
@@ -708,7 +709,7 @@ function drawSemi() {
   const domeOpts = { cx: SC.cx, R: SC.R, theta: SM.th / DEG, ghostTop: false };
   if (flying) { domeOpts.block = false; domeOpts.pos = pos; domeOpts.flying = true; }
   $("#s-svg").innerHTML = domeSvg(domeOpts);
-  /* gráfica N/mg contra θ */
+  /* gráfica N/Mg contra θ */
   const W = 340, H = 160, ml = 46, mr = 14, mt = 12, mb = 32;
   const X = (d) => ml + (d / 90) * (W - ml - mr), Y = (v) => mt + (1 - v) / 2 * (H - mt - mb);
   let g = "";
@@ -716,7 +717,7 @@ function drawSemi() {
   [0, 30, 60, 90].forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 15}" class="gr-tick" text-anchor="middle">${t}°</text>`; });
   g += `<text x="${(ml + W - mr) / 2}" y="${H - 4}" class="gr-lab" text-anchor="middle">ángulo θ desde la vertical</text>`;
   let d = ""; for (let i = 0; i <= 90; i++) { const v = Math.max(-1, nOverMg(i * DEG)); d += (i ? " L " : "M ") + f1(X(i)) + " " + f1(Y(v)); }
-  g += `<path d="${d}" class="gr-line"/>` + `<text x="${ml + 6}" y="${mt + 10}" class="gr-ann">N / mg</text>`;
+  g += `<path d="${d}" class="gr-line"/>` + `<text x="${ml + 6}" y="${mt + 10}" class="gr-ann">N / Mg</text>`;
   const c = (2 + SM.v0 * SM.v0) / 3;
   if (c <= 1) { const ts = Math.acos(c) / DEG; g += `<line x1="${f1(X(ts))}" y1="${f1(Y(0) - 6)}" x2="${f1(X(ts))}" y2="${f1(Y(0) + 6)}" class="gr-axis"/><text x="${f1(X(ts) + 5)}" y="${f1(Y(0) + 16)}" class="gr-ann">se despega: ${ts.toFixed(1).replace(".", ",")}°</text>`; }
   const thNow = Math.min(90, SM.th / DEG);
@@ -773,12 +774,12 @@ function drawPend() {
   g += `<line x1="${px}" y1="${py}" x2="${f1(bx)}" y2="${f1(by)}" class="sv-rope"/><circle cx="${f1(bx)}" cy="${f1(by)}" r="11" class="sv-ball"/>`;
   const ux = (px - bx) / L, uy = (py - by) / L, tl = Math.max(4, Tm * 26);
   g += arrowSvg(bx + ux * 13, by + uy * 13, bx + ux * (13 + tl), by + uy * (13 + tl), "a-f") + T(bx + ux * (17 + tl) + 6, by + uy * (17 + tl), "T", "sv-t t-f");
-  g += arrowSvg(bx, by + 13, bx, by + 13 + 26, "a-peso") + T(bx + 6, by + 38, "mg", "sv-t t-peso");
+  g += arrowSvg(bx, by + 13, bx, by + 13 + 26, "a-peso") + T(bx + 6, by + 38, "Mg", "sv-t t-peso");
   $("#q-svg").innerHTML = `<svg viewBox="0 0 340 214" role="img" aria-label="Péndulo oscilando con la flecha de la tensión">${g}</svg>`;
   $("#q-th-lab").textContent = "Se suelta desde θ₀ = " + Math.round(PD.th0 / DEG) + "°";
   $("#q-now").textContent = Math.round(th / DEG) + "°";
   $("#q-t").textContent = fmt(Tm);
-  $("#q-tb").textContent = fmt(3 - 2 * Math.cos(PD.th0)) + " mg";
+  $("#q-tb").textContent = fmt(3 - 2 * Math.cos(PD.th0)) + " Mg";
 }
 function pendFrame(now) {
   if (!PD.run) return;
@@ -799,39 +800,39 @@ TABS.forEach((on) => $("#tab-" + on).addEventListener("click", () => {
 const PROBS = [
   { n: "T1", t: "Semiesfera: ¿dónde la normal vale un tercio del peso?", src: "Parcial 2025-1 · SM3 (10 pts)",
     fig: () => domeSvg({ theta: 35, angle: true }),
-    txt: "Se suelta un bloque de masa m, desde el reposo, en lo más alto de una superficie semicircular de radio R sin fricción. El bloque se desliza sobre la superficie. El ángulo θ (desde la vertical) en el que la normal es un tercio del peso es: A) cos⁻¹(1/2)  B) cos⁻¹(2/3)  C) cos⁻¹(3/4)  D) cos⁻¹(5/7)  E) cos⁻¹(7/9).",
-    hints: ["Es el ejemplo resuelto 1, pero ahora N = mg/3 en vez de N = 0.", "Radial: mg cos θ − mg/3 = mv²/R. Energía: v² = 2gR(1 − cos θ)."],
-    sol: ["Radial: mg cos θ − mg/3 = mv²/R.", "Energía: v² = 2gR(1 − cos θ).", "Reemplazando: cos θ − 1/3 = 2 − 2cos θ, así que 3cos θ = 7/3 y <b>cos θ = 7/9</b>: opción E.", "La solución oficial escribe cos θ = 2/3 a mitad del cálculo: es un error de transcripción, la respuesta E sí es la correcta."],
+    txt: "Se suelta un bloque de masa M, desde el reposo, en lo más alto de una superficie semicircular de radio R sin fricción. El bloque se desliza sobre la superficie. El ángulo θ (desde la vertical) en el que la normal es un tercio del peso es: A) cos⁻¹(1/2)  B) cos⁻¹(2/3)  C) cos⁻¹(3/4)  D) cos⁻¹(5/7)  E) cos⁻¹(7/9).",
+    hints: ["Es el ejemplo resuelto 1, pero ahora N = Mg/3 en vez de N = 0.", "Radial: Mg cos θ − Mg/3 = Mv²/R. Energía: v² = 2gR(1 − cos θ)."],
+    sol: ["Radial: Mg cos θ − Mg/3 = Mv²/R.", "Energía: v² = 2gR(1 − cos θ).", "Reemplazando: cos θ − 1/3 = 2 − 2cos θ, así que 3cos θ = 7/3 y <b>cos θ = 7/9</b>: opción E.", "La solución oficial escribe cos θ = 2/3 a mitad del cálculo: es un error de transcripción, la respuesta E sí es la correcta."],
     checks: [{ q: "¿Cuál es θ?", opts: ["cos⁻¹(1/2)", "cos⁻¹(2/3)", "cos⁻¹(3/4)", "cos⁻¹(5/7)", "cos⁻¹(7/9)"], a: 4 }] },
   { n: "T2", t: "Estructura semicircular sobre columnas", src: "Parcial 2026-1 · Abierto 3 (20 pts)",
     fig: () => columnsFig({ theta: 42 }),
     txt: "Una estructura tiene una parte semicircular de radio R sobre dos columnas verticales de altura R. Está cubierta de aceite (sin fricción) y se coloca un bloque en la parte superior, que se desliza. A) Halla la velocidad del bloque, en términos de g, R y θ, en el instante en que se desprende (6 pts). B) Halla el ángulo θ en el que se desprende (9 pts). C) Halla la altura H sobre el piso, solo en términos de R, en la que pierde contacto (5 pts).",
-    hints: ["Aquí θ se mide <b>desde la horizontal</b>: la parte del peso hacia el centro es mg·sen θ y la altura sobre el piso es R + R·sen θ.", "Energía desde arriba del todo (altura 2R sobre el piso, quieto) hasta el ángulo θ."],
-    sol: ["<b>A)</b> Radial con N = 0: mg·sen θ = mv²/R, así que <b>v² = gR·sen θ</b>.", "<b>B)</b> Energía con el piso como referencia: mg·2R = mg(R + R·sen θ) + ½mv². Reemplazando v²: 2R = R + R·sen θ + ½R·sen θ, así que <b>sen θ = 2/3</b>.", "<b>C)</b> H = R + R·sen θ = R + 2R/3 = <b>5R/3</b>.", "Es el mismo resultado del ejemplo 1 (baja R/3), visto con otra referencia y otro ángulo."],
+    hints: ["Aquí θ se mide <b>desde la horizontal</b>: la parte del peso hacia el centro es Mg·sen θ y la altura sobre el piso es R + R·sen θ.", "Energía desde arriba del todo (altura 2R sobre el piso, quieto) hasta el ángulo θ."],
+    sol: ["<b>A)</b> Radial con N = 0: Mg·sen θ = Mv²/R, así que <b>v² = gR·sen θ</b>.", "<b>B)</b> Energía con el piso como referencia: Mg·2R = Mg(R + R·sen θ) + ½Mv². Reemplazando v²: 2R = R + R·sen θ + ½R·sen θ, así que <b>sen θ = 2/3</b>.", "<b>C)</b> H = R + R·sen θ = R + 2R/3 = <b>5R/3</b>.", "Es el mismo resultado del ejemplo 1 (baja R/3), visto con otra referencia y otro ángulo."],
     checks: [{ q: "B) ¿Cuánto vale sen θ?", opts: ["1/3", "1/2", "2/3", "3/4"], a: 2 }, { q: "C) ¿Cuánto vale H?", opts: ["4R/3", "3R/2", "5R/3", "2R"], a: 2 }] },
-  { n: "T3", t: "Variante: péndulo con tensión 5mg/2 abajo", src: "Variante de 2024-2 · Abierto 1",
+  { n: "T3", t: "Variante: péndulo con tensión 5Mg/2 abajo", src: "Variante de 2024-2 · Abierto 1",
     fig: () => pendFig({ theta0: 70 }),
-    txt: "Determina el ángulo θ₀ desde el que se debe soltar un péndulo de masa m y longitud L para que la tensión en el punto más bajo de su trayectoria sea 5mg/2.",
-    hints: ["Radial abajo: T − mg = mv²/L.", "Energía: v² = 2gL(1 − cos θ₀). O usa la fórmula T = mg(3 − 2cos θ₀) si la sabes deducir."],
-    sol: ["Radial: 5mg/2 − mg = mv²/L, así que v² = 3gL/2.", "Energía: 3gL/2 = 2gL(1 − cos θ₀), así que 1 − cos θ₀ = 3/4 y <b>cos θ₀ = 1/4</b> (θ₀ ≈ 75,5°)."],
+    txt: "Determina el ángulo θ₀ desde el que se debe soltar un péndulo de masa M y longitud L para que la tensión en el punto más bajo de su trayectoria sea 5Mg/2.",
+    hints: ["Radial abajo: T − Mg = Mv²/L.", "Energía: v² = 2gL(1 − cos θ₀). O usa la fórmula T = Mg(3 − 2cos θ₀) si la sabes deducir."],
+    sol: ["Radial: 5Mg/2 − Mg = Mv²/L, así que v² = 3gL/2.", "Energía: 3gL/2 = 2gL(1 − cos θ₀), así que 1 − cos θ₀ = 3/4 y <b>cos θ₀ = 1/4</b> (θ₀ ≈ 75,5°)."],
     checks: [{ q: "¿Cuánto vale cos θ₀?", opts: ["1/4", "1/3", "1/2", "3/4"], a: 0 }] },
-  { n: "T4", t: "Variante: resorte + loop con N = mg arriba", src: "Variante de 2025-2 · Abierto 2",
-    fig: () => loopSpringFig({ label: "N = mg arriba" }),
-    txt: "Un riel sin fricción tiene una sección circular de radio R. Determina la compresión x del resorte para que, en lo más alto del círculo, el bloque sienta una normal igual a su peso. A) Halla la energía mecánica con el resorte comprimido. B) Halla la energía mecánica en lo más alto. C) Halla la velocidad en lo más alto. D) Halla x en términos de m, g, R y k.",
-    hints: ["C) Radial arriba (por dentro): N + mg = mv²/R con N = mg.", "B) Arriba la altura es 2R, no R."],
-    sol: ["<b>A)</b> E = ½kx² (piso como referencia, bloque quieto).", "<b>C)</b> mg + mg = mv²/R, así que <b>v² = 2gR</b>.", "<b>B)</b> E = ½mv² + mg·2R = mgR + 2mgR = 3mgR.", "<b>D)</b> ½kx² = 3mgR, así que <b>x = √(6mgR/k)</b>."],
-    checks: [{ q: "D) ¿Cuánto vale x?", opts: ["√(5mgR/k)", "√(6mgR/k)", "√(7mgR/k)", "√(3mgR/k)"], a: 1 }] },
+  { n: "T4", t: "Variante: resorte + loop con N = Mg arriba", src: "Variante de 2025-2 · Abierto 2",
+    fig: () => loopSpringFig({ label: "N = Mg arriba" }),
+    txt: "Un riel sin fricción tiene una sección circular de radio R. Determina la compresión x del resorte para que, en lo más alto del círculo, el bloque sienta una normal igual a su peso. A) Halla la energía mecánica con el resorte comprimido. B) Halla la energía mecánica en lo más alto. C) Halla la velocidad en lo más alto. D) Halla x en términos de M, g, R y k.",
+    hints: ["C) Radial arriba (por dentro): N + Mg = Mv²/R con N = Mg.", "B) Arriba la altura es 2R, no R."],
+    sol: ["<b>A)</b> E = ½kx² (piso como referencia, bloque quieto).", "<b>C)</b> Mg + Mg = Mv²/R, así que <b>v² = 2gR</b>.", "<b>B)</b> E = ½Mv² + Mg·2R = MgR + 2MgR = 3MgR.", "<b>D)</b> ½kx² = 3MgR, así que <b>x = √(6MgR/k)</b>."],
+    checks: [{ q: "D) ¿Cuánto vale x?", opts: ["√(5MgR/k)", "√(6MgR/k)", "√(7MgR/k)", "√(3MgR/k)"], a: 1 }] },
   { n: "T5", t: "Variante: el cuenco por dentro", src: "Variante de 2024-2 · Abierto 2",
     fig: () => bowlFig({ phi: 48, arrows: true, h: "h = ?" }),
     txt: "Se suelta un bloque desde el reposo en el borde de un cuenco semiesférico sin fricción de radio R (el borde está a la altura del centro). A) ¿Cuánto vale la normal en el fondo? B) ¿A qué altura sobre el fondo la normal es igual al peso?",
-    hints: ["Del ejemplo resuelto 4: N = 3mg·cos φ, con φ desde la vertical que baja del centro.", "En el fondo φ = 0. Para la parte B, pon N = mg y halla cos φ; la altura sobre el fondo es R(1 − cos φ)."],
-    sol: ["<b>A)</b> En el fondo φ = 0: <b>N = 3mg</b>.", "<b>B)</b> mg = 3mg·cos φ, así que cos φ = 1/3. Altura sobre el fondo: R(1 − 1/3) = <b>2R/3</b>."],
-    checks: [{ q: "B) ¿A qué altura N = mg?", opts: ["R/3", "R/2", "2R/3", "8R/9"], a: 2 }] },
+    hints: ["Del ejemplo resuelto 4: N = 3Mg·cos φ, con φ desde la vertical que baja del centro.", "En el fondo φ = 0. Para la parte B, pon N = Mg y halla cos φ; la altura sobre el fondo es R(1 − cos φ)."],
+    sol: ["<b>A)</b> En el fondo φ = 0: <b>N = 3Mg</b>.", "<b>B)</b> Mg = 3Mg·cos φ, así que cos φ = 1/3. Altura sobre el fondo: R(1 − 1/3) = <b>2R/3</b>."],
+    checks: [{ q: "B) ¿A qué altura N = Mg?", opts: ["R/3", "R/2", "2R/3", "8R/9"], a: 2 }] },
   { n: "T6", t: "Rampa + loop: altura mínima para dar la vuelta", src: "Problema nuevo (clásico del capítulo 7)",
     fig: () => loopRampFig({ hLab: "h = ?" }),
     txt: "Un bloque se suelta desde el reposo a una altura h en una rampa sin fricción que termina en un loop de radio R. ¿Cuál es la altura mínima h para que el bloque dé la vuelta completa sin despegarse?",
-    hints: ["«Dar la vuelta sin despegarse» en el caso límite: en lo más alto, N = 0.", "Radial arriba: mg = mv²/R. Energía: mgh = mg·2R + ½mv²."],
-    sol: ["Radial arriba con N = 0: <b>v² = gR</b> (la rapidez mínima del M5).", "Energía: mgh = 2mgR + ½mgR, así que <b>h = 5R/2</b>.", "Con menos altura, el bloque llega arriba demasiado lento y se cae antes de completar la vuelta."],
+    hints: ["«Dar la vuelta sin despegarse» en el caso límite: en lo más alto, N = 0.", "Radial arriba: Mg = Mv²/R. Energía: Mgh = Mg·2R + ½Mv²."],
+    sol: ["Radial arriba con N = 0: <b>v² = gR</b> (la rapidez mínima del M5).", "Energía: Mgh = 2MgR + ½MgR, así que <b>h = 5R/2</b>.", "Con menos altura, el bloque llega arriba demasiado lento y se cae antes de completar la vuelta."],
     checks: [{ q: "¿Cuánto vale h mínima?", opts: ["2R", "5R/2", "3R", "7R/2"], a: 1 }] }
 ];
 (function renderProblems() {
@@ -870,27 +871,27 @@ const MOD = "M8", NEXT = "Aprobado. Pasas al simulacro.";
 const QUIZ = {
   A: [
     { k: "Conceptual", fig: () => domeSvg({ theta: 35 }), q: "El bloque de la figura se desliza por fuera de la semiesfera. ¿Qué condición dice que «pierde contacto»?",
-      o: ["v = 0", "N = 0", "N = mg", "θ = 90°"], a: 1,
+      o: ["v = 0", "N = 0", "N = Mg", "θ = 90°"], a: 1,
       e: "Perder contacto significa que la superficie ya no empuja al bloque: la normal llega a cero." },
     { k: "Conceptual", fig: () => domeSvg({ theta: 40, angle: true }), q: "El ángulo θ se mide desde la vertical, en el centro. ¿A qué altura sobre el centro está el bloque?",
       o: ["R·sen θ", "R·cos θ", "R(1 − cos θ)", "R·tan θ"], a: 1,
       e: "El radio mide R y el lado vertical pegado al ángulo es R·cos θ. R(1 − cos θ) es lo que ya bajó desde arriba." },
     { k: "Conceptual", fig: () => domeSvg({ theta: 40, angle: true, arrows: true }), q: "En la figura, ¿cuál es la ecuación hacia el centro?",
-      o: ["N − mg·cos θ = mv²/R", "mg·cos θ − N = mv²/R", "mg − N = mv²/R", "N + mg·cos θ = mv²/R"], a: 1,
-      e: "Hacia el centro apunta la parte mg·cos θ del peso (+). La normal empuja hacia afuera (−)." },
+      o: ["N − Mg·cos θ = Mv²/R", "Mg·cos θ − N = Mv²/R", "Mg − N = Mv²/R", "N + Mg·cos θ = Mv²/R"], a: 1,
+      e: "Hacia el centro apunta la parte Mg·cos θ del peso (+). La normal empuja hacia afuera (−)." },
     { k: "Tipo parcial", fig: () => pendFig({ theta0: 90, thLab: "90°" }), q: "Un péndulo se suelta desde la horizontal (θ₀ = 90°). ¿Cuánto vale la tensión en el punto más bajo?",
-      o: ["mg", "2mg", "3mg", "5mg"], a: 2,
-      e: "Energía: v² = 2gL(1 − cos 90°) = 2gL. Radial: T − mg = m·2gL/L = 2mg, así que T = 3mg." },
+      o: ["Mg", "2Mg", "3Mg", "5Mg"], a: 2,
+      e: "Energía: v² = 2gL(1 − cos 90°) = 2gL. Radial: T − Mg = M·2gL/L = 2Mg, así que T = 3Mg." },
     { k: "Tipo parcial", fig: () => loopRampFig({ hLab: "h = 3R", topLab: "N = ?" }), q: "Un bloque se suelta desde el reposo a una altura 3R en la rampa sin fricción de la figura. ¿Cuánto vale la normal en lo más alto del loop?",
-      o: ["0", "mg", "2mg", "3mg"], a: 1,
-      e: "Energía: mg·3R = mg·2R + ½mv², así que v² = 2gR. Radial arriba: N + mg = m·2gR/R = 2mg, así que N = mg." }
+      o: ["0", "Mg", "2Mg", "3Mg"], a: 1,
+      e: "Energía: Mg·3R = Mg·2R + ½Mv², así que v² = 2gR. Radial arriba: N + Mg = M·2gR/R = 2Mg, así que N = Mg." }
   ],
   B: [
     { k: "Conceptual", fig: () => domeSvg({ theta: 35 }), q: "¿Por qué la conservación de la energía sola no te da la normal sobre el bloque?",
       o: ["Porque la normal es muy pequeña", "Porque la normal no hace trabajo, así que no aparece en la energía", "Porque la energía no se conserva", "Porque la normal cambia de dirección"], a: 1,
       e: "La normal es perpendicular al movimiento: su trabajo es cero. Por eso hace falta la ecuación radial." },
     { k: "Conceptual", fig: () => bowlFig({ phi: 50, arrows: true }), q: "El bloque de la figura se desliza por dentro del cuenco, a un ángulo φ de la vertical que baja del centro. ¿Cuál es la ecuación hacia el centro?",
-      o: ["mg·cos φ − N = mv²/R", "N − mg·cos φ = mv²/R", "N + mg·cos φ = mv²/R", "N = mv²/R"], a: 1,
+      o: ["Mg·cos φ − N = Mv²/R", "N − Mg·cos φ = Mv²/R", "N + Mg·cos φ = Mv²/R", "N = Mv²/R"], a: 1,
       e: "Por dentro, la normal apunta al centro (+) y la parte radial del peso se aleja del centro (−)." },
     { k: "Conceptual", fig: () => pendFig({ theta0: 50, thLab: "θ", arrows: false, height: "?" }), q: "El péndulo de la figura está a un ángulo θ de la vertical. ¿A qué altura está la masa sobre el punto más bajo?",
       o: ["L·cos θ", "L·sen θ", "L(1 − cos θ)", "L(1 − sen θ)"], a: 2,
@@ -898,9 +899,9 @@ const QUIZ = {
     { k: "Tipo parcial", fig: () => domeSvg({ theta: 48 }), q: "Un bloque se suelta desde el reposo en lo más alto de la semiesfera sin fricción. ¿Cuánto vale v² en el instante en que se despega?",
       o: ["gR/3", "2gR/3", "gR", "2gR"], a: 1,
       e: "Se despega en cos θ = 2/3 y ahí, con N = 0, v² = gR·cos θ = 2gR/3." },
-    { k: "Tipo parcial", fig: () => loopRampFig({ hLab: "h = ?", topLab: "N = mg" }), q: "¿Desde qué altura h hay que soltar el bloque en la rampa sin fricción para que la normal en lo más alto del loop sea igual a su peso?",
+    { k: "Tipo parcial", fig: () => loopRampFig({ hLab: "h = ?", topLab: "N = Mg" }), q: "¿Desde qué altura h hay que soltar el bloque en la rampa sin fricción para que la normal en lo más alto del loop sea igual a su peso?",
       o: ["5R/2", "3R", "7R/2", "4R"], a: 1,
-      e: "Radial arriba: mg + mg = mv²/R, así que v² = 2gR. Energía: mgh = 2mgR + ½m·2gR = 3mgR, así que h = 3R." }
+      e: "Radial arriba: Mg + Mg = Mv²/R, así que v² = 2gR. Energía: Mgh = 2MgR + ½M·2gR = 3MgR, así que h = 3R." }
   ]
 };
 
