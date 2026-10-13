@@ -430,7 +430,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 2. LAB ============ -->
   <section id="lab" aria-labelledby="l-h">
-    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: la pista con tramo rugoso</h2><p>Suelta el bloque y mira cómo la energía pasa de potencial a cinética y cómo la fricción se la va comiendo en cada pasada.</p></div>
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: la pista con tramo rugoso</h2><p>Suelta el bloque y mira cómo la energía pasa de potencial a cinética y cómo la fricción se la va comiendo en cada pasada. Cambia la masa M para ver qué depende de ella y qué no.</p></div>
     <div class="lab">
       <div class="lab-stage">
         <div id="p-svg" class="lab-fig"></div>
@@ -440,8 +440,12 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
         <div class="ctl"><label for="p-h" id="p-h-lab">H = 1,00 m</label><input type="range" id="p-h" min="0.4" max="1.5" step="0.05" value="1"></div>
         <div class="ctl"><label for="p-d" id="p-d-lab">D = 0,60 m</label><input type="range" id="p-d" min="0.2" max="1.2" step="0.05" value="0.6"></div>
         <div class="ctl"><label for="p-mu" id="p-mu-lab">µₖ = 0,50</label><input type="range" id="p-mu" min="0.05" max="1" step="0.05" value="0.5"></div>
+        <div class="ctl"><label for="p-m" id="p-m-lab">M = 1,0 kg</label><input type="range" id="p-m" min="0.5" max="20" step="0.5" value="1"></div>
         <div class="qrow"><button type="button" class="btn" id="p-go">Soltar</button><button type="button" class="btn ghost" id="p-reset">Reiniciar</button></div>
         <div class="readout" aria-live="polite">
+          <div class="ro"><span>Energía inicial M·g·H</span><b id="p-e0">10,0 J</b></div>
+          <div class="ro"><span>Fricción en AB: fₖ = µₖ·M·g</span><b id="p-f">5,0 N</b></div>
+          <div class="ro"><span>Energía que se come cada pasada: fₖ·D</span><b id="p-ep">3,0 J</b></div>
           <div class="ro"><span>Pasadas previstas n = H/(µₖD)</span><b id="p-n">3,33</b></div>
           <div class="ro"><span>Se detiene a esta distancia de A</span><b id="p-x">0,40 m</b></div>
           <div class="ro"><span>Pasadas en la animación</span><b id="p-count">0</b></div>
@@ -459,6 +463,8 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
           <div class="rev-body"><p>Necesitas que n sea un número entero <b>impar</b> (1, 3, 5…). Por ejemplo, H = 1,5 m, D = 0,6 m y µₖ = 0,5 dan n = 5: se detiene justo al llegar a B en la quinta pasada.</p></div></details>
         <details class="rev"><summary>Reto 3 · Mira las barras de energía mientras el bloque sube la rampa derecha. ¿Qué pasa con la cinética y la potencial?</summary>
           <div class="rev-body"><p>La cinética baja y la potencial sube en la misma cantidad: en la rampa no hay fricción, así que la suma no cambia. Solo en el tramo AB crece la barra de «perdida por fricción».</p></div></details>
+        <details class="rev"><summary>Reto 4 · Suelta el bloque con M = 1 kg y después con M = 10 kg. ¿Cambia dónde se detiene? ¿Qué números sí cambian?</summary>
+          <div class="rev-body"><p>Se detiene en el mismo punto (0,40 m de A). La fricción pasa de 5 N a 50 N, pero la energía inicial también pasa de 10 J a 100 J: cada pasada se come 3 de cada 10 joules en los dos casos. Por eso la masa se cancela en n = M·g·H / (µₖ·M·g·D). Prueba también a mover M con el bloque andando: el movimiento no cambia.</p></div></details>
       </div>
     </div>
   </section>
@@ -609,7 +615,7 @@ function pistaSvg(o) {
   let px, py, ang;
   if (o.u == null) { const h = o.H; const xm = -h * C60 / S60; px = X(xm); py = Y(h); ang = -60; }
   else { const u = o.u; if (u < 0) { px = X(u * C60); py = Y(-u * S60); ang = -60; } else if (u <= D) { px = X(u); py = base; ang = 0; } else { px = X(D + (u - D) * C60); py = Y((u - D) * S60); ang = 60; } }
-  const bs = 14, nx = ang === 0 ? 0 : (ang < 0 ? 1 : -1) * S60, ny = ang === 0 ? -1 : -C60;
+  const bs = o.bs || 14, nx = ang === 0 ? 0 : (ang < 0 ? 1 : -1) * S60, ny = ang === 0 ? -1 : -C60;
   const cx = px + nx * bs / 2, cy = py + ny * bs / 2;
   g += `<g transform="rotate(${ang === 0 ? 0 : (ang < 0 ? 60 : -60)} ${f1(cx)} ${f1(cy)})"><rect x="${f1(cx - bs / 2)}" y="${f1(cy - bs / 2)}" width="${bs}" height="${bs}" class="sv-block"/></g>`;
   return `<svg viewBox="0 0 340 222" role="img" aria-label="Pista con dos rampas sin fricción y un tramo horizontal rugoso entre A y B">${g}</svg>`;
@@ -655,42 +661,47 @@ $("#fig-pista").innerHTML = pistaSvg({ D: 0.6, Hmax: 1.4, H: 1, Hlab: "H" });
 $("#fig-sube").innerHTML = subeSvg({ mu: "µₖ" });
 
 /* ---------- Lab: pista con tramo rugoso ---------- */
-const P = { H: 1, D: 0.6, mu: 0.5, u: null, v: 0, run: false, passes: 0, stopped: false, last: null };
+const P = { H: 1, D: 0.6, mu: 0.5, M: 1, u: null, v: 0, run: false, passes: 0, stopped: false, last: null };
 const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function predicted() {
   const n = P.H / (P.mu * P.D), k = Math.floor(n + 1e-9), fr = n - k;
   const x = k % 2 === 0 ? fr * P.D : (1 - fr) * P.D;
   return { n, x: Math.abs(fr) < 1e-9 ? (k % 2 === 0 ? 0 : P.D) : x };
 }
+const fmtJ = (v) => (v >= 100 ? Math.round(v).toString() : v.toFixed(1).replace(".", ","));
 function heightAt(u) { return u < 0 ? -u * S60 : u <= P.D ? 0 : (u - P.D) * S60; }
 function drawPista() {
   const u = P.u;
-  $("#p-svg").innerHTML = pistaSvg({ D: P.D, Hmax: 1.6, H: P.H, Hlab: "H", Dlab: "D (rugoso)", u });
+  $("#p-svg").innerHTML = pistaSvg({ D: P.D, Hmax: 1.6, H: P.H, Hlab: "H", Dlab: "D (rugoso)", u, bs: 8 + 6 * Math.cbrt(P.M) });
   const g = 10, E0 = g * P.H;
   const y = u == null ? P.H : heightAt(u), K = u == null ? 0 : 0.5 * P.v * P.v, U = g * y, lost = Math.max(0, E0 - K - U);
   const vals = [["Cinética K", K / E0], ["Potencial U", U / E0], ["Perdida por fricción", lost / E0]];
-  const W = 340, ml = 150, mr = 44, rowH = 26, H = vals.length * rowH + 12;
+  const W = 340, ml = 150, mr = 58, rowH = 26, H = vals.length * rowH + 12;
   let b = "";
   vals.forEach(([lab, v], i) => {
     const yy = 6 + i * rowH, w = Math.max(0, Math.min(1, v)) * (W - ml - mr);
     b += `<text x="${ml - 8}" y="${yy + 14}" class="gr-ann" text-anchor="end">${lab}</text>`;
     b += `<rect x="${ml}" y="${yy + 3}" width="${W - ml - mr}" height="14" rx="3" class="bar-track"/><rect x="${ml}" y="${yy + 3}" width="${f1(w)}" height="14" rx="3" class="${i === 2 ? "bar-heat" : "bar"}"/>`;
-    b += `<text x="${W - mr + 6}" y="${yy + 14}" class="gr-ann">${Math.round(v * 100)} %</text>`;
+    b += `<text x="${W - mr + 6}" y="${yy + 14}" class="gr-ann">${fmtJ(v * E0 * P.M)} J</text>`;
   });
-  $("#p-bars").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Barras de energía como porcentaje de la energía inicial">${b}</svg>`;
+  $("#p-bars").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Barras de energía en joules">${b}</svg>`;
   const pr = predicted();
   $("#p-h-lab").textContent = "H = " + fmt(P.H) + " m"; $("#p-d-lab").textContent = "D = " + fmt(P.D) + " m"; $("#p-mu-lab").textContent = "µₖ = " + fmt(P.mu);
+  $("#p-m-lab").textContent = "M = " + P.M.toFixed(1).replace(".", ",") + " kg";
+  $("#p-e0").textContent = fmtJ(P.M * g * P.H) + " J"; $("#p-f").textContent = fmtJ(P.mu * P.M * g) + " N"; $("#p-ep").textContent = fmtJ(P.mu * P.M * g * P.D) + " J";
   $("#p-n").textContent = fmt(pr.n); $("#p-x").textContent = fmt(pr.x) + " m"; $("#p-count").textContent = String(P.passes);
 }
 function stepPhys(dt) {
-  const g = 10;
-  let a;
-  if (P.u < 0) a = g * S60;
-  else if (P.u > P.D) a = -g * S60;
+  const g = 10, M = P.M;
+  let F; // fuerza neta a lo largo de la pista, en N
+  if (P.u < 0) F = M * g * S60; // rampa izquierda: la parte del peso que empuja hacia A
+  else if (P.u > P.D) F = -M * g * S60; // rampa derecha: la parte del peso que frena
   else {
-    if (Math.abs(P.v) < P.mu * g * dt) { P.v = 0; P.stopped = true; return; }
-    a = -P.mu * g * Math.sign(P.v);
+    const N = M * g, f = P.mu * N; // tramo rugoso: fricción cinética
+    if (Math.abs(P.v) < (f / M) * dt) { P.v = 0; P.stopped = true; return; }
+    F = -f * Math.sign(P.v);
   }
+  const a = F / M; // segunda ley de Newton: la M de F y la de abajo se cancelan
   const u0 = P.u;
   P.v += a * dt; P.u += P.v * dt;
   if (u0 <= P.D && P.u > P.D && P.v > 0 && u0 >= 0) P.passes++;
@@ -712,6 +723,7 @@ $("#p-go").addEventListener("click", () => {
 });
 $("#p-reset").addEventListener("click", resetPista);
 [["p-h", "H"], ["p-d", "D"], ["p-mu", "mu"]].forEach(([id, k]) => $("#" + id).addEventListener("input", (e) => { P[k] = Number(e.target.value); resetPista(); }));
+$("#p-m").addEventListener("input", (e) => { P.M = Number(e.target.value); drawPista(); });
 resetPista();
 
 /* ---------- Taller ---------- */
