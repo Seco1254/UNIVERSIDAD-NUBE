@@ -117,7 +117,7 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
   - Disco giratorio: la fricción apunta al centro ⇒ ω_máx = √(µg/R).
   - Rotor / gravitrón: la normal apunta al centro y la fricción sostiene el peso ⇒ ω_mín = √(g/(µR)).
   - Parte alta de un loop por dentro: N + mg = mv²/R. Parte baja de un péndulo: T − mg = mv²/R.
-  - Por fuera de una esfera: mg·cos θ − N = mv²/R.
+  - Por fuera de una esfera, con θ desde la horizontal: mg·sen θ − N = mv²/R.
   - Curva peraltada (del libro, nunca ha salido).
 - **Lab / visual:** animación de los vectores v y a en el movimiento circular. Repaso del experimento demostrativo del gravitrón (clase del 8 de septiembre). Experimento casero: girar un balde con agua.
 - **Taller:** 2025-1 SM2, 2026-1 SM2, los puntos alto y bajo de un loop con v dada y 1 problema de curva peraltada por si acaso.
@@ -153,11 +153,11 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
   2. **Energía** entre el punto de partida y el punto crítico, para hallar v².
   3. **Reemplazar** el v² de la energía en la ecuación radial.
 - **Condiciones especiales:** «pierde contacto» ⇔ N = 0. También aparecen N = k·mg o T = k·mg.
-- **Geometría:** la altura en función del ángulo. Según la figura puede ser R·cos θ, R(1 − cos θ) o R + R·sen θ (con columnas).
+- **Geometría:** la altura en función del ángulo. **Desde el 14 de octubre, M8 mide los ángulos desde la horizontal**, como los enseña el profesor: altura sobre el centro R·sen θ, lo que bajó R(1 − sen θ) y, con columnas, R + R·sen θ. Si un parcial mide desde la vertical, se cambia sen por cos.
 - **Resultados para reconocer en el examen:**
-  - Semiesfera por fuera, soltando el bloque arriba: se despega con cos θ = 2/3, después de bajar R/3.
-  - Cuenco por dentro, soltando el bloque en el borde: N = 3mg·cos φ.
-  - Péndulo soltado desde θ₀: en el punto más bajo, T = mg(3 − 2cos θ₀).
+  - Semiesfera por fuera, soltando el bloque arriba: se despega con sen θ = 2/3 (θ desde la horizontal), después de bajar R/3.
+  - Cuenco por dentro, soltando el bloque en el borde: N = 3mg·sen φ (φ desde la horizontal, hacia abajo).
+  - Péndulo soltado desde θ₀ (desde la horizontal): en el punto más bajo, T = mg(3 − 2·sen θ₀).
   - Loop: para que en la parte alta N = n·mg se necesita v² = (n + 1)gR.
 - **Lab / visual:** animación de un bloque que se desliza sobre una semiesfera mientras N(θ) se grafica en vivo, para ver exactamente dónde cruza 0.
 - **Taller:** 2024-2 SM3 (R/3), 2025-1 SM3 (cos θ = 7/9), 2024-2 A1 (θ = 60°), 2024-2 A2 (8R/9, con la corrección), 2025-2 A2 (x = √(7mgR/k)), 2026-1 A3 (sen θ = 2/3, H = 5R/3) y 2 nuevos que combinan rampa rugosa + loop (M7 + M8).
