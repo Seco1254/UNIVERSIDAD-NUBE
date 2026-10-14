@@ -1,0 +1,291 @@
+<title>La normal en la media esfera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: ficha de refuerzo del cuaderno de laboratorio (mismo sistema de M1). Columna ≤ 980px; figura y controles lado a lado, se apilan en el teléfono. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-comp:#b8680c; --c-v:#2f4fd8; --c-ground:#e2e6ee;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-comp:#f2a955; --c-v:#8a9fff; --c-ground:#253041;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-comp:#f2a955; --c-v:#8a9fff; --c-ground:#253041;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:980px; margin:0 auto; padding-inline:16px; padding-block:28px 72px; display:grid; gap:40px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.6rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.1rem; font-weight:700}
+p{margin:0}
+ul{margin:0; padding-left:1.2em; display:grid; gap:6px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.mono{font-family:var(--f-mono)}
+.cn{color:var(--c-normal); font-weight:700}
+.cp{color:var(--c-peso); font-weight:700}
+.cc{color:var(--c-comp); font-weight:700}
+.cv{color:var(--c-v); font-weight:700}
+section{display:grid; gap:18px; min-width:0}
+.head{display:grid; gap:14px}
+.lede{font-size:1.08rem; max-width:64ch}
+.key{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:grid; gap:6px; max-width:720px}
+.key .eq{font-family:var(--f-mono); font-size:1.25rem; font-weight:600}
+.tag{justify-self:start; font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 7px; border-radius:4px}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:760px){ .lab{grid-template-columns:1fr} }
+.stage{padding:12px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:760px){ .stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.stage svg{display:block; width:100%; height:auto}
+.side{padding:16px; display:grid; gap:14px; align-content:start; min-width:0}
+.modes{display:flex; flex-wrap:wrap; gap:6px}
+.modes label{display:inline-flex; align-items:center; gap:6px; font-size:.9rem; border:1px solid var(--rule); border-radius:999px; padding:4px 12px; cursor:pointer}
+.modes input{accent-color:var(--accent)}
+.ctl{display:grid; gap:4px}
+.ctl label{font-family:var(--f-mono); font-size:.95rem}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl input:disabled{opacity:.45}
+.presets{display:flex; flex-wrap:wrap; gap:6px}
+.btn{font-family:var(--f-body); font-weight:600; font-size:.85rem; padding:6px 10px; border-radius:8px; background:transparent; color:var(--ink); border:1px solid var(--rule); cursor:pointer}
+.btn:hover{background:var(--paper)}
+.status{font-weight:600; border-radius:8px; padding:8px 10px; font-size:.95rem}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.lim{background:var(--hi); color:var(--hi-ink)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.ro{display:grid; border-top:1px solid var(--rule)}
+.ro div{display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid var(--rule); font-size:.92rem}
+.ro b{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+
+/* Barra: el peso radial repartido */
+.bar-wrap{display:grid; gap:6px}
+.bar-t{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.track{display:flex; height:22px; border:1px solid var(--rule); border-radius:5px; overflow:hidden; background:var(--paper)}
+.seg{display:block; transition:width .12s}
+.s-n{background:var(--c-normal)} .s-c{background:var(--c-v)} .s-x{background:var(--red); opacity:.75}
+@media (prefers-reduced-motion: reduce){ .seg{transition:none} }
+.legend{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.82rem; color:var(--muted)}
+.legend i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle}
+
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:16px}
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:10px; align-content:start}
+.card p, .card li{max-width:62ch}
+.eqbox{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border-radius:8px; padding:10px 12px; display:grid; gap:3px; overflow-x:auto}
+.eqbox .res{font-weight:600}
+.rule{background:var(--hi); color:var(--hi-ink); border-radius:8px; padding:10px 12px; font-size:.95rem; max-width:72ch}
+footer{font-size:.88rem; color:var(--muted); border-top:1px solid var(--rule); padding-top:16px}
+
+/* SVG */
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.6}
+.sv-rad{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:5 4; fill:none}
+.sv-proj{stroke:var(--c-comp); stroke-width:1; stroke-dasharray:3 3; fill:none; opacity:.8}
+.sv-arc{stroke:var(--ink); stroke-width:1.4; fill:none}
+.sv-dot{fill:var(--ink)}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)}
+.a-v{stroke:var(--c-v); fill:var(--c-v)}
+.t{font-family:var(--f-mono); font-size:15px; fill:var(--ink); paint-order:stroke; stroke:var(--surface); stroke-width:4px; stroke-linejoin:round}
+.t-peso{fill:var(--c-peso); font-weight:600}
+.t-n{fill:var(--c-normal); font-weight:600}
+.t-comp{fill:var(--c-comp); font-weight:600}
+.t-v{fill:var(--c-v); font-weight:600}
+.t-mut{fill:var(--muted); font-size:12px}
+.t-bad{fill:var(--red); font-weight:600}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 2 · Refuerzo de M5 y M8</p>
+    <h1>La normal en la media esfera</h1>
+    <p class="lede">Cuando el bloque se mueve no aparece ninguna fuerza nueva: siguen siendo el peso y la normal. Lo que cambia es una exigencia. Para ir en curva, la fuerza hacia el centro tiene que <b>sobrar</b>, y lo que sobra tiene que valer m·v²/R.</p>
+    <div class="key">
+      <span class="tag">La ecuación radial (hacia el centro +)</span>
+      <p class="eq"><span class="cc">mg·cos θ</span> − <span class="cn">N</span> = <span class="cv">m·v²/R</span></p>
+      <p class="small muted">El peso empuja hacia el centro, la normal empuja hacia afuera, y la diferencia es lo que curva la trayectoria.</p>
+    </div>
+  </header>
+
+  <section id="lab">
+    <h2>Muévelo tú</h2>
+    <div class="lab">
+      <div class="stage"><div id="fig"></div></div>
+      <div class="side">
+        <div class="modes" role="radiogroup" aria-label="De dónde sale la rapidez">
+          <label><input type="radio" name="modo" id="m-mano" value="mano" checked>Tú eliges v</label>
+          <label><input type="radio" name="modo" id="m-cima" value="cima">Soltado desde la cima</label>
+        </div>
+        <div class="ctl"><label for="th" id="th-lab">θ = 30°</label><input type="range" id="th" min="0" max="70" step="1" value="30"></div>
+        <div class="ctl"><label for="vv" id="v-lab">v² = 0,00 gR</label><input type="range" id="vv" min="0" max="1.2" step="0.01" value="0"></div>
+        <div class="presets">
+          <button type="button" class="btn" id="p-quieto">Quieto en ese instante</button>
+          <button type="button" class="btn" id="p-limite">Justo N = 0</button>
+        </div>
+        <div class="status ok" id="status">Pegado a la superficie</div>
+        <div class="bar-wrap">
+          <span class="bar-t">El peso hacia el centro, repartido</span>
+          <div class="track" id="track"></div>
+          <div class="legend"><span><i class="s-n"></i>lo cancela la normal</span><span><i class="s-c"></i>lo que curva (m·v²/R)</span><span><i class="s-x"></i>lo que falta</span></div>
+        </div>
+        <div class="ro">
+          <div><span>Peso hacia el centro, mg·cos θ</span><b id="r-pc">0,87 mg</b></div>
+          <div><span>Lo que exige la curva, m·v²/R</span><b id="r-mv">0,00 mg</b></div>
+          <div><span>Normal, N = mg·cos θ − m·v²/R</span><b id="r-n">0,87 mg</b></div>
+        </div>
+      </div>
+    </div>
+    <p class="small muted">Pon v = 0 y mira: la normal es igual a mg·cos θ, como en el plano inclinado. Después sube v sin mover θ: el peso es el mismo, pero la normal baja. Cuando la barra azul ocupa toda la barra, N = 0 y el bloque se despega.</p>
+  </section>
+
+  <section id="leer">
+    <h2>Cómo leer el dibujo</h2>
+    <div class="cards">
+      <article class="card">
+        <span class="tag">1 · Quieto en ese instante</span>
+        <p>Si en ese punto el bloque tiene v = 0, no hace falta curvar nada. Las fuerzas radiales se cancelan:</p>
+        <div class="eqbox"><span>mg·cos θ − N = 0</span><span class="res">N = mg·cos θ</span></div>
+        <p>Es lo que venías haciendo en los planos inclinados.</p>
+      </article>
+      <article class="card">
+        <span class="tag">2 · En movimiento</span>
+        <p>Las fuerzas son las mismas, pero ahora no se pueden cancelar: tiene que sobrar m·v²/R hacia el centro. La única que se puede ajustar es la normal, así que baja:</p>
+        <div class="eqbox"><span>mg·cos θ − N = m·v²/R</span><span class="res">N = mg·cos θ − m·v²/R</span></div>
+        <p>Entre más rápido, menos normal.</p>
+      </article>
+      <article class="card">
+        <span class="tag">3 · Justo N = 0</span>
+        <p>Toda la componente del peso hacia el centro se usa para curvar. La superficie ya no ayuda:</p>
+        <div class="eqbox"><span>mg·cos θ = m·v²/R</span><span class="res">v² = g·R·cos θ</span></div>
+        <p>No queda todo en cero: queda mg·cos θ. Si va más rápido, el peso no alcanza y el bloque se despega.</p>
+      </article>
+    </div>
+    <p class="rule"><b>¿Y la componente tangencial, mg·sen θ?</b> No es una fuerza de más que aparece al moverse: es la otra mitad del peso, y está ahí siempre. Apunta a lo largo de la superficie, así que no entra en la ecuación radial. Lo que hace es acelerar al bloque cuesta abajo, o sea, hacer que v crezca.</p>
+  </section>
+
+  <section id="cima">
+    <h2>Soltado desde la cima: dónde se despega</h2>
+    <div class="card">
+      <p>Si el bloque arranca casi quieto arriba, la rapidez en cada punto sale de la energía. Al bajar desde la cima hasta el ángulo θ, cae una altura R − R·cos θ:</p>
+      <div class="eqbox"><span>½·m·v² = m·g·R·(1 − cos θ)</span><span class="res">v² = 2·g·R·(1 − cos θ)</span></div>
+      <p>Esa v² la metes en la ecuación radial:</p>
+      <div class="eqbox"><span>N = mg·cos θ − m·[2gR(1 − cos θ)]/R</span><span>N = mg·cos θ − 2mg + 2mg·cos θ</span><span class="res">N = mg·(3·cos θ − 2)</span></div>
+      <p>La normal llega a cero cuando 3·cos θ − 2 = 0, o sea <b>cos θ = 2/3</b> (θ ≈ 48°). Pon el modo «Soltado desde la cima» y mueve θ para verlo.</p>
+    </div>
+  </section>
+
+  <footer>Refuerzo de M5 (dinámica circular) y M8 (energía con movimiento circular). Las fuerzas del dibujo están a escala en unidades de mg.</footer>
+</div>
+
+<script>
+const D = Math.PI / 180;
+const $ = (s) => document.querySelector(s);
+const n1 = (v) => v.toFixed(1);
+const f2 = (v) => v.toFixed(2).replace(".", ",");
+const add = (p, d, k) => ({ x: p.x + d.x * k, y: p.y + d.y * k });
+const line = (a, b, cls) => `<line x1="${n1(a.x)}" y1="${n1(a.y)}" x2="${n1(b.x)}" y2="${n1(b.y)}" class="${cls}"/>`;
+const text = (p, s, cls, anchor = "middle") => `<text x="${n1(p.x)}" y="${n1(p.y)}" dy=".35em" text-anchor="${anchor}" class="t ${cls}">${s}</text>`;
+function arrow(a, b, cls) {
+  const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy);
+  if (L < 6) return "";
+  const ux = dx / L, uy = dy / L, h = 9, w = 4.6, bx = b.x - ux * h, by = b.y - uy * h;
+  return `<line x1="${n1(a.x)}" y1="${n1(a.y)}" x2="${n1(bx)}" y2="${n1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${n1(b.x)},${n1(b.y)} ${n1(bx - uy * w)},${n1(by + ux * w)} ${n1(bx + uy * w)},${n1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+
+const S = { th: 30, v: 0, mode: "mano" }; // v en unidades de √(gR): m·v²/R vale v² en unidades de mg
+const v2 = () => (S.mode === "cima" ? 2 * (1 - Math.cos(S.th * D)) : S.v * S.v);
+
+function figure() {
+  const W = 560, H = 350, C = { x: 240, y: 312 }, R = 190, K = 88, th = S.th * D, s = Math.sin(th), c = Math.cos(th);
+  const need = v2(), N = c - need, det = N < -1e-6;
+  const r = { x: s, y: -c }, t = { x: c, y: s }, inw = { x: -s, y: c };
+  const B = add(C, r, R + 14 + (det ? 12 : 0));
+  let g = `<line x1="8" y1="${C.y}" x2="${W - 8}" y2="${C.y}" class="sv-line"/>`;
+  g += `<path d="M ${C.x - R} ${C.y} A ${R} ${R} 0 0 1 ${C.x + R} ${C.y} Z" class="sv-ground"/>`;
+  // radio hacia el centro y ángulo θ medido desde la vertical
+  g += line(C, add(C, r, R), "sv-rad") + line(C, { x: C.x, y: C.y - R }, "sv-rad");
+  g += `<circle cx="${C.x}" cy="${C.y}" r="3" class="sv-dot"/>` + text({ x: C.x, y: C.y + 16 }, "centro", "t-mut");
+  if (S.th >= 3) {
+    const a1 = { x: C.x, y: C.y - 46 }, a2 = add(C, r, 46);
+    g += `<path d="M ${n1(a1.x)} ${n1(a1.y)} A 46 46 0 0 1 ${n1(a2.x)} ${n1(a2.y)}" class="sv-arc"/>`;
+    g += text(add(C, { x: Math.sin(th / 2), y: -Math.cos(th / 2) }, 60), "θ", "");
+  }
+  // bloque
+  g += `<rect x="${n1(B.x - 14)}" y="${n1(B.y - 14)}" width="28" height="28" transform="rotate(${n1(S.th)} ${n1(B.x)} ${n1(B.y)})" class="sv-block"/>`;
+  // peso y sus dos componentes
+  const W0 = { x: B.x, y: B.y + K }, Pin = add(B, inw, K * c), Pt = add(B, t, K * s);
+  g += line(W0, Pin, "sv-proj") + line(W0, Pt, "sv-proj");
+  g += arrow(B, Pin, "a-comp") + arrow(B, Pt, "a-comp");
+  g += arrow(B, W0, "a-peso") + text({ x: B.x + 8, y: W0.y + 6 }, "mg", "t-peso", "start");
+  if (c > 0.08) g += text(add(Pin, { x: -1, y: 0 }, 10), "mg·cos θ", "t-comp", "end");
+  if (s > 0.08) g += text(add(Pt, { x: 1, y: 0 }, 9), "mg·sen θ", "t-comp", "start");
+  // normal (hacia afuera)
+  if (N > 0.005) { const Pn = add(B, r, K * N); g += arrow(B, Pn, "a-n") + text(add(Pn, { x: 1, y: 0 }, 8), "N", "t-n", "start"); }
+  else if (!det) g += text(add(B, r, 30), "N = 0", "t-n", "middle");
+  // velocidad (no es una fuerza)
+  const vv = Math.sqrt(need);
+  if (vv > 0.04) { const v0 = add(B, r, 30), v1 = add(v0, t, 60 * vv); g += arrow(v0, v1, "a-v") + text(add(v1, r, 12), "v", "t-v"); }
+  if (det) g += text(add(B, { x: -0.72, y: -0.69 }, 40), "se despega", "t-bad", "end");
+  return `<svg viewBox="130 0 ${W - 130} ${H}" role="img" aria-label="Bloque sobre una media esfera a un ángulo de ${S.th} grados. Peso descompuesto en mg cos theta hacia el centro y mg sen theta a lo largo; la normal apunta hacia afuera y vale ${f2(Math.max(0, N))} mg.">${g}</svg>`;
+}
+
+function render() {
+  const c = Math.cos(S.th * D), need = v2(), N = c - need;
+  if (S.mode === "cima") { S.v = Math.min(1.2, Math.sqrt(need)); $("#vv").value = S.v; }
+  $("#vv").disabled = S.mode === "cima";
+  $("#th-lab").textContent = "θ = " + S.th + "°";
+  $("#v-lab").textContent = "v² = " + f2(need) + " gR" + (S.mode === "cima" ? " (sale de la energía)" : "");
+  $("#fig").innerHTML = figure();
+  $("#r-pc").textContent = f2(c) + " mg";
+  $("#r-mv").textContent = f2(need) + " mg";
+  $("#r-n").textContent = N >= 0 ? f2(N) + " mg" : "no alcanza";
+  const pct = (x) => (Math.max(0, x) * 100).toFixed(2) + "%";
+  const blue = Math.min(need, c), green = Math.max(0, N), over = Math.max(0, need - c);
+  $("#track").innerHTML = `<i class="seg s-n" style="width:${pct(green)}"></i><i class="seg s-c" style="width:${pct(blue)}"></i><i class="seg s-x" style="width:${pct(Math.min(over, 1 - c))}"></i>`;
+  const st = $("#status");
+  if (N > 0.005) { st.className = "status ok"; st.textContent = need < 0.005 ? "Quieto en ese instante: N = mg·cos θ" : "Pegado a la superficie: la normal bajó"; }
+  else if (N > -0.005) { st.className = "status lim"; st.textContent = "Justo en el límite: N = 0, el peso solo hace la curva"; }
+  else { st.className = "status bad"; st.textContent = "Se despega: el peso hacia el centro no alcanza"; }
+}
+
+$("#th").addEventListener("input", (e) => { S.th = +e.target.value; render(); });
+$("#vv").addEventListener("input", (e) => { S.v = +e.target.value; render(); });
+document.querySelectorAll('input[name="modo"]').forEach((el) => el.addEventListener("change", (e) => { S.mode = e.target.value; render(); }));
+$("#p-quieto").addEventListener("click", () => { S.mode = "mano"; $("#m-mano").checked = true; S.v = 0; $("#vv").value = 0; render(); });
+$("#p-limite").addEventListener("click", () => { S.mode = "mano"; $("#m-mano").checked = true; S.v = Math.sqrt(Math.cos(S.th * D)); $("#vv").value = S.v; render(); });
+render();
+</script>
