@@ -263,6 +263,41 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 .sv-dim{stroke:var(--accent); stroke-width:1.6}
 .sv-dim2{stroke:var(--c-fric); stroke-width:3}
 .sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
 </style>
 
 <nav class="nav" aria-label="Secciones del módulo">
@@ -293,7 +328,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 1. TEORÍA ============ -->
   <section id="teoria" aria-labelledby="t-h">
-    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Por qué se necesitan las dos herramientas, la receta de 3 pasos, la geometría del ángulo y cuatro ejemplos resueltos de parciales.</p></div>
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Por qué se necesitan las dos herramientas, la receta, la geometría del ángulo y cuatro ejemplos de parciales resueltos paso a paso, solo con letras.</p></div>
 
     <div class="block">
       <h3>Símbolos de este módulo</h3>
@@ -368,55 +403,143 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       </div>
     </div>
 
-    <div class="block">
-      <h3>Ejemplo resuelto 1: ¿dónde se despega de la semiesfera? (2024-2 SM3)</h3>
-      <p class="prose">Se suelta un bloque desde el reposo en lo más alto de una semiesfera sin fricción. ¿Cuánto baja antes de perder contacto?</p>
-      <ol class="steps">
-        <li><span><b>Radial con N = 0:</b> Mg·cos θ = M·v²/R, así que <b>v² = g·R·cos θ</b>.</span></li>
-        <li><span><b>Energía</b> (desde arriba, quieto, hasta el ángulo θ): bajó R(1 − cos θ), así que ½Mv² = Mg·R(1 − cos θ), o sea, <b>v² = 2gR(1 − cos θ)</b>.</span></li>
-        <li><span><b>Igualando:</b> gR·cos θ = 2gR(1 − cos θ), así que 3·cos θ = 2 y <b>cos θ = 2/3</b> (θ ≈ 48°).</span></li>
-        <li><span><b>Lo que bajó:</b> R(1 − 2/3) = <b>R/3</b>. Esa era la opción B del parcial.</span></li>
-      </ol>
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo va paso a paso. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Todo se resuelve con letras, como en los parciales. Si una letra se cancela, aparece <span class="cx">tachada</span>.</p>
     </div>
 
     <div class="block">
-      <h3>Ejemplo resuelto 2: el péndulo (2024-2 Abierto 1)</h3>
-      <div class="figs">
-        <figure><div id="fig-pend"></div><figcaption>Péndulo soltado desde un ángulo θ₀. En el punto más bajo, la tensión apunta al centro (arriba) y el peso se aleja.</figcaption></figure>
-        <div class="prose">
-          <p>¿Desde qué ángulo θ₀ hay que soltarlo para que la tensión en el punto más bajo sea 2Mg?</p>
-          <p><b>Radial abajo:</b> T − Mg = M·v²/L. Con T = 2Mg: <b>v² = g·L</b>.</p>
-          <p><b>Energía</b> (soltado quieto desde θ₀ hasta abajo): bajó L(1 − cos θ₀), así que <b>v² = 2gL(1 − cos θ₀)</b>.</p>
-          <p><b>Igualando:</b> gL = 2gL(1 − cos θ₀), así que cos θ₀ = 1/2 y <b>θ₀ = 60°</b>.</p>
-          <div class="eq"><span>Fórmula general: <b>T<sub>abajo</sub> = Mg(3 − 2·cos θ₀)</b></span><span>Soltado desde la horizontal (θ₀ = 90°): T = 3Mg.</span></div>
-        </div>
-      </div>
-    </div>
+      <h3>Ejemplos resueltos</h3>
+      <p class="prose">Los cuatro salieron en parciales. Todos siguen la misma receta: <b>radial</b> en el punto que te preguntan, <b>energía</b> desde donde se suelta hasta ese punto, y después <b>juntas</b> las dos.</p>
 
-    <div class="block">
-      <h3>Ejemplo resuelto 3: resorte + loop (2025-2 Abierto 2)</h3>
-      <div class="figs">
-        <figure><div id="fig-loop"></div><figcaption>Un resorte apretado x lanza el bloque, que entra a un loop de radio R. En lo más alto la normal debe ser 2Mg.</figcaption></figure>
-        <div class="prose">
-          <p><b>Radial arriba (por dentro):</b> N + Mg = M·v²/R. Con N = 2Mg: <b>v² = 3gR</b>.</p>
-          <p><b>Energía</b> (con el piso como referencia): al principio todo está en el resorte, ½kx². Arriba del loop la altura es 2R (el diámetro): E = ½Mv² + Mg·2R.</p>
-          <p><b>Igualando:</b> ½kx² = ½M·3gR + 2MgR = (7/2)·MgR, así que <b>x = √(7MgR/k)</b>.</p>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · Parcial 2024-2 SM3</span>
+            <h4 id="wx1-h">¿Dónde se despega de la semiesfera?</h4>
+            <p>Sueltas un bloque de masa M, desde el reposo, en lo más alto de una semiesfera de radio R, sin fricción. El bloque se desliza por fuera. θ es el ángulo del bloque, medido en el centro desde la vertical.</p>
+            <p><b>Pregunta:</b> ¿en qué ángulo pierde contacto y cuánto ha bajado en ese momento?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="semi"></div></figure>
         </div>
-      </div>
-    </div>
+        <ol class="wx-steps">
+          <li><p class="what">Traduce «pierde contacto».</p><p class="why">Perder contacto quiere decir que la superficie deja de empujar al bloque: la normal se vuelve cero. Ese es el dato clave del problema.</p><div class="mx">N = 0</div></li>
+          <li><p class="what">Haz el DCL en el ángulo θ.</p><p class="why">Hay dos fuerzas. El peso, M·g, hacia abajo. La normal, N, hacia afuera (se aleja del centro). Del peso, la parte que apunta al centro es M·g·cos θ (lo viste en el paso 2 de arriba).</p></li>
+          <li><p class="what">Escribe la ecuación radial.</p><p class="why">Lo que apunta al centro va con +, lo que se aleja va con −, y todo eso es igual a M·v²/R.</p><div class="mx">M·g·cos θ − N = <span class="frac"><span>M·v²</span><span>R</span></span></div></li>
+          <li><p class="what">Pon N = 0 y despeja v².</p><p class="why">La M está en los dos lados y se cancela. Después multiplicas los dos lados por R.</p><div class="mx"><span class="cx">M</span>·g·cos θ = <span class="frac"><span><span class="cx">M</span>·v²</span><span>R</span></span><span class="ar">→</span>v² = g·R·cos θ<span class="ar">(ecuación A)</span></div></li>
+          <li><p class="what">Ahora la energía: llena la tabla.</p><p class="why">Entre arriba (donde lo sueltas) y el ángulo θ. No hay fricción y la normal no hace trabajo, así que la energía se conserva. Referencia: el centro de la semiesfera (y = 0). Arriba la altura es R; en el ángulo θ es R·cos θ (paso 1 de arriba).</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (arriba)</th><th>En el ángulo θ</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>M·g·R</td><td>M·g·R·cos θ</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>M·g·R</td><td>½·M·v² + M·g·R·cos θ</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Iguala y despeja v².</p><p class="why">Cancelas M. Pasas g·R·cos θ al otro lado restando y sacas factor común g·R. Al final multiplicas por 2.</p><div class="mx"><span class="cx">M</span>·g·R = ½·<span class="cx">M</span>·v² + <span class="cx">M</span>·g·R·cos θ<br>½·v² = g·R − g·R·cos θ = g·R·(1 − cos θ)<br>v² = 2·g·R·(1 − cos θ)<span class="ar">(ecuación B)</span></div></li>
+          <li><p class="what">Junta A y B.</p><p class="why">Las dos son la v² del mismo punto, así que son iguales.</p><div class="mx">g·R·cos θ = 2·g·R·(1 − cos θ)</div></li>
+          <li><p class="what">Cancela g·R y resuelve cos θ.</p><p class="why">Repartes el 2, pasas −2·cos θ al otro lado sumando y divides entre 3.</p><div class="mx">cos θ = 2 − 2·cos θ<span class="ar">→</span>3·cos θ = 2<span class="ar">→</span>cos θ = <span class="frac"><span>2</span><span>3</span></span></div></li>
+          <li><p class="what">Calcula cuánto bajó.</p><p class="why">Arriba estaba a R sobre el centro; ahora está a R·cos θ. Lo que bajó es la resta.</p><div class="mx">bajó = R − R·cos θ = R·(1 − cos θ) = R·(1 − <span class="frac"><span>2</span><span>3</span></span>) = <span class="frac"><span>R</span><span>3</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> se despega cuando cos θ = 2/3 (unos 48°), después de bajar R/3. Era la opción B del parcial.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> No depende de M, ni de g, ni de R: cualquier bloque en cualquier semiesfera se despega en el mismo ángulo. Lo puedes ver en el lab.</p>
+      </article>
 
-    <div class="block">
-      <h3>Ejemplo resuelto 4: el cuenco por dentro (2024-2 Abierto 2)</h3>
-      <div class="figs">
-        <figure><div id="fig-bowl"></div><figcaption>Bloque soltado desde el borde de un cuenco (altura R sobre el fondo), sin fricción. φ se mide desde la vertical que baja del centro.</figcaption></figure>
-        <div class="prose">
-          <p>¿A qué altura sobre el fondo la normal vale un tercio del peso?</p>
-          <p><b>Energía:</b> desde el borde (a la altura del centro) bajó R·cos φ, así que <b>v² = 2gR·cos φ</b>.</p>
-          <p><b>Radial (por dentro):</b> N − Mg·cos φ = M·v²/R = 2Mg·cos φ, así que <b>N = 3Mg·cos φ</b>.</p>
-          <p>Con N = Mg/3: cos φ = 1/9. Altura sobre el fondo: R(1 − cos φ) = <b>8R/9</b>.</p>
-          <div class="callout trap"><h3>Ojo</h3><p>La solución oficial de este problema dice R/3, y está mal. Verifícalo: con h = R/3 la normal daría 2Mg, no Mg/3.</p></div>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · Parcial 2024-2 Abierto 1</span>
+            <h4 id="wx2-h">El péndulo</h4>
+            <p>Una bolita de masa M cuelga de una cuerda de largo L. La sueltas desde el reposo con la cuerda formando un ángulo θ₀ con la vertical.</p>
+            <p><b>Pregunta:</b> ¿desde qué ángulo θ₀ hay que soltarla para que la tensión en el punto más bajo sea 2·M·g?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="pend"></div></figure>
         </div>
-      </div>
+        <ol class="wx-steps">
+          <li><p class="what">Haz el DCL en el punto más bajo.</p><p class="why">La tensión T apunta hacia arriba, hacia el punto donde está amarrada la cuerda: ese es el centro del círculo. El peso M·g apunta hacia abajo: se aleja del centro. El radio del círculo es L.</p></li>
+          <li><p class="what">Escribe la ecuación radial.</p><p class="why">T apunta al centro (+); M·g se aleja (−).</p><div class="mx">T − M·g = <span class="frac"><span>M·v²</span><span>L</span></span></div></li>
+          <li><p class="what">Usa el dato T = 2·M·g y despeja v².</p><p class="why">2·M·g − M·g = M·g. Cancelas M y multiplicas por L.</p><div class="mx">2·M·g − M·g = <span class="frac"><span>M·v²</span><span>L</span></span><span class="ar">→</span><span class="cx">M</span>·g = <span class="frac"><span><span class="cx">M</span>·v²</span><span>L</span></span><span class="ar">→</span>v² = g·L<span class="ar">(ecuación A)</span></div></li>
+          <li><p class="what">Encuentra la altura de donde la sueltas.</p><p class="why">Con la cuerda inclinada θ₀, la bolita está L·cos θ₀ por debajo del punto de amarre (el lado del triángulo pegado al ángulo). Abajo del todo está L por debajo. La diferencia es la altura h de la figura: cuánto más arriba empieza.</p><div class="mx">h = L − L·cos θ₀ = L·(1 − cos θ₀)</div></li>
+          <li><p class="what">Llena la tabla de energías.</p><p class="why">La tensión es perpendicular al movimiento (W = 0) y no hay fricción: la energía se conserva. Referencia: el punto más bajo.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (en θ₀)</th><th>Abajo</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>M·g·L·(1 − cos θ₀)</td><td>0</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>M·g·L·(1 − cos θ₀)</td><td>½·M·v²</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Iguala y despeja v².</p><p class="why">Cancelas M y multiplicas por 2.</p><div class="mx"><span class="cx">M</span>·g·L·(1 − cos θ₀) = ½·<span class="cx">M</span>·v²<span class="ar">→</span>v² = 2·g·L·(1 − cos θ₀)<span class="ar">(ecuación B)</span></div></li>
+          <li><p class="what">Junta A y B.</p><div class="mx">g·L = 2·g·L·(1 − cos θ₀)</div></li>
+          <li><p class="what">Cancela g·L y despeja cos θ₀.</p><p class="why">Divides entre 2 y pasas cos θ₀ al otro lado. El ángulo cuyo coseno es ½ es 60°.</p><div class="mx">1 = 2·(1 − cos θ₀)<span class="ar">→</span>½ = 1 − cos θ₀<span class="ar">→</span>cos θ₀ = ½<span class="ar">→</span>θ₀ = 60°</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> hay que soltarla desde θ₀ = 60°.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si no usas el dato T = 2·M·g y metes la ecuación B en la radial, sale la fórmula general: T = M·g + M·v²/L = M·g + 2·M·g·(1 − cos θ₀) = <b>M·g·(3 − 2·cos θ₀)</b>. Con θ₀ = 60°, cos θ₀ = ½ y T = M·g·(3 − 1) = 2·M·g. Mientras más arriba la sueltes, más jala la cuerda abajo.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · Parcial 2025-2 Abierto 2</span>
+            <h4 id="wx3-h">Resorte y loop</h4>
+            <p>Un resorte de constante k, apretado una distancia x, lanza un bloque de masa M por una pista sin fricción que termina en un loop de radio R.</p>
+            <p><b>Pregunta:</b> ¿cuánto hay que apretar el resorte para que, en lo más alto del loop, la normal valga 2·M·g?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="loop"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Haz el DCL en lo más alto del loop.</p><p class="why">El bloque va por dentro del loop, cabeza abajo, y el centro del círculo está debajo de él. La pista lo empuja hacia el centro: N apunta hacia abajo. El peso también apunta hacia abajo. Las dos fuerzas apuntan al centro.</p></li>
+          <li><p class="what">Escribe la ecuación radial.</p><p class="why">Las dos apuntan al centro, así que las dos van con +.</p><div class="mx">N + M·g = <span class="frac"><span>M·v²</span><span>R</span></span></div></li>
+          <li><p class="what">Usa N = 2·M·g y despeja v².</p><p class="why">2·M·g + M·g = 3·M·g. Cancelas M y multiplicas por R.</p><div class="mx">3·<span class="cx">M</span>·g = <span class="frac"><span><span class="cx">M</span>·v²</span><span>R</span></span><span class="ar">→</span>v² = 3·g·R<span class="ar">(ecuación A)</span></div></li>
+          <li><p class="what">Llena la tabla de energías.</p><p class="why">Desde el resorte apretado hasta lo más alto del loop. Sin fricción, se conserva. Referencia: el piso. Arriba del loop la altura es <b>2R</b>: es el diámetro, de abajo a arriba del círculo.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (apretado)</th><th>Arriba del loop</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>e</sub> = ½·k·x²</td><td>½·k·x²</td><td>0</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>0</td><td>M·g·2R</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>½·k·x²</td><td>½·M·v² + 2·M·g·R</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Iguala.</p><div class="mx">½·k·x² = ½·M·v² + 2·M·g·R</div></li>
+          <li><p class="what">Reemplaza v² por lo de la ecuación A.</p><p class="why">½·3 = <span class="frac"><span>3</span><span>2</span></span>, y <span class="frac"><span>3</span><span>2</span></span> + 2 = <span class="frac"><span>3</span><span>2</span></span> + <span class="frac"><span>4</span><span>2</span></span> = <span class="frac"><span>7</span><span>2</span></span>.</p><div class="mx">½·k·x² = ½·M·(3·g·R) + 2·M·g·R = <span class="frac"><span>7</span><span>2</span></span>·M·g·R</div></li>
+          <li><p class="what">Despeja x.</p><p class="why">Multiplicas por 2, divides entre k y sacas raíz.</p><div class="mx">k·x² = 7·M·g·R<span class="ar">→</span>x² = <span class="frac"><span>7·M·g·R</span><span>k</span></span><span class="ar">→</span>x = √<span class="rad"><span class="frac"><span>7·M·g·R</span><span>k</span></span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> x = √(7·M·g·R / k).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Con un resorte más duro (k grande) hay que apretarlo menos. Con un bloque más pesado o un loop más grande, hay que apretarlo más. Aquí la M no se cancela porque la energía del resorte no depende de la masa.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · Parcial 2024-2 Abierto 2</span>
+            <h4 id="wx4-h">El cuenco por dentro</h4>
+            <p>Sueltas un bloque de masa M, desde el reposo, en el borde de un cuenco semiesférico de radio R, sin fricción. El borde está a la altura del centro. φ es el ángulo del bloque, medido desde la vertical que baja del centro.</p>
+            <p><b>Pregunta:</b> ¿a qué altura h sobre el fondo la normal vale un tercio del peso, M·g/3?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="bowl"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Haz la geometría.</p><p class="why">En el ángulo φ, el bloque está R·cos φ por debajo del centro (el lado del triángulo pegado a φ). El fondo está R por debajo del centro. La altura sobre el fondo es la resta.</p><div class="mx">h = R − R·cos φ = R·(1 − cos φ)</div></li>
+          <li><p class="what">Llena la tabla de energías.</p><p class="why">Sin fricción y la normal no hace trabajo: se conserva. Referencia: el fondo del cuenco. El borde está a altura R; en el ángulo φ, a altura R·(1 − cos φ).</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (borde)</th><th>En el ángulo φ</th></tr></thead>
+              <tbody>
+                <tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>g</sub> = M·g·y</td><td>M·g·R</td><td>M·g·R·(1 − cos φ)</td></tr>
+                <tr class="tot"><td>E = K + U</td><td>M·g·R</td><td>½·M·v² + M·g·R·(1 − cos φ)</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Iguala y despeja v².</p><p class="why">Cancelas M. Repartes g·R·(1 − cos φ) = g·R − g·R·cos φ; el g·R se cancela con el de la izquierda. Al final multiplicas por 2.</p><div class="mx"><span class="cx">M</span>·g·R = ½·<span class="cx">M</span>·v² + <span class="cx">M</span>·g·R − <span class="cx">M</span>·g·R·cos φ<br><span class="cx">g·R</span> = ½·v² + <span class="cx">g·R</span> − g·R·cos φ<span class="ar">→</span>v² = 2·g·R·cos φ<span class="ar">(ecuación A)</span></div></li>
+          <li><p class="what">Haz el DCL en el ángulo φ.</p><p class="why">Ahora el bloque está <b>por debajo</b> del centro. La normal empuja hacia adentro del cuenco, o sea, hacia el centro. Del peso, la parte en la dirección del radio es M·g·cos φ, pero apunta hacia afuera: se aleja del centro.</p></li>
+          <li><p class="what">Escribe la ecuación radial.</p><p class="why">N apunta al centro (+); M·g·cos φ se aleja (−).</p><div class="mx">N − M·g·cos φ = <span class="frac"><span>M·v²</span><span>R</span></span></div></li>
+          <li><p class="what">Reemplaza v² por lo de la ecuación A y despeja N.</p><p class="why">Las R se cancelan. Después pasas M·g·cos φ al otro lado sumando.</p><div class="mx">N − M·g·cos φ = <span class="frac"><span>M·(2·g·<span class="cx">R</span>·cos φ)</span><span><span class="cx">R</span></span></span> = 2·M·g·cos φ<span class="ar">→</span>N = 3·M·g·cos φ</div></li>
+          <li><p class="what">Usa el dato N = M·g/3.</p><p class="why">Cancelas M·g en los dos lados y divides entre 3.</p><div class="mx"><span class="frac"><span><span class="cx">M·g</span></span><span>3</span></span> = 3·<span class="cx">M·g</span>·cos φ<span class="ar">→</span>cos φ = <span class="frac"><span>1</span><span>9</span></span></div></li>
+          <li><p class="what">Calcula la altura.</p><p class="why">Con la fórmula del paso 1.</p><div class="mx">h = R·(1 − cos φ) = R·(1 − <span class="frac"><span>1</span><span>9</span></span>) = <span class="frac"><span>8R</span><span>9</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> h = 8R/9.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> N = 3·M·g·cos φ es más grande abajo (φ = 0, N = 3·M·g) y más chica cerca del borde. Una normal pequeña, como M·g/3, tiene que pasar arriba, cerca del borde: 8R/9 casi es R. <b>Ojo:</b> la solución oficial dice R/3 y está mal. Con h = R/3 la normal daría 2·M·g, no M·g/3.</p>
+      </article>
     </div>
 
     <div class="block">
@@ -622,7 +745,9 @@ function domeSvg(o = {}) {
       g += arrowSvg(bx + nx * 9, by + ny * 9, bx + nx * 50, by + ny * 50, "a-n") + T(bx + nx * 54, by + ny * 54, "N", "sv-t t-n");
       g += arrowSvg(bx, by, bx, by + 62, "a-peso") + T(bx + 5, by + 62, "Mg", "sv-t t-peso");
       const c = Math.cos(th) * 62;
-      g += `<line x1="${f1(bx)}" y1="${f1(by)}" x2="${f1(bx - nx * c)}" y2="${f1(by - ny * c)}" class="sv-comp"/>` + T(bx - nx * c - 6, by - ny * c + 4, "Mg·cos θ", "sv-t t-comp", "end");
+      g += `<line x1="${f1(bx)}" y1="${f1(by)}" x2="${f1(bx - nx * c)}" y2="${f1(by - ny * c)}" class="sv-comp"/>`;
+      if (o.compLegend) g += `<line x1="12" y1="16" x2="36" y2="16" class="sv-comp"/>` + T(42, 20, "Mg·cos θ: parte del peso hacia el centro", "sv-t t-comp");
+      else g += T(bx - nx * c - 6, by - ny * c + 4, "Mg·cos θ", "sv-t t-comp", "end");
     }
   }
   if (o.pos) g += `<rect x="${f1(o.pos.x - 8)}" y="${f1(o.pos.y - 7)}" width="16" height="14" class="sv-block${o.flying ? " bad" : ""}"/>`;
@@ -693,10 +818,14 @@ function loopRampFig(o = {}) {
   return `<svg viewBox="0 0 320 206" role="img" aria-label="Rampa sin fricción que termina en un loop de radio R">${g}</svg>`;
 }
 $("#fig-geo").innerHTML = domeSvg({ theta: 40, angle: true, heights: true });
-$("#fig-rad").innerHTML = domeSvg({ theta: 40, angle: true, arrows: true });
-$("#fig-pend").innerHTML = pendFig({ theta0: 60 });
-$("#fig-loop").innerHTML = loopSpringFig({ label: "N = 2Mg arriba" });
-$("#fig-bowl").innerHTML = bowlFig({ phi: 55, arrows: true, h: "h" });
+$("#fig-rad").innerHTML = domeSvg({ theta: 40, angle: true, arrows: true, compLegend: true });
+const TFIGS = {
+  semi: () => domeSvg({ theta: 48, angle: true, arrows: true, compLegend: true }),
+  pend: () => pendFig({ theta0: 60, height: "h" }),
+  loop: () => loopSpringFig({ label: "N = 2Mg arriba" }),
+  bowl: () => bowlFig({ phi: 55, arrows: true, h: "h" }),
+};
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = TFIGS[n.dataset.fig](); });
 
 /* ---------- Lab 1: semiesfera ---------- */
 const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
