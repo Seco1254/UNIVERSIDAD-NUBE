@@ -165,6 +165,8 @@ M1 Newton + DCL ─► M2 Poleas ─► M3 Fricción ─► M4 Sistemas con acel
 - **Trampas:** tomar mal la altura de referencia (las columnas de 2026-1); el signo de N por dentro y por fuera; usar cos θ cuando el ángulo se mide desde la horizontal (en 2026-1 A3 la altura es R + R·sen θ).
 
 ### M9 — Simulacro final, estilo Ávila
+> **Versión que se usa (14 de octubre):** [mini-simulacro de 40 minutos](https://claude.ai/artifact/UXeERsnHz1KwRKXLtDuVpi). Son 3 de selección múltiple (poleas, energía con fricción y resorte, mesa + colgante) y 2 abiertos (plano con β desde la vertical y rango de X; rampa rugosa + loop, con h = 5R/2 + µₖ·D), sobre 70 puntos. La meta es 56/70.
+
 *~2 h (80 min de examen + corrección)*
 
 - Un parcial **nuevo** escrito al estilo del profesor: 3 de selección múltiple + 3 abiertos con pasos A, B y C, uno por cada familia 🔴.

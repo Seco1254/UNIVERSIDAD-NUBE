@@ -1,0 +1,753 @@
+<title>M9 Mini-simulacro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan y los módulos). Simulacro cronometrado: instrucciones, parte A (selección múltiple), parte B (abiertos con rúbrica) y hoja de fórmulas al final. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* M9: simulacro */
+.sv-board{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.timer{position:fixed; right:16px; bottom:16px; z-index:6; font-family:var(--f-mono); font-weight:600; font-size:1.05rem; padding:8px 14px; border-radius:10px; background:var(--ink); color:var(--paper); font-variant-numeric:tabular-nums; box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.timer.over{background:var(--red); color:#fff}
+.rules{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px}
+.rules h3{font-size:1.05rem}
+.ab{gap:14px}
+.ab-head{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px; align-items:start}
+.ab-head .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.05rem}
+.ab-head p{margin:4px 0 0; font-weight:600}
+.parts{margin:0; padding-left:20px; display:grid; gap:6px}
+.rub{border-top:1px dashed var(--rule); padding-top:12px; display:grid; gap:8px}
+.rub h4,.sol h4{font-family:var(--f-display); font-weight:800; margin:0; font-size:1rem}
+.rub p{margin:0}
+.rub-i{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.93rem}
+.rub-i input{margin-top:4px; accent-color:var(--green); flex:0 0 auto}
+.rub-i:has(input:checked){border-color:var(--green); background:var(--green-soft)}
+.rub-i b{font-family:var(--f-mono); font-weight:500; font-size:.78rem; color:var(--muted); margin-right:6px}
+.rub-sum{font-weight:600}
+.sol{display:grid; gap:10px; border-top:1px dashed var(--rule); padding-top:12px; min-width:0}
+.sol .qexp{margin:0}
+.sol .wx-steps{padding:0}
+.sol .wx-res{margin:0}
+.qopt .frac{font-size:.95em}
+.fsheet{min-width:0}
+.fsheet td:first-child{font-weight:600; width:9.5rem}
+@media (max-width:640px){ .fsheet td:first-child{width:auto} }
+</style>
+
+<nav class="nav" aria-label="Secciones del simulacro">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/XwfNMJ25u3aDBiU8LXC1uv" target="_blank" rel="noopener">← Plan</a>
+    <a href="#inicio">Instrucciones</a>
+    <a href="#parte-a">Parte A <span>30 pts</span></a>
+    <a href="#parte-b">Parte B <span>40 pts</span></a>
+    <a href="#resultado">Resultado</a>
+  </div>
+</nav>
+<div class="timer" id="timer" role="timer" aria-label="Tiempo restante" hidden>40:00</div>
+
+<div class="wrap">
+  <header class="head" id="inicio">
+    <p class="eyebrow">Física 1 · Parcial 2 · Módulo 9 de 9</p>
+    <h1>Mini-simulacro</h1>
+    <div class="meta">
+      <span class="chip-hot">40 minutos · sin apuntes</span>
+      <span>Miércoles 14 de octubre</span>
+      <span>70 puntos · meta: 56 o más (80 %)</span>
+    </div>
+    <p class="prose">Un medio parcial nuevo, escrito como los de Ávila: <b>3 de selección múltiple</b> (10 pts cada una) y <b>2 problemas abiertos</b> con partes A, B y C (20 pts cada uno). Cubre las familias que más salen: poleas, energía con fricción, bloques conectados, plano con fricción estática y circular + energía.</p>
+    <div class="rules">
+      <h3>Antes de empezar</h3>
+      <ol class="steps">
+        <li><span><b>Ten papel y lápiz.</b> Los abiertos se resuelven en papel. En la selección múltiple también escribe el desarrollo: en el parcial, una respuesta sin justificar no cuenta.</span></li>
+        <li><span><b>Sin apuntes y sin calculadora.</b> Todas las respuestas son con letras.</span></li>
+        <li><span><b>Cronometrado: 40 minutos.</b> Más o menos 5 minutos por cada selección múltiple y 12 por cada abierto. Si se acaba el tiempo, termina igual y anota cuánto te pasaste.</span></li>
+        <li><span><b>Al terminar</b> ves la solución paso a paso y calificas tus abiertos con la rúbrica del profesor (diagrama, ecuaciones y resultado por separado). Si quieres, mándame una foto de tu desarrollo y lo califico yo.</span></li>
+      </ol>
+      <p class="muted">Aquí la masa va con <b>M</b> mayúscula, como en los módulos. En el parcial sale como m minúscula.</p>
+      <div class="qrow"><button type="button" class="btn" id="start">Empezar simulacro (40:00)</button><span class="muted" id="start-msg"></span></div>
+    </div>
+  </header>
+
+  <div id="exam" hidden>
+    <section id="parte-a" aria-labelledby="pa-h">
+      <div class="sec-title"><span class="sec-num">A</span><h2 id="pa-h">Selección múltiple</h2><p>10 pts cada una. Marca una opción y justifícala en papel.</p></div>
+      <div class="quiz" id="sm-list"></div>
+    </section>
+
+    <section id="parte-b" aria-labelledby="pb-h">
+      <div class="sec-title"><span class="sec-num">B</span><h2 id="pb-h">Problemas abiertos</h2><p>20 pts cada uno. Resuélvelos en papel, parte por parte.</p></div>
+      <div class="quiz" id="ab-list"></div>
+    </section>
+
+    <section id="resultado" aria-labelledby="r-h">
+      <div class="sec-title"><span class="sec-num">✓</span><h2 id="r-h">Terminar y calificar</h2><p>Primero se califica la selección múltiple. Después marcas en la rúbrica lo que sí tienes en tu papel.</p></div>
+      <div class="qrow"><button type="button" class="btn" id="finish">Terminé: calificar</button><span class="muted" id="finish-msg"></span></div>
+      <div id="grading" hidden>
+        <div class="result" id="score-card" aria-live="polite"></div>
+        <div class="qrow"><button type="button" class="btn" id="save">Guardar mi nota</button><button type="button" class="btn ghost" id="reset">Volver a empezar</button><span class="muted" id="save-msg"></span></div>
+      </div>
+    </section>
+  </div>
+
+  <section id="formulas" aria-labelledby="f-h" hidden>
+    <div class="sec-title"><span class="sec-num">∑</span><h2 id="f-h">Tu hoja de fórmulas mental</h2><p>Lo que tienes que saber de memoria para mañana. Repásala en los 30 minutos antes del parcial.</p></div>
+    <div class="tw"><table class="fsheet">
+      <thead><tr><th>Tema</th><th>Lo que tienes que saber</th></tr></thead>
+      <tbody>
+        <tr><td>Newton y DCL</td><td>ΣF = M·a en cada dirección. Si está quieto o a velocidad constante, ΣF = 0. Cada cuerpo, su propio diagrama.</td></tr>
+        <tr><td>Plano inclinado</td><td>Ángulo θ <b>desde la horizontal</b>: a lo largo M·g·sen θ, normal M·g·cos θ. Ángulo β <b>desde la vertical</b>: se intercambian (a lo largo M·g·cos β, normal M·g·sen β).</td></tr>
+        <tr><td>Poleas</td><td>Encierra el cuerpo (o la polea) y cuenta cuántas cuerdas lo jalan hacia arriba. Una polea fija con dos tramos jalando hacia abajo aguanta 2T.</td></tr>
+        <tr><td>Fricción</td><td>Estática: fₛ ≤ µₛ·N (vale µₛ·N solo cuando está a punto de moverse). Cinética: fₖ = µₖ·N, siempre en contra del movimiento.</td></tr>
+        <tr><td>Rangos de equilibrio</td><td>Dos casos límite: a punto de subir (fricción hacia abajo) y a punto de bajar (fricción hacia arriba). Cada uno da un extremo del rango.</td></tr>
+        <tr><td>Sistemas conectados</td><td>Truco del sistema: a = (fuerzas que mueven − fuerzas que frenan) / (masa total). Después la tensión sale del DCL de un solo bloque.</td></tr>
+        <tr><td>Circular</td><td>ΣF<sub>hacia el centro</sub> = M·v²/R. Lo que apunta al centro va con +, lo que se aleja con −. «Se despega» o «mínimo para no caer» quiere decir N = 0.</td></tr>
+        <tr><td>Trabajo</td><td>W = F·d·cos φ. Peso: M·g·(h<sub>i</sub> − h<sub>f</sub>). Normal: 0. Fricción: −µₖ·N·d, con d la distancia <b>total</b> sobre la zona rugosa.</td></tr>
+        <tr><td>Energía</td><td>K = ½·M·v². U<sub>g</sub> = M·g·y. U<sub>e</sub> = ½·k·x². <b>E<sub>i</sub> + W<sub>fricción</sub> = E<sub>f</sub></b>. Haz la tabla inicio/final.</td></tr>
+        <tr><td>Rampa con tramo rugoso</td><td>n = H/(µₖ·D) pasadas. Parte entera par: termina en A; impar: en B.</td></tr>
+        <tr><td>Resultados para reconocer</td><td>Semiesfera desde arriba: se despega con cos θ = 2/3 (baja R/3). Péndulo: T<sub>abajo</sub> = M·g·(3 − 2·cos θ₀). Loop sin fricción: mínimo v<sub>arriba</sub>² = g·R y h<sub>mín</sub> = 5R/2. Cuenco desde el borde: N = 3·M·g·cos φ.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="att-h">
+    <div class="block">
+      <h3 id="att-h">Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has guardado un simulacro. Tu nota queda guardada para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Problemas nuevos escritos al estilo de los parciales 2 de 2024-2, 2025-1, 2025-2 y 2026-1 de Física 1, Universidad de los Andes.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Figuras del simulacro ---------- */
+function hatchCeil(x1, x2, y) { let g = `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" class="sv-line"/>`; for (let x = x1 + 4; x < x2; x += 10) g += `<line x1="${x}" y1="${y}" x2="${x + 6}" y2="${y - 6}" class="sv-hatch"/>`; return g; }
+function poleasSvg() {
+  let g = hatchCeil(96, 290, 20);
+  const mv = { x: 150, y: 132 }, fx = { x: 190, y: 64 }, r = 20;
+  g += `<line x1="${mv.x - r}" y1="20" x2="${mv.x - r}" y2="${mv.y}" class="sv-rope"/>`;
+  g += `<line x1="${mv.x + r}" y1="${mv.y}" x2="${fx.x - r}" y2="${fx.y}" class="sv-rope"/>`;
+  g += `<line x1="${fx.x + r}" y1="${fx.y}" x2="${fx.x + r}" y2="168" class="sv-rope"/>`;
+  g += `<line x1="${fx.x}" y1="20" x2="${fx.x}" y2="${fx.y}" class="sv-brk"/>` + T(fx.x + 6, 38, "soporte", "sv-tl");
+  g += `<circle cx="${fx.x}" cy="${fx.y}" r="${r}" class="sv-pulley"/><circle cx="${fx.x}" cy="${fx.y}" r="2.5" class="sv-axle"/>`;
+  g += `<line x1="${mv.x}" y1="${mv.y}" x2="${mv.x}" y2="172" class="sv-rope"/>`;
+  g += `<circle cx="${mv.x}" cy="${mv.y}" r="${r}" class="sv-pulley"/><circle cx="${mv.x}" cy="${mv.y}" r="2.5" class="sv-axle"/>`;
+  g += `<rect x="${mv.x - 22}" y="172" width="44" height="34" class="sv-block"/>` + T(mv.x, 194, "M", "sv-lab", "middle");
+  g += arrowSvg(fx.x + r, 168, fx.x + r, 206, "a-f") + T(fx.x + r + 8, 200, "F", "sv-t t-f");
+  g += T(mv.x - r - 6, 80, "amarrada al techo", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 216" role="img" aria-label="Un extremo de la cuerda está amarrado al techo, baja a una polea móvil que sostiene el bloque M, sube a una polea fija colgada del techo por un soporte y baja hasta donde se jala con la fuerza F">${g}</svg>`;
+}
+function rampaResorteSvg() {
+  const fy = 170;
+  let g = `<line x1="8" y1="${fy}" x2="318" y2="${fy}" class="sv-line"/>`;
+  g += `<path d="M 26 40 Q 44 ${fy} 116 ${fy}" class="sv-track"/>` + `<rect x="21" y="24" width="18" height="14" class="sv-block"/>` + T(30, 18, "M", "sv-t", "middle");
+  g += `<line x1="14" y1="40" x2="14" y2="${fy}" class="sv-dim"/>` + T(10, 110, "H", "sv-t", "end");
+  g += `<line x1="132" y1="${fy}" x2="220" y2="${fy}" class="sv-rough"/>` + T(176, fy + 18, "D, µₖ", "sv-t", "middle");
+  g += `<line x1="312" y1="120" x2="312" y2="${fy}" class="sv-line"/>`;
+  let z = `M 312 ${fy - 12}`; for (let i = 0; i < 8; i++) z += ` L ${306 - i * 6} ${i % 2 ? fy - 18 : fy - 6}`; z += ` L 258 ${fy - 12}`;
+  g += `<path d="${z}" class="sv-spring"/>` + T(284, fy - 26, "k", "sv-t", "middle");
+  g += T(80, 120, "sin fricción", "sv-tl") + T(240, 196, "sin fricción", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 204" role="img" aria-label="Rampa sin fricción de altura H, tramo horizontal rugoso de largo D con coeficiente mu k, y después un resorte de constante k contra una pared">${g}</svg>`;
+}
+function mesaSvg() {
+  const ty = 92;
+  let g = `<rect x="20" y="${ty}" width="218" height="8" class="sv-board"/><line x1="34" y1="${ty + 8}" x2="34" y2="200" class="sv-line"/><line x1="224" y1="${ty + 8}" x2="224" y2="200" class="sv-line"/>`;
+  g += `<rect x="90" y="${ty - 40}" width="64" height="40" class="sv-block"/>` + T(122, ty - 16, "2M", "sv-lab", "middle");
+  g += T(122, ty + 24, "µₖ", "sv-t", "middle");
+  const p = { x: 250, y: ty - 12 }, r = 12;
+  g += `<line x1="238" y1="${ty}" x2="${p.x}" y2="${p.y}" class="sv-brk"/>`;
+  g += `<line x1="154" y1="${p.y - r}" x2="${p.x}" y2="${p.y - r}" class="sv-rope"/><line x1="${p.x + r}" y1="${p.y}" x2="${p.x + r}" y2="150" class="sv-rope"/>`;
+  g += `<circle cx="${p.x}" cy="${p.y}" r="${r}" class="sv-pulley"/><circle cx="${p.x}" cy="${p.y}" r="2" class="sv-axle"/>`;
+  g += `<rect x="${p.x + r - 18}" y="150" width="36" height="34" class="sv-block"/>` + T(p.x + r, 172, "M", "sv-lab", "middle");
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque de masa 2M sobre una mesa con fricción, unido por una cuerda que pasa por una polea en el borde a un bloque M que cuelga">${g}</svg>`;
+}
+function planoVSvg() {
+  const s = inclineSvg({ deg: 35, mode: "v", label: "M", pulley: "X", angLabel: "β", aria: "Bloque M sobre un plano cuyo ángulo beta se mide desde la vertical, unido por una cuerda paralela al plano que pasa por una polea en la cima a un bloque X que cuelga" });
+  return s.replace("</svg>", T(120, 170, "µₛ", "sv-t", "middle") + "</svg>");
+}
+function rampaLoopSvg() {
+  const fy = 192, lc = { x: 268, y: 130 }, R = 62;
+  let g = `<line x1="8" y1="${fy}" x2="338" y2="${fy}" class="sv-line"/>`;
+  g += `<path d="M 26 34 Q 44 ${fy} 116 ${fy}" class="sv-track"/>` + `<rect x="21" y="18" width="18" height="14" class="sv-block"/>` + T(30, 12, "M", "sv-t", "middle");
+  g += `<line x1="14" y1="34" x2="14" y2="${fy}" class="sv-dim"/>` + T(10, 116, "h", "sv-t", "end");
+  g += `<line x1="128" y1="${fy}" x2="200" y2="${fy}" class="sv-rough"/>` + T(164, fy + 16, "D, µₖ", "sv-t", "middle");
+  g += `<circle cx="${lc.x}" cy="${lc.y}" r="${R}" class="sv-track"/><line x1="${lc.x}" y1="${lc.y}" x2="${f1(lc.x + R * 0.7)}" y2="${f1(lc.y + R * 0.7)}" class="sv-dash"/>` + T(lc.x + 24, lc.y + 26, "R", "sv-tl");
+  g += `<rect x="${lc.x - 11}" y="${lc.y - R + 3}" width="22" height="12" rx="2" class="sv-ghost"/>`;
+  g += T(76, 110, "sin fricción", "sv-tl") + T(lc.x, lc.y - 8, "loop sin fricción", "sv-tl", "middle");
+  return `<svg viewBox="0 0 340 212" role="img" aria-label="Rampa sin fricción desde la altura h, tramo horizontal rugoso de largo D y después un loop de radio R sin fricción">${g}</svg>`;
+}
+
+/* ---------- Problemas ---------- */
+const frac = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const sqrt = (x) => `√<span class="rad">${x}</span>`;
+const SM = [
+  { id: "sm1", fam: "Poleas en equilibrio", fig: poleasSvg,
+    q: "El bloque de masa M de la figura está en equilibrio. Un extremo de la cuerda está amarrado al techo; la cuerda baja a la polea móvil, sube a la polea fija y baja hasta donde se jala con la fuerza F. Las poleas y la cuerda no tienen masa. ¿Cuánto vale F y cuánto aguanta el soporte de la polea fija?",
+    o: ["F = Mg/2 y el soporte aguanta Mg/2", "F = Mg/2 y el soporte aguanta Mg", "F = Mg y el soporte aguanta 2Mg", "F = Mg/4 y el soporte aguanta Mg/2", "F = Mg/2 y el soporte aguanta 3Mg/2"], a: 1,
+    sol: [
+      { w: "La cuerda es una sola: tiene la misma tensión T en todos sus tramos.", m: "F = T" },
+      { w: "Encierra la polea móvil con el bloque.", y: "Dos tramos de cuerda la jalan hacia arriba (el que viene del techo y el que sube a la polea fija). Hacia abajo, el peso.", m: `2·T = M·g<span class="ar">→</span>T = ${frac("M·g", "2")}<span class="ar">→</span>F = ${frac("M·g", "2")}` },
+      { w: "Encierra la polea fija.", y: "Dos tramos de cuerda la jalan hacia abajo: el que baja a la polea móvil y el que baja a la mano. El soporte la sostiene hacia arriba.", m: `S = T + T = 2·T = 2·${frac("M·g", "2")} = M·g` },
+    ], res: "F = M·g/2 y el soporte aguanta M·g: opción B." },
+  { id: "sm2", fam: "Trabajo y energía con fricción", fig: rampaResorteSvg,
+    q: "Un bloque de masa M se suelta desde el reposo a una altura H en una rampa sin fricción. Abajo recorre un tramo horizontal rugoso de largo D, con coeficiente de fricción cinética µₖ, y después, ya sin fricción, choca con un resorte de constante k. Suponga que alcanza a llegar al resorte. ¿Cuánto se comprime el resorte como máximo?",
+    o: [sqrt(frac("2·M·g·H", "k")), sqrt(frac("M·g·(H − µₖ·D)", "k")), sqrt(frac("2·M·g·(H − µₖ·D)", "k")), sqrt(frac("2·M·g·(H + µₖ·D)", "k")), frac("2·M·g·(H − µₖ·D)", "k")], a: 2, html: true,
+    sol: [
+      { w: "Tabla de energías: inicio arriba, final con el resorte apretado al máximo.", y: "Referencia y = 0 en el piso. Al máximo de compresión el bloque se detiene un instante: K = 0.",
+        html: `<div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio (arriba)</th><th>Final (resorte apretado x)</th></tr></thead><tbody><tr><td>K</td><td>0</td><td>0</td></tr><tr><td>U<sub>g</sub></td><td>M·g·H</td><td>0</td></tr><tr><td>U<sub>e</sub></td><td>0</td><td>½·k·x²</td></tr><tr class="tot"><td>E</td><td>M·g·H</td><td>½·k·x²</td></tr></tbody></table></div>` },
+      { w: "Trabajo de la fricción.", y: "Piso horizontal: N = M·g. La recorre una sola vez, una distancia D.", m: "W<sub>fricción</sub> = −µₖ·M·g·D" },
+      { w: "Ecuación del profesor: E<sub>i</sub> + W<sub>fricción</sub> = E<sub>f</sub>.", m: `M·g·H − µₖ·M·g·D = ½·k·x²<span class="ar">→</span>M·g·(H − µₖ·D) = ½·k·x²` },
+      { w: "Despeja x.", y: "Multiplicas por 2, divides entre k y sacas raíz.", m: `x² = ${frac("2·M·g·(H − µₖ·D)", "k")}<span class="ar">→</span>x = ${sqrt(frac("2·M·g·(H − µₖ·D)", "k"))}` },
+    ], res: "x = √(2·M·g·(H − µₖ·D)/k): opción C. Aquí la M no se cancela, porque hay un resorte." },
+  { id: "sm3", fam: "Bloques conectados con aceleración", fig: mesaSvg,
+    q: "Un bloque de masa 2M está sobre una mesa con coeficiente de fricción cinética µₖ (con µₖ < 1/2). Una cuerda lo une, pasando por una polea sin fricción en el borde, a un bloque de masa M que cuelga. Se sueltan y el sistema acelera. ¿Cuánto vale la tensión de la cuerda?",
+    o: ["M·g", "(2/3)·M·g", "M·g·(1 − 2µₖ)/3", "(2/3)·M·g·(1 + µₖ)", "2·µₖ·M·g"], a: 3,
+    sol: [
+      { w: "Aceleración con el truco del sistema.", y: "Lo que mueve al sistema es el peso del que cuelga, M·g. Lo que lo frena es la fricción sobre 2M: µₖ·N = µₖ·2·M·g. La masa total es 3M.", m: `a = ${frac("M·g − 2·µₖ·M·g", "3·M")} = ${frac("g·(1 − 2µₖ)", "3")}` },
+      { w: "DCL del bloque que cuelga.", y: "Baja acelerando: el peso le gana a la tensión.", m: "M·g − T = M·a<span class=\"ar\">→</span>T = M·(g − a)" },
+      { w: "Reemplaza a y simplifica.", y: `g − ${frac("g·(1 − 2µₖ)", "3")} = ${frac("3g − g + 2µₖ·g", "3")} = ${frac("2g·(1 + µₖ)", "3")}`, m: `T = M·${frac("2g·(1 + µₖ)", "3")} = ${frac("2", "3")}·M·g·(1 + µₖ)` },
+    ], res: "T = (2/3)·M·g·(1 + µₖ): opción D. Chequeo: sin fricción daría (2/3)·M·g, menos que M·g, porque el bloque que cuelga está acelerando." },
+];
+const AB = [
+  { id: "a1", fam: "Plano con fricción estática (rango)", fig: planoVSvg,
+    q: "El bloque de masa M está sobre un plano inclinado. <b>Ojo: el ángulo β se mide desde la vertical.</b> El coeficiente de fricción estática entre el bloque y el plano es µₛ. Una cuerda paralela al plano pasa por una polea sin fricción en la cima y sostiene un bloque de masa X que cuelga. Se busca el rango de valores de X para que el sistema se quede en reposo.",
+    parts: [
+      { k: "A", pts: 6, t: "Dibuja los diagramas de cuerpo libre de M y de X. Para M, dibuja los dos casos límite: a punto de subir por el plano y a punto de bajar." },
+      { k: "B", pts: 7, t: "Escribe las ecuaciones de equilibrio de los dos bloques en los dos casos límite." },
+      { k: "C", pts: 7, t: "Encuentra el valor máximo y el mínimo de X, y escribe el rango." },
+    ],
+    rub: [
+      { p: "A", pts: 2, t: "DCL de X: tensión T hacia arriba y peso X·g hacia abajo." },
+      { p: "A", pts: 2, t: "DCL de M: peso M·g vertical, normal perpendicular al plano y tensión paralela al plano, hacia la polea." },
+      { p: "A", pts: 2, t: "Fricción en el sentido correcto: hacia abajo del plano cuando está a punto de subir; hacia arriba cuando está a punto de bajar." },
+      { p: "B", pts: 2, t: "Para X en reposo: T = X·g." },
+      { p: "B", pts: 2, t: "Perpendicular al plano, con β desde la vertical: N = M·g·sen β (no cos β)." },
+      { p: "B", pts: 3, t: "A lo largo del plano en los dos casos: T = M·g·cos β ± µₛ·N." },
+      { p: "C", pts: 3, t: "X<sub>máx</sub> = M·(cos β + µₛ·sen β)." },
+      { p: "C", pts: 3, t: "X<sub>mín</sub> = M·(cos β − µₛ·sen β)." },
+      { p: "C", pts: 1, t: "El rango con las desigualdades en el sentido correcto: X<sub>mín</sub> ≤ X ≤ X<sub>máx</sub>." },
+    ],
+    sol: [
+      { w: "Descompón el peso con β desde la vertical.", y: "Si el plano forma β con la vertical, forma 90° − β con la horizontal. Por eso se intercambian seno y coseno respecto a lo que viste en M1: la parte del peso a lo largo del plano es M·g·cos β y la perpendicular es M·g·sen β.", m: "a lo largo: M·g·cos β (hacia abajo del plano)<br>perpendicular: M·g·sen β (contra el plano)" },
+      { w: "Equilibrio de X.", y: "Cuelga quieto: la tensión equilibra su peso.", m: "T = X·g" },
+      { w: "Normal sobre M.", y: "Perpendicular al plano no se mueve: la normal equilibra la parte perpendicular del peso.", m: "N = M·g·sen β" },
+      { w: "Caso 1: a punto de subir (X grande).", y: "La fricción estática es la máxima, µₛ·N, y apunta hacia abajo del plano, junto con M·g·cos β. Las dos se oponen a la tensión.", m: `T = M·g·cos β + µₛ·M·g·sen β<span class="ar">→</span>X·<span class="cx">g</span> = M·<span class="cx">g</span>·(cos β + µₛ·sen β)<span class="ar">→</span>X<sub>máx</sub> = M·(cos β + µₛ·sen β)` },
+      { w: "Caso 2: a punto de bajar (X pequeño).", y: "Ahora la fricción apunta hacia arriba del plano y ayuda a la tensión a sostener el bloque.", m: `T + µₛ·M·g·sen β = M·g·cos β<span class="ar">→</span>X<sub>mín</sub> = M·(cos β − µₛ·sen β)` },
+      { w: "Escribe el rango.", m: "M·(cos β − µₛ·sen β) ≤ X ≤ M·(cos β + µₛ·sen β)" },
+    ], res: "M·(cos β − µₛ·sen β) ≤ X ≤ M·(cos β + µₛ·sen β). Si cos β − µₛ·sen β da negativo, el mínimo es 0: el bloque se queda quieto aunque no cuelgue nada." },
+  { id: "a2", fam: "Circular + energía con fricción", fig: rampaLoopSvg,
+    q: "Un bloque de masa M se suelta desde el reposo a una altura h en una rampa sin fricción. Abajo pasa por un tramo horizontal rugoso de largo D, con coeficiente de fricción cinética µₖ, y después entra a un loop de radio R sin fricción. Se busca la altura mínima h para que el bloque dé la vuelta completa al loop sin despegarse.",
+    parts: [
+      { k: "A", pts: 6, t: "Dibuja el diagrama de cuerpo libre del bloque en lo más alto del loop." },
+      { k: "B", pts: 6, t: "Escribe la ecuación radial en lo más alto y la condición para la altura mínima. ¿Cuánto vale v² arriba?" },
+      { k: "C", pts: 8, t: "Usa energía con fricción para encontrar la altura mínima h." },
+    ],
+    rub: [
+      { p: "A", pts: 3, t: "Peso M·g hacia abajo, hacia el centro del loop." },
+      { p: "A", pts: 3, t: "Normal hacia abajo, hacia el centro: la pista empuja al bloque hacia adentro." },
+      { p: "B", pts: 3, t: "Radial arriba: N + M·g = M·v²/R, las dos con +." },
+      { p: "B", pts: 3, t: "Altura mínima ⇒ N = 0 arriba ⇒ v² = g·R." },
+      { p: "C", pts: 2, t: "Energías: E<sub>i</sub> = M·g·h; arriba del loop E<sub>f</sub> = ½·M·v² + M·g·2R (altura 2R)." },
+      { p: "C", pts: 2, t: "Trabajo de la fricción: W = −µₖ·M·g·D, con N = M·g en el piso." },
+      { p: "C", pts: 2, t: "Ecuación completa: M·g·h − µₖ·M·g·D = ½·M·v² + 2·M·g·R." },
+      { p: "C", pts: 2, t: "Resultado: h = 5R/2 + µₖ·D." },
+    ],
+    sol: [
+      { w: "DCL en lo más alto.", y: "El bloque va por dentro, cabeza abajo; el centro del loop está debajo. El peso apunta hacia abajo (al centro). La pista lo empuja hacia adentro, o sea, también hacia abajo (al centro)." },
+      { w: "Ecuación radial arriba.", y: "Las dos fuerzas apuntan al centro: las dos con +.", m: `N + M·g = ${frac("M·v²", "R")}` },
+      { w: "Condición mínima.", y: "La altura mínima es la que deja al bloque justo a punto de despegarse arriba: N = 0. Con menos rapidez, se caería.", m: `<span class="cx">M</span>·g = ${frac('<span class="cx">M</span>·v²', "R")}<span class="ar">→</span>v² = g·R` },
+      { w: "Tabla de energías: inicio en la rampa, final arriba del loop.", y: "Referencia: el piso. Arriba del loop la altura es 2R, el diámetro.",
+        html: `<div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio (altura h)</th><th>Arriba del loop</th></tr></thead><tbody><tr><td>K</td><td>0</td><td>½·M·v²</td></tr><tr><td>U<sub>g</sub></td><td>M·g·h</td><td>M·g·2R</td></tr><tr class="tot"><td>E</td><td>M·g·h</td><td>½·M·v² + 2·M·g·R</td></tr></tbody></table></div>` },
+      { w: "Trabajo de la fricción.", y: "Piso horizontal: N = M·g. Pasa una sola vez por el tramo, una distancia D.", m: "W<sub>fricción</sub> = −µₖ·M·g·D" },
+      { w: "Ecuación del profesor y reemplazo de v² = g·R.", m: `M·g·h − µₖ·M·g·D = ½·M·(g·R) + 2·M·g·R` },
+      { w: "Cancela M·g y despeja h.", y: "½·R + 2R = ½·R + 4/2·R = 5R/2.", m: `h − µₖ·D = ${frac("R", "2")} + 2R = ${frac("5R", "2")}<span class="ar">→</span>h = ${frac("5R", "2")} + µₖ·D` },
+    ], res: "h<sub>mín</sub> = 5R/2 + µₖ·D. Sin fricción (µₖ = 0) queda el 5R/2 de siempre; la fricción obliga a soltarlo µₖ·D más arriba." },
+];
+
+/* ---------- Estado, cronómetro y calificación ---------- */
+const LIMIT = 40 * 60 * 1000, KEY = "m9-sim-v1";
+const st = { start: null, end: null, sm: {}, rub: {}, finished: false };
+function load() { try { Object.assign(st, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {} }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+const mmss = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+function tick() {
+  if (!st.start) return;
+  const t = $("#timer"); t.hidden = false;
+  const used = (st.end || Date.now()) - st.start, left = LIMIT - used;
+  t.textContent = left >= 0 ? mmss(left) : "+" + mmss(-left);
+  t.classList.toggle("over", left < 0);
+  if (!st.end) setTimeout(tick, 500);
+}
+function stepsHtml(steps) {
+  return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}${s.html || ""}</li>`).join("")}</ol>`;
+}
+function renderExam() {
+  const smBox = $("#sm-list"); smBox.textContent = "";
+  SM.forEach((it, i) => {
+    const fs = el("fieldset", "q"); fs.id = it.id;
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.fam + " · 10 pts")); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = it.id; r.value = String(oi);
+      if (st.sm[it.id] === oi) r.checked = true;
+      r.addEventListener("change", () => { st.sm[it.id] = oi; save(); });
+      const sp = el("span"); sp.innerHTML = String.fromCharCode(65 + oi) + ") " + o;
+      lab.appendChild(r); lab.appendChild(sp); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const sol = el("div", "sol"); sol.hidden = true; fs.appendChild(sol);
+    smBox.appendChild(fs);
+  });
+  const abBox = $("#ab-list"); abBox.textContent = "";
+  AB.forEach((it, i) => {
+    const art = el("article", "q ab"); art.id = it.id;
+    art.innerHTML = `<div class="ab-head"><span class="qn">${i + 1}</span><div><span class="kind">${it.fam} · 20 pts</span><p>${it.q}</p></div></div>
+      <div class="qfig">${it.fig()}</div>
+      <ol class="parts">${it.parts.map((p) => `<li><b>${p.k}.</b> (${p.pts} pts) ${p.t}</li>`).join("")}</ol>
+      <div class="rub" hidden><h4>Califícate con la rúbrica</h4><p class="muted">Marca solo lo que está escrito en tu papel, no lo que «sabías».</p>
+        ${it.rub.map((r, ri) => `<label class="rub-i"><input type="checkbox" data-ab="${it.id}" data-i="${ri}"${st.rub[it.id + "-" + ri] ? " checked" : ""}><span><b>${r.p} · ${r.pts} pts</b> ${r.t}</span></label>`).join("")}
+        <p class="rub-sum" id="sum-${it.id}"></p></div>
+      <div class="sol" hidden></div>`;
+    abBox.appendChild(art);
+  });
+  abBox.querySelectorAll('input[type="checkbox"]').forEach((c) => c.addEventListener("change", () => { st.rub[c.dataset.ab + "-" + c.dataset.i] = c.checked; save(); score(); }));
+}
+function abPts(it) { return it.rub.reduce((s, r, ri) => s + (st.rub[it.id + "-" + ri] ? r.pts : 0), 0); }
+function score() {
+  const smPts = SM.reduce((s, it) => s + (st.sm[it.id] === it.a ? 10 : 0), 0);
+  const ab = AB.map(abPts), total = smPts + ab[0] + ab[1], pct = Math.round((total / 70) * 100), pass = total >= 56;
+  AB.forEach((it, i) => { const e = $("#sum-" + it.id); if (e) e.textContent = `Llevas ${ab[i]} de 20 pts en este problema.`; });
+  const mins = st.start && st.end ? Math.round((st.end - st.start) / 60000) : null;
+  const lost = [];
+  SM.forEach((it) => { if (st.sm[it.id] !== it.a) lost.push(it.fam); });
+  AB.forEach((it, i) => { if (ab[i] < 16) lost.push(it.fam); });
+  const card = $("#score-card"); card.className = "result " + (pass ? "pass" : "fail");
+  card.innerHTML = `<span class="score">${total}/70</span><p><b>${pct} %.</b> Selección múltiple: ${smPts}/30. Abiertos: ${ab[0]}/20 y ${ab[1]}/20.${mins != null ? ` Tiempo: ${mins} min.` : ""}</p>` +
+    `<p>${pass ? "Llegaste a la meta (56/70). Mañana: 30 minutos con la hoja de fórmulas y la clave de parciales, y a descansar." : "Todavía no llegas a 56/70. Repasa la solución debajo de cada problema y la hoja de fórmulas del final; si quieres, mándame tu desarrollo y miramos juntos dónde se fueron los puntos."}</p>` +
+    (lost.length ? `<p class="muted">Para repasar: ${[...new Set(lost)].join(" · ")}.</p>` : "");
+  return { smPts, ab, total, pct, pass, mins };
+}
+let finishArmed = false;
+function finish() {
+  const missing = SM.filter((it) => st.sm[it.id] == null).length;
+  if (missing && !finishArmed) { finishArmed = true; $("#finish-msg").textContent = (missing === 1 ? "Te falta 1 de selección múltiple." : `Te faltan ${missing} de selección múltiple.`) + " Oprime otra vez para calificar igual."; return; }
+  if (!st.end) st.end = Date.now();
+  st.finished = true; save(); showResults();
+}
+function showResults() {
+  SM.forEach((it) => {
+    const fs = $("#" + it.id);
+    fs.querySelectorAll("input").forEach((r) => { r.disabled = true; const lab = r.closest(".qopt"); const v = Number(r.value); if (v === it.a) lab.classList.add("right"); else if (r.checked) lab.classList.add("wrong"); });
+    const sol = fs.querySelector(".sol"); sol.hidden = false;
+    const ok = st.sm[it.id] === it.a;
+    sol.innerHTML = `<p class="qexp ${ok ? "ok" : "no"}"><b>${ok ? "Correcta: 10/10." : "Incorrecta: 0/10."}</b> Solución:</p>${stepsHtml(it.sol)}<div class="wx-res"><b>Resultado:</b> ${it.res}</div>`;
+  });
+  AB.forEach((it) => {
+    const art = $("#" + it.id);
+    art.querySelector(".rub").hidden = false;
+    const sol = art.querySelector(".sol"); sol.hidden = false;
+    sol.innerHTML = `<h4>Solución paso a paso</h4>${stepsHtml(it.sol)}<div class="wx-res"><b>Resultado:</b> ${it.res}</div>`;
+  });
+  $("#finish").disabled = true; $("#finish-msg").textContent = "Ya calificado. Debajo de cada problema está la solución.";
+  $("#grading").hidden = false; $("#formulas").hidden = false;
+  score();
+}
+let db = null;
+async function saveAttempt() {
+  const r = score();
+  if (!db) { $("#save-msg").textContent = "No se pudo conectar con la base de datos. Mándame tu nota por el chat."; return; }
+  $("#save").disabled = true; $("#save-msg").textContent = "Guardando…";
+  try {
+    await db.collection("intentos").add({ modulo: "M9", quiz: "Simulacro", puntaje: r.total, total: 70, aprobado: r.pass, porcentaje: r.pct, sm: SM.map((it) => (st.sm[it.id] == null ? "-" : String.fromCharCode(65 + st.sm[it.id]))), abiertos: r.ab, minutos: r.mins, fecha: new Date().toISOString() });
+    $("#save-msg").textContent = "Nota guardada. Cuando vuelvas al chat, Claude la marca en tu plan.";
+  } catch (e) { $("#save").disabled = false; $("#save-msg").textContent = "No se pudo guardar. Intenta otra vez o mándame tu nota por el chat."; }
+}
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has guardado un simulacro. Tu nota queda guardada para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Simulacro · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Meta cumplida" : "Debajo de la meta"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+}
+function begin() {
+  if (!st.start) { st.start = Date.now(); save(); }
+  $("#exam").hidden = false; $("#start").disabled = true; $("#start-msg").textContent = "En curso. El cronómetro está arriba, en la barra.";
+  tick();
+}
+load();
+renderExam();
+$("#start").addEventListener("click", () => { begin(); $("#parte-a").scrollIntoView({ behavior: "smooth" }); });
+$("#finish").addEventListener("click", finish);
+$("#save").addEventListener("click", saveAttempt);
+$("#reset").addEventListener("click", () => { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); });
+if (st.start) begin();
+if (st.finished) showResults();
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
