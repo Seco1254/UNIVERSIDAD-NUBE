@@ -119,6 +119,8 @@ footer{font-size:.88rem; color:var(--muted); border-top:1px solid var(--rule); p
 .a-n{stroke:var(--c-normal); fill:var(--c-normal)}
 .a-comp{stroke:var(--c-comp); fill:var(--c-comp)}
 .a-v{stroke:var(--c-v); fill:var(--c-v)}
+.a-v-dash{stroke:var(--c-v); stroke-width:2.4; stroke-dasharray:6 4; fill:none}
+.fig-sum svg{display:block; width:100%; height:auto; max-width:620px}
 .t{font-family:var(--f-mono); font-size:15px; fill:var(--ink); paint-order:stroke; stroke:var(--surface); stroke-width:4px; stroke-linejoin:round}
 .t-peso{fill:var(--c-peso); font-weight:600}
 .t-n{fill:var(--c-normal); font-weight:600}
@@ -194,6 +196,48 @@ footer{font-size:.88rem; color:var(--muted); border-top:1px solid var(--rule); p
       </article>
     </div>
     <p class="rule"><b>¿Y la componente tangencial, mg·sen θ?</b> No es una fuerza de más que aparece al moverse: es la otra mitad del peso, y está ahí siempre. Apunta a lo largo de la superficie, así que no entra en la ecuación radial. Lo que hace es acelerar al bloque cuesta abajo, o sea, hacer que v crezca.</p>
+  </section>
+
+  <section id="suma">
+    <h2>¿No debería la normal ser la suma de las dos?</h2>
+    <p class="muted" style="max-width:68ch">La idea es tentadora: la componente del peso y la aceleración apuntan hacia el centro, la normal apunta hacia afuera, así que la normal debería aguantar las dos. El problema es que M·v²/R no es una fuerza que haya que aguantar. Con los números del taller (cos θ = 7/9, N = Mg/3):</p>
+    <div class="cards">
+      <article class="card">
+        <span class="tag" style="color:var(--red)">Tu idea</span>
+        <figure class="fig-sum"><svg viewBox="0 0 540 210" role="img" aria-label="Idea incorrecta: Mg cos theta y M v al cuadrado sobre R hacia el centro, y la normal hacia afuera igual a la suma. Si fuera así, las fuerzas se cancelarían y el bloque no curvaría.">
+          <text x="20" y="100" dy=".35em" class="t t-mut">← centro</text>
+          <rect x="283" y="83" width="34" height="34" class="sv-block"/>
+          <line x1="283" y1="90" x2="152" y2="90" class="a-comp" stroke-width="2.4"/><polygon points="143,90 152,85.4 152,94.6" class="a-comp"/>
+          <text x="213" y="72" dy=".35em" text-anchor="middle" class="t t-comp">Mg·cos θ</text>
+          <line x1="283" y1="112" x2="202" y2="112" class="a-v-dash"/><polygon points="193,112 202,107.4 202,116.6" class="a-v"/>
+          <text x="238" y="130" dy=".35em" text-anchor="middle" class="t t-v">M·v²/R</text>
+          <text x="238" y="148" dy=".35em" text-anchor="middle" class="t t-bad" style="font-size:12px">no es una fuerza</text>
+          <line x1="317" y1="100" x2="498" y2="100" class="a-n" stroke-width="2.4"/><polygon points="507,100 498,95.4 498,104.6" class="a-n"/>
+          <text x="412" y="82" dy=".35em" text-anchor="middle" class="t t-n">N = la suma (?)</text>
+          <text x="270" y="178" dy=".35em" text-anchor="middle" class="t t-bad">Si fuera así, todo se cancelaría: ΣF = 0,</text>
+          <text x="270" y="198" dy=".35em" text-anchor="middle" class="t t-bad">y sin fuerza neta el bloque no podría curvar.</text>
+        </svg></figure>
+        <p>Aquí M·v²/R está dibujada como una flecha más que jala hacia el centro, y la normal tiene que equilibrarla. Pero en el DCL solo van fuerzas que alguien hace: la Tierra (el peso) y la superficie (la normal). Nadie hace "la fuerza M·v²/R".</p>
+      </article>
+      <article class="card">
+        <span class="tag" style="color:var(--green)">Lo que pasa</span>
+        <figure class="fig-sum"><svg viewBox="0 0 540 240" role="img" aria-label="Suma de fuerzas sobre la línea del radio: Mg cos theta de 7/9 Mg hacia el centro, la normal de 3/9 Mg hacia afuera, y sobra 4/9 Mg hacia el centro, que es M v al cuadrado sobre R.">
+          <line x1="470" y1="50" x2="470" y2="165" class="sv-rad"/><line x1="190" y1="50" x2="190" y2="105" class="sv-rad"/><line x1="310" y1="105" x2="310" y2="165" class="sv-rad"/>
+          <line x1="470" y1="50" x2="199" y2="50" class="a-comp" stroke-width="2.4"/><polygon points="190,50 199,45.4 199,54.6" class="a-comp"/>
+          <text x="330" y="32" dy=".35em" text-anchor="middle" class="t t-comp">Mg·cos θ = 7/9 Mg</text>
+          <line x1="190" y1="105" x2="301" y2="105" class="a-n" stroke-width="2.4"/><polygon points="310,105 301,100.4 301,109.6" class="a-n"/>
+          <text x="250" y="87" dy=".35em" text-anchor="middle" class="t t-n">N = 3/9 Mg</text>
+          <line x1="470" y1="165" x2="319" y2="165" class="a-v" stroke-width="4"/><polygon points="310,165 320,159.5 320,170.5" class="a-v"/>
+          <text x="390" y="190" dy=".35em" text-anchor="middle" class="t t-v">sobra 4/9 Mg = M·v²/R</text>
+          <text x="470" y="32" dy=".35em" text-anchor="middle" class="t t-mut">bloque</text>
+          <text x="30" y="226" dy=".35em" class="t t-mut">← hacia el centro</text>
+          <text x="510" y="226" dy=".35em" text-anchor="end" class="t t-mut">hacia afuera →</text>
+        </svg></figure>
+        <p>Solo sumas las dos fuerzas reales, cada una con su sentido. El peso jala 7/9 hacia el centro, la normal devuelve 3/9 hacia afuera, y sobran 4/9 hacia el centro. Ese sobrante no lo aguanta nadie: es lo que hace curvar al bloque, y por eso vale M·v²/R.</p>
+      </article>
+    </div>
+    <p class="rule"><b>Como un carrito:</b> lo empujas con 10 N y la fricción lo frena con 3 N. Nadie diría que la fricción vale 10 N + m·a. Sobran 7 N, y esos 7 N son m·a: 10 − 3 = m·a. Aquí es igual: el peso empuja hacia el centro (tu mano), la normal frena (la fricción) y lo que sobra es M·v²/R.</p>
+    <p class="rule"><b>Si lo quieres ver como una balanza en equilibrio,</b> M·v²/R va del lado de la normal, no del lado del peso: Mg·cos θ = N + M·v²/R. Es la misma ecuación de arriba, solo reacomodada.</p>
   </section>
 
   <section id="cima">
