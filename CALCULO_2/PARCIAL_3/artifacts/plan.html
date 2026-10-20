@@ -1,0 +1,546 @@
+<title>Plan Parcial 3 Cálculo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el mismo cuaderno de laboratorio del plan de Física (papel milimetrado, una columna ≤ 900px), con acento violeta para Cálculo. "Hoy" arriba, la semana como tira de días con medidor de carga, los módulos con chips de progreso, y al final qué sale y la clave. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9; --yellow:#8a6e00; --yellow-soft:#f8f0c9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.55;
+}
+.wrap{max-width:900px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:28px 64px; display:grid; gap:44px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.1}
+h1{font-size:clamp(2.6rem,9vw,4.4rem); font-weight:900; font-stretch:112%; letter-spacing:-.02em}
+h2{font-size:1.55rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.08rem; font-weight:700}
+p{margin:0}
+sup{font-size:.72em; line-height:0}
+.eyebrow{font-family:var(--f-mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+
+/* Encabezado */
+.top{display:grid; gap:14px}
+.lede{font-size:1.1rem; max-width:62ch}
+.stats{display:flex; flex-wrap:wrap; gap:10px 28px; align-items:end; margin-top:6px}
+.stat{display:grid; gap:2px}
+.stat b{font-family:var(--f-display); font-size:2rem; font-weight:800; font-stretch:110%; line-height:1; font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem; color:var(--muted)}
+.bar{height:8px; background:var(--rule); border-radius:99px; overflow:hidden; width:min(260px,100%)}
+.bar i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .4s}
+
+/* Hoy */
+.today{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:18px 20px; display:grid; gap:10px; box-shadow:4px 4px 0 var(--ink)}
+.today .row{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.today h3{font-size:1.35rem}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+
+/* Medidor de carga */
+.load{display:inline-flex; align-items:center; gap:7px; font-size:.82rem; font-weight:600}
+.load .m{display:inline-flex; gap:2px; align-items:flex-end; height:14px}
+.load .m i{width:4px; background:var(--rule); border-radius:1px}
+.load .m i:nth-child(1){height:5px}.load .m i:nth-child(2){height:8px}.load .m i:nth-child(3){height:11px}.load .m i:nth-child(4){height:14px}
+.load .m i.on{background:var(--accent)}
+
+/* Semana */
+.legend{display:flex; flex-wrap:wrap; gap:8px 18px; color:var(--muted); font-size:.88rem}
+.days{display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr)); gap:10px}
+.day{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 13px; display:grid; gap:6px; align-content:start; min-width:0}
+.day .dn{display:flex; justify-content:space-between; align-items:baseline; gap:6px}
+.day .dn b{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.day .dn span{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.day .w{font-size:.92rem; line-height:1.35}
+.day .c{font-size:.8rem; line-height:1.3; color:var(--muted)}
+.day .h{font-family:var(--f-mono); font-size:.78rem; color:var(--muted)}
+.day.is-today{border:1.5px solid var(--ink); background:linear-gradient(var(--hi),var(--hi)) left top/100% 5px no-repeat, var(--surface)}
+.day.is-past{opacity:.6}
+.day.exam{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.day.exam .dn span,.day.exam .h,.day.exam .c{color:var(--paper); opacity:.75}
+.tag-today{font-family:var(--f-mono); font-size:.7rem; background:var(--hi); color:var(--hi-ink); padding:1px 6px; border-radius:4px}
+.rules{display:grid; gap:8px; margin:0; padding:0; list-style:none; font-size:.95rem; max-width:70ch}
+.rules li{padding-left:14px; border-left:3px solid var(--rule)}
+
+/* Módulos */
+.note{font-size:.95rem; max-width:68ch}
+.dbnote{font-size:.85rem; color:var(--muted); font-style:italic}
+.mods{display:grid; gap:12px}
+.mod{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px 18px; display:grid; gap:12px; min-width:0}
+.mod.done{border-color:var(--green)}
+.mod-head{display:grid; grid-template-columns:auto 1fr auto; gap:4px 14px; align-items:start}
+.code{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:1.5rem; line-height:1; padding-top:2px; min-width:2.2em}
+.mod-meta{font-size:.84rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:4px}
+.pill{font-size:.75rem; font-weight:600; padding:3px 9px; border-radius:99px; white-space:nowrap; background:var(--rule); color:var(--ink)}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.go{background:var(--accent-soft); color:var(--accent)}
+.pill.lock{background:transparent; border:1px dashed var(--rule); color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.chip-hot{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.prog{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.tog{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:.88rem; padding:6px 11px; border-radius:8px; border:1px solid var(--rule); background:transparent; color:var(--ink); cursor:pointer}
+.tog .box{width:15px; height:15px; border:1.5px solid var(--muted); border-radius:4px; display:grid; place-items:center; font-size:11px; line-height:1}
+.tog[aria-pressed="true"]{border-color:var(--green); background:var(--green-soft)}
+.tog[aria-pressed="true"] .box{background:var(--green); border-color:var(--green); color:var(--surface)}
+.tog:disabled{cursor:default; opacity:.7}
+.quizsel{display:inline-flex; align-items:center; gap:7px; font-size:.88rem; padding:4px 6px 4px 11px; border-radius:8px; border:1px solid var(--rule)}
+.quizsel select,.quizsel input{font:inherit; font-family:var(--f-mono); background:var(--paper); color:var(--ink); border:1px solid var(--rule); border-radius:6px; padding:3px 6px}
+.quizsel input{width:4.5em}
+.open{margin-left:auto; font-weight:600; font-size:.9rem; text-decoration:none}
+.open:hover{text-decoration:underline}
+details.more summary{cursor:pointer; font-size:.88rem; color:var(--muted); list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+ "; font-family:var(--f-mono)}
+details.more[open] summary::before{content:"− "}
+.more-body{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:12px}
+.more-body h4{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
+.more-body ul{margin:0; padding-left:18px; font-size:.9rem; display:grid; gap:4px}
+
+/* Qué sale */
+.freq{display:grid; gap:12px}
+.fr{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:baseline}
+.fr .lab{font-weight:600}
+.fr .lab small{font-weight:400; color:var(--muted)}
+.fr .val{font-family:var(--f-mono); font-size:.85rem; font-variant-numeric:tabular-nums; color:var(--muted)}
+.fr .track{grid-column:1 / -1; height:12px; background:var(--rule); border-radius:3px; overflow:hidden}
+.fr .track i{display:block; height:100%; border-radius:3px}
+.p-alta i{background:var(--red)} .p-media i{background:var(--orange)} .p-baja i{background:var(--yellow)}
+.prio{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:1px}
+.prio.alta{background:var(--red)} .prio.media{background:var(--orange)} .prio.baja{background:var(--yellow)}
+.patterns{display:grid; gap:10px; padding:0; margin:0; list-style:none; counter-reset:p}
+.patterns li{display:grid; grid-template-columns:2rem 1fr; gap:10px; counter-increment:p}
+.patterns li::before{content:counter(p); font-family:var(--f-display); font-weight:900; font-size:1.3rem; color:var(--accent); line-height:1.2}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.9rem; min-width:600px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td.ans{font-size:.88rem}
+td.when{white-space:nowrap}
+.verdict{display:inline-block; font-family:var(--f-mono); font-size:.72rem; font-weight:500; letter-spacing:.04em; text-transform:uppercase; padding:1px 7px; border-radius:4px; margin-right:6px}
+.verdict.conv{background:var(--green-soft); color:var(--green)}
+.verdict.div{background:var(--red-soft); color:var(--red)}
+.verdict.val{background:var(--accent-soft); color:var(--accent)}
+section{display:grid; gap:16px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.errata{display:grid; gap:10px; margin:0; padding:0; list-style:none; max-width:72ch}
+.errata li{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:11px 14px; font-size:.93rem}
+footer{font-size:.82rem; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ .bar i{transition:none} }
+@media (max-width:560px){
+  .mod-head{grid-template-columns:auto 1fr}
+  .mod-head .pill{grid-column:2; justify-self:start}
+  .open{margin-left:0}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">MATE 1214 · Cálculo Integral con Ecuaciones Diferenciales · Prof. Otaivin Martínez</p>
+    <h1>Parcial 3</h1>
+    <p class="lede">Sucesiones y series, secciones 11.1 a 11.10 del Stewart. Vale el 20 % de la nota. Lunes 26 de octubre de 2026, salón O_102. Si sale como en 2025: 75 minutos, sobre 50, sin apuntes ni calculadora.</p>
+    <div class="stats">
+      <div class="stat"><b id="dias">6</b><span id="dias-lab">días para el parcial</span></div>
+      <div class="stat"><b id="aprob">0/8</b><span>módulos aprobados</span></div>
+      <div class="stat" style="align-self:center"><div class="bar" aria-hidden="true"><i id="aprob-bar"></i></div></div>
+    </div>
+  </header>
+
+  <section aria-labelledby="hoy-h">
+    <div class="today" id="hoy">
+      <p class="eyebrow" id="hoy-h">Hoy</p>
+      <h3 id="hoy-t">M1 · Sucesiones y límites al infinito</h3>
+      <div class="row" id="hoy-row"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sem-h">
+    <div class="sec-head">
+      <h2 id="sem-h">Tu semana</h2>
+      <p class="note">La carga sigue tus días: martes y jueves son tus días más pesados, así que ahí va lo liviano. Lo que más puntos vale (series de potencias y Taylor, 45 % del parcial) queda para el sábado y el domingo, cuando ya tienes los criterios.</p>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="days" id="days"></div>
+    <ul class="rules">
+      <li><b>Si te atrasas:</b> M1 y M2 ya los viste en clase. Haz el quiz primero y, si sacas 4/5 o más, sáltalos. Recorta el lab de M5 antes que cualquier taller. <b>Nunca recortes M6, M7 ni el simulacro.</b></li>
+      <li><b>Si vas adelantado:</b> adelanta M6. Para hallar el radio solo necesitas el criterio del cociente de M4.</li>
+      <li><b>Ve a la clase del viernes:</b> es Taylor (11.10) y entra en el parcial.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="mod-h">
+    <div class="sec-head">
+      <h2 id="mod-h">Módulos</h2>
+      <p class="note">Cada módulo tiene cuatro partes: teoría, lab visual, taller y quiz. Pasas al siguiente con 4/5 o más en el quiz; si no, repasamos el error y haces el Quiz B. Lo que ya viste en clase va en los días livianos, pero la teoría va completa igual.</p>
+      <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
+    </div>
+    <div class="mods" id="mods"></div>
+  </section>
+
+  <section aria-labelledby="sale-h">
+    <div class="sec-head">
+      <h2 id="sale-h">Qué sale en el parcial</h2>
+      <p class="note">Puntos que valió cada tipo de problema en los parciales 3 de 2023-19 y 2025-10 (100 pts en total). Los dos son del profesor Martínez, el mismo que tienes ahora.</p>
+      <div class="legend"><span><i class="prio alta"></i>Sale seguro</span><span><i class="prio media"></i>Muy probable</span></div>
+    </div>
+    <div class="freq" id="freq"></div>
+    <h3>Lo que el profesor repite</h3>
+    <ol class="patterns">
+      <li><span><b>Repite ejercicios tal cual.</b> La serie de potencias Σ (−1)<sup>n</sup>(x + 2)<sup>n</sup>/(3<sup>n</sup>(n² + 1)) salió idéntica en 2023 y en 2025. Las dos de Taylor siguen la misma plantilla: A/(x − c) centrada en a = c + 1.</span></li>
+      <li><span><b>Saca el parcial de sus hojas de ejercicios.</b> El 2023 P1e (Σ sen² n/n³) es literal la hoja 11.4 (h), y el 2025 P1b es una variante de la hoja 11.6 (i). Hacer las hojas completas es el mejor seguro.</span></li>
+      <li><span><b>Las series del punto 1 siempre mezclan tres criterios:</b> comparación en el límite, comparación con el seno acotado y raíz. En 2023 sumó cociente y alternante. Lo difícil es escoger el criterio, no la cuenta.</span></li>
+      <li><span><b>Sin justificación, cero.</b> Hay que nombrar el criterio, verificar sus hipótesis y cerrar con una frase: «por el criterio de …, la serie converge». El programa dice que un cálculo sin explicación no da puntos.</span></li>
+      <li><span><b>En Taylor pide el intervalo de convergencia</b>, y en la del logaritmo los dos extremos dan distinto: (4, 6].</span></li>
+      <li><span><b>Nunca han salido</b> la monotonía de sucesiones, el criterio de la integral, la estimación del error ni las series de Maclaurin de e<sup>x</sup>, sen x o cos x. Se ven, pero rápido.</span></li>
+      <li><span><b>Sin apuntes, sin calculadora y sin hojas extra.</b> Todo va de memoria. La hoja de fórmulas mental se arma en el simulacro.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="clave-h">
+    <div class="sec-head">
+      <h2 id="clave-h">Clave de los parciales anteriores</h2>
+      <p class="note">No venían soluciones oficiales: estas respuestas las saqué yo y las verifiqué con cálculo simbólico. Cada una dice en qué módulo se practica.</p>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Parcial</th><th>Problema</th><th>Respuesta</th><th>Módulo</th></tr></thead>
+      <tbody id="clave"></tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="mat-h">
+    <div class="sec-head">
+      <h2 id="mat-h">Notas sobre el material</h2>
+      <p class="note">Detalles de las hojas y del programa que conviene saber antes de empezar.</p>
+    </div>
+    <ul class="errata">
+      <li><b>La hoja 10.1 (curvas paramétricas) no entra.</b> Ese tema empieza el martes 27 de octubre, después del parcial. Queda guardada para el final.</li>
+      <li><b>«Test del radio»</b> es como el profesor llama al criterio del cociente (en inglés, <i>ratio test</i>). No tiene nada que ver con el radio de convergencia de M6.</li>
+      <li><b>El profesor escribe sin</b> para el seno (la notación en inglés). Aquí uso sen. Es lo mismo.</li>
+      <li><b>Hoja 11.2 (5c)</b> dice (x² + x − 1)/(2x² + 1), pero es con n: (n² + n − 1)/(2n² + 1). Diverge porque el término tiende a 1/2.</li>
+      <li><b>Hoja 11.6 (1f)</b> no tiene exponente. Tal como está, diverge porque el término tiende a 1/2. Si se le perdió el exponente n, converge por la raíz (L = 1/2). Practicamos las dos versiones.</li>
+      <li><b>No hay hojas de 11.3, 11.8, 11.9 ni 11.10.</b> Para esos temas armo variantes al estilo del profesor. Si te sobra tiempo, el programa sugiere ejercicios del Stewart.</li>
+    </ul>
+  </section>
+
+  <footer>Fuente: parciales 3 de 2023-19 y 2025-10, hojas de ejercicios 11.1 a 11.6 y el programa MATE 1214 2026-2. El progreso se guarda en esta página; Claude lo actualiza cuando pasas un quiz.</footer>
+</div>
+
+<script>
+const EXAM_DAY = "2026-10-26";
+const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
+const DAYS = [
+  {d:"2026-10-20", n:"Mar", f:"20 oct", load:1, what:"M1 Sucesiones y límites al infinito", clase:"En clase: 11.9", mods:["M1"], h:"1–1,5 h"},
+  {d:"2026-10-21", n:"Mié", f:"21 oct", load:3, what:"M2 Series básicas + M3 teoría y lab", mods:["M2","M3"], h:"2,5–3 h"},
+  {d:"2026-10-22", n:"Jue", f:"22 oct", load:1, what:"M3 taller y quiz", mods:["M3"], h:"1–1,5 h"},
+  {d:"2026-10-23", n:"Vie", f:"23 oct", load:2, what:"M4 Alternantes, cociente y raíz", clase:"En clase: Taylor (entra)", mods:["M4"], h:"~2 h"},
+  {d:"2026-10-24", n:"Sáb", f:"24 oct", load:4, what:"M5 ¿Qué criterio uso? + M6 Series de potencias", mods:["M5","M6"], h:"4–5 h"},
+  {d:"2026-10-25", n:"Dom", f:"25 oct", load:4, what:"M7 Taylor + M8 Simulacro de 75 min", mods:["M7","M8"], h:"4–5 h"},
+  {d:"2026-10-26", n:"Lun", f:"26 oct · O_102", load:0, what:"30 min con la hoja mental y la clave, y Parcial 3", mods:[], h:"Llega descansado", exam:true}
+];
+const MODS = [
+  {id:"M1", t:"Sucesiones y límites al infinito", clase:"Visto en clase", day:"Mar 20", h:"1–1,5 h", libro:"11.1", extra:"la caja de herramientas",
+    dominar:["El término dominante manda: dividir por la potencia más alta.","Límites de memoria: (1 + a/n)<sup>n</sup> → e<sup>a</sup>, n<sup>1/n</sup> → 1 y r<sup>n</sup> → 0 si |r| &lt; 1.","Jerarquía de crecimiento: ln n ≪ n<sup>p</sup> ≪ r<sup>n</sup> ≪ n! ≪ n<sup>n</sup>."],
+    taller:["Hoja 11.1 (3) a–e: límites","Hoja 11.1 (1) y (2): términos y fórmula general","Los límites que aparecen dentro de los parciales"],
+    trampas:["(1 + 1/n)<sup>n</sup> tiende a e, no a 1.","Que a<sub>n</sub> → 0 no significa que la serie converja."]},
+  {id:"M2", t:"Series: geométrica, telescópica y criterio de divergencia", clase:"Visto en clase", day:"Mié 21", h:"1,5 h", libro:"11.2", extra:"7 pts en 2025",
+    dominar:["La suma parcial S<sub>N</sub> y qué significa que una serie converja.","Geométrica: converge si |r| &lt; 1 y vale (primer término)/(1 − r).","Telescópica: fracciones parciales, tachar lo que se cancela y tomar el límite de S<sub>N</sub>."],
+    taller:["2025 P2: Σ 2/(k² + k) = 2","Hoja 11.2 (2): seis geométricas","Hoja 11.2 (3): telescópicas","Hoja 11.2 (1) y (5): notación y divergencia"],
+    trampas:["La fórmula usa el primer término de la suma, que no siempre es a.","Si a<sub>n</sub> → 0, el criterio de divergencia no dice nada: la armónica diverge."]},
+  {id:"M3", t:"Comparación directa, comparación en el límite y serie p", clase:"Visto en clase", day:"Mié 21 y jue 22", h:"2 h", libro:"11.3–11.4", extra:"24 pts históricos",
+    dominar:["Serie p: Σ 1/n<sup>p</sup> converge si y solo si p &gt; 1.","Escoger b<sub>n</sub> con el término dominante de arriba y de abajo.","Acotar sen² n y cos² n entre 0 y 1."],
+    taller:["2025 P1a: √(n³ + 5)/(n³ − 3)","2025 P1c: (1 + sen² n)/n","2023 P1a: √(n + 1)/(n + 2)","2023 P1e: sen² n/n³","Hoja 11.4 completa (a–o)"],
+    trampas:["Ser menor que una serie divergente no prueba nada.","Decir que el límite L es finito y positivo.","Los primeros términos negativos (2025 P1a con n = 1) no cambian la conclusión."]},
+  {id:"M4", t:"Alternantes, convergencia absoluta, cociente y raíz", clase:"Visto en clase", day:"Vie 23", h:"2 h", libro:"11.5–11.6", extra:"24 pts históricos",
+    dominar:["Criterio de Leibniz: b<sub>n</sub> decreciente y b<sub>n</sub> → 0.","Decidir si converge absolutamente, condicionalmente o diverge.","Cociente para factoriales y r<sup>n</sup>; raíz para todo lo que está elevado a n."],
+    taller:["2023 P1b: 2<sup>n−1</sup>/(n + 1)!","2023 P1c: (−1)<sup>n</sup> 2n/(n² + 1)","2023 P1d: (2n²/(n² + 3))<sup>n</sup>","2025 P1b: ((n + 2)/n)<sup>n²</sup>","Hojas 11.5 y 11.6 completas"],
+    trampas:["Con L = 1 el criterio no concluye: las series p siempre dan 1.","«Test del radio» es el cociente, no el radio de convergencia.","(n + 1)!/n! = n + 1."]},
+  {id:"M5", t:"¿Qué criterio uso? Estrategia y redacción", day:"Sáb 24", h:"1,5–2 h", libro:"11.7", extra:"el bloque de criterios vale 36–60 %",
+    dominar:["El árbol de decisión en 7 preguntas.","La frase de justificación de cada criterio.","Resolver cada serie en menos de 6 minutos."],
+    taller:["Los 8 ejercicios del punto 1 de 2023 y 2025, mezclados y sin pista","Series mezcladas de las hojas"],
+    trampas:["Usar el cociente con una fracción de potencias: da 1 y se pierde el tiempo.","No escribir la conclusión: sin justificación vale 0."]},
+  {id:"M6", t:"Series de potencias: radio e intervalo de convergencia", hot:true, clase:"Visto en clase", day:"Sáb 24", h:"2–2,5 h", libro:"11.8", extra:"28 % · salió idéntico 2 veces",
+    dominar:["Receta: cociente con |x − a| → radio → los dos extremos → intervalo.","Cada extremo es una serie numérica que se decide con M3 y M4.","Los casos R = 0 y R = ∞."],
+    taller:["2025 P3 = 2023 P2: R = 3 e intervalo [−5, 1]","Hoja 11.2 (4): cuatro geométricas con x","Variantes donde un extremo converge y el otro no"],
+    trampas:["Olvidar los extremos: son la mitad del puntaje.","En x = −5, (−1)<sup>n</sup>(−3)<sup>n</sup> = 3<sup>n</sup>: los signos se cancelan."]},
+  {id:"M7", t:"Representación de funciones y series de Taylor", clase:"Clase hoy y el viernes", day:"Dom 25", h:"2,5–3 h", libro:"11.9–11.10 (hasta el ej. 6)", extra:"17 % del parcial",
+    dominar:["La geométrica como molde: 1/(1 − u) = Σ u<sup>n</sup> si |u| &lt; 1.","A/(x − c) centrada en a: sacar (a − c) como factor común.","Integrar término a término (el logaritmo) y hallar la constante en el centro.","c<sub>n</sub> = f<sup>(n)</sup>(a)/n!; Maclaurin de e<sup>x</sup>, sen x y cos x."],
+    taller:["2025 P4a: 3/(x − 4) centrada en 5","2025 P4b: 3 ln(x − 4) centrada en 5","2023 P3: 2/(x + 3) centrada en −2","Variantes con a − c ≠ 1 y de Maclaurin"],
+    trampas:["Olvidar la constante al integrar.","Al integrar, el intervalo puede ganar un extremo: (4, 6]."]},
+  {id:"M8", t:"Simulacro estilo Martínez", day:"Dom 25", h:"75 min + corrección", libro:"11.1–11.10", extra:"sin apuntes", sim:true,
+    dominar:["Un parcial nuevo con la estructura de 2025: 3 series (18), una suma (7), radio e intervalo (14) y Taylor (11).","Calificado con rúbrica: criterio, hipótesis, cuenta y conclusión por separado.","Tu hoja de fórmulas mental."],
+    taller:["Un parcial nuevo escrito al estilo del profesor, sobre 50"],
+    trampas:["La meta es 40/50 o más. Si sacas menos, el lunes repasas solo lo que perdiste."]}
+];
+const FREQ = [
+  {t:"Radio e intervalo de una serie de potencias", ex:"con los dos extremos", pts:28, p:"alta", v:"2 de 2 · idéntico"},
+  {t:"Serie de Taylor con la geométrica", ex:"A/(x − c) centrada en a; ln integrando", pts:17, p:"alta", v:"2 de 2"},
+  {t:"Comparación en el límite con una serie p", ex:"fracciones con raíces", pts:12, p:"alta", v:"2 de 2"},
+  {t:"Comparación directa con el seno acotado", ex:"0 ≤ sen² n ≤ 1", pts:12, p:"alta", v:"2 de 2"},
+  {t:"Criterio de la raíz", ex:"todo elevado a n o a n²", pts:12, p:"alta", v:"2 de 2"},
+  {t:"Suma telescópica", ex:"fracciones parciales", pts:7, p:"media", v:"1 de 2"},
+  {t:"Criterio del cociente", ex:"factoriales", pts:6, p:"media", v:"1 de 2"},
+  {t:"Serie alternante (Leibniz)", ex:"converge condicionalmente", pts:6, p:"media", v:"1 de 2"}
+];
+/* [parcial, problema (HTML), veredicto, respuesta (HTML), módulo] */
+const CLAVE = [
+  ["2023-19","P1a · Σ √(n + 1)/(n + 2)","div","Comparación en el límite con 1/√n: L = 1, y Σ 1/n<sup>1/2</sup> es serie p con p = 1/2 ≤ 1.","M3"],
+  ["2023-19","P1b · Σ 2<sup>n−1</sup>/(n + 1)!","conv","Cociente: L = lim 2/(n + 2) = 0 &lt; 1.","M4"],
+  ["2023-19","P1c · Σ (−1)<sup>n</sup> 2n/(n² + 1), desde n = 2","conv","Leibniz: b<sub>n</sub> = 2n/(n² + 1) decrece y tiende a 0. Converge condicionalmente: Σ |a<sub>n</sub>| diverge (compara con 1/n, L = 2).","M4"],
+  ["2023-19","P1d · Σ (2n²/(n² + 3))<sup>n</sup>","div","Raíz: L = lim 2n²/(n² + 3) = 2 &gt; 1.","M4"],
+  ["2023-19","P1e · Σ sen² n/n³","conv","Comparación directa: 0 ≤ sen² n/n³ ≤ 1/n³, serie p con p = 3.","M3"],
+  ["2023-19","P2 · radio e intervalo de Σ (−1)<sup>n</sup>(x + 2)<sup>n</sup>/(3<sup>n</sup>(n² + 1))","val","R = 3, intervalo <b>[−5, 1]</b>. En los dos extremos queda una serie que se compara con 1/n².","M6"],
+  ["2023-19","P3 · Taylor de 2/(x + 3) centrada en −2","val","Σ 2(−1)<sup>n</sup>(x + 2)<sup>n</sup>, intervalo (−3, −1).","M7"],
+  ["2025-10","P1a · Σ √(n³ + 5)/(n³ − 3)","conv","Comparación en el límite con 1/n<sup>3/2</sup>: L = 1, serie p con p = 3/2. El primer término es negativo y no cambia nada.","M3"],
+  ["2025-10","P1b · Σ ((n + 2)/n)<sup>n²</sup>","div","Raíz: L = lim (1 + 2/n)<sup>n</sup> = e² &gt; 1.","M4"],
+  ["2025-10","P1c · Σ (1 + sen² n)/n","div","Comparación directa: (1 + sen² n)/n ≥ 1/n, y la armónica diverge.","M3"],
+  ["2025-10","P2 · Σ 2/(k² + k), desde k = 1","val","Converge a <b>2</b>. 2/(k² + k) = 2/k − 2/(k + 1), así que S<sub>N</sub> = 2 − 2/(N + 1).","M2"],
+  ["2025-10","P3 · el mismo de 2023-19 P2","val","R = 3, intervalo <b>[−5, 1]</b>.","M6"],
+  ["2025-10","P4a · Taylor de 3/(x − 4) centrada en 5","val","Σ 3(−1)<sup>n</sup>(x − 5)<sup>n</sup>, intervalo (4, 6). En los extremos el término no tiende a 0.","M7"],
+  ["2025-10","P4b · Taylor de 3 ln(x − 4) centrada en 5","val","Σ<sub>n≥1</sub> 3(−1)<sup>n−1</sup>(x − 5)<sup>n</sup>/n, intervalo <b>(4, 6]</b>: en x = 6 es la armónica alternante; en x = 4, −3 por la armónica.","M7"]
+];
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página (tienen <sup> y <sub>). */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const pad = (n) => String(n).padStart(2, "0");
+const now = new Date();
+const todayIso = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+
+function loadMeter(level) {
+  const w = el("span", "load");
+  const m = el("span", "m"); m.setAttribute("aria-hidden", "true");
+  for (let i = 1; i <= 4; i++) { const b = el("i", i <= level ? "on" : ""); m.appendChild(b); }
+  w.appendChild(m); w.appendChild(el("span", "", LOADS[level]));
+  return w;
+}
+
+/* Cuenta regresiva en días de calendario */
+(function () {
+  const [y, mo, d] = EXAM_DAY.split("-").map(Number);
+  const exam = new Date(y, mo - 1, d);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = Math.round((exam - today) / 86400000);
+  if (days < 0) { $("#dias").textContent = "—"; $("#dias-lab").textContent = "el parcial ya pasó"; }
+  else if (days === 0) { $("#dias").textContent = "Hoy"; $("#dias-lab").textContent = "es el parcial"; }
+  else { $("#dias").textContent = days; $("#dias-lab").textContent = days === 1 ? "día para el parcial" : "días para el parcial"; }
+})();
+
+/* Semana */
+(function () {
+  const lg = $("#legend");
+  [[1,"Mar y jue · 1–1,5 h"],[2,"Lun y vie · ~2 h"],[3,"Mié · 2,5–3 h"],[4,"Sáb y dom · 4–5 h"]].forEach(([l, t]) => {
+    const s = el("span"); s.appendChild(loadMeter(l)); s.appendChild(document.createTextNode(" " + t)); lg.appendChild(s);
+  });
+  const box = $("#days");
+  DAYS.forEach((d) => {
+    const c = el("article", "day" + (d.exam ? " exam" : "") + (d.d === todayIso ? " is-today" : "") + (d.d < todayIso ? " is-past" : ""));
+    const dn = el("div", "dn"); dn.appendChild(el("b", "", d.n)); dn.appendChild(el("span", "", d.f)); c.appendChild(dn);
+    if (d.d === todayIso) { const t = el("span", "tag-today", "HOY"); t.style.justifySelf = "start"; c.appendChild(t); }
+    if (!d.exam) c.appendChild(loadMeter(d.load));
+    c.appendChild(el("p", "w", d.what));
+    if (d.clase) c.appendChild(el("p", "c", d.clase));
+    c.appendChild(el("p", "h", d.h));
+    box.appendChild(c);
+  });
+})();
+
+/* Qué sale */
+(function () {
+  const box = $("#freq");
+  const max = Math.max(...FREQ.map((f) => f.pts));
+  FREQ.forEach((f) => {
+    const r = el("div", "fr p-" + f.p);
+    const lab = el("div", "lab"); const dot = el("i", "prio " + f.p); lab.appendChild(dot);
+    lab.appendChild(document.createTextNode(f.t + " ")); lab.appendChild(el("small", "", "· " + f.ex));
+    r.appendChild(lab);
+    r.appendChild(el("div", "val", f.pts + " pts · " + f.v));
+    const tr = el("div", "track"); const i = el("i"); i.style.width = (f.pts / max * 100) + "%"; tr.appendChild(i); r.appendChild(tr);
+    box.appendChild(r);
+  });
+})();
+
+/* Clave */
+(function () {
+  const tb = $("#clave");
+  const LAB = {conv:"Converge", div:"Diverge"};
+  CLAVE.forEach((r) => {
+    const tr = el("tr");
+    tr.appendChild(el("td", "mono when", r[0]));
+    tr.appendChild(elh("td", "", r[1]));
+    const a = el("td", "ans");
+    if (LAB[r[2]]) a.appendChild(el("span", "verdict " + r[2], LAB[r[2]]));
+    const t = el("span"); t.innerHTML = r[3]; a.appendChild(t);
+    tr.appendChild(a);
+    tr.appendChild(el("td", "mono", r[4]));
+    tb.appendChild(tr);
+  });
+})();
+
+/* Progreso */
+let progress = {};
+let db = null, canWrite = false;
+const writeQueue = {};
+
+function isPassed(m, p) { if (!p || p.quiz == null || p.quiz === "") return false; return m.sim ? Number(p.quiz) >= 40 : Number(p.quiz) >= 4; }
+function status(m, idx) {
+  const p = progress[m.id] || {};
+  if (isPassed(m, p)) return ["Aprobado", "ok"];
+  if (p.teoria || p.lab || p.taller || (p.quiz != null && p.quiz !== "")) return ["En curso", "go"];
+  if (idx > 0 && !isPassed(MODS[idx - 1], progress[MODS[idx - 1].id])) return ["Después de " + MODS[idx - 1].id, "lock"];
+  return ["Siguiente", "go"];
+}
+
+function renderMods() {
+  const box = $("#mods"); box.textContent = "";
+  let passed = 0;
+  MODS.forEach((m, idx) => {
+    const p = progress[m.id] || {};
+    if (isPassed(m, p)) passed++;
+    const card = el("article", "mod" + (isPassed(m, p) ? " done" : ""));
+    const head = el("div", "mod-head");
+    head.appendChild(el("span", "code", m.id));
+    const tbox = el("div"); tbox.style.minWidth = "0";
+    tbox.appendChild(el("h3", "", m.t));
+    const meta = el("div", "mod-meta");
+    if (m.hot) meta.appendChild(el("span", "chip-hot", "El que más pesa"));
+    if (m.clase) meta.appendChild(el("span", "chip-ref", m.clase));
+    meta.appendChild(el("span", "", m.day + " · " + m.h));
+    meta.appendChild(el("span", "", "Libro " + m.libro));
+    if (m.extra) meta.appendChild(el("span", "", m.extra));
+    tbox.appendChild(meta); head.appendChild(tbox);
+    const [st, cls] = status(m, idx);
+    head.appendChild(el("span", "pill " + cls, st));
+    card.appendChild(head);
+
+    const prog = el("div", "prog");
+    if (!m.sim) {
+      [["teoria", "Teoría"], ["lab", "Lab"], ["taller", "Taller"]].forEach(([k, lab]) => {
+        const b = el("button", "tog"); b.type = "button"; b.id = "tog-" + m.id + "-" + k;
+        b.setAttribute("aria-pressed", p[k] ? "true" : "false");
+        const bx = el("span", "box", p[k] ? "✓" : ""); bx.setAttribute("aria-hidden", "true");
+        b.appendChild(bx); b.appendChild(document.createTextNode(lab));
+        b.disabled = !canWrite;
+        b.addEventListener("click", () => save(m.id, { [k]: !p[k] }));
+        prog.appendChild(b);
+      });
+    }
+    const q = el("label", "quizsel"); q.htmlFor = "quiz-" + m.id;
+    q.appendChild(document.createTextNode(m.sim ? "Simulacro" : "Quiz"));
+    let inp;
+    if (m.sim) {
+      inp = el("input"); inp.type = "number"; inp.min = 0; inp.max = 50; inp.placeholder = "—";
+      inp.value = p.quiz != null ? p.quiz : "";
+      inp.addEventListener("change", () => { const v = inp.value === "" ? null : Math.max(0, Math.min(50, Number(inp.value))); save(m.id, { quiz: v }); });
+      q.appendChild(inp); q.appendChild(document.createTextNode("/50"));
+    } else {
+      inp = el("select");
+      const o0 = el("option", "", "—"); o0.value = ""; inp.appendChild(o0);
+      for (let i = 0; i <= 5; i++) { const o = el("option", "", i + "/5"); o.value = String(i); inp.appendChild(o); }
+      inp.value = p.quiz != null ? String(p.quiz) : "";
+      inp.addEventListener("change", () => save(m.id, { quiz: inp.value === "" ? null : Number(inp.value) }));
+      q.appendChild(inp);
+    }
+    inp.id = "quiz-" + m.id; inp.disabled = !canWrite;
+    prog.appendChild(q);
+    if (p.url) { const a = el("a", "open", "Abrir módulo →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; prog.appendChild(a); }
+    else { prog.appendChild(el("span", "open muted", "Módulo aún no creado")); }
+    card.appendChild(prog);
+
+    const det = el("details", "more");
+    det.appendChild(el("summary", "", "Qué incluye"));
+    const body = el("div", "more-body");
+    [["Vas a dominar", m.dominar], [m.sim ? "Formato" : "Taller", m.taller], [m.sim ? "Meta" : "Trampas", m.trampas]].forEach(([h, list]) => {
+      const col = el("div"); col.appendChild(el("h4", "", h));
+      const ul = el("ul"); list.forEach((x) => ul.appendChild(elh("li", "", x))); col.appendChild(ul); body.appendChild(col);
+    });
+    det.appendChild(body); card.appendChild(det);
+    box.appendChild(card);
+  });
+  $("#aprob").textContent = passed + "/" + MODS.length;
+  $("#aprob-bar").style.width = (passed / MODS.length * 100) + "%";
+  renderToday();
+}
+
+function renderToday() {
+  const d = DAYS.find((x) => x.d === todayIso) || (todayIso < DAYS[0].d ? DAYS[0] : null);
+  const row = $("#hoy-row"); row.textContent = "";
+  if (!d) { $("#hoy-h").textContent = "Después del parcial"; $("#hoy-t").textContent = "El parcial 3 ya pasó."; return; }
+  $("#hoy-h").textContent = d.d === todayIso ? "Hoy · " + d.n + " " + d.f : "Primer día · " + d.n + " " + d.f;
+  $("#hoy-t").textContent = d.what;
+  if (!d.exam) row.appendChild(loadMeter(d.load));
+  row.appendChild(el("span", "mono muted", d.h));
+  d.mods.forEach((id) => {
+    const p = progress[id] || {};
+    if (p.url) { const a = el("a", "btn", "Abrir " + id + " →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a); }
+  });
+}
+
+async function save(id, patch) {
+  if (!db || !canWrite) return;
+  progress[id] = Object.assign({}, progress[id] || {}, patch);
+  renderMods();
+  const prev = writeQueue[id] || Promise.resolve();
+  const run = prev.then(() => db.collection("progreso").doc(id).set(Object.assign({}, progress[id]))).catch((e) => {
+    if (e && e.code === "invalid_argument") { canWrite = false; $("#dbnote").textContent = "Esta vista es de solo lectura: no se pudo guardar el cambio."; renderMods(); }
+    else { $("#dbnote").textContent = "No se pudo guardar el cambio. Vuelve a intentarlo en un momento."; }
+  });
+  writeQueue[id] = run;
+  return run;
+}
+
+renderMods();
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) { $("#dbnote").textContent = "Abre esta página en claude.ai con tu cuenta para guardar y ver tu progreso."; return; }
+  let user = null;
+  try { user = await window.claude.use("user"); } catch (e) { user = null; }
+  let cw = null;
+  try { cw = user ? await user.can("data.write") : null; } catch (e) { cw = null; }
+  canWrite = cw !== false;
+  $("#dbnote").textContent = canWrite ? "Marca cada parte cuando la termines. Claude actualiza la nota del quiz cuando lo apruebas." : "Estás viendo el progreso en modo lectura.";
+  db.collection("progreso").onSnapshot((snap) => {
+    const next = {};
+    snap.docs.forEach((d) => { if (d.exists) next[d.id] = Object.assign({}, d.data()); });
+    progress = next;
+    renderMods();
+  }, () => { $("#dbnote").textContent = "Se perdió la conexión con tu progreso. Recarga la página."; });
+})();
+</script>
