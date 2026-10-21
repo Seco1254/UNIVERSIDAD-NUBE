@@ -16,12 +16,22 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 - **Todo se entrega como Artifact**: planes, módulos, talleres y quizzes. El HTML fuente se guarda en `<MATERIA>/<EVALUACION>/artifacts/` y los links publicados quedan anotados en la tabla de abajo.
 - **Carga semanal**: martes y jueves, **liviana** (1–1,5 h; son sus días más pesados); lunes y viernes, **suave** (~2 h); miércoles, **media** (2,5–3 h); sábado y domingo, **pesada** (4–5 h; ahí van los bloques difíciles).
 - Los temas que ya vio en clase pueden ir en días livianos, pero **la teoría nunca se recorta**.
-- **Asume que no sabe nada** más allá de lo que se explicó en los módulos anteriores (pidió esto el 8 de octubre). Cada módulo abre con una tabla «Símbolos de este módulo» (símbolo, cómo se lee, qué significa, unidades) y cada símbolo se explica en palabras la primera vez que aparece. Nada de fₛ, µ, ω, etc. sin definir. La teoría va desde la intuición, con al menos un ejemplo resuelto por idea clave.
-- **Ejemplos resueltos extendidos y solo con letras** (pidió esto el 13 de octubre): paso a paso, sin saltarse pasos. Cada paso dice qué se hace, por qué y la cuenta; las energías van en una tabla inicio/final y lo que se cancela se muestra tachado. Nada de números en los ejemplos de teoría: lo confunden.
+- **Asume que no sabe nada** más allá de lo que se explicó en los módulos anteriores (pidió esto el 8 de octubre). Cada módulo abre con una tabla «Símbolos de este módulo» (símbolo, cómo se lee, qué significa, unidades; en Cálculo la columna de unidades se cambia por un ejemplo) y cada símbolo se explica en palabras la primera vez que aparece. Nada de fₛ, µ, ω, etc. sin definir. La teoría va desde la intuición, con al menos un ejemplo resuelto por idea clave.
+- **Ejemplos resueltos extendidos** (pidió esto el 13 de octubre): paso a paso, sin saltarse pasos. Cada paso dice qué se hace, por qué y la cuenta; lo que se cancela se muestra tachado.
+- En el chat, cuando pregunta algo puntual mientras resuelve un taller, responde **solo** lo que pregunta, sin pistas extra ni resolverle el resto.
+- **Cada materia tiene sus propias reglas** (pidió esto el 21 de octubre): lo de Física no se copia tal cual a otras materias.
+
+### Solo en Física
+
+- **Ejemplos de teoría solo con letras** (13 de octubre): nada de números, lo confunden. Las energías van en una tabla inicio/final.
 - **La masa se escribe M mayúscula** (pidió esto el 13 de octubre, desde M6–M7): la m minúscula queda solo para metros. La tabla de símbolos lo aclara y recuerda que en el parcial la masa sale como m minúscula.
 - **Ángulos en circular desde la horizontal** (pidió esto el 14 de octubre; así se los enseñó el profesor): altura R·sen θ y peso hacia el centro M·g·sen θ. Cuando un parcial mida desde la vertical, se deja como en el parcial y se enseña la conversión (cambiar sen por cos).
 - **Toda pregunta de quiz o problema de taller que describa una situación física lleva su figura** (SVG), como en los parciales. Nada de describir montajes solo con texto.
-- En el chat, cuando pregunta algo puntual mientras resuelve un taller, responde **solo** lo que pregunta, sin pistas extra ni resolverle el resto.
+
+### Solo en Cálculo
+
+- **Ejemplos con números** (pidió esto el 21 de octubre): en Cálculo lo que es letra (n, x) es la variable y lo demás son números, así que los ejemplos resueltos no cambian los números por letras. Cada ejemplo es un ejercicio de los parciales o de las hojas del profesor, con sus números.
+- **Enfocado en el parcial** (21 de octubre): cada módulo trae solo lo que da puntos en el parcial. Lo que nunca ha salido se omite o queda como extra.
 
 ## Artifacts publicados
 

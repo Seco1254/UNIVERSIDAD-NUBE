@@ -198,6 +198,7 @@ svg text{fill:var(--ink)}
 
 /* Taller */
 .prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.extra{border-style:dashed}
 .prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
 .prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
 .prob-body{display:grid; gap:10px; min-width:0}
@@ -245,9 +246,9 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 <nav class="nav" aria-label="Secciones del módulo">
   <div class="nav-in">
     <a class="back" href="https://claude.ai/artifact/Ra9LHTCCAvquo8459V5bhS" target="_blank" rel="noopener">← Plan</a>
-    <a href="#teoria">1 Teoría <span>45 min</span></a>
-    <a href="#lab">2 Lab <span>10 min</span></a>
-    <a href="#taller">3 Taller <span>30 min</span></a>
+    <a href="#teoria">1 Teoría <span>30 min</span></a>
+    <a href="#lab">2 Lab <span>5 min</span></a>
+    <a href="#taller">3 Taller <span>25 min</span></a>
     <a href="#quiz">4 Quiz <span>10 min</span></a>
   </div>
 </nav>
@@ -258,13 +259,13 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <h1>Sucesiones y límites al infinito</h1>
     <div class="meta">
       <span class="chip-ref">Visto en clase</span>
-      <span>Martes 20 de octubre · 1–1,5 h</span>
-      <span>Libro 11.1 · la caja de herramientas del parcial</span>
+      <span>Miércoles 21 de octubre · ~1 h</span>
+      <span>Libro 11.1 · solo lo que usa el parcial</span>
     </div>
-    <p class="prose">Todo el parcial 3 termina, tarde o temprano, en un límite cuando n se hace enorme. Cada criterio de convergencia (comparación, cociente, raíz) se decide con un límite, y la serie de potencias también. Este módulo es la caja de herramientas: si calculas estos límites rápido y bien, los módulos que siguen se vuelven mecánicos.</p>
+    <p class="prose">Todo el parcial 3 termina, tarde o temprano, en un límite cuando n se hace enorme: cada criterio de convergencia se decide con uno, y el radio de la serie de potencias también. Este módulo es la caja de herramientas, y solo trae los límites que de verdad aparecen en tus parciales y en las hojas del profesor.</p>
     <div class="callout">
       <h3>Dónde aparece en tus parciales</h3>
-      <p>En 2025-10, para decidir la serie del P1b había que saber cuánto vale <span class="m">(1 + 2/n)<sup>n</sup></span>. En 2023-19, el P1d se decidía con <span class="m">2n²/(n² + 3)</span>, y el P1b con un cociente de factoriales. Los resuelves todos en el taller.</p>
+      <p>En 2025-10, la serie del P1b se decidía con <span class="m">(1 + 2/n)<sup>n</sup></span> y la del P1a con un límite con raíces. En 2023-19, el P1d se decidía con <span class="m">2n²/(n² + 3)</span> y el P1b con un cociente de factoriales. Son los ejemplos resueltos de abajo; los demás límites de los parciales están en el taller.</p>
     </div>
     <div class="shortcut">
       <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M2.</p>
@@ -274,335 +275,268 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 1. TEORÍA ============ -->
   <section id="teoria" aria-labelledby="t-h">
-    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es una sucesión, cómo se calcula su límite y los resultados que usa todo el parcial. Nueve ejemplos resueltos paso a paso, solo con letras.</p></div>
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Los cinco tipos de límite que salen dentro de los criterios del parcial, cada uno con un ejemplo resuelto paso a paso, con los números de tus parciales o de las hojas.</p></div>
 
     <div class="block">
       <h3>Símbolos de este módulo</h3>
       <div class="tw"><table class="sym">
         <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
         <tbody>
-          <tr><td class="mono">n</td><td>«ene»</td><td>La posición del término en la lista. Es un entero: 1, 2, 3, … (a veces la lista empieza en 0).</td><td>Si la lista empieza en 1, n = 4 es el cuarto término.</td></tr>
-          <tr><td class="mono">a<sub>n</sub></td><td>«a sub ene»</td><td>El término número n. Es una fórmula: le das la posición n y te devuelve el número.</td><td>Si a<sub>n</sub> = c/n, el tercero es a<sub>3</sub> = c/3.</td></tr>
-          <tr><td class="mono">{a<sub>n</sub>}</td><td>«la sucesión a sub ene»</td><td>La lista completa de términos: a<sub>1</sub>, a<sub>2</sub>, a<sub>3</sub>, …</td><td>{c/n} es c, c/2, c/3, …</td></tr>
-          <tr><td class="mono">a, b, c, d</td><td>«a, be, ce, de»</td><td>Constantes: números fijos que no cambian con n. En la teoría van como letras para que veas la estructura; en el taller ya son números.</td><td>En 3n + 5, a = 3 y b = 5.</td></tr>
-          <tr><td class="mono">k, p</td><td>«ka», «pe»</td><td>Exponentes fijos (constantes positivas).</td><td>n<sup>k</sup> con k = 2 es n².</td></tr>
-          <tr><td class="mono">r</td><td>«erre»</td><td>La base de una potencia r<sup>n</sup>: un número fijo multiplicado n veces por sí mismo.</td><td>r<sup>n</sup> = r·r·…·r (n veces).</td></tr>
-          <tr><td class="mono">n → ∞</td><td>«n tiende a infinito»</td><td>n crece sin parar, más allá de cualquier número.</td><td>n = 10, 100, 1000, …</td></tr>
-          <tr><td class="mono"><span class="lim">lim<small>n→∞</small></span> a<sub>n</sub> = L</td><td>«el límite de a sub ene, cuando n tiende a infinito, es L»</td><td>El número fijo L al que se pegan los términos cuando n crece.</td><td><span class="lim">lim<small>n→∞</small></span> c/n = 0</td></tr>
-          <tr><td class="mono">converge, diverge</td><td>—</td><td>La sucesión converge si su límite existe y es un número. Diverge si no: se va a ∞ o salta sin decidirse.</td><td>c/n converge a 0; (−1)<sup>n</sup> diverge.</td></tr>
-          <tr><td class="mono">∞</td><td>«infinito»</td><td>No es un número: indica que algo crece sin parar. «a<sub>n</sub> → ∞» quiere decir que diverge creciendo.</td><td>n² → ∞</td></tr>
-          <tr><td class="mono">e</td><td>«e»</td><td>El número de Euler, un poco más de 2,7. Es la base de la exponencial e<sup>x</sup> y del logaritmo natural.</td><td>e<sup>0</sup> = 1</td></tr>
-          <tr><td class="mono">ln</td><td>«logaritmo natural»</td><td>ln x es el exponente al que hay que elevar e para obtener x. Crece muy despacio.</td><td>ln(e<sup>k</sup>) = k</td></tr>
-          <tr><td class="mono">n!</td><td>«ene factorial»</td><td>El producto 1·2·3·…·n. Por convención, 0! = 1.</td><td>4! = 1·2·3·4</td></tr>
+          <tr><td class="mono">n</td><td>«ene»</td><td>La posición del término: 1, 2, 3, … Es la única letra que cambia; todo lo demás en la fórmula son números fijos.</td><td>En 2n²/(n² + 3), solo n cambia.</td></tr>
+          <tr><td class="mono">a<sub>n</sub></td><td>«a sub ene»</td><td>El término número n: una fórmula que depende de n.</td><td>Si a<sub>n</sub> = 2n²/(n² + 3), a<sub>1</sub> = 2/4 = 1/2.</td></tr>
+          <tr><td class="mono"><span class="lim">lim<small>n→∞</small></span> a<sub>n</sub> = L</td><td>«el límite de a sub ene, cuando n tiende a infinito, es L»</td><td>El número fijo L al que se pegan los términos cuando n crece sin parar.</td><td><span class="lim">lim<small>n→∞</small></span> 1/n = 0</td></tr>
+          <tr><td class="mono">converge, diverge</td><td>—</td><td>Converge si el límite existe y es un número. Diverge si no: se va a ∞ o salta sin decidirse.</td><td>1/n converge a 0; (−1)<sup>n</sup> diverge.</td></tr>
+          <tr><td class="mono">∞</td><td>«infinito»</td><td>No es un número: indica que algo crece sin parar.</td><td>n² → ∞</td></tr>
+          <tr><td class="mono">e</td><td>«e»</td><td>El número de Euler, ≈ 2,718. Es la base de la exponencial e<sup>x</sup> y del logaritmo natural.</td><td>e² ≈ 7,39</td></tr>
+          <tr><td class="mono">ln</td><td>«logaritmo natural»</td><td>ln x es el exponente al que hay que elevar e para obtener x. Crece muy despacio.</td><td>ln(e³) = 3</td></tr>
+          <tr><td class="mono">n!</td><td>«ene factorial»</td><td>El producto 1·2·3·…·n. Por convención, 0! = 1.</td><td>4! = 1·2·3·4 = 24</td></tr>
           <tr><td class="mono">(−1)<sup>n</sup></td><td>«menos uno a la ene»</td><td>Vale 1 si n es par y −1 si n es impar. Hace que los signos se alternen.</td><td>(−1)<sup>3</sup> = −1</td></tr>
-          <tr><td class="mono">|x|</td><td>«valor absoluto de x»</td><td>El tamaño de x, sin el signo.</td><td>|−c| = c</td></tr>
-          <tr><td class="mono">sen, cos, arctan</td><td>«seno, coseno, arcotangente»</td><td>Las funciones trigonométricas. El profesor escribe <b>sin</b> para el seno (es la notación en inglés). arctan x es el ángulo cuya tangente es x.</td><td>arctan 1 = π/4</td></tr>
-          <tr><td class="mono">≪</td><td>«mucho menor que»</td><td>f ≪ g quiere decir que f/g → 0: g crece muchísimo más rápido que f.</td><td>ln n ≪ n</td></tr>
+          <tr><td class="mono">|x|</td><td>«valor absoluto de x»</td><td>El tamaño de x, sin el signo.</td><td>|−3| = 3</td></tr>
+          <tr><td class="mono">sen, arctan</td><td>«seno», «arcotangente»</td><td>El profesor escribe <b>sin</b> para el seno (es la notación en inglés). arctan x es el ángulo cuya tangente es x; nunca pasa de π/2.</td><td>arctan 1 = π/4</td></tr>
+          <tr><td class="mono">≪</td><td>«mucho menor que»</td><td>f ≪ g quiere decir que f/g → 0: g crece muchísimo más rápido que f.</td><td>n² ≪ 2<sup>n</sup></td></tr>
+          <tr><td class="mono">p, r</td><td>«pe», «erre»</td><td>Solo aparecen en las reglas generales: p es un exponente fijo y r una base fija. En cada ejemplo ya son números.</td><td>En n³, p = 3. En 2<sup>n</sup>, r = 2.</td></tr>
         </tbody>
       </table></div>
     </div>
 
     <div class="callout">
       <h3>Cómo leer los ejemplos</h3>
-      <p>Cada ejemplo va paso a paso. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Las constantes van con letras (a, b, c, …) para que veas la estructura; en el taller ya son números. Lo que se cancela aparece <span class="cx">tachado</span>.</p>
+      <p>Cada ejemplo es un límite que salió dentro de tus parciales o en las hojas del profesor, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Lo que se cancela aparece <span class="cx">tachado</span>.</p>
     </div>
 
-    <!-- Idea 1 -->
+    <!-- Antes de empezar -->
     <div class="block">
-      <div class="idea"><span class="k">Idea 1</span><h3>Qué es una sucesión y qué quiere decir que converja</h3></div>
-      <div class="prose">
-        <p>Una sucesión es una lista infinita de números que sigue una regla. La regla es una fórmula a<sub>n</sub>: le das la posición n y te devuelve el término. Con a<sub>n</sub> = c/n (c una constante positiva), la lista es c, c/2, c/3, c/4, …</p>
-        <p>Si dibujas los términos como puntos (n en el eje horizontal y a<sub>n</sub> en el vertical), pasa una de tres cosas:</p>
-      </div>
+      <div class="idea"><span class="k">Antes de empezar</span><h3>Qué quiere decir que una sucesión converja</h3></div>
+      <p class="prose">Una sucesión es una lista infinita de números que sigue una fórmula a<sub>n</sub>. Si dibujas los términos como puntos (n en el eje horizontal y a<sub>n</sub> en el vertical), pasa una de tres cosas:</p>
       <div class="figs">
         <figure><div data-fig="conv"></div><figcaption><b>Converge:</b> los puntos se pegan a una línea horizontal L.</figcaption></figure>
         <figure><div data-fig="inf"></div><figcaption><b>Diverge a ∞:</b> los puntos suben sin parar.</figcaption></figure>
         <figure><div data-fig="osc"></div><figcaption><b>Diverge porque oscila:</b> los puntos saltan entre dos alturas y nunca se deciden.</figcaption></figure>
       </div>
-      <p class="prose"><span class="m"><span class="lim">lim<small>n→∞</small></span> a<sub>n</sub> = L</span> quiere decir esto: dibuja una franja tan delgada como quieras alrededor de L. Desde algún término en adelante, todos los puntos quedan dentro de la franja. No importa cómo empiece la lista: importa lo que pasa cuando n es enorme. Lo puedes probar en el lab.</p>
-      <div class="tw"><table class="narrow">
-        <thead><tr><th>Cómo encontrar la fórmula (hoja 11.1)</th><th>Usa</th></tr></thead>
-        <tbody>
-          <tr><td>Signos alternos que empiezan en − (con n = 1)</td><td class="mono">(−1)<sup>n</sup></td></tr>
-          <tr><td>Signos alternos que empiezan en + (con n = 1)</td><td class="mono">(−1)<sup>n+1</sup></td></tr>
-          <tr><td>Pares: 2, 4, 6, …</td><td class="mono">2n</td></tr>
-          <tr><td>Impares: 1, 3, 5, …</td><td class="mono">2n − 1</td></tr>
-          <tr><td>Potencias de una base: r, r², r³, …</td><td class="mono">r<sup>n</sup></td></tr>
-          <tr><td>Productos 1, 1·2, 1·2·3, …</td><td class="mono">n!</td></tr>
-        </tbody>
-      </table></div>
-
-      <article class="wx" aria-labelledby="wx1-h">
-        <div class="wx-head">
-          <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 1 · Como la hoja 11.1 (2)</span>
-            <h4 id="wx1-h">La fórmula de una lista y su límite</h4>
-            <p>Te dan los primeros términos de una sucesión: <span class="m">c, −c/2, c/3, −c/4, c/5, …</span>, donde c es una constante positiva.</p>
-            <p><b>Pregunta:</b> ¿cuál es la fórmula de a<sub>n</sub> y a qué tiende?</p>
-          </div>
-          <figure class="wx-fig"><div data-fig="ex1"></div></figure>
-        </div>
-        <ol class="wx-steps">
-          <li><p class="what">Separa lo que cambia de lo que no.</p><p class="why">El numerador siempre es c. Los denominadores son 1, 2, 3, 4, 5: la posición n. El signo va +, −, +, −.</p><div class="mx">tamaño del término n: <span class="frac"><span>c</span><span>n</span></span></div></li>
-          <li><p class="what">Arma el signo.</p><p class="why">(−1)<sup>n</sup> vale −1 cuando n es impar y +1 cuando n es par. Aquí el primer término (n = 1) es positivo, así que hay que correr el exponente en uno: (−1)<sup>n+1</sup>.</p><div class="mx">n = 1: (−1)<sup>2</sup> = +1<span class="ar">·</span>n = 2: (−1)<sup>3</sup> = −1</div></li>
-          <li><p class="what">Junta el signo y el tamaño, y comprueba.</p><p class="why">Prueba la fórmula con un término de la lista, por ejemplo el tercero.</p><div class="mx">a<sub>n</sub> = (−1)<sup>n+1</sup>·<span class="frac"><span>c</span><span>n</span></span><span class="ar">→</span>a<sub>3</sub> = (−1)<sup>4</sup>·<span class="frac"><span>c</span><span>3</span></span> = <span class="frac"><span>c</span><span>3</span></span> ✓</div></li>
-          <li><p class="what">Mira qué pasa con el tamaño cuando n crece.</p><p class="why">c está fijo y n crece sin parar: c/n se hace tan pequeño como quieras. El signo solo decide de qué lado del 0 queda el punto.</p><div class="mx">|a<sub>n</sub>| = <span class="frac"><span>c</span><span>n</span></span> → 0</div></li>
-          <li><p class="what">Concluye.</p><p class="why">Si el tamaño tiende a 0, el término tiende a 0, tenga el signo que tenga. Es el sándwich de la idea 5.</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> a<sub>n</sub> = 0</div></li>
-        </ol>
-        <div class="wx-res"><b>Resultado:</b> a<sub>n</sub> = (−1)<sup>n+1</sup>·c/n, para n ≥ 1. Converge a 0.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> En la figura los puntos saltan arriba y abajo del 0, pero cada vez más pegados a él. En el lab lo ves con (−1)<sup>n</sup>/n.</p>
-      </article>
+      <p class="prose"><span class="m"><span class="lim">lim<small>n→∞</small></span> a<sub>n</sub> = L</span> quiere decir: dibuja una franja tan delgada como quieras alrededor de L; desde algún término en adelante, todos los puntos quedan dentro. Lo que importa es lo que pasa cuando n es enorme, no cómo empieza la lista. Lo pruebas en el lab.</p>
     </div>
 
-    <!-- Idea 2 -->
+    <!-- Tipo 1 -->
     <div class="block">
-      <div class="idea"><span class="k">Idea 2</span><h3>El término dominante manda</h3></div>
-      <div class="prose">
-        <p>Cuando n es enorme, en una suma solo importa el término que crece más rápido: el <b>dominante</b>. En a·n² + b·n, el término a·n² es n veces más grande que b·n, así que b·n no pesa nada a su lado.</p>
-        <p>El truco para calcular el límite de un cociente: <b>dividir arriba y abajo entre la potencia más alta del denominador</b>. Todo lo que quede como «constante entre una potencia de n» se va a 0.</p>
-      </div>
+      <div class="idea"><span class="k">Tipo 1 · comparación en el límite y raíz</span><h3>El término dominante manda: polinomios y raíces</h3></div>
+      <p class="prose">Cuando n es enorme, en una suma solo importa el término que crece más rápido: el <b>dominante</b>. En n² + 3, cuando n vale mil, n² vale un millón y el 3 no se nota. El truco para un cociente: <b>dividir arriba y abajo entre la potencia más alta del denominador</b>. Todo lo que quede como «número fijo entre una potencia de n» se va a 0.</p>
+
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · Parcial 2023-19 P1d</span>
+            <h4 id="wx1-h">Mismo grado arriba y abajo</h4>
+            <p>Para decidir la serie Σ (2n²/(n² + 3))<sup>n</sup> hay que calcular <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2n²</span><span>n² + 3</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca la potencia más alta del denominador.</p><p class="why">Abajo hay n² + 3: cuando n es enorme, manda n².</p><div class="mx">potencia más alta abajo: n²</div></li>
+          <li><p class="what">Divide arriba y abajo entre n².</p><p class="why">Dividir el numerador y el denominador entre lo mismo no cambia la fracción: es como multiplicar por 1. Cada término se divide por separado.</p><div class="mx"><span class="frac"><span>2n²</span><span>n² + 3</span></span> = <span class="frac"><span><span class="frac"><span>2<span class="cx">n²</span></span><span><span class="cx">n²</span></span></span></span><span><span class="frac"><span><span class="cx">n²</span></span><span><span class="cx">n²</span></span></span> + <span class="frac"><span>3</span><span>n²</span></span></span></span> = <span class="frac"><span>2</span><span>1 + <span class="frac"><span>3</span><span>n²</span></span></span></span></div></li>
+          <li><p class="what">Manda n a infinito.</p><p class="why">3/n² → 0, porque el 3 queda fijo y n² crece sin parar.</p><div class="mx">→ <span class="frac"><span>2</span><span>1 + 0</span></span> = 2</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> 2.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Con el mismo grado arriba y abajo, el límite es el cociente de los números que acompañan a la potencia más alta: 2/1 = 2. En el parcial, este 2 decide la serie por el criterio de la raíz (M4): como 2 &gt; 1, diverge.</p>
+      </article>
 
       <article class="wx" aria-labelledby="wx2-h">
         <div class="wx-head one">
           <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 2 · Mismo grado arriba y abajo</span>
-            <h4 id="wx2-h">Un cociente de polinomios</h4>
-            <p>Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>a·n² + b·n</span><span>c·n² + d</span></span></span>, donde a, b, c y d son constantes, con a y c distintos de 0.</p>
+            <span class="tag">Ejemplo resuelto 2 · Parcial 2025-10 P1a</span>
+            <h4 id="wx2-h">Con raíz</h4>
+            <p>Para decidir la serie Σ √(n³ + 5)/(n³ − 3) se compara con Σ 1/n<sup>3/2</sup> (lo ves en M3), y hay que calcular <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>√<span class="rad">n³ + 5</span>·n<sup>3/2</sup></span><span>n³ − 3</span></span></span>.</p>
           </div>
         </div>
         <ol class="wx-steps">
-          <li><p class="what">Busca la potencia más alta del denominador.</p><p class="why">Abajo, cuando n es enorme, c·n² pesa mucho más que d.</p><div class="mx">potencia más alta abajo: n²</div></li>
-          <li><p class="what">Divide cada término, arriba y abajo, entre n².</p><p class="why">Dividir el numerador y el denominador entre lo mismo no cambia la fracción: es como multiplicar por 1.</p><div class="mx"><span class="frac"><span>a·n² + b·n</span><span>c·n² + d</span></span> = <span class="frac"><span><span class="frac"><span>a·n²</span><span>n²</span></span> + <span class="frac"><span>b·n</span><span>n²</span></span></span><span><span class="frac"><span>c·n²</span><span>n²</span></span> + <span class="frac"><span>d</span><span>n²</span></span></span></span></div></li>
-          <li><p class="what">Simplifica cada término.</p><p class="why">En a·n²/n² se cancela n² y queda a. En b·n/n² se cancela una n y queda b/n. Igual abajo.</p><div class="mx"><span class="frac"><span>a·<span class="cx">n²</span></span><span><span class="cx">n²</span></span></span> = a<span class="ar">·</span><span class="frac"><span>b·<span class="cx">n</span></span><span>n<span class="cx">²</span></span></span> = <span class="frac"><span>b</span><span>n</span></span><span class="ar">→</span><span class="frac"><span>a + <span class="frac"><span>b</span><span>n</span></span></span><span>c + <span class="frac"><span>d</span><span>n²</span></span></span></span></div></li>
-          <li><p class="what">Manda n a infinito.</p><p class="why">Una constante dividida entre algo que crece sin parar tiende a 0: b/n → 0 y d/n² → 0.</p><div class="mx">→ <span class="frac"><span>a + 0</span><span>c + 0</span></span> = <span class="frac"><span>a</span><span>c</span></span></div></li>
+          <li><p class="what">Cuenta el grado de arriba.</p><p class="why">Dentro de la raíz manda n³, y la raíz parte el exponente por la mitad: √(n³) = n<sup>3/2</sup>. Al multiplicar por n<sup>3/2</sup>, los exponentes se suman.</p><div class="mx">√<span class="rad">n³</span>·n<sup>3/2</sup> = n<sup>3/2</sup>·n<sup>3/2</sup> = n<sup>3/2 + 3/2</sup> = n³<span class="ar">(grado 3)</span></div></li>
+          <li><p class="what">Compara con el de abajo.</p><p class="why">Abajo, n³ − 3 también tiene grado 3. Mismo grado: el límite va a ser un número.</p><div class="mx">grado 3 arriba, grado 3 abajo</div></li>
+          <li><p class="what">Divide arriba y abajo entre n³.</p><p class="why">Arriba, n<sup>3/2</sup>/n³ = 1/n<sup>3/2</sup>. Y dividir la raíz entre n<sup>3/2</sup> = √(n³) es dividir lo de adentro entre n³.</p><div class="mx"><span class="frac"><span>√<span class="rad">n³ + 5</span>·n<sup>3/2</sup></span><span>n³</span></span> = <span class="frac"><span>√<span class="rad">n³ + 5</span></span><span>n<sup>3/2</sup></span></span> = √<span class="rad"><span class="frac"><span>n³ + 5</span><span>n³</span></span></span> = √<span class="rad">1 + <span class="frac"><span>5</span><span>n³</span></span></span><span class="ar">y abajo</span><span class="frac"><span>n³ − 3</span><span>n³</span></span> = 1 − <span class="frac"><span>3</span><span>n³</span></span></div></li>
+          <li><p class="what">Manda n a infinito.</p><p class="why">5/n³ → 0 y 3/n³ → 0.</p><div class="mx">→ <span class="frac"><span>√<span class="rad">1 + 0</span></span><span>1 − 0</span></span> = 1</div></li>
         </ol>
-        <div class="wx-res"><b>Resultado:</b> el límite es a/c, el cociente de los coeficientes de los términos dominantes.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> Cuando n es enorme, b·n no pesa nada al lado de a·n², ni d al lado de c·n². Queda a·n²/(c·n²) = a/c.</p>
-      </article>
-
-      <article class="wx" aria-labelledby="wx3-h">
-        <div class="wx-head one">
-          <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 3 · Con raíz, como en 2025 P1a</span>
-            <h4 id="wx3-h">Una raíz arriba</h4>
-            <p>Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>√<span class="rad">a·n² + b</span></span><span>c·n + d</span></span></span>, con a y c positivos.</p>
-          </div>
-        </div>
-        <ol class="wx-steps">
-          <li><p class="what">Encuentra el grado de cada parte.</p><p class="why">Dentro de la raíz manda a·n², y la raíz de a·n² es √a·n: arriba el grado es 1. Abajo también es 1. Con el mismo grado, el límite va a ser un número.</p><div class="mx">√<span class="rad">a·n²</span> = √a·n<span class="ar">(grado 1)</span></div></li>
-          <li><p class="what">Divide arriba entre n, metiéndola en la raíz.</p><p class="why">Como n es positiva, n = √(n²). Dividir una raíz entre √(n²) es dividir lo de adentro entre n².</p><div class="mx"><span class="frac"><span>√<span class="rad">a·n² + b</span></span><span>n</span></span> = √<span class="rad"><span class="frac"><span>a·n² + b</span><span>n²</span></span></span> = √<span class="rad">a + <span class="frac"><span>b</span><span>n²</span></span></span></div></li>
-          <li><p class="what">Divide abajo entre n.</p><p class="why">Igual que en el ejemplo 2.</p><div class="mx"><span class="frac"><span>c·n + d</span><span>n</span></span> = c + <span class="frac"><span>d</span><span>n</span></span></div></li>
-          <li><p class="what">Manda n a infinito.</p><p class="why">b/n² → 0 y d/n → 0.</p><div class="mx">→ <span class="frac"><span>√<span class="rad">a + 0</span></span><span>c + 0</span></span> = <span class="frac"><span>√a</span><span>c</span></span></div></li>
-        </ol>
-        <div class="wx-res"><b>Resultado:</b> √a/c.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> Es el ejemplo 2 con una raíz encima: sobrevive la raíz del coeficiente dominante de adentro.</p>
+        <div class="wx-res"><b>Resultado:</b> 1.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Arriba y abajo se comportan como n³ cuando n es enorme, así que el cociente se acerca a 1. En el parcial, como el límite da un número positivo, la serie hace lo mismo que Σ 1/n<sup>3/2</sup>, que converge (M3).</p>
       </article>
 
       <div class="tw"><table class="narrow">
-        <thead><tr><th>Grado arriba k, grado abajo m (coeficientes dominantes a y c)</th><th>El límite es</th></tr></thead>
+        <thead><tr><th>Si el grado de arriba es…</th><th>El límite es</th><th>Ejemplo</th></tr></thead>
         <tbody>
-          <tr><td>k = m</td><td class="mono">a/c</td></tr>
-          <tr><td>k &lt; m (abajo crece más rápido)</td><td class="mono">0</td></tr>
-          <tr><td>k &gt; m (arriba crece más rápido)</td><td class="mono">±∞: diverge</td></tr>
+          <tr><td>igual al de abajo</td><td>el cociente de los números de la potencia más alta</td><td class="mono">(5n + 1)/(2n − 3) → 5/2</td></tr>
+          <tr><td>menor que el de abajo</td><td class="mono">0</td><td class="mono">n/(n² + 1) → 0</td></tr>
+          <tr><td>mayor que el de abajo</td><td class="mono">∞: diverge</td><td class="mono">(n² + 1)/(n + 2) → ∞</td></tr>
         </tbody>
       </table></div>
       <div class="callout">
         <h3>El grado de una raíz</h3>
-        <p><span class="m">√<span class="rad">n<sup>k</sup></span> = n<sup>k/2</sup></span>. Por eso √(n³) tiene grado 3/2 y √n tiene grado 1/2. Lo vas a usar en M3 para escoger con qué serie comparar.</p>
+        <p>La raíz parte el exponente por la mitad: √(n³) = n<sup>3/2</sup> (grado 3/2), √n = n<sup>1/2</sup> (grado 1/2) y √(n² + 4) se comporta como n (grado 1). Lo vas a usar en M3 para escoger con qué serie comparar.</p>
       </div>
     </div>
 
-    <!-- Idea 3 -->
+    <!-- Tipo 2 -->
     <div class="block">
-      <div class="idea"><span class="k">Idea 3</span><h3>Quién crece más rápido: la escalera</h3></div>
-      <p class="prose">Cuando arriba y abajo hay tipos distintos (logaritmos, potencias, exponenciales, factoriales), contar grados no sirve. Sirve esta escalera, de más lento a más rápido (con p &gt; 0 y r &gt; 1):</p>
-      <div class="ladder" aria-label="ln n mucho menor que n a la p, mucho menor que r a la n, mucho menor que n factorial, mucho menor que n a la n"><b>ln n</b><i>≪</i><b>n<sup>p</sup></b><i>≪</i><b>r<sup>n</sup></b><i>≪</i><b>n!</b><i>≪</i><b>n<sup>n</sup></b></div>
-      <p class="prose">Cualquiera dividido entre uno que está más a la derecha tiende a 0. Al revés, tiende a ∞. En el lab hay una carrera entre los cinco.</p>
-      <div class="tw"><table class="narrow">
-        <thead><tr><th>Las potencias r<sup>n</sup> solas</th><th>Límite</th></tr></thead>
-        <tbody>
-          <tr><td>|r| &lt; 1 (la base es más chica que 1 en tamaño)</td><td class="mono">0</td></tr>
-          <tr><td>r = 1</td><td class="mono">1</td></tr>
-          <tr><td>r &gt; 1</td><td class="mono">∞: diverge</td></tr>
-          <tr><td>r ≤ −1</td><td class="mono">no existe: el signo salta</td></tr>
-        </tbody>
-      </table></div>
-
-      <article class="wx" aria-labelledby="wx4-h">
+      <div class="idea"><span class="k">Tipo 2 · criterio del cociente</span><h3>Factoriales y potencias: simplificar antes del límite</h3></div>
+      <div class="prose">
+        <p>En el criterio del cociente (M4) aparecen cocientes con factoriales y potencias. Primero se simplifica y después se toma el límite. Dos reglas:</p>
+        <ul>
+          <li>Un factorial «contiene» al anterior: (n + 1)! = (n + 1)·n!, y (n + 2)! = (n + 2)·(n + 1)!.</li>
+          <li>Al dividir potencias de la misma base, se restan los exponentes: 2<sup>n</sup>/2<sup>n−1</sup> = 2<sup>n − (n − 1)</sup> = 2<sup>1</sup> = 2.</li>
+        </ul>
+      </div>
+      <article class="wx" aria-labelledby="wx3-h">
         <div class="wx-head one">
           <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 4 · Tipos distintos arriba y abajo</span>
-            <h4 id="wx4-h">Potencias contra exponenciales</h4>
-            <p>Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>n<sup>k</sup> + a·r<sup>n</sup></span><span>b·r<sup>n</sup> + n</span></span></span>, con r &gt; 1 y a, b, k positivos.</p>
+            <span class="tag">Ejemplo resuelto 3 · Parcial 2023-19 P1b</span>
+            <h4 id="wx3-h">Un cociente con factoriales</h4>
+            <p>Para decidir la serie Σ 2<sup>n−1</sup>/(n + 1)! con el criterio del cociente hay que calcular <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2<sup>n</sup></span><span>(n + 2)!</span></span>·<span class="frac"><span>(n + 1)!</span><span>2<sup>n−1</sup></span></span></span>.</p>
           </div>
         </div>
         <ol class="wx-steps">
-          <li><p class="what">Busca al más rápido de la escalera.</p><p class="why">Hay potencias de n (n<sup>k</sup> y n) y una exponencial r<sup>n</sup> con r &gt; 1. En la escalera, r<sup>n</sup> está más a la derecha que cualquier potencia: es el dominante.</p><div class="mx">dominante: r<sup>n</sup></div></li>
-          <li><p class="what">Divide arriba y abajo entre r<sup>n</sup>.</p><p class="why">Como en el ejemplo 2, pero ahora el dominante es r<sup>n</sup>.</p><div class="mx"><span class="frac"><span><span class="frac"><span>n<sup>k</sup></span><span>r<sup>n</sup></span></span> + <span class="frac"><span>a·<span class="cx">r<sup>n</sup></span></span><span><span class="cx">r<sup>n</sup></span></span></span></span><span><span class="frac"><span>b·<span class="cx">r<sup>n</sup></span></span><span><span class="cx">r<sup>n</sup></span></span></span> + <span class="frac"><span>n</span><span>r<sup>n</sup></span></span></span></span> = <span class="frac"><span><span class="frac"><span>n<sup>k</sup></span><span>r<sup>n</sup></span></span> + a</span><span>b + <span class="frac"><span>n</span><span>r<sup>n</sup></span></span></span></span></div></li>
-          <li><p class="what">Usa la escalera.</p><p class="why">n<sup>k</sup>/r<sup>n</sup> y n/r<sup>n</sup> son «lento entre rápido»: tienden a 0.</p><div class="mx"><span class="frac"><span>n<sup>k</sup></span><span>r<sup>n</sup></span></span> → 0<span class="ar">y</span><span class="frac"><span>n</span><span>r<sup>n</sup></span></span> → 0</div></li>
-          <li><p class="what">Concluye.</p><div class="mx">→ <span class="frac"><span>0 + a</span><span>b + 0</span></span> = <span class="frac"><span>a</span><span>b</span></span></div></li>
+          <li><p class="what">Junta las potencias por un lado y los factoriales por otro.</p><p class="why">Es un producto de fracciones: puedes reordenar los factores.</p><div class="mx"><span class="frac"><span>2<sup>n</sup></span><span>2<sup>n−1</sup></span></span>·<span class="frac"><span>(n + 1)!</span><span>(n + 2)!</span></span></div></li>
+          <li><p class="what">Simplifica las potencias.</p><p class="why">Misma base: se restan los exponentes, n − (n − 1) = 1.</p><div class="mx"><span class="frac"><span>2<sup>n</sup></span><span>2<sup>n−1</sup></span></span> = 2<sup>1</sup> = 2</div></li>
+          <li><p class="what">Simplifica los factoriales.</p><p class="why">(n + 2)! es el producto hasta n + 2: es (n + 1)! multiplicado por el último factor, n + 2. El (n + 1)! se cancela.</p><div class="mx"><span class="frac"><span>(n + 1)!</span><span>(n + 2)!</span></span> = <span class="frac"><span><span class="cx">(n + 1)!</span></span><span>(n + 2)·<span class="cx">(n + 1)!</span></span></span> = <span class="frac"><span>1</span><span>n + 2</span></span></div></li>
+          <li><p class="what">Toma el límite.</p><p class="why">Un número fijo entre algo que crece tiende a 0.</p><div class="mx">2·<span class="frac"><span>1</span><span>n + 2</span></span> = <span class="frac"><span>2</span><span>n + 2</span></span> → 0</div></li>
         </ol>
-        <div class="wx-res"><b>Resultado:</b> a/b.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> Cuando n es enorme, n<sup>k</sup> y n no pesan nada al lado de r<sup>n</sup>: queda a·r<sup>n</sup>/(b·r<sup>n</sup>) = a/b.</p>
+        <div class="wx-res"><b>Resultado:</b> 0.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El factorial crece muchísimo más rápido que 2<sup>n</sup>, así que cada término es mucho más pequeño que el anterior. En el parcial, como 0 &lt; 1, la serie converge por el criterio del cociente (M4).</p>
+      </article>
+    </div>
+
+    <!-- Tipo 3 -->
+    <div class="block">
+      <div class="idea"><span class="k">Tipo 3 · comparación y criterio de divergencia</span><h3>Quién crece más rápido: la escalera</h3></div>
+      <p class="prose">Cuando arriba y abajo hay tipos distintos (logaritmos, potencias, exponenciales, factoriales), contar grados no sirve. Sirve esta escalera, de más lento a más rápido:</p>
+      <div class="ladder" aria-label="ln n mucho menor que n al cubo, mucho menor que 2 a la n, mucho menor que n factorial, mucho menor que n a la n"><b>ln n</b><i>≪</i><b>n³</b><i>≪</i><b>2<sup>n</sup></b><i>≪</i><b>n!</b><i>≪</i><b>n<sup>n</sup></b></div>
+      <p class="prose">Vale con cualquier potencia de n en lugar de n³ (√n, n², n<sup>10</sup>) y con cualquier base mayor que 1 en lugar de 2 (3<sup>n</sup>, (3/2)<sup>n</sup>). Cualquiera dividido entre uno que está más a la derecha tiende a 0; al revés, tiende a ∞. En el lab hay una carrera entre los cinco.</p>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Potencias r<sup>n</sup> solas</th><th>Límite</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td>la base está entre −1 y 1</td><td class="mono">0</td><td class="mono">(1/2)<sup>n</sup> → 0, (−2/3)<sup>n</sup> → 0</td></tr>
+          <tr><td>la base es 1</td><td class="mono">1</td><td class="mono">1<sup>n</sup> = 1</td></tr>
+          <tr><td>la base es mayor que 1</td><td class="mono">∞: diverge</td><td class="mono">(3/2)<sup>n</sup> → ∞</td></tr>
+          <tr><td>la base es −1 o menor</td><td class="mono">no existe: el signo salta</td><td class="mono">(−1)<sup>n</sup>, (−2)<sup>n</sup></td></tr>
+        </tbody>
+      </table></div>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · Hoja 11.4 (c)</span>
+            <h4 id="wx4-h">Exponenciales con bases distintas</h4>
+            <p>Para la serie Σ (4 + 3<sup>n</sup>)/2<sup>n</sup> hay que ver si el término tiende a 0: calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>4 + 3<sup>n</sup></span><span>2<sup>n</sup></span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Separa en dos fracciones.</p><p class="why">Abajo hay un solo término, así que cada parte de arriba se divide por separado. Y 3<sup>n</sup>/2<sup>n</sup> = (3/2)<sup>n</sup>, porque las dos están elevadas a la n.</p><div class="mx"><span class="frac"><span>4 + 3<sup>n</sup></span><span>2<sup>n</sup></span></span> = <span class="frac"><span>4</span><span>2<sup>n</sup></span></span> + (<span class="frac"><span>3</span><span>2</span></span>)<sup>n</sup></div></li>
+          <li><p class="what">Mira cada parte.</p><p class="why">4/2<sup>n</sup>: un número fijo entre algo que crece, tiende a 0. (3/2)<sup>n</sup>: la base es mayor que 1, crece sin parar.</p><div class="mx"><span class="frac"><span>4</span><span>2<sup>n</sup></span></span> → 0<span class="ar">y</span>(<span class="frac"><span>3</span><span>2</span></span>)<sup>n</sup> → ∞</div></li>
+          <li><p class="what">Concluye.</p><div class="mx">→ 0 + ∞ = ∞: diverge</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> ∞.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> 3<sup>n</sup> crece más rápido que 2<sup>n</sup>, así que el de arriba gana. En M2 esto decide la serie: como el término no tiende a 0, la serie diverge.</p>
       </article>
       <details class="rev"><summary>¿De dónde sale la escalera?</summary>
         <div class="rev-body">
-          <p><b>ln n ≪ n<sup>p</sup>:</b> cambia n por x y usa L'Hôpital: lim ln x/x<sup>p</sup> = lim (1/x)/(p·x<sup>p−1</sup>) = lim 1/(p·x<sup>p</sup>) = 0.</p>
-          <p><b>n<sup>k</sup> ≪ r<sup>n</sup>:</b> cada vez que aplicas L'Hôpital, la potencia de arriba baja un grado y r<sup>x</sup> sigue igual (su derivada es r<sup>x</sup>·ln r). Después de suficientes pasos, arriba queda una constante y abajo algo que crece: tiende a 0.</p>
-          <p><b>r<sup>n</sup> ≪ n!:</b> al pasar de n a n + 1, r<sup>n</sup> se multiplica por r y n! se multiplica por n + 1. Cuando n + 1 ya es más grande que r, el factorial crece más en cada paso, y la diferencia se acumula.</p>
+          <p><b>ln n ≪ n²:</b> cambia n por x y usa L'Hôpital: lim ln x/x² = lim (1/x)/(2x) = lim 1/(2x²) = 0.</p>
+          <p><b>n³ ≪ 2<sup>n</sup>:</b> cada vez que aplicas L'Hôpital, la potencia de arriba baja un grado (3x², 6x, 6) y 2<sup>x</sup> sigue siendo 2<sup>x</sup> por un número. Después de tres pasos arriba queda 6 y abajo algo que crece: tiende a 0.</p>
+          <p><b>2<sup>n</sup> ≪ n!:</b> al pasar de n a n + 1, 2<sup>n</sup> se multiplica por 2 y n! se multiplica por n + 1, que desde n = 2 ya es 3 o más. El factorial crece más en cada paso, y la diferencia se acumula.</p>
           <p><b>n! ≪ n<sup>n</sup>:</b> n! = 1·2·…·n y n<sup>n</sup> = n·n·…·n tienen la misma cantidad de factores, pero los de n<sup>n</sup> son todos n. Entonces n!/n<sup>n</sup> = (1/n)·(2/n)·…·(n/n) ≤ 1/n → 0.</p>
         </div>
       </details>
     </div>
 
-    <!-- Idea 4 -->
+    <!-- Tipo 4 -->
     <div class="block">
-      <div class="idea"><span class="k">Idea 4</span><h3>Dos límites especiales: e<sup>a</sup> y la raíz n-ésima</h3></div>
+      <div class="idea"><span class="k">Tipo 4 · criterio de la raíz</span><h3>Todo elevado a la n: el número e y la raíz n-ésima</h3></div>
       <p class="prose">Aparecen cuando todo está elevado a la n. Son justo los que calcula el criterio de la raíz en M4, así que vale la pena saberlos de memoria.</p>
-
       <article class="wx" aria-labelledby="wx5-h">
         <div class="wx-head">
           <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 5 · Como en 2025 P1b</span>
+            <span class="tag">Ejemplo resuelto 5 · Parcial 2025-10 P1b</span>
             <h4 id="wx5-h">El número e</h4>
-            <p>Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> (<span class="frac"><span>n + a</span><span>n</span></span>)<sup>n</sup></span>, con a constante.</p>
+            <p>Para decidir la serie Σ ((n + 2)/n)<sup>n²</sup>, el criterio de la raíz deja <span class="m"><span class="lim">lim<small>n→∞</small></span> (<span class="frac"><span>n + 2</span><span>n</span></span>)<sup>n</sup></span>. Calcúlalo.</p>
           </div>
           <figure class="wx-fig"><div data-fig="ex5"></div></figure>
         </div>
         <ol class="wx-steps">
-          <li><p class="what">Separa la fracción.</p><p class="why">Partes el numerador en dos y simplificas n/n.</p><div class="mx"><span class="frac"><span>n + a</span><span>n</span></span> = <span class="frac"><span><span class="cx">n</span></span><span><span class="cx">n</span></span></span> + <span class="frac"><span>a</span><span>n</span></span> = 1 + <span class="frac"><span>a</span><span>n</span></span></div></li>
+          <li><p class="what">Separa la fracción.</p><p class="why">Partes el numerador en dos y simplificas n/n.</p><div class="mx"><span class="frac"><span>n + 2</span><span>n</span></span> = <span class="frac"><span><span class="cx">n</span></span><span><span class="cx">n</span></span></span> + <span class="frac"><span>2</span><span>n</span></span> = 1 + <span class="frac"><span>2</span><span>n</span></span></div></li>
           <li><p class="what">Reconoce la trampa «1 elevado a infinito».</p><p class="why">La base tiende a 1 y el exponente a ∞. No puedes decir «1 elevado a cualquier cosa es 1»: la base nunca es exactamente 1, y el exponente crece justo lo necesario para que el resultado se estabilice en otro número.</p><div class="mx">1<sup>∞</sup> no tiene valor fijo: hay que calcularlo</div></li>
-          <li><p class="what">Usa el límite especial.</p><p class="why">Es la definición del número e. La figura muestra cómo se acerca: sube y se estabiliza en e<sup>a</sup>.</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> (1 + <span class="frac"><span>a</span><span>n</span></span>)<sup>n</sup> = e<sup>a</sup></div></li>
+          <li><p class="what">Usa la regla del número e.</p><p class="why">La regla es (1 + a/n)<sup>n</sup> → e<sup>a</sup>, donde a es el número que está sobre la n. Aquí ese número es 2. La figura muestra cómo se acerca.</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> (1 + <span class="frac"><span>2</span><span>n</span></span>)<sup>n</sup> = e<sup>2</sup> ≈ 7,39</div></li>
         </ol>
-        <div class="wx-res"><b>Resultado:</b> e<sup>a</sup>.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> Si a = 0, queda 1<sup>n</sup> = 1, y e<sup>0</sup> = 1. Con a positiva la base es mayor que 1 y el resultado también: e<sup>a</sup> &gt; 1.</p>
+        <div class="wx-res"><b>Resultado:</b> e² ≈ 7,39.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> La base siempre es un poco mayor que 1, así que el resultado es mayor que 1. En el parcial, como e² &gt; 1, la serie diverge por el criterio de la raíz (M4).</p>
       </article>
       <div class="tw"><table class="narrow">
-        <thead><tr><th>Variantes que salen en los criterios</th><th>Límite</th></tr></thead>
+        <thead><tr><th>Variantes que salen en las hojas</th><th>Límite</th></tr></thead>
         <tbody>
-          <tr><td class="mono">(1 + a/n)<sup>b·n</sup></td><td class="mono">e<sup>a·b</sup></td></tr>
-          <tr><td class="mono">(1 − a/n)<sup>n</sup></td><td class="mono">e<sup>−a</sup></td></tr>
-          <tr><td class="mono">(n/(n + a))<sup>n</sup>, porque es 1/(1 + a/n)<sup>n</sup></td><td class="mono">e<sup>−a</sup></td></tr>
+          <tr><td class="mono">(1 + 3/n)<sup>n</sup></td><td class="mono">e³</td></tr>
+          <tr><td class="mono">(1 − 1/n)<sup>n</sup></td><td class="mono">e<sup>−1</sup> = 1/e</td></tr>
+          <tr><td class="mono">(n/(n + 1))<sup>n</sup> = 1/(1 + 1/n)<sup>n</sup> (hoja 11.6 g)</td><td class="mono">1/e</td></tr>
+          <tr><td class="mono">(1 + 2/n)<sup>3n</sup> = [(1 + 2/n)<sup>n</sup>]³</td><td class="mono">e<sup>6</sup></td></tr>
         </tbody>
       </table></div>
-      <details class="rev"><summary><span>¿De dónde sale e<sup>a</sup>?</span></summary>
-        <div class="rev-body">
-          <p>Saca logaritmo: ln[(1 + a/n)<sup>n</sup>] = n·ln(1 + a/n). Cambia 1/n por x (x → 0): queda ln(1 + a·x)/x, que es «0/0». Por L'Hôpital: [a/(1 + a·x)]/1 → a. Si el logaritmo tiende a a, el número tiende a e<sup>a</sup>.</p>
-        </div>
+      <details class="rev"><summary><span>¿De dónde sale e<sup>2</sup>?</span></summary>
+        <div class="rev-body"><p>Saca logaritmo: ln[(1 + 2/n)<sup>n</sup>] = n·ln(1 + 2/n). Cambia 1/n por x (x → 0): queda ln(1 + 2x)/x, que es «0/0». Por L'Hôpital: [2/(1 + 2x)]/1 → 2. Si el logaritmo tiende a 2, el número tiende a e².</p></div>
       </details>
 
       <article class="wx" aria-labelledby="wx6-h">
         <div class="wx-head one">
           <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 6 · Lo que calcula el criterio de la raíz (M4)</span>
+            <span class="tag">Ejemplo resuelto 6 · Criterio de la raíz con potencias de n</span>
             <h4 id="wx6-h">La raíz n-ésima</h4>
-            <p>Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> (<span class="frac"><span>a·n<sup>k</sup></span><span>r<sup>n</sup></span></span>)<sup>1/n</sup></span>, con a, k y r positivos.</p>
+            <p>Para la serie Σ n²/3<sup>n</sup>, el criterio de la raíz deja <span class="m"><span class="lim">lim<small>n→∞</small></span> (<span class="frac"><span>n²</span><span>3<sup>n</sup></span></span>)<sup>1/n</sup></span>. Calcúlalo.</p>
           </div>
         </div>
         <ol class="wx-steps">
-          <li><p class="what">Reparte la raíz n-ésima.</p><p class="why">Elevar a 1/n es sacar la raíz n-ésima, y la raíz de un producto o de un cociente se reparte en cada factor.</p><div class="mx">(<span class="frac"><span>a·n<sup>k</sup></span><span>r<sup>n</sup></span></span>)<sup>1/n</sup> = <span class="frac"><span>a<sup>1/n</sup>·(n<sup>1/n</sup>)<sup>k</sup></span><span>(r<sup>n</sup>)<sup>1/n</sup></span></span></div></li>
-          <li><p class="what">Simplifica la potencia de abajo.</p><p class="why">En una potencia de potencia se multiplican los exponentes: n·(1/n) = 1.</p><div class="mx">(r<sup>n</sup>)<sup>1/n</sup> = r<sup><span class="cx">n</span>/<span class="cx">n</span></sup> = r</div></li>
-          <li><p class="what">Usa los dos límites de memoria.</p><p class="why">Una constante positiva elevada a 1/n tiende a 1, porque el exponente tiende a 0. Y n<sup>1/n</sup> también tiende a 1: sube un poquito y vuelve a bajar (míralo en el lab).</p><div class="mx">a<sup>1/n</sup> → 1<span class="ar">y</span>n<sup>1/n</sup> → 1</div></li>
-          <li><p class="what">Concluye.</p><div class="mx">→ <span class="frac"><span>1·1<sup>k</sup></span><span>r</span></span> = <span class="frac"><span>1</span><span>r</span></span></div></li>
+          <li><p class="what">Reparte la raíz n-ésima arriba y abajo.</p><p class="why">Elevar a 1/n es sacar la raíz n-ésima, y se reparte en el numerador y el denominador. Abajo, en una potencia de potencia se multiplican los exponentes: n·(1/n) = 1.</p><div class="mx">(<span class="frac"><span>n²</span><span>3<sup>n</sup></span></span>)<sup>1/n</sup> = <span class="frac"><span>(n<sup>1/n</sup>)²</span><span>3<sup><span class="cx">n</span>/<span class="cx">n</span></sup></span></span> = <span class="frac"><span>(n<sup>1/n</sup>)²</span><span>3</span></span></div></li>
+          <li><p class="what">Usa n<sup>1/n</sup> → 1.</p><p class="why">La raíz n-ésima de n tiende a 1: sube un poquito y vuelve a bajar (míralo en el lab). Lo mismo pasa con cualquier número fijo: 5<sup>1/n</sup> → 1.</p><div class="mx">→ <span class="frac"><span>1²</span><span>3</span></span> = <span class="frac"><span>1</span><span>3</span></span></div></li>
         </ol>
-        <div class="wx-res"><b>Resultado:</b> 1/r. En la raíz n-ésima, las constantes y las potencias de n se vuelven 1: solo sobrevive lo que estaba elevado a la n.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> Si quitas a·n<sup>k</sup>, queda (1/r<sup>n</sup>)<sup>1/n</sup> = 1/r exacto. Lo que agregaste crece demasiado despacio para notarse en una raíz n-ésima.</p>
+        <div class="wx-res"><b>Resultado:</b> 1/3. En la raíz n-ésima, los números fijos y las potencias de n se vuelven 1: solo sobrevive lo que estaba elevado a la n.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Sin el n², (1/3<sup>n</sup>)<sup>1/n</sup> = 1/3 exacto: el n² crece demasiado despacio para notarse. En M4, como 1/3 &lt; 1, la serie converge.</p>
       </article>
       <details class="rev"><summary><span>¿Por qué n<sup>1/n</sup> tiende a 1?</span></summary>
         <div class="rev-body"><p>n<sup>1/n</sup> = e<sup>(ln n)/n</sup>. Por la escalera, (ln n)/n → 0, así que n<sup>1/n</sup> → e<sup>0</sup> = 1.</p></div>
       </details>
     </div>
 
-    <!-- Idea 5 -->
+    <!-- Tipo 5 -->
     <div class="block">
-      <div class="idea"><span class="k">Idea 5</span><h3>Lo que salta pero está atrapado: el sándwich</h3></div>
+      <div class="idea"><span class="k">Tipo 5 · comparación con seno y alternantes</span><h3>Lo que salta pero está atrapado: el sándwich</h3></div>
       <div class="prose">
         <p>Hay términos que no tienen límite por sí solos, como sen n o (−1)<sup>n</sup>: saltan para siempre. Pero están atrapados entre −1 y 1.</p>
-        <p>El <b>teorema del sándwich</b> dice: si b<sub>n</sub> ≤ a<sub>n</sub> ≤ c<sub>n</sub> y las dos «tapas» b<sub>n</sub> y c<sub>n</sub> tienden al mismo L, entonces a<sub>n</sub> también tiende a L. Una consecuencia que vas a usar mucho: <b>si el tamaño |a<sub>n</sub>| tiende a 0, entonces a<sub>n</sub> tiende a 0</b>, tenga el signo que tenga.</p>
+        <p>El <b>teorema del sándwich</b> dice: si un término está encerrado entre dos «tapas» y las dos tienden al mismo número, el término también tiende a ese número. Una consecuencia que vas a usar mucho: <b>si el tamaño |a<sub>n</sub>| tiende a 0, entonces a<sub>n</sub> tiende a 0</b>, tenga el signo que tenga.</p>
       </div>
-
       <article class="wx" aria-labelledby="wx7-h">
         <div class="wx-head">
           <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 7 · El término de 2025 P1c</span>
+            <span class="tag">Ejemplo resuelto 7 · Parcial 2025-10 P1c</span>
             <h4 id="wx7-h">El sándwich con seno</h4>
-            <p>Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>a + sen² n</span><span>b·n</span></span></span>, con a y b positivos.</p>
+            <p>El término de la serie Σ (1 + sen² n)/n es (1 + sen² n)/n. Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>1 + sen² n</span><span>n</span></span></span>.</p>
           </div>
           <figure class="wx-fig"><div data-fig="ex7"></div></figure>
         </div>
         <ol class="wx-steps">
           <li><p class="what">Encierra lo que salta.</p><p class="why">sen n no tiene límite: salta entre −1 y 1 para siempre. Al cuadrado queda atrapado entre 0 y 1.</p><div class="mx">0 ≤ sen² n ≤ 1</div></li>
-          <li><p class="what">Arma el término dentro del encierro.</p><p class="why">Le sumas a a las tres partes y las divides entre b·n, que es positivo. Así las desigualdades no se voltean.</p><div class="mx"><span class="frac"><span>a</span><span>b·n</span></span> ≤ <span class="frac"><span>a + sen² n</span><span>b·n</span></span> ≤ <span class="frac"><span>a + 1</span><span>b·n</span></span></div></li>
-          <li><p class="what">Mira las dos tapas.</p><p class="why">Las dos son una constante entre algo que crece: tienden a 0. En la figura son las dos curvas punteadas.</p><div class="mx"><span class="frac"><span>a</span><span>b·n</span></span> → 0<span class="ar">y</span><span class="frac"><span>a + 1</span><span>b·n</span></span> → 0</div></li>
-          <li><p class="what">Concluye con el sándwich.</p><p class="why">Si lo de abajo y lo de arriba van al mismo número, lo del medio también.</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>a + sen² n</span><span>b·n</span></span> = 0</div></li>
+          <li><p class="what">Arma el término dentro del encierro.</p><p class="why">Le sumas 1 a las tres partes y las divides entre n, que es positivo. Así las desigualdades no se voltean.</p><div class="mx"><span class="frac"><span>1</span><span>n</span></span> ≤ <span class="frac"><span>1 + sen² n</span><span>n</span></span> ≤ <span class="frac"><span>2</span><span>n</span></span></div></li>
+          <li><p class="what">Mira las dos tapas.</p><p class="why">1/n y 2/n tienden a 0. En la figura son las dos curvas punteadas.</p><div class="mx"><span class="frac"><span>1</span><span>n</span></span> → 0<span class="ar">y</span><span class="frac"><span>2</span><span>n</span></span> → 0</div></li>
+          <li><p class="what">Concluye con el sándwich.</p><p class="why">Si lo de abajo y lo de arriba van al mismo número, lo del medio también.</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>1 + sen² n</span><span>n</span></span> = 0</div></li>
         </ol>
         <div class="wx-res"><b>Resultado:</b> 0.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> Ojo con lo que esto <b>no</b> dice: que el término tienda a 0 no significa que la serie converja. Justo la serie Σ (1 + sen² n)/n diverge: es el 2025 P1c, y lo resuelves en M3.</p>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Ojo con lo que esto <b>no</b> dice: que el término tienda a 0 no significa que la serie converja. Justo esta serie diverge, porque cada término es mayor o igual que 1/n (M3). Era la trampa del P1c.</p>
       </article>
       <div class="callout trap">
         <h3>Cuando el tamaño no tiende a 0</h3>
-        <p>Si el tamaño no tiende a 0, el (−1)<sup>n</sup> hace que la sucesión salte. En <span class="m">(−1)<sup>n</sup>·(a·n)/(b·n + c)</span> el tamaño tiende a a/b: los términos pares se acercan a a/b y los impares a −a/b. No hay un solo número al que se peguen: no tiene límite, diverge.</p>
+        <p>Si el tamaño no tiende a 0, el (−1)<sup>n</sup> hace que la sucesión salte. En <span class="m">(−1)<sup>n</sup>·n/(n + 1)</span> el tamaño n/(n + 1) tiende a 1: los términos pares se acercan a 1 y los impares a −1. No hay un solo número al que se peguen: no tiene límite, diverge.</p>
       </div>
-
       <div class="prose">
-        <p><b>Funciones continuas.</b> Si una función no tiene saltos en su gráfica (sen, cos, arctan, √, ln, e<sup>x</sup>), el límite pasa por adentro: lim f(a<sub>n</sub>) = f(lim a<sub>n</sub>).</p>
+        <p><b>Funciones sin saltos.</b> Si la función no tiene saltos en su gráfica (sen, cos, arctan, √, ln, e<sup>x</sup>), el límite pasa por adentro: calculas el límite de adentro y se lo aplicas a la función. Estos salen en las hojas:</p>
       </div>
-      <article class="wx" aria-labelledby="wx8-h">
-        <div class="wx-head one">
-          <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 8 · Como la hoja 11.1 (3e)</span>
-            <h4 id="wx8-h">Una función continua por fuera</h4>
-            <p>Calcula <span class="m"><span class="lim">lim<small>n→∞</small></span> arctan(<span class="frac"><span>a·n + b</span><span>c·n + d</span></span>)</span>, con a y c positivos.</p>
-          </div>
-        </div>
-        <ol class="wx-steps">
-          <li><p class="what">Calcula el límite de adentro.</p><p class="why">Es un cociente con el mismo grado arriba y abajo (ejemplo 2).</p><div class="mx"><span class="frac"><span>a·n + b</span><span>c·n + d</span></span> → <span class="frac"><span>a</span><span>c</span></span></div></li>
-          <li><p class="what">Pasa el límite por la función.</p><p class="why">arctan es continua: si lo de adentro se acerca a a/c, arctan de eso se acerca a arctan(a/c).</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> arctan(…) = arctan(<span class="lim">lim<small>n→∞</small></span> …) = arctan(<span class="frac"><span>a</span><span>c</span></span>)</div></li>
-        </ol>
-        <div class="wx-res"><b>Resultado:</b> arctan(a/c).</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> Si lo de adentro tendiera a ∞ en vez de a un número, arctan se acercaría a π/2, que es su techo: arctan n → π/2.</p>
-      </article>
-    </div>
-
-    <!-- Idea 6 -->
-    <div class="block">
-      <div class="idea"><span class="k">Idea 6 · prioridad baja</span><h3>Creciente, decreciente y acotada</h3></div>
-      <div class="prose">
-        <p>La hoja 11.1 lo pide, pero nunca ha salido en el parcial. Igual mira el método de la derivada: lo vas a usar en M4 para el criterio de Leibniz.</p>
-        <ul>
-          <li><b>Creciente:</b> cada término es mayor o igual que el anterior, a<sub>n+1</sub> ≥ a<sub>n</sub>. <b>Decreciente:</b> a<sub>n+1</sub> ≤ a<sub>n</sub>.</li>
-          <li><b>Acotada:</b> hay dos números fijos que la encierran, uno por debajo y otro por encima de todos los términos.</li>
-          <li><b>Teorema:</b> si es creciente y acotada por arriba (o decreciente y acotada por abajo), converge.</li>
-        </ul>
-      </div>
-      <article class="wx" aria-labelledby="wx9-h">
-        <div class="wx-head one">
-          <div class="wx-q">
-            <span class="tag">Ejemplo resuelto 9 · Prioridad baja</span>
-            <h4 id="wx9-h">Creciente y acotada</h4>
-            <p>Sea <span class="m">a<sub>n</sub> = <span class="frac"><span>a·n</span><span>b·n + c</span></span></span>, con a, b y c positivos y n ≥ 1.</p>
-            <p><b>Pregunta:</b> ¿es creciente o decreciente? ¿Está acotada?</p>
-          </div>
-        </div>
-        <ol class="wx-steps">
-          <li><p class="what">Cambia n por x.</p><p class="why">Para usar derivadas necesitas una función de variable real. Si la función crece, la sucesión también.</p><div class="mx">f(x) = <span class="frac"><span>a·x</span><span>b·x + c</span></span>,  x ≥ 1</div></li>
-          <li><p class="what">Deriva con la regla del cociente.</p><p class="why">(u/v)′ = (u′·v − u·v′)/v². Aquí u = a·x y v = b·x + c. Al repartir, a·b·x se cancela.</p><div class="mx">f′(x) = <span class="frac"><span>a·(b·x + c) − a·x·b</span><span>(b·x + c)²</span></span> = <span class="frac"><span><span class="cx">a·b·x</span> + a·c − <span class="cx">a·b·x</span></span><span>(b·x + c)²</span></span> = <span class="frac"><span>a·c</span><span>(b·x + c)²</span></span></div></li>
-          <li><p class="what">Mira el signo.</p><p class="why">a y c son positivos y un cuadrado nunca es negativo.</p><div class="mx">f′(x) &gt; 0<span class="ar">→</span>f crece<span class="ar">→</span>a<sub>n</sub> es creciente</div></li>
-          <li><p class="what">Busca las cotas.</p><p class="why">Si crece, el más pequeño es el primero. Por arriba: si le quitas c al denominador, la fracción se agranda, así que a<sub>n</sub> siempre es menor que a·n/(b·n) = a/b.</p><div class="mx"><span class="frac"><span>a</span><span>b + c</span></span> = a<sub>1</sub> ≤ a<sub>n</sub> &lt; <span class="frac"><span>a</span><span>b</span></span></div></li>
-        </ol>
-        <div class="wx-res"><b>Resultado:</b> creciente y acotada entre a/(b + c) y a/b. Por el teorema converge, y por el ejemplo 2 converge a a/b.</div>
-        <p class="wx-chk"><b>¿Tiene sentido?</b> El límite a/b es justo la cota de arriba: la sucesión sube hacia ella sin pasarla.</p>
-      </article>
+      <div class="mx">cos(<span class="frac"><span>π</span><span>n</span></span>) → cos 0 = 1<span class="ar">(hoja 11.5 j)</span><br>sen(<span class="frac"><span>nπ</span><span>n + 1</span></span>) → sen π = 0<span class="ar">(hoja 11.1)</span><br>arctan n → <span class="frac"><span>π</span><span>2</span></span>, su techo<span class="ar">(hoja 11.6 e)</span></div>
     </div>
 
     <div class="block">
       <h3>La receta: cómo calcular <span class="lim">lim<small>n→∞</small></span> a<sub>n</sub></h3>
       <ol class="steps">
-        <li><span><b>¿Tiene (−1)<sup>n</sup>, sen o cos?</b> Mira el tamaño |a<sub>n</sub>|. Si tiende a 0, a<sub>n</sub> → 0 (sándwich). Si no tiende a 0 y hay (−1)<sup>n</sup>, no tiene límite.</span></li>
-        <li><span><b>¿Todo está elevado a la n?</b> Si es (1 + a/n)<sup>n</sup> o parecido, da e<sup>a</sup>. Si es una raíz n-ésima, las constantes y las potencias de n se vuelven 1.</span></li>
-        <li><span><b>¿Hay tipos distintos (ln, potencias, r<sup>n</sup>, n!, n<sup>n</sup>)?</b> Divide arriba y abajo entre el más rápido de la escalera.</span></li>
-        <li><span><b>¿Es un cociente de potencias o raíces?</b> Divide entre la potencia más alta del denominador.</span></li>
-        <li><span><b>¿Está dentro de una función continua (arctan, sen, √, ln)?</b> Calcula el límite de adentro y pásalo por la función.</span></li>
+        <li><span><b>¿Tiene (−1)<sup>n</sup>, sen o cos?</b> Mira el tamaño |a<sub>n</sub>|. Si tiende a 0, a<sub>n</sub> → 0 (sándwich, ejemplo 7). Si no tiende a 0 y hay (−1)<sup>n</sup>, no tiene límite.</span></li>
+        <li><span><b>¿Todo está elevado a la n?</b> Si es (1 + 2/n)<sup>n</sup> o parecido, da e elevado al número sobre la n (ejemplo 5). Si es una raíz n-ésima, los números fijos y las potencias de n se vuelven 1 (ejemplo 6).</span></li>
+        <li><span><b>¿Hay factoriales o potencias con exponente n?</b> Simplifica primero (ejemplo 3).</span></li>
+        <li><span><b>¿Hay tipos distintos (ln, potencias, 2<sup>n</sup>, n!, n<sup>n</sup>)?</b> Divide entre el más rápido de la escalera (ejemplo 4).</span></li>
+        <li><span><b>¿Es un cociente de potencias o raíces?</b> Divide entre la potencia más alta del denominador (ejemplos 1 y 2).</span></li>
         <li><span><b>¿Nada funciona?</b> Cambia n por x y usa L'Hôpital.</span></li>
       </ol>
     </div>
@@ -610,25 +544,25 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
     <div class="block">
       <h3>Resultados de memoria</h3>
       <div class="tw"><table class="narrow">
-        <thead><tr><th>Límite cuando n → ∞</th><th>Vale</th></tr></thead>
+        <thead><tr><th>Regla, cuando n → ∞</th><th>Vale</th><th>Ejemplo</th></tr></thead>
         <tbody>
-          <tr><td class="mono">c/n<sup>p</sup>, con p &gt; 0</td><td class="mono">0</td></tr>
-          <tr><td class="mono">r<sup>n</sup></td><td class="mono">0 si |r| &lt; 1 · 1 si r = 1 · ∞ si r &gt; 1 · no existe si r ≤ −1</td></tr>
-          <tr><td class="mono">(1 + a/n)<sup>n</sup></td><td class="mono">e<sup>a</sup></td></tr>
-          <tr><td class="mono">(n/(n + a))<sup>n</sup></td><td class="mono">e<sup>−a</sup></td></tr>
-          <tr><td class="mono">n<sup>1/n</sup> y c<sup>1/n</sup> (c &gt; 0)</td><td class="mono">1</td></tr>
-          <tr><td class="mono">(ln n)/n<sup>p</sup>, n<sup>k</sup>/r<sup>n</sup> (r &gt; 1), r<sup>n</sup>/n!, n!/n<sup>n</sup></td><td class="mono">0</td></tr>
-          <tr><td class="mono">arctan n</td><td class="mono">π/2</td></tr>
-          <tr><td class="mono">(−1)<sup>n</sup></td><td class="mono">no existe</td></tr>
+          <tr><td class="mono">número fijo / potencia de n</td><td class="mono">0</td><td class="mono">5/n² → 0</td></tr>
+          <tr><td class="mono">r<sup>n</sup></td><td class="mono">0 si −1 &lt; r &lt; 1; ∞ si r &gt; 1</td><td class="mono">(2/3)<sup>n</sup> → 0; 3<sup>n</sup> → ∞</td></tr>
+          <tr><td class="mono">(1 + a/n)<sup>n</sup></td><td class="mono">e<sup>a</sup></td><td class="mono">(1 + 2/n)<sup>n</sup> → e²</td></tr>
+          <tr><td class="mono">(n/(n + a))<sup>n</sup></td><td class="mono">e<sup>−a</sup></td><td class="mono">(n/(n + 1))<sup>n</sup> → 1/e</td></tr>
+          <tr><td class="mono">n<sup>1/n</sup>, (número fijo)<sup>1/n</sup></td><td class="mono">1</td><td class="mono">5<sup>1/n</sup> → 1</td></tr>
+          <tr><td class="mono">lento / rápido de la escalera</td><td class="mono">0</td><td class="mono">n<sup>10</sup>/2<sup>n</sup> → 0; 2<sup>n</sup>/n! → 0</td></tr>
+          <tr><td class="mono">arctan n</td><td class="mono">π/2</td><td class="mono">—</td></tr>
+          <tr><td class="mono">(−1)<sup>n</sup></td><td class="mono">no existe</td><td class="mono">—</td></tr>
         </tbody>
       </table></div>
     </div>
 
     <div class="callout trap"><h3>Trampas</h3>
-      <p><b>«1 elevado a infinito» no es 1:</b> (1 + a/n)<sup>n</sup> → e<sup>a</sup>.</p>
-      <p><b>«Infinito entre infinito» no es 1:</b> depende de quién crece más rápido.</p>
+      <p><b>«1 elevado a infinito» no es 1:</b> (1 + 2/n)<sup>n</sup> → e², no 1.</p>
+      <p><b>«Infinito entre infinito» no es 1:</b> (4 + 3<sup>n</sup>)/2<sup>n</sup> → ∞, pero n<sup>5</sup>/2<sup>n</sup> → 0. Depende de quién crece más rápido.</p>
       <p><b>(−1)<sup>n</sup> por algo que no tiende a 0</b> no tiene límite.</p>
-      <p><b>Que a<sub>n</sub> → 0 no dice que la serie Σ a<sub>n</sub> converja:</b> (1 + sen² n)/n → 0, pero su serie diverge (lo ves en M2 y M3).</p>
+      <p><b>Que el término tienda a 0 no dice que la serie converja:</b> (1 + sen² n)/n → 0, pero su serie diverge.</p>
       <p><b>√(n³) tiene grado 3/2</b>, no 3.</p>
     </div>
   </section>
@@ -672,7 +606,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
       <p class="muted">Predice primero y después compruébalo en el lab.</p>
       <div class="challenges">
         <details class="rev"><summary>Reto 1 · Escoge (1 + 2/n)ⁿ. ¿A qué valor se acerca? ¿Ya llegó en n = 50?</summary>
-          <div class="rev-body"><p><b>A e² ≈ 7,39.</b> En n = 50 vale ≈ 7,11: se acerca muy despacio. Por eso este límite no se adivina con la calculadora: se calcula con la fórmula (1 + a/n)<sup>n</sup> → e<sup>a</sup>.</p></div></details>
+          <div class="rev-body"><p><b>A e² ≈ 7,39.</b> En n = 50 vale ≈ 7,11: se acerca muy despacio. Por eso este límite no se adivina con la calculadora: se calcula con la regla (1 + a/n)<sup>n</sup> → e<sup>a</sup>.</p></div></details>
         <details class="rev"><summary>Reto 2 · Escoge (2n² + 3n)/(n² + 1) con la franja L ± 0,1. ¿Desde qué n quedan todos los términos dentro?</summary>
           <div class="rev-body"><p><b>Desde n = 30</b> (sube N por encima de 30 para verlo). Con una franja más delgada hay que ir más lejos, pero siempre llega: eso es converger.</p></div></details>
         <details class="rev"><summary>Reto 3 · Escoge (−1)ⁿ·n/(n + 1). ¿Hay alguna franja que atrape a todos los términos?</summary>
@@ -685,7 +619,7 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
 
   <!-- ============ 3. TALLER ============ -->
   <section id="taller" aria-labelledby="w-h">
-    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero los límites que salieron dentro de tus dos parciales, después la hoja 11.1 del profesor y al final variantes de los límites que vas a usar en M3 y M4.</p></div>
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero los límites de tus parciales que no están en la teoría, después los de las hojas 11.5 y 11.6 y al final variantes nuevas. El último es extra.</p></div>
     <p class="prose">Resuélvelos en papel con la receta. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
     <div id="problems" class="block"></div>
   </section>
@@ -707,8 +641,8 @@ footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
   </section>
 
   <footer>
-    <p>Siguiente: M2 · Series: geométrica, telescópica y criterio de divergencia.</p>
-    <p>Fuente de los problemas: parciales 3 de 2023-19 y 2025-10 y la hoja 11.1 del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
+    <p>Siguiente: M2 · Series: geométrica, telescópica y criterio de divergencia (también hoy).</p>
+    <p>Fuente de los problemas: parciales 3 de 2023-19 y 2025-10 y las hojas 11.1, 11.4, 11.5 y 11.6 del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
   </footer>
 </div>
 
@@ -784,25 +718,24 @@ function plotSeq(o) {
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Términos de una sucesión"}">${g}</svg>`;
 }
 
-/* Figuras de la teoría: sin números, solo la forma */
+/* Figuras de la teoría */
 const TFIGS = {
   conv: () => plotSeq({ f: (n) => 1 + 1.4 / n, N: 24, L: 1, Llab: "L", W: 260, H: 140, aria: "Puntos que se acercan a una línea horizontal L" }),
   inf: () => plotSeq({ f: (n) => Math.sqrt(n), N: 24, W: 260, H: 140, note: "crece sin parar", aria: "Puntos que suben sin parar" }),
   osc: () => plotSeq({ f: (n) => (n % 2 ? -1 : 1) * n / (n + 1), N: 24, W: 260, H: 140, aria: "Puntos que saltan entre dos alturas" }),
-  ex1: () => plotSeq({ f: (n) => (n % 2 ? 1 : -1) / n, N: 20, L: 0, Llab: "L = 0", W: 300, H: 160, aria: "Puntos que saltan arriba y abajo del cero, cada vez más cerca" }),
-  ex5: () => plotSeq({ f: (n) => Math.pow(1 + 2 / n, n), N: 40, L: Math.exp(2), Llab: "eᵃ", W: 300, H: 160, yMin: 2.6, aria: "Puntos que suben y se estabilizan en e a la a" }),
-  ex7: () => plotSeq({ f: (n) => (1 + Math.pow(Math.sin(n), 2)) / n, N: 24, L: 0, Llab: "0", W: 300, H: 170, n0: 1,
-    curves: [{ f: (n) => 2 / n, lab: "(a + 1)/(b·n)", at: 3 }, { f: (n) => 1 / n, lab: "a/(b·n)", at: 9, dy: 16 }], aria: "Puntos atrapados entre dos curvas que bajan a cero" })
+  ex5: () => plotSeq({ f: (n) => Math.pow(1 + 2 / n, n), N: 40, L: Math.exp(2), Llab: "e² ≈ 7,39", W: 300, H: 160, yMin: 2.6, aria: "Los términos de (1 + 2/n) a la n suben y se estabilizan en e al cuadrado" }),
+  ex7: () => plotSeq({ f: (n) => (1 + Math.pow(Math.sin(n), 2)) / n, N: 24, L: 0, Llab: "0", W: 300, H: 170,
+    curves: [{ f: (n) => 2 / n, lab: "2/n", at: 3 }, { f: (n) => 1 / n, lab: "1/n", at: 9, dy: 16 }], aria: "Los términos quedan atrapados entre 1/n y 2/n, que bajan a cero" })
 };
 document.querySelectorAll("[data-fig]").forEach((nd) => { nd.innerHTML = TFIGS[nd.dataset.fig](); });
 
 /* ---------- Lab 1: sucesión y su límite ---------- */
 const SEQS = [
-  { lab: "(2n² + 3n)/(n² + 1)", f: (n) => (2 * n * n + 3 * n) / (n * n + 1), L: 2, Lt: "2", note: "Mismo grado arriba y abajo: el límite es el cociente de los coeficientes dominantes, 2/1 = 2 (ejemplo 2)." },
-  { lab: "(−1)ⁿ/n", f: (n) => (n % 2 ? -1 : 1) / n, L: 0, Lt: "0", note: "Los puntos saltan arriba y abajo del 0, cada vez más cerca: el tamaño 1/n tiende a 0 (ejemplo 1)." },
+  { lab: "(2n² + 3n)/(n² + 1)", f: (n) => (2 * n * n + 3 * n) / (n * n + 1), L: 2, Lt: "2", note: "Mismo grado arriba y abajo: el límite es el cociente de los números de n², 2/1 = 2 (tipo 1)." },
+  { lab: "(−1)ⁿ/n", f: (n) => (n % 2 ? -1 : 1) / n, L: 0, Lt: "0", note: "Los puntos saltan arriba y abajo del 0, cada vez más cerca: el tamaño 1/n tiende a 0 (tipo 5)." },
   { lab: "(1 + 2/n)ⁿ", f: (n) => Math.pow(1 + 2 / n, n), L: Math.exp(2), Lt: "e² ≈ 7,389", note: "La base se acerca a 1 y el exponente crece. El resultado no es 1: se estabiliza en e² (ejemplo 5)." },
   { lab: "ⁿ√n  (n elevado a 1/n)", f: (n) => Math.pow(n, 1 / n), L: 1, Lt: "1", note: "Sube un poco hasta n = 3 y después baja despacio hacia 1 (ejemplo 6)." },
-  { lab: "sen(n)/n", f: (n) => Math.sin(n) / n, L: 0, Lt: "0", note: "sen n salta sin orden entre −1 y 1, pero dividido entre n queda atrapado entre −1/n y 1/n: es el sándwich (ejemplo 7)." },
+  { lab: "sen(n)/n", f: (n) => Math.sin(n) / n, L: 0, Lt: "0", note: "sen n salta sin orden entre −1 y 1, pero dividido entre n queda atrapado entre −1/n y 1/n: es el sándwich (tipo 5)." },
   { lab: "(−1)ⁿ·n/(n + 1)", f: (n) => (n % 2 ? -1 : 1) * n / (n + 1), L: 1, Lt: "no existe", div: true, note: "Los pares se acercan a 1 y los impares a −1. La franja está alrededor de 1, pero los impares nunca entran: diverge." }
 ];
 const EPS = [1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01];
@@ -911,71 +844,56 @@ TABS.forEach((on) => $("#tab-" + on).addEventListener("click", () => {
 
 /* ---------- Taller ---------- */
 const PROBS = [
-  { n: "T1", t: "Los límites escondidos en el parcial 2025-10", src: "Parcial 2025-10 · P1a y P1b",
-    txt: `<p>En el parcial 2025-10, para decidir si ${M("Σ " + F(SQ("n³ + 5"), "n³ − 3"))} converge (P1a) hay que calcular el límite (a). Para ${M("Σ (" + F("n + 2", "n") + ")<sup>n²</sup>")} (P1b) hay que calcular el (b). Lo de las series lo terminas en M3 y M4; aquí solo los límites.</p>
-      <ol class="items"><li>(a) ${M(LIM + " " + F(SQ("n³ + 5") + "·n<sup>3/2</sup>", "n³ − 3"))}</li><li>(b) ${M(LIM + " (" + F("n + 2", "n") + ")<sup>n</sup>")}</li></ol>`,
-    checks: [{ q: "(a) ¿Cuánto vale?", opts: ["0", "1", F(SQ("5"), "3"), "∞"], a: 1 }, { q: "(b) ¿Cuánto vale?", opts: ["1", "2", "e<sup>2</sup>", "∞"], a: 2 }],
-    hints: ["(a) Cuenta grados: √(n³) = n<sup>3/2</sup>, y n<sup>3/2</sup>·n<sup>3/2</sup> = n³. Arriba y abajo hay grado 3: divide todo entre n³.", "(b) (n + 2)/n = 1 + 2/n. Es el ejemplo resuelto 5 con a = 2."],
-    sol: ["<b>(a)</b> Arriba, √(n³ + 5)·n<sup>3/2</sup> tiene grado 3/2 + 3/2 = 3. Abajo, grado 3. Mismo grado: el límite es un número.",
-      "Divide entre n³. Arriba: √(n³ + 5)·n<sup>3/2</sup>/n³ = √(n³ + 5)/n<sup>3/2</sup> = √((n³ + 5)/n³) = √(1 + 5/n³). Abajo: 1 − 3/n³.",
-      "Con n → ∞: √(1 + 0)/(1 − 0) = <b>1</b>.",
-      "<b>(b)</b> (n + 2)/n = 1 + 2/n, así que ((n + 2)/n)<sup>n</sup> = (1 + 2/n)<sup>n</sup> → <b>e²</b>.",
-      "Por qué importa: el criterio de la raíz (M4) le saca la raíz n-ésima a ((n + 2)/n)<sup>n²</sup> y queda justo este límite. Como e² &gt; 1, la serie diverge."] },
-  { n: "T2", t: "Los límites escondidos en el parcial 2023-19", src: "Parcial 2023-19 · P1a, P1b y P1d",
-    txt: `<p>Cada una de estas series del parcial 2023-19 se decide con un límite. Calcúlalos.</p>
-      <ol class="items"><li>(a) Para ${M("Σ " + F(SQ("n + 1"), "n + 2"))} (P1a): ${M(LIM + " " + F(SQ("n + 1") + "·" + SQ("n"), "n + 2"))}</li>
-      <li>(b) Para ${M("Σ " + F("2<sup>n−1</sup>", "(n + 1)!"))} (P1b): ${M(LIM + " " + F("2<sup>n</sup>", "(n + 2)!") + "·" + F("(n + 1)!", "2<sup>n−1</sup>"))}</li>
-      <li>(c) Para ${M("Σ (" + F("2n²", "n² + 3") + ")<sup>n</sup>")} (P1d): ${M(LIM + " " + F("2n²", "n² + 3"))}</li></ol>`,
-    checks: [{ q: "(a) ¿Cuánto vale?", opts: ["0", F("1", "2"), "1", "∞"], a: 2 }, { q: "(b) ¿Cuánto vale?", opts: ["0", F("1", "2"), "2", "∞"], a: 0 }, { q: "(c) ¿Cuánto vale?", opts: ["0", F("2", "3"), "2", "∞"], a: 2 }],
-    hints: ["(a) √(n + 1)·√n = √(n² + n): grado 1, igual que abajo.", "(b) Sepáralo en dos cocientes. (n + 2)! = (n + 2)·(n + 1)!, y 2<sup>n</sup> = 2·2<sup>n−1</sup>.", "(c) Mismo grado: cociente de los coeficientes de n²."],
-    sol: ["<b>(a)</b> √(n + 1)·√n = √(n² + n). Divide arriba y abajo entre n: √(1 + 1/n)/(1 + 2/n) → √1/1 = <b>1</b>.",
-      "<b>(b)</b> Reordena: (2<sup>n</sup>/2<sup>n−1</sup>)·((n + 1)!/(n + 2)!). El primero es 2<sup>n − (n − 1)</sup> = 2. En el segundo, (n + 2)! = (n + 2)·(n + 1)!, así que (n + 1)!/(n + 2)! = 1/(n + 2).",
-      "Queda 2/(n + 2) → <b>0</b>. En M4 vas a ver que este es el cociente del criterio del cociente: como 0 &lt; 1, la serie converge.",
-      "<b>(c)</b> Divide entre n²: 2/(1 + 3/n²) → <b>2</b>. En M4: como 2 &gt; 1, la serie diverge por la raíz."] },
-  { n: "T3", t: "Cinco límites de la hoja", src: "Hoja 11.1 · ejercicio 3",
-    txt: `<p>Determina si cada sucesión converge y encuentra su límite. La hoja también pregunta si es creciente o decreciente y si es acotada: eso va en la solución (prioridad baja).</p>
-      <ol class="items"><li>(a) a<sub>n</sub> = ${F("n² + 4n", "n² + 1")}, n ≥ 0</li><li>(b) a<sub>n</sub> = ${F("arctan n", "n + 1")}, n ≥ 1</li><li>(c) a<sub>n</sub> = sen(${F("nπ", "n + 1")}), n ≥ 2</li><li>(d) a<sub>n</sub> = ${F(SQ("n² + 4"), "n")}, n ≥ 1</li><li>(e) a<sub>n</sub> = arctan(${F(SQ("2n² + 1"), "2n + 3")}), n ≥ 0</li></ol>`,
-    checks: [{ q: "(a)", opts: ["0", "1", "4", "∞"], a: 1 }, { q: "(b)", opts: ["0", F("π", "2"), "1", "No existe"], a: 0 }, { q: "(c)", opts: ["0", "1", "π", "No existe"], a: 0 }, { q: "(d)", opts: ["0", "1", "2", "∞"], a: 1 }, { q: "(e)", opts: [F("π", "4"), "arctan(" + F(SQ("2"), "2") + ")", "arctan(" + SQ("2") + ")", F("π", "2")], a: 1 }],
-    hints: ["(b) arctan n no se va al infinito: se queda entre 0 y π/2. Usa el sándwich.", "(c) Primero el límite de adentro, nπ/(n + 1). Después pásalo por sen.", "(e) Es el ejemplo resuelto 8 con una raíz adentro (ejemplo 3)."],
-    sol: ["<b>(a)</b> Divide entre n²: (1 + 4/n)/(1 + 1/n²) → <b>1</b>. a₀ = 0, a₁ = 5/2, a₂ = 12/5, a₃ = 21/10: sube de a₀ a a₁ y desde n = 1 baja hacia 1. Acotada: 0 ≤ a<sub>n</sub> ≤ 5/2.",
-      "<b>(b)</b> 0 &lt; arctan n &lt; π/2, así que 0 &lt; a<sub>n</sub> &lt; (π/2)/(n + 1). Las dos tapas tienden a 0: por el sándwich, a<sub>n</sub> → <b>0</b>. Es decreciente (a₁ = π/8 ≈ 0,39; a₂ ≈ 0,37; a₃ ≈ 0,31) y acotada entre 0 y π/8.",
-      "<b>(c)</b> nπ/(n + 1) → π (mismo grado). sen es continua: a<sub>n</sub> → sen π = <b>0</b>. El ángulo sube de 2π/3 hacia π, y en ese tramo el seno baja: decreciente, acotada entre 0 y √3/2.",
-      "<b>(d)</b> Divide entre n: √(n² + 4)/n = √(1 + 4/n²) → <b>1</b>. Decreciente (4/n² baja) y acotada: 1 &lt; a<sub>n</sub> ≤ √5.",
-      "<b>(e)</b> Adentro, divide entre n: √(2 + 1/n²)/(2 + 3/n) → √2/2. arctan es continua: a<sub>n</sub> → <b>arctan(√2/2)</b> ≈ 0,62. Lo de adentro crece (1/3, √3/5, 3/7, …) y arctan también, así que a<sub>n</sub> es creciente y acotada por arriba por arctan(√2/2)."] },
-  { n: "T4", t: "La fórmula general", src: "Hoja 11.1 · ejercicio 2",
-    txt: `<p>Encuentra la fórmula general a<sub>n</sub>, empezando en n = 1, y di a qué tiende.</p>
-      <ol class="items"><li>(a) ${F("1", "2")}, ${F("2", "3")}, ${F("3", "4")}, ${F("4", "5")}, ${F("5", "6")}, …</li><li>(b) −1, ${F("1", "3")}, −${F("1", "5")}, ${F("1", "7")}, −${F("1", "9")}, …</li><li>(c) ${F("2", "4")}, −${F("4", "8")}, ${F("6", "16")}, −${F("8", "32")}, ${F("10", "64")}, …</li></ol>`,
-    checks: [{ q: "(a) ¿Cuál es a<sub>n</sub>?", opts: [F("n", "n + 1"), F("n + 1", "n"), F("n", "2n"), F("1", "n + 1")], a: 0 },
-      { q: "(b) ¿Cuál es a<sub>n</sub>?", opts: ["(−1)<sup>n</sup>·" + F("1", "2n − 1"), "(−1)<sup>n+1</sup>·" + F("1", "2n − 1"), "(−1)<sup>n</sup>·" + F("1", "2n + 1"), "(−1)<sup>n</sup>·" + F("1", "n")], a: 0 },
-      { q: "(c) ¿Cuál es a<sub>n</sub>?", opts: ["(−1)<sup>n+1</sup>·" + F("n", "2<sup>n</sup>"), "(−1)<sup>n</sup>·" + F("n", "2<sup>n</sup>"), "(−1)<sup>n+1</sup>·" + F("2n", "4<sup>n</sup>"), "(−1)<sup>n+1</sup>·" + F("1", "2<sup>n</sup>")], a: 0 }],
-    hints: ["Separa en tres: el signo, el numerador y el denominador. Mira la tabla «Cómo encontrar la fórmula» de la idea 1.", "(c) Los denominadores 4, 8, 16, 32, 64 son 2<sup>n+1</sup>. Después simplifica 2n/2<sup>n+1</sup>."],
-    sol: ["<b>(a)</b> Numeradores 1, 2, 3, …: n. Denominadores 2, 3, 4, …: n + 1. a<sub>n</sub> = n/(n + 1) → <b>1</b>.",
-      "<b>(b)</b> El signo empieza en − con n = 1: (−1)<sup>n</sup>. Numerador 1. Denominadores 1, 3, 5, 7, 9: impares, 2n − 1. a<sub>n</sub> = (−1)<sup>n</sup>/(2n − 1) → <b>0</b>, porque el tamaño 1/(2n − 1) tiende a 0.",
-      "<b>(c)</b> El signo empieza en +: (−1)<sup>n+1</sup>. Numeradores 2, 4, 6, 8, 10: 2n. Denominadores: 2<sup>n+1</sup>. a<sub>n</sub> = (−1)<sup>n+1</sup>·2n/2<sup>n+1</sup> = (−1)<sup>n+1</sup>·n/2<sup>n</sup> → <b>0</b>, porque n/2<sup>n</sup> → 0 por la escalera."] },
-  { n: "T5", t: "Términos con trampa", src: "Hoja 11.1 · ejercicio 1",
-    txt: `<p>Escribe los primeros cinco términos y di a qué tiende cada sucesión. Dos de ellas esconden una sorpresa.</p>
-      <ol class="items"><li>(c) a<sub>n</sub> = ${F("n(n + 1)", "n + 2")}, n ≥ 3</li><li>(d) b<sub>n</sub> = ${F("2<sup>n</sup>", "n + 3")}, n ≥ 0</li><li>(e) b<sub>n</sub> = ${F("(−1)<sup>n</sup>·cos(nπ)", "n")}, n ≥ 1</li><li>(f) b<sub>n</sub> = ${F("(−1)<sup>n+1</sup>·sen(2nπ)", "n + 3")}, n ≥ 2</li></ol>`,
-    checks: [{ q: "(d) ¿A qué tiende?", opts: ["0", "1", "2", "∞ (diverge)"], a: 3 }, { q: "(e) ¿Cuánto vale b<sub>3</sub>?", opts: ["−" + F("1", "3"), F("1", "3"), "0", "−1"], a: 1 }, { q: "(f) ¿Cuánto vale b<sub>2</sub>?", opts: ["0", F("1", "5"), "−" + F("1", "5"), F("2", "5")], a: 0 }],
-    hints: ["(e) cos(nπ) vale 1 si n es par y −1 si es impar: es lo mismo que (−1)<sup>n</sup>.", "(f) El seno de un múltiplo entero de π siempre es 0."],
-    sol: ["<b>(c)</b> 12/5, 10/3, 30/7, 21/4, 56/9. Arriba grado 2 y abajo grado 1: → <b>∞</b>, diverge.",
-      "<b>(d)</b> 1/3, 1/2, 4/5, 4/3, 16/7. Exponencial entre potencia, rápido entre lento: → <b>∞</b>, diverge.",
-      "<b>(e)</b> Como cos(nπ) = (−1)<sup>n</sup>, el numerador es (−1)<sup>n</sup>·(−1)<sup>n</sup> = (−1)<sup>2n</sup> = 1. Entonces b<sub>n</sub> = 1/n: 1, 1/2, 1/3, 1/4, 1/5 → <b>0</b>. Los signos se cancelan: no alterna.",
-      "<b>(f)</b> sen(2nπ) = 0 para todo n entero. Todos los términos son 0: 0, 0, 0, 0, 0 → <b>0</b>."] },
-  { n: "T6", t: "Variantes: los límites de M3 y M4", src: "Problemas nuevos",
-    txt: `<p>Estos son límites que vas a necesitar dentro de los criterios de M3 y M4. Calcula cada uno.</p>
-      <ol class="items"><li>(a) ${M(LIM + " (" + F("n", "n + 3") + ")<sup>n</sup>")}</li><li>(b) ${M(LIM + " (3n² + 1)<sup>1/n</sup>")}</li><li>(c) ${M(LIM + " " + F("n<sup>5</sup>", "2<sup>n</sup>"))}</li><li>(d) ${M(LIM + " " + F("4 + 3<sup>n</sup>", "2<sup>n</sup>"))}</li><li>(e) ${M(LIM + " (−1)<sup>n</sup>·" + F("n", "n + 1"))}</li></ol>`,
-    checks: [{ q: "(a)", opts: ["1", "e<sup>3</sup>", "e<sup>−3</sup>", "0"], a: 2 }, { q: "(b)", opts: ["0", "1", "3", "∞"], a: 1 }, { q: "(c)", opts: ["0", "1", F("5", "2"), "∞"], a: 0 }, { q: "(d)", opts: ["0", F("3", "2"), "4", "∞"], a: 3 }, { q: "(e)", opts: ["1", "−1", "0", "No existe"], a: 3 }],
-    hints: ["(a) n/(n + 3) = 1/(1 + 3/n).", "(b) Sándwich: para n ≥ 1, 3n² ≤ 3n² + 1 ≤ 4n². Y (c·n²)<sup>1/n</sup> → 1 (ejemplo resuelto 6).", "(d) Divide entre 2<sup>n</sup>: queda 4/2<sup>n</sup> + (3/2)<sup>n</sup>."],
+  { n: "T1", t: "Los otros límites de tus parciales", src: "Parcial 2023-19 · P1a y P1c · Parcial 2025-10 · P3",
+    txt: `<p>Los ejemplos resueltos usaron los límites del P1b y P1d de 2023 y del P1a, P1b y P1c de 2025. Estos son los que faltan. Calcula cada uno; lo de las series lo terminas en M3, M4 y M6.</p>
+      <ol class="items"><li>(a) 2023 P1a: para comparar Σ ${F(SQ("n + 1"), "n + 2")} con Σ ${F("1", SQ("n"))} hay que calcular ${M(LIM + " " + F(SQ("n + 1") + "·" + SQ("n"), "n + 2"))}</li>
+      <li>(b) 2023 P1c: en Σ (−1)<sup>n</sup>·${F("2n", "n² + 1")}, el tamaño del término es ${M("b<sub>n</sub> = " + F("2n", "n² + 1"))}. Calcula ${M(LIM + " b<sub>n</sub>")}</li>
+      <li>(c) 2023 P1c: para comparar el tamaño con Σ ${F("1", "n")} hay que calcular ${M(LIM + " " + F("2n", "n² + 1") + " ÷ " + F("1", "n"))}</li>
+      <li>(d) 2025 P3: en la serie de potencias Σ (−1)<sup>n</sup>${F("(x + 2)<sup>n</sup>", "3<sup>n</sup>(n² + 1)")}, el criterio del cociente deja ${M(LIM + " " + F("n² + 1", "(n + 1)² + 1"))}</li></ol>`,
+    checks: [{ q: "(a) ¿Cuánto vale?", opts: ["0", F("1", "2"), "1", "∞"], a: 2 }, { q: "(b) ¿Cuánto vale?", opts: ["0", "1", "2", "∞"], a: 0 }, { q: "(c) ¿Cuánto vale?", opts: ["0", "1", "2", "∞"], a: 2 }, { q: "(d) ¿Cuánto vale?", opts: ["0", F("1", "3"), "1", "∞"], a: 2 }],
+    hints: ["(a) √(n + 1)·√n = √(n² + n): grado 1, igual que abajo.", "(b) Arriba grado 1 y abajo grado 2: abajo crece más rápido.", "(c) Dividir entre 1/n es multiplicar por n: queda 2n²/(n² + 1).", "(d) (n + 1)² + 1 = n² + 2n + 2: mismo grado que n² + 1."],
+    sol: ["<b>(a)</b> √(n + 1)·√n = √(n² + n). Divide arriba y abajo entre n: √(1 + 1/n)/(1 + 2/n) → √1/1 = <b>1</b>. En M3: como da 1, la serie se comporta como Σ 1/√n, que diverge.",
+      "<b>(b)</b> Divide entre n²: (2/n)/(1 + 1/n²) → 0/1 = <b>0</b>. Es una de las dos condiciones del criterio de Leibniz (M4).",
+      "<b>(c)</b> (2n/(n² + 1))·n = 2n²/(n² + 1) → <b>2</b>. En M4: como da 2, Σ |a<sub>n</sub>| se comporta como Σ 1/n, que diverge. Por eso esa serie converge solo condicionalmente.",
+      "<b>(d)</b> (n² + 1)/(n² + 2n + 2): divide entre n² y queda (1 + 1/n²)/(1 + 2/n + 2/n²) → <b>1</b>. En M6: el cociente completo queda |x + 2|/3 por este 1, y de ahí sale el radio 3."] },
+  { n: "T2", t: "Los límites de las hojas 11.5 y 11.6", src: "Hojas 11.5 y 11.6",
+    txt: `<p>Con estos límites se deciden varias series de las hojas que vienen en M4. Calcula cada uno.</p>
+      <ol class="items"><li>(a) 11.6 (g): ${M(LIM + " (" + F("n", "n + 1") + ")<sup>n</sup>")}</li><li>(b) 11.6 (i): ${M(LIM + " (1 + " + F("1", "n") + ")<sup>n</sup>")}</li><li>(c) 11.6 (h): ${M(LIM + " (" + F("2n", "n + 1") + ")<sup>5</sup>")}</li>
+      <li>(d) 11.6 (c): ${M(LIM + " " + F("10<sup>n+1</sup>", "(n + 2)·4<sup>2n+3</sup>") + "·" + F("(n + 1)·4<sup>2n+1</sup>", "10<sup>n</sup>"))}</li><li>(e) 11.5 (j): ${M(LIM + " cos(" + F("π", "n") + ")")}</li>
+      <li>(f) 11.6 (d): ${M(LIM + " " + F("(n + 1)²·2<sup>n+1</sup>", "(n + 1)!") + "·" + F("n!", "n²·2<sup>n</sup>"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["1", "e", F("1", "e"), "0"], a: 2 }, { q: "(b)", opts: ["1", "e", "∞", "2"], a: 1 }, { q: "(c)", opts: ["2", "10", "32", "∞"], a: 2 }, { q: "(d)", opts: [F("5", "2"), F("5", "8"), F("10", "4"), "0"], a: 1 }, { q: "(e)", opts: ["0", "1", "−1", "No existe"], a: 1 }, { q: "(f)", opts: ["0", "1", "2", "∞"], a: 0 }],
+    hints: ["(a) n/(n + 1) = 1/(1 + 1/n).", "(c) Primero el límite de adentro, después lo elevas a la 5.", "(d) Agrupa: 10<sup>n+1</sup>/10<sup>n</sup> = 10; 4<sup>2n+1</sup>/4<sup>2n+3</sup> = 1/4² = 1/16; y (n + 1)/(n + 2) → 1.", "(f) (n + 1)!/n! = n + 1 y 2<sup>n+1</sup>/2<sup>n</sup> = 2."],
+    sol: ["<b>(a)</b> (n/(n + 1))<sup>n</sup> = 1/(1 + 1/n)<sup>n</sup> → <b>1/e</b>. En M4 este es el cociente de la serie Σ n!/n<sup>n</sup>: como 1/e &lt; 1, converge.",
+      "<b>(b)</b> Es la regla del número e con 1 sobre la n: → <b>e</b>. En M4: como e &gt; 1, la serie Σ (1 + 1/n)<sup>n²</sup> diverge por la raíz.",
+      "<b>(c)</b> 2n/(n + 1) → 2, y elevar a la 5 es una función sin saltos: → 2<sup>5</sup> = <b>32</b>. En M4: como 32 &gt; 1, la serie diverge.",
+      "<b>(d)</b> Agrupando: 10·(1/16)·(n + 1)/(n + 2) → 10/16 = <b>5/8</b>. En M4: como 5/8 &lt; 1, converge.",
+      "<b>(e)</b> π/n → 0 y el coseno no tiene saltos: → cos 0 = <b>1</b>. En M2: como el término de Σ (−1)<sup>n</sup> cos(π/n) no tiende a 0, la serie diverge.",
+      "<b>(f)</b> Agrupando: ((n + 1)²/n²)·2·(n!/(n + 1)!) = 2(n + 1)²/(n²(n + 1)) = 2(n + 1)/n² → <b>0</b>. Arriba grado 1 y abajo grado 2."] },
+  { n: "T3", t: "Variantes tipo parcial", src: "Problemas nuevos",
+    txt: `<p>Límites como los que el profesor pone dentro de los criterios. Calcula cada uno.</p>
+      <ol class="items"><li>(a) ${M(LIM + " (" + F("n", "n + 3") + ")<sup>n</sup>")}</li><li>(b) ${M(LIM + " (3n² + 1)<sup>1/n</sup>")}</li><li>(c) ${M(LIM + " " + F("n<sup>5</sup>", "2<sup>n</sup>"))}</li><li>(d) ${M(LIM + " (−1)<sup>n</sup>·" + F("n", "n + 1"))}</li><li>(e) ${M(LIM + " " + F(SQ("4n² + 1"), "3n + 2"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["1", "e<sup>3</sup>", "e<sup>−3</sup>", "0"], a: 2 }, { q: "(b)", opts: ["0", "1", "3", "∞"], a: 1 }, { q: "(c)", opts: ["0", "1", F("5", "2"), "∞"], a: 0 }, { q: "(d)", opts: ["1", "−1", "0", "No existe"], a: 3 }, { q: "(e)", opts: [F("4", "3"), F("2", "3"), F("1", "3"), "∞"], a: 1 }],
+    hints: ["(a) n/(n + 3) = 1/(1 + 3/n).", "(b) Sándwich: para n ≥ 1, 3n² ≤ 3n² + 1 ≤ 4n². Y la raíz n-ésima de un número fijo por n² tiende a 1 (ejemplo 6).", "(e) √(4n²) = 2n: grado 1 arriba y abajo."],
     sol: ["<b>(a)</b> (n/(n + 3))<sup>n</sup> = 1/(1 + 3/n)<sup>n</sup> → 1/e³ = <b>e<sup>−3</sup></b>.",
       "<b>(b)</b> Para n ≥ 1: 3n² ≤ 3n² + 1 ≤ 4n². La raíz n-ésima no voltea las desigualdades: 3<sup>1/n</sup>·(n<sup>1/n</sup>)² ≤ a<sub>n</sub> ≤ 4<sup>1/n</sup>·(n<sup>1/n</sup>)². Las dos tapas tienden a 1·1² = 1. Por el sándwich: <b>1</b>.",
       "<b>(c)</b> Potencia entre exponencial con base 2 &gt; 1: lento entre rápido → <b>0</b>.",
-      "<b>(d)</b> 4/2<sup>n</sup> → 0 y (3/2)<sup>n</sup> → ∞ porque 3/2 &gt; 1: <b>∞</b>, diverge. En M2 esto dice que la serie Σ (4 + 3<sup>n</sup>)/2<sup>n</sup> diverge (hoja 11.4 c).",
-      "<b>(e)</b> El tamaño n/(n + 1) tiende a 1, no a 0. Los pares se acercan a 1 y los impares a −1: <b>no existe</b>. En M2 esto dice que la serie Σ (−1)<sup>n</sup>·n/(n + 1) diverge."] }
+      "<b>(d)</b> El tamaño n/(n + 1) tiende a 1, no a 0. Los pares se acercan a 1 y los impares a −1: <b>no existe</b>. En M2: la serie Σ (−1)<sup>n</sup>·n/(n + 1) diverge.",
+      "<b>(e)</b> Divide entre n: √(4 + 1/n²)/(3 + 2/n) → √4/3 = <b>2/3</b>."] },
+  { n: "Extra", t: "Cinco límites de la hoja 11.1", src: "Hoja 11.1 · ejercicio 3 · si te sobra tiempo", extra: true,
+    txt: `<p>Nunca han salido así en el parcial, pero son buena práctica de límites. La hoja también pregunta si son crecientes y acotadas: sáltate eso.</p>
+      <ol class="items"><li>(a) a<sub>n</sub> = ${F("n² + 4n", "n² + 1")}</li><li>(b) a<sub>n</sub> = ${F("arctan n", "n + 1")}</li><li>(c) a<sub>n</sub> = sen(${F("nπ", "n + 1")})</li><li>(d) a<sub>n</sub> = ${F(SQ("n² + 4"), "n")}</li><li>(e) a<sub>n</sub> = arctan(${F(SQ("2n² + 1"), "2n + 3")})</li></ol>`,
+    checks: [{ q: "(a)", opts: ["0", "1", "4", "∞"], a: 1 }, { q: "(b)", opts: ["0", F("π", "2"), "1", "No existe"], a: 0 }, { q: "(c)", opts: ["0", "1", "π", "No existe"], a: 0 }, { q: "(d)", opts: ["0", "1", "2", "∞"], a: 1 }, { q: "(e)", opts: [F("π", "4"), "arctan(" + F(SQ("2"), "2") + ")", "arctan(" + SQ("2") + ")", F("π", "2")], a: 1 }],
+    hints: ["(b) arctan n se queda entre 0 y π/2. Usa el sándwich.", "(c) Primero el límite de adentro, nπ/(n + 1). Después pásalo por el seno.", "(e) Primero el límite de adentro (con raíz, como el ejemplo 2), después pásalo por arctan."],
+    sol: ["<b>(a)</b> Divide entre n²: (1 + 4/n)/(1 + 1/n²) → <b>1</b>.",
+      "<b>(b)</b> 0 &lt; arctan n &lt; π/2, así que 0 &lt; a<sub>n</sub> &lt; (π/2)/(n + 1). Las dos tapas tienden a 0: <b>0</b>.",
+      "<b>(c)</b> nπ/(n + 1) → π (mismo grado) y el seno no tiene saltos: → sen π = <b>0</b>.",
+      "<b>(d)</b> Divide entre n: √(1 + 4/n²) → <b>1</b>.",
+      "<b>(e)</b> Adentro, divide entre n: √(2 + 1/n²)/(2 + 3/n) → √2/2. Por fuera: → <b>arctan(√2/2)</b> ≈ 0,62."] }
 ];
 (function renderProblems() {
   const box = $("#problems");
   PROBS.forEach((p) => {
-    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const a = el("article", "prob" + (p.extra ? " extra" : "")); a.id = "prob-" + p.n;
     const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
     a.appendChild(elh("div", "prob-body", p.txt));
     p.checks.forEach((ck, ci) => {
@@ -1008,15 +926,15 @@ const QUIZ = {
     { k: "Conceptual", q: `¿Qué quiere decir ${M(LIM + " a<sub>n</sub> = L")}?`,
       o: ["Que algún término de la lista vale exactamente L.", "Que, desde algún n en adelante, todos los términos quedan tan cerca de L como uno quiera.", "Que todos los términos son menores que L.", "Que el primer término vale L."], a: 1,
       e: "El límite habla de lo que pasa cuando n crece: los términos se pegan a L y ya no se despegan. No importa si alguno vale L ni cómo empieza la lista." },
-    { k: "Conceptual", q: `Con a y c positivos, ¿cuánto vale ${M(LIM + " " + F("a·n³ + b·n", "c·n² + d"))}?`,
-      o: [F("a", "c"), "0", "Diverge a ∞", F("b", "d")], a: 2,
-      e: "Arriba el grado es 3 y abajo 2: arriba crece más rápido. Dividiendo entre n² queda (a·n + b/n)/(c + d/n²), y a·n → ∞." },
+    { k: "Conceptual", q: `¿Cuánto vale ${M(LIM + " " + F("3n³ + n", "5n² + 2"))}?`,
+      o: [F("3", "5"), "0", "Diverge a ∞", F("1", "2")], a: 2,
+      e: "Arriba el grado es 3 y abajo 2: arriba crece más rápido. Dividiendo entre n² queda (3n + 1/n)/(5 + 2/n²), y 3n → ∞." },
     { k: "Conceptual", q: "¿Cuál de estos límites vale 0?",
       o: [M(LIM + " " + F("2<sup>n</sup>", "n<sup>10</sup>")), M(LIM + " " + F("n!", "5<sup>n</sup>")), M(LIM + " " + F("n<sup>10</sup>", "2<sup>n</sup>")), M(LIM + " " + F("n", "ln n"))], a: 2,
-      e: "En la escalera, n<sup>k</sup> ≪ r<sup>n</sup> si r &gt; 1: una potencia entre una exponencial tiende a 0. Las otras tres son rápido entre lento y tienden a ∞." },
-    { k: "Tipo parcial", q: `Dentro de una comparación en el límite (M3) aparece ${M(LIM + " " + F(SQ("4n² + 1"), "3n + 2"))}. ¿Cuánto vale?`,
-      o: [F("4", "3"), F("2", "3"), F("1", "3"), "∞"], a: 1,
-      e: "Mismo grado: arriba es 1, porque √(4n²) = 2n. Divides entre n: √(4 + 1/n²)/(3 + 2/n) → √4/3 = 2/3." },
+      e: "En la escalera, una potencia de n es mucho menor que una exponencial con base mayor que 1: n<sup>10</sup>/2<sup>n</sup> → 0. Las otras tres son rápido entre lento y tienden a ∞." },
+    { k: "Tipo parcial", q: `Dentro de una comparación en el límite (M3) aparece ${M(LIM + " " + F(SQ("9n² + 1"), "4n − 1"))}. ¿Cuánto vale?`,
+      o: [F("9", "4"), F("3", "4"), F("1", "4"), "∞"], a: 1,
+      e: "√(9n²) = 3n: grado 1 arriba y abajo. Divides entre n: √(9 + 1/n²)/(4 − 1/n) → √9/4 = 3/4." },
     { k: "Tipo parcial", q: `Dentro del criterio de la raíz (M4) aparece ${M(LIM + " (" + F("n", "n + 2") + ")<sup>n</sup>")}. ¿Cuánto vale?`,
       o: ["1", "e<sup>2</sup>", "e<sup>−2</sup>", "0"], a: 2,
       e: "n/(n + 2) = 1/(1 + 2/n), así que (n/(n + 2))<sup>n</sup> = 1/(1 + 2/n)<sup>n</sup> → 1/e² = e<sup>−2</sup>. No es 1: es la trampa de «1 elevado a infinito»." }
@@ -1025,9 +943,9 @@ const QUIZ = {
     { k: "Conceptual", q: `¿Qué pasa con ${M("a<sub>n</sub> = (−1)<sup>n</sup>·" + F("2n", "n + 1"))} cuando n → ∞?`,
       o: ["Converge a 0.", "Converge a 2.", "No tiene límite: los pares se acercan a 2 y los impares a −2.", "Converge a −2."], a: 2,
       e: "El tamaño 2n/(n + 1) tiende a 2, no a 0. El (−1)<sup>n</sup> lo pone una vez arriba y otra abajo: salta entre cerca de 2 y cerca de −2." },
-    { k: "Conceptual", q: `Con a y c positivos, ¿cuánto vale ${M(LIM + " " + F("a·n² + b", "c·n³ + d"))}?`,
-      o: [F("a", "c"), "0", "∞", F("b", "d")], a: 1,
-      e: "Arriba grado 2 y abajo grado 3: abajo crece más rápido. Dividiendo entre n³ queda (a/n + b/n³)/(c + d/n³) → 0/c = 0." },
+    { k: "Conceptual", q: `¿Cuánto vale ${M(LIM + " " + F("4n² + 1", "2n³ − n"))}?`,
+      o: ["2", "0", "∞", "−1"], a: 1,
+      e: "Arriba grado 2 y abajo grado 3: abajo crece más rápido. Dividiendo entre n³ queda (4/n + 1/n³)/(2 − 1/n²) → 0/2 = 0." },
     { k: "Conceptual", q: "¿Cuál de estos límites vale 1?",
       o: [M(LIM + " n<sup>1/n</sup>"), M(LIM + " (1 + " + F("1", "n") + ")<sup>n</sup>"), M(LIM + " (" + F("1", "2") + ")<sup>n</sup>"), M(LIM + " " + F("n", "ln n"))], a: 0,
       e: "n<sup>1/n</sup> → 1. En cambio (1 + 1/n)<sup>n</sup> → e, (1/2)<sup>n</sup> → 0 y n/ln n → ∞." },
@@ -1036,7 +954,7 @@ const QUIZ = {
       e: "El más rápido es 5<sup>n</sup>. Divides entre 5<sup>n</sup>: (1 + n³/5<sup>n</sup>)/(2 + 1/5<sup>n</sup>) → (1 + 0)/(2 + 0) = 1/2." },
     { k: "Tipo parcial", q: `¿Cuánto vale ${M(LIM + " (1 − " + F("3", "n") + ")<sup>2n</sup>")}?`,
       o: ["e<sup>−3</sup>", "e<sup>−6</sup>", "e<sup>6</sup>", "1"], a: 1,
-      e: "(1 − 3/n)<sup>2n</sup> = [(1 − 3/n)<sup>n</sup>]² → (e<sup>−3</sup>)² = e<sup>−6</sup>. Con la tabla de variantes: a = −3 y b = 2 dan e<sup>a·b</sup> = e<sup>−6</sup>." }
+      e: "(1 − 3/n)<sup>2n</sup> = [(1 − 3/n)<sup>n</sup>]². Por dentro, (1 − 3/n)<sup>n</sup> → e<sup>−3</sup>; al cuadrado, (e<sup>−3</sup>)² = e<sup>−6</sup>." }
   ]
 };
 

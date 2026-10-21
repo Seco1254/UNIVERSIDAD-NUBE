@@ -198,7 +198,8 @@ footer{font-size:.82rem; color:var(--muted)}
     </div>
     <div class="days" id="days"></div>
     <ul class="rules">
-      <li><b>Si te atrasas:</b> M1 y M2 ya los viste en clase. Haz el quiz primero y, si sacas 4/5 o más, sáltalos. Recorta el lab de M5 antes que cualquier taller. <b>Nunca recortes M6, M7 ni el simulacro.</b></li>
+      <li><b>Ajuste del 21 de octubre:</b> M1 pasó al miércoles junto con M2, y M3 va completo el jueves. Cada módulo trae solo lo que da puntos en el parcial, con ejemplos resueltos tomados de tus parciales y de las hojas.</li>
+      <li><b>Si te atrasas:</b> recorta primero los extras del taller y el lab de M5. Si ya dominas un módulo, haz el quiz primero y sáltalo con 4/5. <b>Nunca recortes M6 (14 pts), M7 (11 pts) ni el simulacro.</b></li>
       <li><b>Si vas adelantado:</b> adelanta M6. Para hallar el radio solo necesitas el criterio del cociente de M4.</li>
       <li><b>Ve a la clase del viernes:</b> es Taylor (11.10) y entra en el parcial.</li>
     </ul>
@@ -207,7 +208,7 @@ footer{font-size:.82rem; color:var(--muted)}
   <section aria-labelledby="mod-h">
     <div class="sec-head">
       <h2 id="mod-h">Módulos</h2>
-      <p class="note">Cada módulo tiene cuatro partes: teoría, lab visual, taller y quiz. Pasas al siguiente con 4/5 o más en el quiz; si no, repasamos el error y haces el Quiz B. Lo que ya viste en clase va en los días livianos, pero la teoría va completa igual.</p>
+      <p class="note">Cada módulo tiene cuatro partes: teoría, lab visual, taller y quiz. Pasas al siguiente con 4/5 o más en el quiz; si no, repasamos el error y haces el Quiz B. Cada módulo trae solo lo que da puntos en el parcial, y los ejemplos resueltos son ejercicios de tus parciales y de las hojas, con sus números.</p>
       <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
     </div>
     <div class="mods" id="mods"></div>
@@ -254,6 +255,7 @@ footer{font-size:.82rem; color:var(--muted)}
       <li><b>El profesor escribe sin</b> para el seno (la notación en inglés). Aquí uso sen. Es lo mismo.</li>
       <li><b>Hoja 11.2 (5c)</b> dice (x² + x − 1)/(2x² + 1), pero es con n: (n² + n − 1)/(2n² + 1). Diverge porque el término tiende a 1/2.</li>
       <li><b>Hoja 11.6 (1f)</b> no tiene exponente. Tal como está, diverge porque el término tiende a 1/2. Si se le perdió el exponente n, converge por la raíz (L = 1/2). Practicamos las dos versiones.</li>
+      <li><b>De la hoja 11.1 solo practicamos límites.</b> Escribir términos, la fórmula general y la monotonía (ejercicios 1, 2 y 4) nunca han salido en el parcial. Los límites del ejercicio 3 quedan como extra en M1.</li>
       <li><b>No hay hojas de 11.3, 11.8, 11.9 ni 11.10.</b> Para esos temas armo variantes al estilo del profesor. Si te sobra tiempo, el programa sugiere ejercicios del Stewart.</li>
     </ul>
   </section>
@@ -265,24 +267,24 @@ footer{font-size:.82rem; color:var(--muted)}
 const EXAM_DAY = "2026-10-26";
 const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
 const DAYS = [
-  {d:"2026-10-20", n:"Mar", f:"20 oct", load:1, what:"M1 Sucesiones y límites al infinito", clase:"En clase: 11.9", mods:["M1"], h:"1–1,5 h"},
-  {d:"2026-10-21", n:"Mié", f:"21 oct", load:3, what:"M2 Series básicas + M3 teoría y lab", mods:["M2","M3"], h:"2,5–3 h"},
-  {d:"2026-10-22", n:"Jue", f:"22 oct", load:1, what:"M3 taller y quiz", mods:["M3"], h:"1–1,5 h"},
+  {d:"2026-10-20", n:"Mar", f:"20 oct", load:1, what:"Plan listo. M1 pasó al miércoles", clase:"En clase: 11.9", mods:[], h:"—"},
+  {d:"2026-10-21", n:"Mié", f:"21 oct", load:3, what:"M1 Límites + M2 Series básicas", mods:["M1","M2"], h:"2,5–3 h"},
+  {d:"2026-10-22", n:"Jue", f:"22 oct", load:1, what:"M3 Comparación y serie p", mods:["M3"], h:"1–1,5 h"},
   {d:"2026-10-23", n:"Vie", f:"23 oct", load:2, what:"M4 Alternantes, cociente y raíz", clase:"En clase: Taylor (entra)", mods:["M4"], h:"~2 h"},
   {d:"2026-10-24", n:"Sáb", f:"24 oct", load:4, what:"M5 ¿Qué criterio uso? + M6 Series de potencias", mods:["M5","M6"], h:"4–5 h"},
   {d:"2026-10-25", n:"Dom", f:"25 oct", load:4, what:"M7 Taylor + M8 Simulacro de 75 min", mods:["M7","M8"], h:"4–5 h"},
   {d:"2026-10-26", n:"Lun", f:"26 oct · O_102", load:0, what:"30 min con la hoja mental y la clave, y Parcial 3", mods:[], h:"Llega descansado", exam:true}
 ];
 const MODS = [
-  {id:"M1", t:"Sucesiones y límites al infinito", clase:"Visto en clase", day:"Mar 20", h:"1–1,5 h", libro:"11.1", extra:"la caja de herramientas",
-    dominar:["El término dominante manda: dividir por la potencia más alta.","Límites de memoria: (1 + a/n)<sup>n</sup> → e<sup>a</sup>, n<sup>1/n</sup> → 1 y r<sup>n</sup> → 0 si |r| &lt; 1.","Jerarquía de crecimiento: ln n ≪ n<sup>p</sup> ≪ r<sup>n</sup> ≪ n! ≪ n<sup>n</sup>."],
-    taller:["Hoja 11.1 (3) a–e: límites","Hoja 11.1 (1) y (2): términos y fórmula general","Los límites que aparecen dentro de los parciales"],
-    trampas:["(1 + 1/n)<sup>n</sup> tiende a e, no a 1.","Que a<sub>n</sub> → 0 no significa que la serie converja."]},
+  {id:"M1", t:"Sucesiones y límites al infinito", clase:"Visto en clase", day:"Mié 21", h:"~1 h", libro:"11.1", extra:"solo los límites que usan los criterios",
+    dominar:["El término dominante: polinomios y raíces (√(n³) tiene grado 3/2).","Simplificar factoriales y potencias antes del límite.","(1 + 2/n)<sup>n</sup> → e², la raíz n-ésima y la escalera ln n ≪ n³ ≪ 2<sup>n</sup> ≪ n! ≪ n<sup>n</sup>."],
+    taller:["Los límites de tus parciales que no están en la teoría (2023 P1a y P1c, 2025 P3)","Los límites de las hojas 11.5 y 11.6","Variantes tipo parcial"],
+    trampas:["(1 + 2/n)<sup>n</sup> tiende a e², no a 1.","Que el término tienda a 0 no dice que la serie converja."]},
   {id:"M2", t:"Series: geométrica, telescópica y criterio de divergencia", clase:"Visto en clase", day:"Mié 21", h:"1,5 h", libro:"11.2", extra:"7 pts en 2025",
     dominar:["La suma parcial S<sub>N</sub> y qué significa que una serie converja.","Geométrica: converge si |r| &lt; 1 y vale (primer término)/(1 − r).","Telescópica: fracciones parciales, tachar lo que se cancela y tomar el límite de S<sub>N</sub>."],
     taller:["2025 P2: Σ 2/(k² + k) = 2","Hoja 11.2 (2): seis geométricas","Hoja 11.2 (3): telescópicas","Hoja 11.2 (1) y (5): notación y divergencia"],
     trampas:["La fórmula usa el primer término de la suma, que no siempre es a.","Si a<sub>n</sub> → 0, el criterio de divergencia no dice nada: la armónica diverge."]},
-  {id:"M3", t:"Comparación directa, comparación en el límite y serie p", clase:"Visto en clase", day:"Mié 21 y jue 22", h:"2 h", libro:"11.3–11.4", extra:"24 pts históricos",
+  {id:"M3", t:"Comparación directa, comparación en el límite y serie p", clase:"Visto en clase", day:"Jue 22", h:"1,5 h", libro:"11.3–11.4", extra:"24 pts históricos",
     dominar:["Serie p: Σ 1/n<sup>p</sup> converge si y solo si p &gt; 1.","Escoger b<sub>n</sub> con el término dominante de arriba y de abajo.","Acotar sen² n y cos² n entre 0 y 1."],
     taller:["2025 P1a: √(n³ + 5)/(n³ − 3)","2025 P1c: (1 + sen² n)/n","2023 P1a: √(n + 1)/(n + 2)","2023 P1e: sen² n/n³","Hoja 11.4 completa (a–o)"],
     trampas:["Ser menor que una serie divergente no prueba nada.","Decir que el límite L es finito y positivo.","Los primeros términos negativos (2025 P1a con n = 1) no cambian la conclusión."]},

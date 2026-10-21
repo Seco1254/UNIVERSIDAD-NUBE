@@ -56,13 +56,13 @@ Revisé los parciales 3 de 2023-19 (intersemestral, 110 min) y 2025-10 (75 min).
 
 **Atajo:** si sientes que ya dominas un módulo, puedes hacer el quiz primero. Si sacas ≥ 4/5, lo saltas.
 
-**Cómo aplican tus preferencias en Cálculo:**
+**Cómo se adapta en Cálculo (ajuste del 21 de octubre):**
 
-- Cada módulo abre con la tabla **«Símbolos de este módulo»** (aₙ, Sₙ, Σ, lim, n!, e, R…). Como aquí casi nada tiene unidades, esa columna se cambia por un ejemplo.
-- La teoría arranca desde la intuición y trae al menos un ejemplo resuelto por idea clave, **paso a paso**, diciendo qué se hace, por qué y la cuenta.
-- **Ejemplos de teoría solo con letras:** las constantes van como letras (a, b, c, p, r) para que se vea la estructura. Por ejemplo, Σ (a·n + b)/(c·n³ + d) en lugar de Σ (2n + 1)/(n³ + 5). Los números quedan para el taller y el quiz.
+- **Enfocado en el parcial:** cada módulo trae solo lo que da puntos. Lo que nunca ha salido se omite o queda como extra.
+- **Ejemplos con los números del parcial:** en Cálculo, lo que es letra (n, x) es la variable y lo demás son números, así que los ejemplos no cambian los números por letras como en Física. Cada ejemplo resuelto es un ejercicio de los parciales o de las hojas, paso a paso: qué se hace, por qué y la cuenta.
+- Cada módulo abre con la tabla **«Símbolos de este módulo»**. Como aquí casi nada tiene unidades, esa columna se cambia por un ejemplo.
 - En series casi no hay montajes físicos. Donde ayuda, va una figura: la recta numérica del intervalo, las sumas parciales o los términos.
-- La M mayúscula para la masa y los ángulos desde la horizontal eran de Física: aquí no aplican.
+- La M mayúscula para la masa y los ángulos desde la horizontal son de Física: aquí no aplican.
 
 ---
 
@@ -76,19 +76,21 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
          M8 SIMULACRO ◄─ M7 Taylor ◄─ M6 Series de potencias ◄─ M5 ¿Qué criterio uso?
 ```
 
-### M1 — Sucesiones y límites al infinito: la caja de herramientas
-*Libro: 11.1 · Visto en clase (21 y 22 de septiembre) · ~1–1,5 h*
+### M1 — Sucesiones y límites al infinito: los límites que usan los criterios
+> **Versión que se usa:** [M1 · Sucesiones y límites al infinito](https://claude.ai/artifact/ETtmmaWSoyPyFuYaU6SHaC).
 
-- **Teoría:** qué es una sucesión aₙ y qué significa que converja. Las herramientas que usa todo el parcial:
-  - El término dominante manda: dividir por la potencia más alta en (a·nᵏ + …)/(c·nᵐ + …).
-  - Jerarquía de crecimiento: ln n ≪ nᵖ ≪ rⁿ ≪ n! ≪ nⁿ.
-  - Límites de memoria: (1 + a/n)ⁿ → eᵃ, n^(1/n) → 1, a^(1/n) → 1 y rⁿ → 0 si |r| < 1.
-  - L'Hôpital pasando a la variable x, y el teorema del sándwich para (−1)ⁿ y sen n.
-  - Monotonía y acotación (las pide la hoja, pero nunca han salido en el parcial): prioridad baja.
-- **Lab / visual:** la gráfica de puntos aₙ contra n con una franja alrededor del límite; una carrera de crecimiento entre ln n, n², 2ⁿ, n! y nⁿ; (1 + a/n)ⁿ acercándose a eᵃ con un control para a.
-- **Taller:** hoja 11.1 (3) a–e (límites), (1) y (2) (términos y fórmula general), y los límites que aparecen dentro de los parciales: ((n + 2)/n)ⁿ, 2n²/(n² + 3), √(n³ + 5)·n^(3/2)/(n³ − 3).
-- **Quiz:** límites con término dominante, (1 + a/n)ⁿ, jerarquía y sándwich.
-- **Trampas:** (1 + 1/n)ⁿ tiende a e, no a 1 («1 elevado a infinito» es indeterminado); creer que aₙ → 0 significa que la serie converge.
+*Libro: 11.1 · Visto en clase (21 y 22 de septiembre) · ~1 h (miércoles 21)*
+
+- **Teoría:** qué significa que una sucesión converja y los cinco tipos de límite que salen dentro de los criterios del parcial, cada uno con un ejemplo resuelto de los parciales o de las hojas:
+  1. Término dominante, con polinomios y raíces: 2n²/(n² + 3) → 2 (2023 P1d) y √(n³ + 5)·n^(3/2)/(n³ − 3) → 1 (2025 P1a).
+  2. Factoriales y potencias: simplificar antes del límite, 2/(n + 2) → 0 (2023 P1b).
+  3. La escalera ln n ≪ n³ ≪ 2ⁿ ≪ n! ≪ nⁿ: (4 + 3ⁿ)/2ⁿ → ∞ (hoja 11.4 c).
+  4. Todo elevado a la n: ((n + 2)/n)ⁿ → e² (2025 P1b) y (n²/3ⁿ)^(1/n) → 1/3.
+  5. Sándwich: (1 + sen² n)/n → 0 (2025 P1c), aunque su serie diverge.
+- **Lab / visual:** la gráfica de puntos aₙ contra n con una franja alrededor del límite y una carrera de crecimiento entre ln n, n², 2ⁿ, n! y nⁿ.
+- **Taller:** los límites de los parciales que no están en la teoría (2023 P1a y P1c, 2025 P3), los de las hojas 11.5 y 11.6, variantes tipo parcial y, como extra, la hoja 11.1 (3).
+- **Quiz:** límites con término dominante, raíces, la escalera, el número e y el (−1)ⁿ.
+- **Trampas:** (1 + 2/n)ⁿ tiende a e², no a 1 («1 elevado a infinito» no tiene valor fijo); creer que si el término tiende a 0 la serie converge.
 
 ### M2 — Series: geométrica, telescópica y criterio de divergencia
 *Libro: 11.2 · Visto en clase (25 de septiembre) · 7 pts en 2025 · ~1,5 h*
@@ -100,7 +102,7 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
 - **Trampas:** la fórmula usa el **primer término de la suma**, que no siempre es a; usar el criterio de divergencia para «probar» que una serie converge.
 
 ### M3 — Comparación directa, comparación en el límite y serie p
-*Libro: 11.3–11.4 · Visto en clase · 24 pts históricos · ~2 h (miércoles 21 y jueves 22)*
+*Libro: 11.3–11.4 · Visto en clase · 24 pts históricos · ~1,5 h (jueves 22)*
 
 - **Teoría:** serie p: Σ 1/nᵖ converge si y solo si p > 1 (de dónde sale, con el criterio de la integral en versión corta). **Comparación directa:** si 0 ≤ aₙ ≤ bₙ y Σ bₙ converge, Σ aₙ converge; si aₙ ≥ bₙ ≥ 0 y Σ bₙ diverge, Σ aₙ diverge. **Seno y coseno acotados:** 0 ≤ sen² n ≤ 1. **Comparación en el límite:** si lim aₙ/bₙ = L con 0 < L < ∞, las dos series hacen lo mismo. **Receta para escoger bₙ:** quedarse con el término dominante de arriba y de abajo.
 - **Lab / visual:** barras de aₙ y bₙ lado a lado; el área bajo 1/xᵖ contra los rectángulos de la serie, con un control para p.
@@ -176,15 +178,16 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 
 | Día | Fecha | Carga | Módulo | Tiempo |
 |---|---|---|---|---|
-| 1 | Mar 20 oct | Liviana | **M1** Sucesiones y límites (en clase: 11.9) | 1–1,5 h |
-| 2 | Mié 21 oct | Media | **M2** Series básicas + **M3** teoría y lab | 2,5–3 h |
-| 3 | Jue 22 oct | Liviana | **M3** taller y quiz | 1–1,5 h |
+| 1 | Mar 20 oct | Liviana | Plan listo; M1 pasó al miércoles | — |
+| 2 | Mié 21 oct | Media | **M1** Límites + **M2** Series básicas | 2,5–3 h |
+| 3 | Jue 22 oct | Liviana | **M3** Comparación y serie p | 1–1,5 h |
 | 4 | Vie 23 oct | Suave | **M4** Alternantes, cociente y raíz (en clase: Taylor, entra) | ~2 h |
 | 5 | Sáb 24 oct | Pesada | **M5** ¿Qué criterio uso? + **M6** Series de potencias | 4–5 h |
 | 6 | Dom 25 oct | Pesada | **M7** Taylor + **M8** Simulacro de 75 min | 4–5 h |
 | — | **Lun 26 oct** | — | 30 min con la hoja mental y la clave, y **PARCIAL 3** (O_102) | — |
 
-**Si te atrasas:** M1 y M2 ya los viste en clase. Haz el quiz primero y, si sacas ≥ 4/5, sáltalos. Recorta el lab de M5 antes que cualquier taller. **Nunca recortes M6, M7 ni el simulacro.**
+**Ajuste del 21 de octubre:** M1 pasó al miércoles junto con M2, y M3 va completo el jueves.
+**Si te atrasas:** recorta primero los extras del taller y el lab de M5. Si ya dominas un módulo, haz el quiz primero y sáltalo con ≥ 4/5. **Nunca recortes M6 (14 pts), M7 (11 pts) ni el simulacro.**
 **Si vas adelantado:** adelanta M6. Para hallar el radio solo necesitas el criterio del cociente de M4.
 
 ---
@@ -229,7 +232,7 @@ Los PDF están en [`material/`](material/). No venían soluciones oficiales: est
 
 | Hoja | Ejercicios | Módulo |
 |---|---|---|
-| 11.1 Sucesiones | (1) primeros términos, (2) fórmula general, (3) límites, (4) monotonía | M1 |
+| 11.1 Sucesiones | (3) límites, como extra. (1), (2) y (4) no se practican: nunca han salido | M1 |
 | 11.2 Series | (1) notación, (2) geométricas, (3) telescópicas, (5) divergencia | M2 |
 | 11.2 Series | (4) valores de x (geométricas con x) | M6 |
 | 11.4 Comparación | (a)–(o) | M3 |
@@ -243,5 +246,6 @@ Los PDF están en [`material/`](material/). No venían soluciones oficiales: est
 - **El profesor escribe sin** para el seno (notación en inglés). Aquí uso sen. Es lo mismo.
 - **Hoja 11.2 (5c)** dice (x² + x − 1)/(2x² + 1), pero es con n: (n² + n − 1)/(2n² + 1). Diverge porque el término tiende a 1/2.
 - **Hoja 11.6 (1f)** no tiene exponente. Tal como está, diverge porque el término tiende a 1/2. Si se le perdió el exponente n, converge por la raíz (L = 1/2). Se practican las dos versiones.
+- **De la hoja 11.1 solo se practican límites.** Escribir términos, la fórmula general y la monotonía (ejercicios 1, 2 y 4) nunca han salido en el parcial. Los límites del ejercicio 3 quedan como extra en M1.
 - **No hay hojas de 11.3, 11.8, 11.9 ni 11.10.** Para esos temas armo variantes al estilo del profesor. Si sobra tiempo, el programa sugiere del Stewart: 11.3: 2, 5–7, 12, 20, 25, 29; 11.8: 13–18, 20, 21, 26, 27; 11.9: 3–11, 15–18, 23–26; 11.10: 2, 6, 8, 14, 20, 31–34, 43, 44, 51, 65, 68.
 - El programa pone 11.9 el «19 Ma»; es el martes 20.
