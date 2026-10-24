@@ -184,12 +184,12 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 
 | Día | Fecha | Carga | Módulo | Tiempo |
 |---|---|---|---|---|
-| 1 | Mar 20 oct | Liviana | Plan listo; M1 pasó al miércoles | — |
-| 2 | Mié 21 oct | Media | **M1** Límites + **M2** Series básicas | 2,5–3 h |
-| 3 | Jue 22 oct | Liviana | **M3** Comparación y serie p | 1–1,5 h |
-| 4 | Vie 23 oct | Suave | **M4** Alternantes, cociente y raíz (en clase: Taylor, entra) | ~2 h |
-| 5 | Sáb 24 oct | Pesada | **M5** ¿Qué criterio uso? + **M6** Series de potencias | 4–5 h |
-| 6 | Dom 25 oct | Pesada | **M7** Taylor + **M8** Simulacro de 75 min | 4–5 h |
+| 1 | Mar 20 oct | Liviana | Plan listo | — |
+| 2 | Mié 21 oct | Media | M1 (pasó al viernes) | — |
+| 3 | Jue 22 oct | Liviana | Sin estudio registrado | — |
+| 4 | Vie 23 oct | Suave | **M1** aprobado con el Quiz B (4/5) · en clase: Taylor | — |
+| 5 | Sáb 24 oct | Pesada | **M2** Series básicas + **M3** Comparación + **M4** Raíz, cociente, alternantes y estrategia | 4–5 h |
+| 6 | Dom 25 oct | Pesada | **M6** Series de potencias + **M7** Taylor + **M8** Simulacro de 75 min | 4–5 h |
 | — | **Lun 26 oct** | — | 30 min con la hoja mental y la clave, y **PARCIAL 3** (O_102) | — |
 
 **Ajuste del 21 de octubre:** M1 pasó al miércoles junto con M2, y M3 va completo el jueves.
