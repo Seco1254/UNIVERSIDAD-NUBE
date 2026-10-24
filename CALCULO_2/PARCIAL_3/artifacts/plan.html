@@ -199,7 +199,8 @@ footer{font-size:.82rem; color:var(--muted)}
     <div class="days" id="days"></div>
     <ul class="rules">
       <li><b>Ajuste del 21 de octubre:</b> M1 pasó al miércoles junto con M2, y M3 va completo el jueves. Cada módulo trae solo lo que da puntos en el parcial, con ejemplos resueltos tomados de tus parciales y de las hojas.</li>
-      <li><b>Si te atrasas:</b> recorta primero los extras del taller y el lab de M5. Si ya dominas un módulo, haz el quiz primero y sáltalo con 4/5. <b>Nunca recortes M6 (14 pts), M7 (11 pts) ni el simulacro.</b></li>
+      <li><b>Ajuste del 24 de octubre:</b> quedan dos días. El sábado van M2, M3 y M4, y la estrategia de M5 queda dentro de M4. El domingo van M6, M7 y el simulacro.</li>
+      <li><b>Si te atrasas:</b> recorta primero los extras del taller y los labs. Si el sábado no terminas M4, el domingo empieza igual por M6 y M7: valen 25 pts y son las más mecánicas. <b>Nunca recortes M6 (14 pts), M7 (11 pts) ni el simulacro.</b></li>
       <li><b>Si vas adelantado:</b> adelanta M6. Para hallar el radio solo necesitas el criterio del cociente de M4.</li>
       <li><b>Ve a la clase del viernes:</b> es Taylor (11.10) y entra en el parcial.</li>
     </ul>
@@ -268,11 +269,11 @@ const EXAM_DAY = "2026-10-26";
 const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
 const DAYS = [
   {d:"2026-10-20", n:"Mar", f:"20 oct", load:1, what:"Plan listo. M1 pasó al miércoles", clase:"En clase: 11.9", mods:[], h:"—"},
-  {d:"2026-10-21", n:"Mié", f:"21 oct", load:3, what:"M1 Límites + M2 Series básicas", mods:["M1","M2"], h:"2,5–3 h"},
-  {d:"2026-10-22", n:"Jue", f:"22 oct", load:1, what:"M3 Comparación y serie p", mods:["M3"], h:"1–1,5 h"},
-  {d:"2026-10-23", n:"Vie", f:"23 oct", load:2, what:"M4 Alternantes, cociente y raíz", clase:"En clase: Taylor (entra)", mods:["M4"], h:"~2 h"},
-  {d:"2026-10-24", n:"Sáb", f:"24 oct", load:4, what:"M5 ¿Qué criterio uso? + M6 Series de potencias", mods:["M5","M6"], h:"4–5 h"},
-  {d:"2026-10-25", n:"Dom", f:"25 oct", load:4, what:"M7 Taylor + M8 Simulacro de 75 min", mods:["M7","M8"], h:"4–5 h"},
+  {d:"2026-10-21", n:"Mié", f:"21 oct", load:3, what:"M1 Límites (pasó al viernes)", mods:["M1"], h:"—"},
+  {d:"2026-10-22", n:"Jue", f:"22 oct", load:1, what:"Sin estudio registrado", mods:[], h:"—"},
+  {d:"2026-10-23", n:"Vie", f:"23 oct", load:2, what:"M1 aprobado (Quiz B 4/5)", clase:"En clase: Taylor (entra)", mods:["M1"], h:"—"},
+  {d:"2026-10-24", n:"Sáb", f:"24 oct", load:4, what:"M2 Series básicas + M3 Comparación + M4 Raíz, cociente y alternantes", mods:["M2","M3","M4"], h:"4–5 h"},
+  {d:"2026-10-25", n:"Dom", f:"25 oct", load:4, what:"M6 Series de potencias + M7 Taylor + M8 Simulacro de 75 min", mods:["M6","M7","M8"], h:"4–5 h"},
   {d:"2026-10-26", n:"Lun", f:"26 oct · O_102", load:0, what:"30 min con la hoja mental y la clave, y Parcial 3", mods:[], h:"Llega descansado", exam:true}
 ];
 const MODS = [
@@ -280,27 +281,23 @@ const MODS = [
     dominar:["El término dominante: polinomios y raíces (√(n³) tiene grado 3/2).","Simplificar factoriales y potencias antes del límite.","(1 + 2/n)<sup>n</sup> → e², la raíz n-ésima y la escalera ln n ≪ n³ ≪ 2<sup>n</sup> ≪ n! ≪ n<sup>n</sup>."],
     taller:["Los límites de tus parciales que no están en la teoría (2023 P1a y P1c, 2025 P3)","Los límites de las hojas 11.5 y 11.6","Variantes tipo parcial"],
     trampas:["(1 + 2/n)<sup>n</sup> tiende a e², no a 1.","Que el término tienda a 0 no dice que la serie converja."]},
-  {id:"M2", t:"Series: geométrica, telescópica y criterio de divergencia", clase:"Visto en clase", day:"Mié 21", h:"1,5 h", libro:"11.2", extra:"7 pts en 2025",
+  {id:"M2", t:"Series: geométrica, telescópica y criterio de divergencia", clase:"Visto en clase", day:"Sáb 24", h:"~1 h", libro:"11.2", extra:"7 pts en 2025",
     dominar:["La suma parcial S<sub>N</sub> y qué significa que una serie converja.","Geométrica: converge si |r| &lt; 1 y vale (primer término)/(1 − r).","Telescópica: fracciones parciales, tachar lo que se cancela y tomar el límite de S<sub>N</sub>."],
-    taller:["2025 P2: Σ 2/(k² + k) = 2","Hoja 11.2 (2): seis geométricas","Hoja 11.2 (3): telescópicas","Hoja 11.2 (1) y (5): notación y divergencia"],
-    trampas:["La fórmula usa el primer término de la suma, que no siempre es a.","Si a<sub>n</sub> → 0, el criterio de divergencia no dice nada: la armónica diverge."]},
-  {id:"M3", t:"Comparación directa, comparación en el límite y serie p", clase:"Visto en clase", day:"Jue 22", h:"1,5 h", libro:"11.3–11.4", extra:"24 pts históricos",
+    taller:["2025 P2 (Σ 2/(k² + k) = 2) resuelto en la teoría","Hoja 11.2 completa: telescópicas, geométricas, geométricas con x y divergencia","Variantes con la redacción del P2"],
+    trampas:["El primer término sale del índice de abajo.","Si el término tiende a 0, el criterio de divergencia no dice nada: la armónica diverge."]},
+  {id:"M3", t:"Comparación directa, comparación en el límite y serie p", clase:"Visto en clase", day:"Sáb 24", h:"~1,25 h", libro:"11.3–11.4", extra:"24 pts históricos",
     dominar:["Serie p: Σ 1/n<sup>p</sup> converge si y solo si p &gt; 1.","Escoger b<sub>n</sub> con el término dominante de arriba y de abajo.","Acotar sen² n y cos² n entre 0 y 1."],
     taller:["2025 P1a: √(n³ + 5)/(n³ − 3)","2025 P1c: (1 + sen² n)/n","2023 P1a: √(n + 1)/(n + 2)","2023 P1e: sen² n/n³","Hoja 11.4 completa (a–o)"],
     trampas:["Ser menor que una serie divergente no prueba nada.","Decir que el límite L es finito y positivo.","Los primeros términos negativos (2025 P1a con n = 1) no cambian la conclusión."]},
-  {id:"M4", t:"Alternantes, convergencia absoluta, cociente y raíz", clase:"Visto en clase", day:"Vie 23", h:"2 h", libro:"11.5–11.6", extra:"24 pts históricos",
-    dominar:["Criterio de Leibniz: b<sub>n</sub> decreciente y b<sub>n</sub> → 0.","Decidir si converge absolutamente, condicionalmente o diverge.","Cociente para factoriales y r<sup>n</sup>; raíz para todo lo que está elevado a n."],
-    taller:["2023 P1b: 2<sup>n−1</sup>/(n + 1)!","2023 P1c: (−1)<sup>n</sup> 2n/(n² + 1)","2023 P1d: (2n²/(n² + 3))<sup>n</sup>","2025 P1b: ((n + 2)/n)<sup>n²</sup>","Hojas 11.5 y 11.6 completas"],
-    trampas:["Con L = 1 el criterio no concluye: las series p siempre dan 1.","«Test del radio» es el cociente, no el radio de convergencia.","(n + 1)!/n! = n + 1."]},
-  {id:"M5", t:"¿Qué criterio uso? Estrategia y redacción", day:"Sáb 24", h:"1,5–2 h", libro:"11.7", extra:"el bloque de criterios vale 36–60 %",
-    dominar:["El árbol de decisión en 7 preguntas.","La frase de justificación de cada criterio.","Resolver cada serie en menos de 6 minutos."],
-    taller:["Los 8 ejercicios del punto 1 de 2023 y 2025, mezclados y sin pista","Series mezcladas de las hojas"],
-    trampas:["Usar el cociente con una fracción de potencias: da 1 y se pierde el tiempo.","No escribir la conclusión: sin justificación vale 0."]},
-  {id:"M6", t:"Series de potencias: radio e intervalo de convergencia", hot:true, clase:"Visto en clase", day:"Sáb 24", h:"2–2,5 h", libro:"11.8", extra:"28 % · salió idéntico 2 veces",
+  {id:"M4", t:"Raíz, cociente, alternantes y ¿qué criterio uso?", clase:"Visto en clase", day:"Sáb 24", h:"~1,5–2 h", libro:"11.5–11.7", extra:"incluye la estrategia de M5",
+    dominar:["Criterio de Leibniz: b<sub>n</sub> decreciente y b<sub>n</sub> → 0.","Cociente para factoriales y r<sup>n</sup>; raíz para todo lo que está elevado a n.","El árbol de decisión: qué criterio usar con cada serie y la frase de justificación."],
+    taller:["2023 P1b: 2<sup>n−1</sup>/(n + 1)!","2023 P1c: (−1)<sup>n</sup> 2n/(n² + 1)","2023 P1d: (2n²/(n² + 3))<sup>n</sup>","2025 P1b: ((n + 2)/n)<sup>n²</sup>","Los 8 ejercicios del punto 1, mezclados y sin pista"],
+    trampas:["Con L = 1 el criterio no concluye: las series p siempre dan 1.","«Test del radio» es el cociente, no el radio de convergencia.","Sin la frase de justificación, el punto vale 0."]},
+  {id:"M6", t:"Series de potencias: radio e intervalo de convergencia", hot:true, clase:"Visto en clase", day:"Dom 25", h:"~1,5 h", libro:"11.8", extra:"28 % · salió idéntico 2 veces",
     dominar:["Receta: cociente con |x − a| → radio → los dos extremos → intervalo.","Cada extremo es una serie numérica que se decide con M3 y M4.","Los casos R = 0 y R = ∞."],
     taller:["2025 P3 = 2023 P2: R = 3 e intervalo [−5, 1]","Hoja 11.2 (4): cuatro geométricas con x","Variantes donde un extremo converge y el otro no"],
     trampas:["Olvidar los extremos: son la mitad del puntaje.","En x = −5, (−1)<sup>n</sup>(−3)<sup>n</sup> = 3<sup>n</sup>: los signos se cancelan."]},
-  {id:"M7", t:"Representación de funciones y series de Taylor", clase:"Clase hoy y el viernes", day:"Dom 25", h:"2,5–3 h", libro:"11.9–11.10 (hasta el ej. 6)", extra:"17 % del parcial",
+  {id:"M7", t:"Representación de funciones y series de Taylor", clase:"Visto en clase", day:"Dom 25", h:"~1,5 h", libro:"11.9–11.10 (hasta el ej. 6)", extra:"17 % del parcial",
     dominar:["La geométrica como molde: 1/(1 − u) = Σ u<sup>n</sup> si |u| &lt; 1.","A/(x − c) centrada en a: sacar (a − c) como factor común.","Integrar término a término (el logaritmo) y hallar la constante en el centro.","c<sub>n</sub> = f<sup>(n)</sup>(a)/n!; Maclaurin de e<sup>x</sup>, sen x y cos x."],
     taller:["2025 P4a: 3/(x − 4) centrada en 5","2025 P4b: 3 ln(x − 4) centrada en 5","2023 P3: 2/(x + 3) centrada en −2","Variantes con a − c ≠ 1 y de Maclaurin"],
     trampas:["Olvidar la constante al integrar.","Al integrar, el intervalo puede ganar un extremo: (4, 6]."]},

@@ -1,0 +1,858 @@
+<title>M3 Comparación y serie p</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de M1 y M2, acento violeta de Cálculo). Columna de lectura ≤ 860px con barra de secciones fija; el lab grafica las sumas parciales de la serie p y pone lado a lado los términos de una serie del parcial y los de la serie con que se compara. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.quad{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.quad div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.quad div.yes{border-color:var(--green); background:var(--green-soft)}
+.quad div.no{border-style:dashed}
+@media (max-width:560px){ .quad{grid-template-columns:1fr} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-dot.b{fill:var(--orange)}
+.gr-curve{stroke:var(--orange); stroke-width:1.5; fill:none; stroke-dasharray:4 3}
+.lg-a{fill:var(--accent)} .lg-b{fill:var(--orange)}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/Ra9LHTCCAvquo8459V5bhS" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>30 min</span></a>
+    <a href="#lab">2 Lab <span>5 min</span></a>
+    <a href="#taller">3 Taller <span>30 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Parcial 3 · Módulo 3</p>
+    <h1>Comparación y serie p</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>Sábado 24 de octubre · ~1,25 h</span>
+      <span>Libro 11.3–11.4 · 24 pts en tus dos parciales</span>
+    </div>
+    <p class="prose">En el punto 1 del parcial («determine si la serie converge o diverge») siempre hay dos series que se deciden comparando con una serie que ya conoces: una fracción con raíces (comparación en el límite) y una con seno al cuadrado (comparación directa). Entre los dos parciales fueron 4 ejercicios de 6 puntos. Los cuatro son los ejemplos resueltos de este módulo.</p>
+    <div class="callout">
+      <h3>Dónde aparece en tus parciales</h3>
+      <p>2025-10 P1a (√(n³ + 5)/(n³ − 3), converge) y 2023-19 P1a (√(n + 1)/(n + 2), diverge) son comparación en el límite. 2025-10 P1c ((1 + sen² n)/n, diverge) y 2023-19 P1e (sen² n/n³, converge) son comparación directa.</p>
+    </div>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M4.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>La serie p (la regla para comparar), la comparación directa y la comparación en el límite. Cinco ejemplos resueltos: cuatro son tus parciales.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Σ 1/n<sup>p</sup></td><td>«serie p»</td><td>La serie de 1 entre una potencia fija de n.</td><td>Σ 1/n² tiene p = 2.</td></tr>
+          <tr><td class="mono">p</td><td>«pe»</td><td>El exponente fijo de la serie p.</td><td>1/√n = 1/n<sup>1/2</sup>: p = 1/2.</td></tr>
+          <tr><td class="mono">a<sub>n</sub></td><td>«a sub ene»</td><td>El término de la serie que te dan.</td><td>a<sub>n</sub> = √(n³ + 5)/(n³ − 3)</td></tr>
+          <tr><td class="mono">b<sub>n</sub></td><td>«be sub ene»</td><td>El término de la serie con la que comparas: una serie p o una geométrica, que ya sabes si converge.</td><td>Para la de arriba, b<sub>n</sub> = 1/n<sup>3/2</sup>.</td></tr>
+          <tr><td class="mono">L</td><td>«ele»</td><td>En la comparación en el límite, el límite de a<sub>n</sub>/b<sub>n</sub>.</td><td>L = 1</td></tr>
+          <tr><td class="mono">≤, ≥</td><td>«menor o igual», «mayor o igual»</td><td>Para decir que un término queda por debajo o por encima de otro.</td><td>0 ≤ sen² n ≤ 1</td></tr>
+          <tr><td class="mono">sen² n</td><td>«seno al cuadrado de n»</td><td>(sen n)². El profesor escribe sin²(n). Siempre está entre 0 y 1.</td><td>sen² n ≤ 1</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo es un ejercicio de tus parciales o de las hojas, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). El último paso siempre es la frase que se escribe en el parcial: sin ella, el profesor pone cero.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 1 · la regla contra la que se compara todo</span><h3>La serie p</h3></div>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p><span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>1</span><span>n<sup>p</sup></span></span></span> <b>converge si p &gt; 1</b> y <b>diverge si p ≤ 1</b>.</p>
+      </div>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Serie</th><th>p</th><th>¿Converge?</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Σ 1/n²</td><td class="mono">2</td><td>Sí</td></tr>
+          <tr><td class="mono">Σ 1/n³</td><td class="mono">3</td><td>Sí</td></tr>
+          <tr><td class="mono">Σ 1/n<sup>3/2</sup> = Σ 1/(n√n)</td><td class="mono">3/2</td><td>Sí</td></tr>
+          <tr><td class="mono">Σ 1/n (la armónica)</td><td class="mono">1</td><td>No: diverge</td></tr>
+          <tr><td class="mono">Σ 1/√n = Σ 1/n<sup>1/2</sup></td><td class="mono">1/2</td><td>No: diverge</td></tr>
+        </tbody>
+      </table></div>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · reconocer la p</span>
+            <h4 id="wx1-h">Cuando la potencia está escondida</h4>
+            <p>¿Converge <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>1</span><span>n√n</span></span></span>?</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escribe la raíz como potencia.</p><p class="why">√n = n<sup>1/2</sup>. Al multiplicar potencias de la misma base, los exponentes se suman.</p><div class="mx">n√n = n<sup>1</sup>·n<sup>1/2</sup> = n<sup>1 + 1/2</sup> = n<sup>3/2</sup></div></li>
+          <li><p class="what">Lee la p y compárala con 1.</p><div class="mx">p = <span class="frac"><span>3</span><span>2</span></span> &gt; 1</div></li>
+          <li><p class="what">Concluye con una frase.</p><div class="mx txt">Σ 1/n<sup>3/2</sup> es una serie p con p = 3/2 &gt; 1, así que converge.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> 1/n<sup>3/2</sup> se achica más rápido que 1/n (que diverge) y más despacio que 1/n² (que converge). El límite entre las dos cosas está justo en p = 1.</p>
+      </article>
+      <details class="rev"><summary>¿De dónde sale la regla? (criterio de la integral)</summary>
+        <div class="rev-body">
+          <p>La suma Σ 1/n<sup>p</sup> se parece al área bajo la curva 1/x<sup>p</sup> desde 1 hasta ∞: cada término es un rectángulo de base 1. Esa área es ∫ 1/x<sup>p</sup> dx, que es finita solo si p &gt; 1 (la integral impropia de Cálculo 2, 7.8). Si el área es finita, la suma también; si es infinita, la suma también.</p>
+          <p>El criterio de la integral nunca ha salido en tus parciales: basta con saber la regla.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Idea 2 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 2 · seno o coseno acotados</span><h3>La comparación directa</h3></div>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p>Con términos positivos: si a<sub>n</sub> ≤ b<sub>n</sub> y Σ b<sub>n</sub> converge, Σ a<sub>n</sub> converge. Si a<sub>n</sub> ≥ b<sub>n</sub> y Σ b<sub>n</sub> diverge, Σ a<sub>n</sub> diverge.</p>
+      </div>
+      <div class="quad">
+        <div class="yes"><b>Menor que una que converge</b> → converge.</div>
+        <div class="yes"><b>Mayor que una que diverge</b> → diverge.</div>
+        <div class="no"><b>Menor que una que diverge</b> → no dice nada.</div>
+        <div class="no"><b>Mayor que una que converge</b> → no dice nada.</div>
+      </div>
+      <p class="prose">Se usa cuando hay un seno o un coseno: no tienen límite, pero están atrapados (0 ≤ sen² n ≤ 1, −1 ≤ cos n ≤ 1). También sirve para comparar con una geométrica: 1/(1 + 2<sup>n</sup>) ≤ 1/2<sup>n</sup>.</p>
+
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · Parcial 2023-19 P1e (6 pts) · también hoja 11.4 (h)</span>
+            <h4 id="wx2-h">Seno al cuadrado arriba: converge</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=2</small></span> <span class="frac"><span>sen² n</span><span>n³</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Acota el seno.</p><p class="why">sen n está entre −1 y 1, así que su cuadrado está entre 0 y 1.</p><div class="mx">0 ≤ sen² n ≤ 1</div></li>
+          <li><p class="what">Divide entre n³.</p><p class="why">n³ es positivo, así que las desigualdades no se voltean.</p><div class="mx">0 ≤ <span class="frac"><span>sen² n</span><span>n³</span></span> ≤ <span class="frac"><span>1</span><span>n³</span></span></div></li>
+          <li><p class="what">Decide la serie de la derecha.</p><p class="why">Es una serie p con p = 3.</p><div class="mx">Σ <span class="frac"><span>1</span><span>n³</span></span>: p = 3 &gt; 1, converge</div></li>
+          <li><p class="what">Escribe la conclusión.</p><p class="why">Es menor que una que converge: converge.</p><div class="mx txt">Como 0 ≤ sen² n/n³ ≤ 1/n³ y Σ 1/n³ converge (serie p con p = 3 &gt; 1), la serie converge por el criterio de comparación directa.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Que la suma empiece en n = 2 no cambia nada: quitar o agregar unos pocos términos no cambia si una serie converge.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · Parcial 2025-10 P1c (6 pts)</span>
+            <h4 id="wx3-h">Uno más seno al cuadrado, entre n: diverge</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>1 + sen² n</span><span>n</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Acota por abajo.</p><p class="why">Como sen² n ≥ 0, sumarle 1 da algo de por lo menos 1.</p><div class="mx">1 + sen² n ≥ 1</div></li>
+          <li><p class="what">Divide entre n.</p><div class="mx"><span class="frac"><span>1 + sen² n</span><span>n</span></span> ≥ <span class="frac"><span>1</span><span>n</span></span> &gt; 0</div></li>
+          <li><p class="what">Decide la serie de la derecha.</p><div class="mx">Σ <span class="frac"><span>1</span><span>n</span></span>: la armónica, p = 1, diverge</div></li>
+          <li><p class="what">Escribe la conclusión.</p><p class="why">Es mayor que una que diverge: diverge.</p><div class="mx txt">Como (1 + sen² n)/n ≥ 1/n &gt; 0 y Σ 1/n diverge (serie p con p = 1), la serie diverge por el criterio de comparación directa.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> diverge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> La trampa era acotar por arriba: (1 + sen² n)/n ≤ 2/n es verdad, pero ser menor que una serie que diverge no dice nada. Antes de acotar, piensa hacia dónde vas: si sospechas que diverge, acota por abajo.</p>
+      </article>
+    </div>
+
+    <!-- Idea 3 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 3 · fracciones con potencias y raíces</span><h3>La comparación en el límite</h3></div>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p>Con términos positivos: si <span class="m"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>a<sub>n</sub></span><span>b<sub>n</sub></span></span> = L</span> con <b>0 &lt; L &lt; ∞</b> (un número positivo), las dos series hacen lo mismo: las dos convergen o las dos divergen.</p>
+      </div>
+      <ol class="steps">
+        <li><span><b>Escoge b<sub>n</sub>:</b> arriba y abajo quédate solo con el término dominante (M1), sin los números que lo acompañan, y simplifica. Te queda una serie p.</span></li>
+        <li><span><b>Calcula L</b> = lim a<sub>n</sub>/b<sub>n</sub> (dividir entre b<sub>n</sub> es multiplicar por su recíproco).</span></li>
+        <li><span><b>Revisa que L sea un número positivo.</b> Si da 0 o ∞, escogiste mal b<sub>n</sub>.</span></li>
+        <li><span><b>Decide Σ b<sub>n</sub></b> con la regla de la serie p y escribe la conclusión.</span></li>
+      </ol>
+
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · Parcial 2025-10 P1a (6 pts)</span>
+            <h4 id="wx4-h">Raíz arriba: converge</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>√<span class="rad">n³ + 5</span></span><span>n³ − 3</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escoge b<sub>n</sub> con los términos dominantes.</p><p class="why">Arriba, dentro de la raíz manda n³ y √(n³) = n<sup>3/2</sup>. Abajo manda n³. Al dividir potencias, se restan los exponentes: 3 − 3/2 = 3/2.</p><div class="mx">b<sub>n</sub> = <span class="frac"><span>n<sup>3/2</sup></span><span>n³</span></span> = <span class="frac"><span>1</span><span>n<sup>3/2</sup></span></span></div></li>
+          <li><p class="what">Calcula L.</p><p class="why">Dividir entre 1/n<sup>3/2</sup> es multiplicar por n<sup>3/2</sup>. Este límite es el ejemplo 2 de M1: mismo grado 3 arriba y abajo.</p><div class="mx">L = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>√<span class="rad">n³ + 5</span>·n<sup>3/2</sup></span><span>n³ − 3</span></span> = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>√<span class="rad">1 + 5/n³</span></span><span>1 − 3/n³</span></span> = 1</div></li>
+          <li><p class="what">Revisa L.</p><div class="mx">0 &lt; 1 &lt; ∞ ✓</div></li>
+          <li><p class="what">Decide Σ b<sub>n</sub>.</p><div class="mx">Σ <span class="frac"><span>1</span><span>n<sup>3/2</sup></span></span>: p = <span class="frac"><span>3</span><span>2</span></span> &gt; 1, converge</div></li>
+          <li><p class="what">Escribe la conclusión.</p><div class="mx txt">Como lim a<sub>n</sub>/b<sub>n</sub> = 1, que es finito y positivo, y Σ 1/n<sup>3/2</sup> converge (serie p con p = 3/2 &gt; 1), la serie converge por el criterio de comparación en el límite.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El primer término (n = 1) es negativo: √6/(−2). No importa: desde n = 2 todos son positivos, y unos pocos términos no cambian si la serie converge. Si quieres, escríbelo en una línea en el parcial.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5 · Parcial 2023-19 P1a (6 pts)</span>
+            <h4 id="wx5-h">Raíz arriba: diverge</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>√<span class="rad">n + 1</span></span><span>n + 2</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escoge b<sub>n</sub>.</p><p class="why">Arriba manda √n = n<sup>1/2</sup>; abajo manda n. Se restan los exponentes: 1 − 1/2 = 1/2.</p><div class="mx">b<sub>n</sub> = <span class="frac"><span>n<sup>1/2</sup></span><span>n</span></span> = <span class="frac"><span>1</span><span>n<sup>1/2</sup></span></span> = <span class="frac"><span>1</span><span>√n</span></span></div></li>
+          <li><p class="what">Calcula L.</p><p class="why">Multiplica por √n y junta las raíces: √(n + 1)·√n = √(n² + n). Divide arriba y abajo entre n (M1).</p><div class="mx">L = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>√<span class="rad">n² + n</span></span><span>n + 2</span></span> = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>√<span class="rad">1 + 1/n</span></span><span>1 + 2/n</span></span> = 1</div></li>
+          <li><p class="what">Revisa L y decide Σ b<sub>n</sub>.</p><div class="mx">0 &lt; 1 &lt; ∞ ✓<span class="ar">y</span>Σ <span class="frac"><span>1</span><span>√n</span></span>: p = <span class="frac"><span>1</span><span>2</span></span> ≤ 1, diverge</div></li>
+          <li><p class="what">Escribe la conclusión.</p><div class="mx txt">Como lim a<sub>n</sub>/b<sub>n</sub> = 1, que es finito y positivo, y Σ 1/√n diverge (serie p con p = 1/2 ≤ 1), la serie diverge por el criterio de comparación en el límite.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> diverge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Arriba crece como √n y abajo como n: el término se achica como 1/√n, que es demasiado lento para que la suma se quede quieta.</p>
+      </article>
+
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Serie (hoja 11.4)</th><th>b<sub>n</sub></th><th>L</th><th>Conclusión</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">n/(2n³ + 1)</td><td class="mono">1/n²</td><td class="mono">1/2</td><td>converge (p = 2)</td></tr>
+          <tr><td class="mono">(n + 2)/(n + 1)²</td><td class="mono">1/n</td><td class="mono">1</td><td>diverge (p = 1)</td></tr>
+          <tr><td class="mono">1/√(4n⁴ + 1)</td><td class="mono">1/n²</td><td class="mono">1/2</td><td>converge (p = 2)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout trap">
+        <h3>La raíz también se le saca al número</h3>
+        <p>√(4n⁴) = 2n², no 4n². Y √(9n²) = 3n. Para escoger b<sub>n</sub> no importa (el número no cambia si converge), pero para calcular L sí: en 1/√(4n⁴ + 1) comparada con 1/n², L = 1/√4 = 1/2.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>La receta: ¿cuál de las dos comparaciones uso?</h3>
+      <ol class="steps">
+        <li><span><b>Primero mira el término:</b> si no tiende a 0, diverge y ya (criterio de divergencia, M2).</span></li>
+        <li><span><b>¿Tiene sen o cos?</b> Comparación directa. Si sospechas que converge, acota por arriba; si sospechas que diverge, acota por abajo.</span></li>
+        <li><span><b>¿Es una fracción de potencias o raíces?</b> Comparación en el límite con la serie p de los términos dominantes.</span></li>
+        <li><span><b>¿Hay exponenciales como 2<sup>n</sup> o 3<sup>n</sup>?</b> Compara con una geométrica, o usa el cociente (M4).</span></li>
+      </ol>
+    </div>
+
+    <div class="block">
+      <h3>Las frases para el parcial</h3>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Criterio</th><th>Lo que escribes</th></tr></thead>
+        <tbody>
+          <tr><td>Comparación directa</td><td>Como 0 ≤ a<sub>n</sub> ≤ b<sub>n</sub> y Σ b<sub>n</sub> converge (serie p con p = … &gt; 1), la serie converge por comparación directa. <span class="muted">(O al revés: a<sub>n</sub> ≥ b<sub>n</sub> ≥ 0 y Σ b<sub>n</sub> diverge.)</span></td></tr>
+          <tr><td>Comparación en el límite</td><td>Como lim a<sub>n</sub>/b<sub>n</sub> = L, que es finito y positivo, y Σ b<sub>n</sub> converge (o diverge) por ser serie p con p = …, la serie converge (o diverge) por comparación en el límite.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas</h3>
+      <p><b>La dirección de la comparación:</b> ser menor que una que diverge, o mayor que una que converge, no dice nada.</p>
+      <p><b>En la comparación en el límite, di que L es finito y positivo.</b> Si L = 0 o L = ∞, el criterio no concluye.</p>
+      <p><b>√(9n²) = 3n</b>, no 9n: la raíz también se le saca al número.</p>
+      <p><b>Unos pocos términos negativos al principio no importan</b> (2025 P1a con n = 1).</p>
+      <p><b>No olvides la frase final:</b> sin justificación el punto vale 0.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Mira las sumas parciales de la serie p para distintos p, y pon lado a lado los términos de una serie del parcial y los de la serie con que se compara.</p></div>
+    <div class="tabs" role="tablist" aria-label="Experimento">
+      <button type="button" role="tab" class="tab" id="tab-p" aria-selected="true" aria-controls="lab-p">Serie p</button>
+      <button type="button" role="tab" class="tab" id="tab-cmp" aria-selected="false" aria-controls="lab-cmp">Comparar con b<sub>n</sub></button>
+    </div>
+    <div class="lab" id="lab-p" role="tabpanel" aria-labelledby="tab-p">
+      <div class="lab-stage"><div id="p-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="p-p" id="p-p-lab">p = 2</label><input type="range" id="p-p" min="0.3" max="3" step="0.1" value="2"></div>
+        <div class="ctl"><label for="p-n" id="p-n-lab">Términos sumados: N = 100</label><input type="range" id="p-n" min="10" max="300" step="5" value="100"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Suma parcial S<sub>N</sub></span><b id="p-sn">—</b></div>
+          <div class="ro"><span>Suma de la serie</span><b id="p-s">—</b></div>
+          <div class="status" id="p-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="lab" id="lab-cmp" role="tabpanel" aria-labelledby="tab-cmp" hidden>
+      <div class="lab-stage"><div id="c-svg" class="lab-fig"></div><p class="small muted" id="c-note"></p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="c-sel">Serie del parcial</label><select id="c-sel"></select></div>
+        <div class="ctl"><label for="c-n" id="c-n-lab">Hasta n = 30</label><input type="range" id="c-n" min="10" max="60" step="1" value="30"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span id="c-ab-lab">a<sub>n</sub>/b<sub>n</sub> en el último n</span><b id="c-ab">—</b></div>
+          <div class="status" id="c-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · En «Serie p», compara p = 1 con p = 1,1 usando N = 200. ¿Se ven distintas? ¿Cuál converge?</summary>
+          <div class="rev-body"><p><b>Casi iguales:</b> S<sub>200</sub> ≈ 5,88 con p = 1 y ≈ 4,70 con p = 1,1. Pero con p = 1 diverge, y con p = 1,1 converge (a ≈ 10,58, muy despacio). No se decide a ojo: se decide con la regla p &gt; 1.</p></div></details>
+        <details class="rev"><summary><span>Reto 2 · En «Comparar», escoge 2025 P1a. ¿A qué se acerca a<sub>n</sub>/b<sub>n</sub>?</span></summary>
+          <div class="rev-body"><p><b>A 1.</b> Es un número positivo, así que las dos series hacen lo mismo: como Σ 1/n<sup>3/2</sup> converge, la del parcial también.</p></div></details>
+        <details class="rev"><summary><span>Reto 3 · Escoge 2025 P1c. ¿Los puntos de a<sub>n</sub> quedan arriba o abajo de los de 1/n?</span></summary>
+          <div class="rev-body"><p><b>Arriba, siempre.</b> Mayor que la armónica, que diverge: la del parcial diverge.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Tus cuatro ejercicios de parcial son los ejemplos resueltos. Aquí va la hoja 11.4 (de donde el profesor sacó el 2023 P1e) y variantes tipo parcial.</p></div>
+    <p class="prose">Para cada serie: decide si converge, di con qué la comparas y escribe la frase completa en papel. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. Si quieres que te corrija la redacción, mándame una foto o escríbela en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M4 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M4 · Raíz, cociente, alternantes y ¿qué criterio uso? (también hoy).</p>
+    <p>Fuente de los problemas: parciales 3 de 2023-19 y 2025-10 y la hoja 11.4 del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const dec = (v, d) => v.toFixed(d).replace(".", ",");
+
+/* ---------- Notación ---------- */
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const SG = (lo, hi = "∞") => `<span class="sig"><small>${hi}</small><b>Σ</b><small>${lo}</small></span>`;
+const SQ = (x) => `√<span class="rad">${x}</span>`;
+const M = (x) => `<span class="m">${x}</span>`;
+
+/* ---------- Gráficas ---------- */
+function niceStep(span, count) {
+  const raw = span / count, mag = Math.pow(10, Math.floor(Math.log10(raw))), e = raw / mag;
+  return (e >= 7.5 ? 10 : e >= 3.5 ? 5 : e >= 1.5 ? 2 : 1) * mag;
+}
+/* Una o dos sucesiones de puntos sobre los mismos ejes. */
+function plot(o) {
+  const W = 360, H = 220, ml = 46, mr = 12, mt = o.legend ? 24 : 14, mb = 32;
+  const n0 = o.n0 || 1, N = o.N, series = o.series;
+  let lo = Infinity, hi = -Infinity;
+  series.forEach((s) => { for (let n = n0; n <= N; n++) { const y = s.f(n); lo = Math.min(lo, y); hi = Math.max(hi, y); } });
+  if (o.L != null) { lo = Math.min(lo, o.L); hi = Math.max(hi, o.L); }
+  if (o.yMin != null) lo = Math.min(lo, o.yMin);
+  const pad = (hi - lo) * 0.08 || 0.5; lo -= pad; hi += pad;
+  const X = (n) => ml + (N === n0 ? 0 : (n - n0) / (N - n0)) * (W - ml - mr);
+  const Y = (y) => mt + (hi - y) / (hi - lo) * (H - mt - mb);
+  let g = "";
+  const st = niceStep(hi - lo, 4), d = Math.max(0, -Math.floor(Math.log10(st) + 1e-9));
+  for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) {
+    const vv = Math.abs(v) < st / 1e6 ? 0 : v;
+    g += `<line x1="${ml}" y1="${f1(Y(vv))}" x2="${W - mr}" y2="${f1(Y(vv))}" class="gr-grid"/><text x="${ml - 6}" y="${f1(Y(vv) + 3.5)}" class="gr-tick" text-anchor="end">${dec(vv, d)}</text>`;
+  }
+  [...new Set([n0, Math.round((n0 + N) / 2), N])].forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 14}" class="gr-tick" text-anchor="middle">${t}</text>`; });
+  g += `<text x="${(ml + W - mr) / 2}" y="${H - 3}" class="gr-lab" text-anchor="middle">${o.xlab}</text>`;
+  g += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}" class="gr-axis"/>`;
+  if (o.L != null) {
+    g += `<line x1="${ml}" y1="${f1(Y(o.L))}" x2="${W - mr}" y2="${f1(Y(o.L))}" class="gr-L"/>`;
+    if (o.Llab) g += `<text x="${W - mr - 2}" y="${f1(Y(o.L) - 6)}" class="gr-Lt" text-anchor="end">${o.Llab}</text>`;
+  }
+  const r = N <= 30 ? 3.2 : N <= 80 ? 2.6 : 2;
+  series.forEach((s) => { for (let n = n0; n <= N; n++) g += `<circle cx="${f1(X(n))}" cy="${f1(Y(s.f(n)))}" r="${r}" class="gr-dot${s.cls ? " " + s.cls : ""}"/>`; });
+  if (o.legend) {
+    let x = ml + 4;
+    series.forEach((s) => { g += `<circle cx="${x + 4}" cy="12" r="4" class="${s.cls === "b" ? "lg-b" : "lg-a"}"/><text x="${x + 12}" y="16" class="gr-ann">${s.lab}</text>`; x += 14 + s.lab.length * 6.6 + 14; });
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
+}
+
+/* ---------- Lab 1: serie p ---------- */
+function zeta(p) { let s = 0; const Mx = 2000; for (let k = 1; k <= Mx; k++) s += Math.pow(k, -p); return s + Math.pow(Mx, 1 - p) / (p - 1) - Math.pow(Mx, -p) / 2; }
+function drawP() {
+  const p = Math.round(Number($("#p-p").value) * 10) / 10, N = Number($("#p-n").value);
+  const sums = []; let acc = 0; for (let k = 1; k <= N; k++) { acc += Math.pow(k, -p); sums.push(acc); }
+  const conv = p > 1 + 1e-9, S = conv ? zeta(p) : null;
+  $("#p-svg").innerHTML = plot({ series: [{ f: (k) => sums[k - 1] }], N, L: conv && S < sums[N - 1] * 3 ? S : null, Llab: conv ? "suma ≈ " + dec(S, 2) : "", xlab: "términos sumados N", yMin: 0, aria: "Sumas parciales de la serie p con p = " + dec(p, 1) });
+  $("#p-p-lab").textContent = "p = " + dec(p, 1);
+  $("#p-n-lab").textContent = "Términos sumados: N = " + N;
+  $("#p-sn").textContent = dec(sums[N - 1], 4);
+  $("#p-s").textContent = conv ? "≈ " + dec(S, 4) : "no existe (∞)";
+  const st = $("#p-status");
+  if (conv) { st.textContent = "p = " + dec(p, 1) + " > 1: la serie converge."; st.className = "status ok"; }
+  else { st.textContent = "p = " + dec(p, 1) + " ≤ 1: la serie diverge, aunque suba despacio."; st.className = "status bad"; }
+}
+["#p-p", "#p-n"].forEach((s) => $(s).addEventListener("input", drawP));
+drawP();
+
+/* ---------- Lab 2: comparar con b_n ---------- */
+const CMP = [
+  { lab: "2025 P1a: √(n³ + 5)/(n³ − 3)", a: (n) => Math.sqrt(n * n * n + 5) / (n * n * n - 3), b: (n) => Math.pow(n, -1.5), blab: "1/n^(3/2)", n0: 2, kind: "lim",
+    note: "Desde n = 2 (el término de n = 1 es negativo). Comparación en el límite con b_n = 1/n^(3/2): el cociente se acerca a 1." },
+  { lab: "2023 P1a: √(n + 1)/(n + 2)", a: (n) => Math.sqrt(n + 1) / (n + 2), b: (n) => Math.pow(n, -0.5), blab: "1/√n", n0: 1, kind: "lim",
+    note: "Comparación en el límite con b_n = 1/√n: el cociente se acerca a 1, y Σ 1/√n diverge." },
+  { lab: "2025 P1c: (1 + sen² n)/n", a: (n) => (1 + Math.pow(Math.sin(n), 2)) / n, b: (n) => 1 / n, blab: "1/n", n0: 1, kind: "ge",
+    note: "Comparación directa: todos los puntos de a_n quedan por encima de los de 1/n." },
+  { lab: "2023 P1e: sen² n/n³", a: (n) => Math.pow(Math.sin(n), 2) / (n * n * n), b: (n) => 1 / (n * n * n), blab: "1/n³", n0: 2, kind: "le",
+    note: "Comparación directa: todos los puntos de a_n quedan por debajo de los de 1/n³." }
+];
+function drawCmp() {
+  const c = CMP[Number($("#c-sel").value)], N = Number($("#c-n").value);
+  $("#c-svg").innerHTML = plot({ series: [{ f: c.a, lab: "a_n" }, { f: c.b, cls: "b", lab: "b_n = " + c.blab }], n0: c.n0, N, xlab: "n", yMin: 0, legend: true, aria: "Términos de la serie del parcial y de la serie con que se compara" });
+  $("#c-note").textContent = c.note;
+  $("#c-n-lab").textContent = "Hasta n = " + N;
+  const st = $("#c-status");
+  if (c.kind === "lim") {
+    $("#c-ab").textContent = dec(c.a(N) / c.b(N), 4);
+    st.textContent = "El cociente se acerca a 1: un número positivo. Las dos series hacen lo mismo."; st.className = "status ok";
+  } else {
+    let ok = true; for (let n = c.n0; n <= N; n++) { if (c.kind === "ge" ? c.a(n) < c.b(n) - 1e-15 : c.a(n) > c.b(n) + 1e-15) ok = false; }
+    $("#c-ab").textContent = dec(c.a(N) / c.b(N), 4);
+    st.textContent = c.kind === "ge" ? (ok ? "a_n ≥ 1/n en todos los puntos, y Σ 1/n diverge: la serie diverge." : "—") : (ok ? "a_n ≤ 1/n³ en todos los puntos, y Σ 1/n³ converge: la serie converge." : "—");
+    st.className = "status ok";
+  }
+}
+CMP.forEach((c, i) => { const o = el("option", "", c.lab); o.value = String(i); $("#c-sel").appendChild(o); });
+$("#c-sel").addEventListener("change", drawCmp);
+$("#c-n").addEventListener("input", drawCmp);
+drawCmp();
+const TABS = ["p", "cmp"];
+TABS.forEach((on) => $("#tab-" + on).addEventListener("click", () => {
+  TABS.forEach((t) => { $("#lab-" + t).hidden = t !== on; $("#tab-" + t).setAttribute("aria-selected", t === on ? "true" : "false"); });
+}));
+
+/* ---------- Taller ---------- */
+const CD = ["Converge", "Diverge"];
+const PROBS = [
+  { n: "T1", t: "Comparación directa", src: "Hoja 11.4 · (k), (e), (f) y (n)",
+    txt: `<p>Determina si cada serie converge o diverge con comparación directa. Escribe la desigualdad y la frase.</p>
+      <ol class="items"><li>(k) ${M(SG("n=3") + " " + F("cos² n", "n³ + 1"))}</li><li>(e) ${M(SG("n=0") + " " + F("1", "1 + 2<sup>n</sup>"))}</li><li>(f) ${M(SG("n=0") + " " + F("n", "(n + 1)·3<sup>n</sup>"))}</li><li>(n) ${M(SG("n=3") + " " + F("e<sup>1/n</sup>", "n"))}</li></ol>`,
+    checks: [{ q: "(k)", opts: CD, a: 0 }, { q: "(e)", opts: CD, a: 0 }, { q: "(f)", opts: CD, a: 0 }, { q: "(n)", opts: CD, a: 1 }],
+    hints: ["(k) 0 ≤ cos² n ≤ 1 y n³ + 1 &gt; n³.", "(e) 1 + 2<sup>n</sup> &gt; 2<sup>n</sup>, así que 1/(1 + 2<sup>n</sup>) &lt; 1/2<sup>n</sup> = (1/2)<sup>n</sup>: una geométrica.", "(f) n/(n + 1) &lt; 1.", "(n) Como 1/n &gt; 0, e<sup>1/n</sup> ≥ 1."],
+    sol: ["<b>(k)</b> 0 ≤ cos² n/(n³ + 1) ≤ 1/(n³ + 1) &lt; 1/n³, y Σ 1/n³ converge (p = 3 &gt; 1): <b>converge</b> por comparación directa.",
+      "<b>(e)</b> 0 &lt; 1/(1 + 2<sup>n</sup>) &lt; (1/2)<sup>n</sup>, y Σ (1/2)<sup>n</sup> es geométrica con r = 1/2 &lt; 1: <b>converge</b>.",
+      "<b>(f)</b> 0 ≤ n/((n + 1)·3<sup>n</sup>) &lt; 1/3<sup>n</sup> = (1/3)<sup>n</sup>, geométrica con r = 1/3: <b>converge</b>.",
+      "<b>(n)</b> e<sup>1/n</sup>/n ≥ 1/n &gt; 0, y Σ 1/n diverge: <b>diverge</b> por comparación directa."] },
+  { n: "T2", t: "Comparación en el límite", src: "Hoja 11.4 · (a), (g), (i) y (l)",
+    txt: `<p>Para cada serie escoge b<sub>n</sub>, calcula L y decide.</p>
+      <ol class="items"><li>(a) ${M(SG("n=0") + " " + F("n", "2n³ + 1"))}</li><li>(g) ${M(SG("n=0") + " " + F(SQ("n + 1"), "2n² + n + 1"))}</li><li>(i) ${M(SG("n=0") + " " + F("1", SQ("4n⁴ + 1")))}</li><li>(l) ${M(SG("n=2") + " " + F("n + 2", "(n + 1)²"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["Converge, con b = 1/n²", "Diverge, con b = 1/n", "Converge, con b = 1/n³", "Diverge: el término no tiende a 0"], a: 0 },
+      { q: "(g)", opts: ["Converge, con b = 1/n<sup>3/2</sup>", "Diverge, con b = 1/√n", "Converge, con b = 1/n²", "Diverge, con b = 1/n"], a: 0 },
+      { q: "(i)", opts: ["Converge, con b = 1/n²", "Diverge, con b = 1/n", "Converge, con b = 1/n⁴", "Diverge, con b = 1/√n"], a: 0 },
+      { q: "(l)", opts: ["Converge, con b = 1/n²", "Diverge, con b = 1/n", "Converge, con b = 1/n<sup>3/2</sup>", "Diverge: el término no tiende a 0"], a: 1 }],
+    hints: ["Arriba y abajo quédate solo con el término dominante, sin el número que lo acompaña, y simplifica: eso es b<sub>n</sub>.", "(g) √(n + 1) se comporta como √n = n<sup>1/2</sup>; abajo manda n² (el 2 no importa para escoger b<sub>n</sub>).", "(i) √(4n⁴) = 2n²."],
+    sol: ["<b>(a)</b> b<sub>n</sub> = n/n³ = 1/n². L = lim n·n²/(2n³ + 1) = 1/2: finito y positivo. Σ 1/n² converge (p = 2): <b>converge</b>.",
+      "<b>(g)</b> b<sub>n</sub> = n<sup>1/2</sup>/n² = 1/n<sup>3/2</sup>. L = lim √(n + 1)·n<sup>3/2</sup>/(2n² + n + 1) = 1/2. p = 3/2 &gt; 1: <b>converge</b>.",
+      "<b>(i)</b> b<sub>n</sub> = 1/n². L = lim n²/√(4n⁴ + 1) = 1/√4 = 1/2. <b>Converge</b>.",
+      "<b>(l)</b> b<sub>n</sub> = n/n² = 1/n. L = lim n(n + 2)/(n + 1)² = 1. Σ 1/n diverge: <b>diverge</b>."] },
+  { n: "T3", t: "Mixtas de la hoja", src: "Hoja 11.4 · (b), (d), (j), (m) y (o) · sin decirte el criterio",
+    txt: `<p>Ahora tú escoges el criterio. Ojo: una se resuelve sin comparar.</p>
+      <ol class="items"><li>(b) ${M(SG("n=1") + " " + F("n + 1", SQ("n")))}</li><li>(d) ${M(SG("n=1") + " " + F("n² − 1", "3n⁴ + 1"))}</li><li>(j) ${M(SG("n=1") + " " + F("n − 1", "n²" + SQ("n")))}</li><li>(m) ${M(SG("n=4") + " " + F("1", "n<sup>1 + 1/n</sup>"))}</li><li>(o) ${M(SG("n=0") + " " + F("1", "n!"))}</li></ol>`,
+    checks: [{ q: "(b)", opts: CD, a: 1 }, { q: "(d)", opts: CD, a: 0 }, { q: "(j)", opts: CD, a: 0 }, { q: "(m)", opts: CD, a: 1 }, { q: "(o)", opts: CD, a: 0 }],
+    hints: ["(b) Mira primero el término: ¿tiende a 0?", "(m) Compara en el límite con 1/n. El cociente queda 1/n<sup>1/n</sup>, y n<sup>1/n</sup> → 1 (M1).", "(o) Para n ≥ 1, n! = 1·2·3·…·n ≥ 1·2·2·…·2 = 2<sup>n−1</sup>."],
+    sol: ["<b>(b)</b> (n + 1)/√n → ∞ (grado 1 arriba contra 1/2 abajo): el término no tiende a 0, <b>diverge</b> por el criterio de divergencia. No hacía falta comparar.",
+      "<b>(d)</b> b<sub>n</sub> = n²/n⁴ = 1/n², L = 1/3: <b>converge</b>.",
+      "<b>(j)</b> b<sub>n</sub> = n/(n²·n<sup>1/2</sup>) = 1/n<sup>3/2</sup>, L = 1: <b>converge</b>.",
+      "<b>(m)</b> El exponente 1 + 1/n es mayor que 1, pero se acerca a 1: no es una serie p. Con b<sub>n</sub> = 1/n: L = lim 1/n<sup>1/n</sup> = 1, y Σ 1/n diverge: <b>diverge</b>.",
+      "<b>(o)</b> 1/n! ≤ (1/2)<sup>n−1</sup> para n ≥ 1, una geométrica con r = 1/2: <b>converge</b> por comparación directa. En M4 lo vas a resolver más rápido con el cociente."] },
+  { n: "T4", t: "Variantes tipo parcial", src: "Problemas nuevos · «Determine si la serie converge o diverge» (6 pts c/u)",
+    txt: `<p>Como en el punto 1 del parcial: criterio, cuenta y frase.</p>
+      <ol class="items"><li>(a) ${M(SG("n=1") + " " + F(SQ("n² + 1"), "n³ + 2"))}</li><li>(b) ${M(SG("n=1") + " " + F("2 + cos n", SQ("n")))}</li><li>(c) ${M(SG("n=1") + " " + F("n", SQ("n⁵") + " + 4"))}</li><li>(d) ${M(SG("n=2") + " " + F("3n + 1", "n² − 2"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: CD, a: 0 }, { q: "(b)", opts: CD, a: 1 }, { q: "(c)", opts: CD, a: 0 }, { q: "(d)", opts: CD, a: 1 }],
+    hints: ["(b) cos n ≥ −1, así que 2 + cos n ≥ 1.", "(c) √(n⁵) = n<sup>5/2</sup>."],
+    sol: ["<b>(a)</b> b<sub>n</sub> = n/n³ = 1/n². L = lim n²·√(n² + 1)/(n³ + 2) = 1. Σ 1/n² converge: <b>converge</b> por comparación en el límite.",
+      "<b>(b)</b> 2 + cos n ≥ 1, así que (2 + cos n)/√n ≥ 1/√n &gt; 0, y Σ 1/√n diverge (p = 1/2): <b>diverge</b> por comparación directa.",
+      "<b>(c)</b> b<sub>n</sub> = n/n<sup>5/2</sup> = 1/n<sup>3/2</sup>. L = 1. p = 3/2 &gt; 1: <b>converge</b>.",
+      "<b>(d)</b> b<sub>n</sub> = n/n² = 1/n. L = lim n(3n + 1)/(n² − 2) = 3, finito y positivo. Σ 1/n diverge: <b>diverge</b>."] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(elh("div", "prob-body", p.txt));
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(elh("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu frase."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(elh("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => sb.appendChild(elh("p", "", s))); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M3", NEXT = "Aprobado. Pasas a M4: raíz, cociente, alternantes y la estrategia.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "¿Para qué valores de p converge la serie Σ 1/n<sup>p</sup>?",
+      o: ["p &gt; 0", "p ≥ 1", "p &gt; 1", "p &lt; 1"], a: 2,
+      e: "Converge solo si p &gt; 1. Con p = 1 es la armónica, que diverge." },
+    { k: "Conceptual", q: "Si 0 ≤ a<sub>n</sub> ≤ b<sub>n</sub> y Σ b<sub>n</sub> diverge, ¿qué dice esto de Σ a<sub>n</sub>?",
+      o: ["Converge.", "Diverge.", "Nada.", "Converge a 0."], a: 2,
+      e: "Ser menor que una serie que diverge no dice nada: Σ 1/n² y Σ 1/n son las dos menores que Σ 2/n, y una converge y la otra no." },
+    { k: "Conceptual", q: `Para ${M(SG("n=1") + " " + F("5n² + 1", "n⁴ + 3n"))}, ¿con qué serie comparas en el límite?`,
+      o: ["Σ 1/n²", "Σ 1/n⁴", "Σ 1/n", "Σ n²"], a: 0,
+      e: "Términos dominantes: n² arriba y n⁴ abajo, así que b<sub>n</sub> = n²/n⁴ = 1/n². El L da 5, finito y positivo, y como Σ 1/n² converge, la serie converge." },
+    { k: "Tipo parcial", q: `Determine si converge: ${M(SG("n=1") + " " + F("3 + sen n", "n²"))}.`,
+      o: ["Converge, por comparación directa con Σ 4/n².", "Diverge, por comparación con Σ 1/n.", "Diverge, porque sen n no tiene límite.", "Converge, porque el término tiende a 0."], a: 0,
+      e: "sen n ≤ 1, así que 0 &lt; (3 + sen n)/n² ≤ 4/n², y Σ 4/n² converge (es 4 veces una serie p con p = 2). La D no sirve: que el término tienda a 0 no prueba nada." },
+    { k: "Tipo parcial", q: `Determine si converge: ${M(SG("n=1") + " " + F(SQ("n + 2"), "n² + 1"))}.`,
+      o: ["Converge: con b<sub>n</sub> = 1/n<sup>3/2</sup>, L = 1 y p = 3/2 &gt; 1.", "Diverge: con b<sub>n</sub> = 1/√n, L = 1 y p = 1/2.", "Diverge: con b<sub>n</sub> = 1/n, L = 1.", "Converge: el término tiende a 0."], a: 0,
+      e: "Arriba manda √n = n<sup>1/2</sup> y abajo n²: b<sub>n</sub> = n<sup>1/2</sup>/n² = 1/n<sup>3/2</sup>. L = 1 y p = 3/2 &gt; 1: converge." }
+  ],
+  B: [
+    { k: "Conceptual", q: "¿Cuál de estas series converge?",
+      o: ["Σ 1/√n", "Σ 1/n", "Σ 1/n<sup>1,01</sup>", "Σ 1/n<sup>0,99</sup>"], a: 2,
+      e: "Es la única con p &gt; 1. Aunque 1,01 esté muy cerca de 1, la regla es estricta." },
+    { k: "Conceptual", q: "En la comparación en el límite, ¿qué tiene que cumplir L = lim a<sub>n</sub>/b<sub>n</sub> para poder concluir?",
+      o: ["Ser exactamente 1.", "Ser un número positivo: 0 &lt; L &lt; ∞.", "Ser menor que 1.", "Ser mayor que 1."], a: 1,
+      e: "Cualquier número positivo sirve. Si L = 0 o L = ∞, el criterio no concluye. (Que L sea menor o mayor que 1 importa en la raíz y el cociente, no aquí.)" },
+    { k: "Conceptual", q: "Si 0 ≤ a<sub>n</sub> ≤ b<sub>n</sub> y Σ a<sub>n</sub> converge, ¿qué dice esto de Σ b<sub>n</sub>?",
+      o: ["Converge.", "Diverge.", "Nada.", "Converge al mismo valor."], a: 2,
+      e: "Ser mayor que una que converge no dice nada. La comparación directa solo concluye en dos direcciones: menor que una que converge, o mayor que una que diverge." },
+    { k: "Tipo parcial", q: `Determine si converge: ${M(SG("n=1") + " " + F("1 + cos² n", SQ("n")))}.`,
+      o: ["Diverge: es mayor o igual que 1/√n, y Σ 1/√n diverge.", "Converge: es menor o igual que 2/√n.", "Converge: el término tiende a 0.", "Diverge: cos n no tiene límite."], a: 0,
+      e: "cos² n ≥ 0, así que (1 + cos² n)/√n ≥ 1/√n &gt; 0, y Σ 1/√n diverge (p = 1/2). La B es la trampa: ser menor que 2/√n, que diverge, no dice nada." },
+    { k: "Tipo parcial", q: `Determine si converge: ${M(SG("n=1") + " " + F(SQ("4n³ + 1"), "2n³ + n"))}.`,
+      o: ["Converge: comparada con Σ 1/n<sup>3/2</sup>, L = 1.", "Converge: comparada con Σ 1/n<sup>3/2</sup>, L = 2.", "Diverge: comparada con Σ 1/n, L = 1.", "Diverge: el término no tiende a 0."], a: 0,
+      e: "b<sub>n</sub> = n<sup>3/2</sup>/n³ = 1/n<sup>3/2</sup>. L = lim √(4n³ + 1)·n<sup>3/2</sup>/(2n³ + n) = √4/2 = 2/2 = 1. Ojo: √4 = 2, no 4. Las dos primeras concluyen lo mismo, pero el L correcto es 1." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(elh("span", "", it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(elh("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.innerHTML = (ok ? "Correcta. " : "Incorrecta. La respuesta es la " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

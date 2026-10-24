@@ -1,0 +1,881 @@
+<title>M2 Series básicas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de M1, acento violeta de Cálculo). Columna de lectura ≤ 860px con barra de secciones fija; el lab grafica las sumas parciales de varias series y muestra cómo se tachan los términos de una telescópica. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.tele{font-family:var(--f-mono); font-size:1rem; line-height:2.4; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:10px 12px; overflow-x:auto}
+.tele .par{white-space:nowrap}
+.tele .keep{color:var(--green); font-weight:500}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/Ra9LHTCCAvquo8459V5bhS" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>25 min</span></a>
+    <a href="#lab">2 Lab <span>5 min</span></a>
+    <a href="#taller">3 Taller <span>20 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Parcial 3 · Módulo 2</p>
+    <h1>Series: geométrica, telescópica y divergencia</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>Sábado 24 de octubre · ~1 h</span>
+      <span>Libro 11.2 · el P2 de 2025 valió 7 pts</span>
+    </div>
+    <p class="prose">Una serie es una suma infinita. En el parcial esto te da tres cosas: el punto «muestre que la serie converge y encuentre su valor» (7 pts en 2025), la serie geométrica, que es el molde de toda la Taylor de M7, y el criterio de divergencia, que se usa en los extremos de la serie de potencias de M6.</p>
+    <div class="callout">
+      <h3>Dónde aparece en tus parciales</h3>
+      <p>2025-10 P2: Σ 2/(k² + k) = 2 es el ejemplo resuelto 5. Las Taylor de 2025-10 P4 y 2023-19 P3 salen de la geométrica con x de la idea 4. Y los extremos del intervalo de 2025 P4a se deciden con el criterio de divergencia de la idea 2.</p>
+    </div>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M3.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es una serie, cuándo diverge seguro, cómo sumar una geométrica y una telescópica. Cinco ejemplos resueltos con los números de tus parciales y de la hoja 11.2.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Σ</td><td>«sumatoria»</td><td>Suma todos los términos, desde el índice de abajo hasta el de arriba.</td><td><span class="sig"><small>3</small><b>Σ</b><small>n=1</small></span> n = 1 + 2 + 3 = 6</td></tr>
+          <tr><td class="mono"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> a<sub>n</sub></td><td>«la serie de a sub ene, desde n = 1»</td><td>La suma infinita a<sub>1</sub> + a<sub>2</sub> + a<sub>3</sub> + …</td><td>1/2 + 1/4 + 1/8 + …</td></tr>
+          <tr><td class="mono">n, k</td><td>«ene», «ka»</td><td>El índice: la posición del término. El profesor usa n o k; es lo mismo.</td><td>El P2 de 2025 usa k.</td></tr>
+          <tr><td class="mono">S<sub>N</sub></td><td>«ese sub ene»</td><td>La suma parcial: la suma de los primeros N términos.</td><td>En Σ 1/2<sup>n</sup>, S<sub>2</sub> = 1/2 + 1/4 = 3/4.</td></tr>
+          <tr><td class="mono">S</td><td>«ese»</td><td>La suma de la serie: el límite de S<sub>N</sub>. Si existe, la serie converge y vale S.</td><td>Σ 1/2<sup>n</sup> = 1</td></tr>
+          <tr><td class="mono">r</td><td>«erre», la razón</td><td>En una geométrica, el número por el que se multiplica para pasar de un término al siguiente.</td><td>En 1/2 + 1/4 + 1/8 + …, r = 1/2.</td></tr>
+          <tr><td class="mono">primer término</td><td>—</td><td>El término del índice de abajo. No siempre es el número que va adelante.</td><td>Σ desde n = 0 de 1/2<sup>n−1</sup> empieza en 2.</td></tr>
+          <tr><td class="mono">|r|</td><td>«valor absoluto de r»</td><td>El tamaño de r, sin el signo.</td><td>|−2/3| = 2/3</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo es un ejercicio de tus parciales o de la hoja 11.2, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Lo que se cancela aparece <span class="cx">tachado</span>.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 1</span><h3>Qué es una serie y qué quiere decir que converja</h3></div>
+      <p class="prose">Una serie es una suma infinita. No se puede sumar todo de una vez, así que se suma por partes: la <b>suma parcial</b> S<sub>N</sub> suma los primeros N términos. Si S<sub>N</sub> se acerca a un número S cuando N crece, la serie <b>converge y vale S</b>. Si no, diverge. Mira Σ<sub>n≥1</sub> 1/2<sup>n</sup>:</p>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>N</th><th>S<sub>N</sub></th><th>Lo que falta para 1</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">1</td><td class="mono">1/2</td><td class="mono">1/2</td></tr>
+          <tr><td class="mono">2</td><td class="mono">1/2 + 1/4 = 3/4</td><td class="mono">1/4</td></tr>
+          <tr><td class="mono">3</td><td class="mono">3/4 + 1/8 = 7/8</td><td class="mono">1/8</td></tr>
+          <tr><td class="mono">4</td><td class="mono">7/8 + 1/16 = 15/16</td><td class="mono">1/16</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose">Cada vez falta la mitad de lo que faltaba: S<sub>N</sub> = 1 − 1/2<sup>N</sup> → 1. La serie converge y vale 1.</p>
+      <div class="figs">
+        <figure><div data-fig="conv"></div><figcaption><b>Converge:</b> las sumas parciales de Σ 1/2<sup>n</sup> se pegan a 1.</figcaption></figure>
+        <figure><div data-fig="harm"></div><figcaption><b>Diverge:</b> las sumas parciales de Σ 1/n siguen subiendo, cada vez más despacio, pero sin parar.</figcaption></figure>
+      </div>
+      <div class="callout">
+        <h3>No confundas el término con la suma</h3>
+        <p>En Σ 1/2<sup>n</sup>, los términos 1/2<sup>n</sup> tienden a 0 y las sumas parciales tienden a 1. La serie vale <b>1</b>, no 0. El término y la suma son dos sucesiones distintas.</p>
+      </div>
+    </div>
+
+    <!-- Idea 2 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 2 · extremos de la serie de potencias</span><h3>El criterio de divergencia</h3></div>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p>Si <span class="m"><span class="lim">lim<small>n→∞</small></span> a<sub>n</sub> ≠ 0</span> (o no existe), la serie Σ a<sub>n</sub> <b>diverge</b>.</p>
+        <p>Si el límite es 0, este criterio <b>no dice nada</b>: hay que usar otro (M3 y M4).</p>
+      </div>
+      <p class="prose">Por qué funciona: si los términos no se achican hasta 0, cada vez le estás sumando algo de tamaño fijo a la suma, y la suma no se puede quedar quieta.</p>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · Hoja 11.2 (5a)</span>
+            <h4 id="wx1-h">Mostrar que una serie diverge</h4>
+            <p>Muestra que <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>n</span><span>n + 1</span></span></span> diverge.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Calcula el límite del término.</p><p class="why">Es un cociente con el mismo grado arriba y abajo (M1): el límite es el cociente de los números que acompañan a n.</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>n</span><span>n + 1</span></span> = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>1</span><span>1 + <span class="frac"><span>1</span><span>n</span></span></span></span> = 1</div></li>
+          <li><p class="what">Compáralo con 0.</p><p class="why">El límite es 1, no 0: los términos no se achican.</p><div class="mx">1 ≠ 0</div></li>
+          <li><p class="what">Concluye con una frase.</p><p class="why">En el parcial, sin la frase no hay puntos.</p><div class="mx txt">Como lim n/(n + 1) = 1 ≠ 0, la serie diverge por el criterio de divergencia.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> diverge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Desde cierto n, cada término vale casi 1, así que S<sub>N</sub> crece más o menos como N. Lo ves en el lab.</p>
+      </article>
+      <div class="callout trap">
+        <h3>La armónica: el término tiende a 0 y aun así diverge</h3>
+        <p>Σ 1/n diverge aunque 1/n → 0. Agrupa los términos: 1 + 1/2 + (1/3 + 1/4) + (1/5 + 1/6 + 1/7 + 1/8) + … Cada paréntesis suma por lo menos 1/2 (por ejemplo, 1/3 + 1/4 ≥ 1/4 + 1/4 = 1/2). Sumar 1/2 infinitas veces da infinito.</p>
+        <p>Por eso el criterio de divergencia solo sirve para decir <b>diverge</b>, nunca para decir converge.</p>
+      </div>
+    </div>
+
+    <!-- Idea 3 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 3 · P2 y molde de Taylor</span><h3>La serie geométrica</h3></div>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p>Una serie es <b>geométrica</b> si cada término se obtiene multiplicando el anterior por el mismo número r, la razón.</p>
+        <p>Converge si <b>|r| &lt; 1</b>, y entonces vale <span class="m"><span class="frac"><span>primer término</span><span>1 − r</span></span></span>. Si |r| ≥ 1, diverge.</p>
+      </div>
+      <p class="prose">Para encontrar r, escribe todo lo que tiene n como (algo)<sup>n</sup>: ese «algo» es la razón. El primer término se saca reemplazando el índice de abajo.</p>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · Hoja 11.2 (2e)</span>
+            <h4 id="wx2-h">Sumar una geométrica</h4>
+            <p>Decide si converge y encuentra su valor: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> <span class="frac"><span>2<sup>n</sup></span><span>3<sup>n+1</sup></span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Separa la potencia de 3.</p><p class="why">3<sup>n+1</sup> = 3·3<sup>n</sup>. Así todo lo que tiene n queda junto.</p><div class="mx"><span class="frac"><span>2<sup>n</sup></span><span>3<sup>n+1</sup></span></span> = <span class="frac"><span>2<sup>n</sup></span><span>3·3<sup>n</sup></span></span> = <span class="frac"><span>1</span><span>3</span></span>·(<span class="frac"><span>2</span><span>3</span></span>)<sup>n</sup></div></li>
+          <li><p class="what">Identifica la razón.</p><p class="why">Lo que está elevado a la n es la razón.</p><div class="mx">r = <span class="frac"><span>2</span><span>3</span></span><span class="ar">y</span>|r| &lt; 1<span class="ar">→</span>converge</div></li>
+          <li><p class="what">Calcula el primer término.</p><p class="why">La suma empieza en n = 0: reemplaza n = 0. Cualquier número a la 0 es 1.</p><div class="mx"><span class="frac"><span>1</span><span>3</span></span>·(<span class="frac"><span>2</span><span>3</span></span>)<sup>0</sup> = <span class="frac"><span>1</span><span>3</span></span></div></li>
+          <li><p class="what">Usa la fórmula.</p><div class="mx">S = <span class="frac"><span>1/3</span><span>1 − 2/3</span></span> = <span class="frac"><span>1/3</span><span>1/3</span></span> = 1</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge y vale 1.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> S<sub>1</sub> = 1/3, S<sub>2</sub> = 1/3 + 2/9 = 5/9 y S<sub>3</sub> = 5/9 + 4/27 = 19/27 ≈ 0,70: se van acercando a 1. Lo ves en el lab.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · Hoja 11.2 (2b) · la trampa del primer término</span>
+            <h4 id="wx3-h">Cuando el primer término no es el que parece</h4>
+            <p>Encuentra el valor de <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> <span class="frac"><span>1</span><span>2<sup>n−1</sup></span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Identifica la razón.</p><p class="why">1/2<sup>n−1</sup> = (1/2)<sup>n−1</sup>: cada término es la mitad del anterior.</p><div class="mx">r = <span class="frac"><span>1</span><span>2</span></span><span class="ar">y</span>|r| &lt; 1<span class="ar">→</span>converge</div></li>
+          <li><p class="what">Calcula el primer término reemplazando n = 0.</p><p class="why">Aquí está la trampa: con n = 0 el exponente es −1, y un exponente negativo voltea la fracción.</p><div class="mx"><span class="frac"><span>1</span><span>2<sup>0−1</sup></span></span> = <span class="frac"><span>1</span><span>2<sup>−1</sup></span></span> = 2</div></li>
+          <li><p class="what">Usa la fórmula.</p><div class="mx">S = <span class="frac"><span>2</span><span>1 − 1/2</span></span> = <span class="frac"><span>2</span><span>1/2</span></span> = 4</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge y vale 4.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es 2 + 1 + 1/2 + 1/4 + … = 4. Si hubieras puesto 1 como primer término, te daría 2: esa es la serie que empieza en n = 1 (hoja 11.2 (2a)).</p>
+      </article>
+    </div>
+
+    <!-- Idea 4 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 4 · el puente a M6 y M7</span><h3>Geométrica con x</h3></div>
+      <p class="prose">Si la razón tiene una x, la serie converge solo para los x que hacen |r| &lt; 1. Esa es la idea de una <b>serie de potencias</b> (M6), y al revés, escribir una función como una serie así es lo que pide la <b>Taylor</b> del parcial (M7).</p>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · Hoja 11.2 (4d)</span>
+            <h4 id="wx4-h">¿Para qué x converge?</h4>
+            <p>Encuentra los valores de x para los que converge <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> (<span class="frac"><span>x + 2</span><span>5</span></span>)<sup>n</sup></span>, y su suma.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Identifica la razón.</p><div class="mx">r = <span class="frac"><span>x + 2</span><span>5</span></span></div></li>
+          <li><p class="what">Pide |r| &lt; 1 y despeja x.</p><p class="why">|algo| &lt; 1 quiere decir que ese algo está entre −1 y 1. Multiplicas todo por 5 y después le restas 2 a las tres partes.</p><div class="mx">−1 &lt; <span class="frac"><span>x + 2</span><span>5</span></span> &lt; 1<span class="ar">→</span>−5 &lt; x + 2 &lt; 5<span class="ar">→</span>−7 &lt; x &lt; 3</div></li>
+          <li><p class="what">Calcula la suma.</p><p class="why">El primer término (n = 0) es 1. Para simplificar, multiplicas arriba y abajo por 5.</p><div class="mx">S = <span class="frac"><span>1</span><span>1 − <span class="frac"><span>x + 2</span><span>5</span></span></span></span> = <span class="frac"><span>5</span><span>5 − x − 2</span></span> = <span class="frac"><span>5</span><span>3 − x</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge para −7 &lt; x &lt; 3, y ahí vale 5/(3 − x).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> En los extremos, x = −7 y x = 3, la razón vale −1 y 1: el término no tiende a 0 y la serie diverge (idea 2). Leída al revés, la igualdad dice 5/(3 − x) = Σ ((x + 2)/5)<sup>n</sup>: una función escrita como serie, que es exactamente lo que harás en M7.</p>
+      </article>
+    </div>
+
+    <!-- Idea 5 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 5 · el P2 de 2025 (7 pts)</span><h3>La serie telescópica</h3></div>
+      <p class="prose">Una serie es telescópica cuando cada término se puede escribir como una resta en la que un pedazo se cancela con el término siguiente. Las sumas parciales se encogen como un telescopio y queda una fórmula corta para S<sub>N</sub>.</p>
+      <ol class="steps">
+        <li><span><b>Factoriza</b> el denominador.</span></li>
+        <li><span><b>Fracciones parciales:</b> escribe el término como una resta.</span></li>
+        <li><span><b>Escribe S<sub>N</sub></b> con los primeros términos y el último, y tacha lo que se cancela.</span></li>
+        <li><span><b>Toma el límite</b> de S<sub>N</sub>. Si existe, la serie converge y ese es su valor.</span></li>
+      </ol>
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5 · Parcial 2025-10 P2 (7 pts)</span>
+            <h4 id="wx5-h">Muestre que la serie converge y encuentre su valor</h4>
+            <p><span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>k=1</small></span> <span class="frac"><span>2</span><span>k² + k</span></span></span></p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Factoriza el denominador.</p><p class="why">k es factor común.</p><div class="mx">k² + k = k(k + 1)</div></li>
+          <li><p class="what">Escribe el término como resta (fracciones parciales).</p><p class="why">Buscas A y B con 2/(k(k + 1)) = A/k + B/(k + 1). Multiplicando por k(k + 1) queda 2 = A(k + 1) + B·k. Con k = 0 sale A = 2; con k = −1 sale B = −2.</p><div class="mx"><span class="frac"><span>2</span><span>k(k + 1)</span></span> = <span class="frac"><span>2</span><span>k</span></span> − <span class="frac"><span>2</span><span>k + 1</span></span></div></li>
+          <li><p class="what">Escribe S<sub>N</sub> y tacha.</p><p class="why">Pones los primeros términos y el último. El −2/2 del primero se cancela con el +2/2 del segundo, el −2/3 con el +2/3, y así hasta el final.</p><div class="mx">S<sub>N</sub> = (<span class="frac"><span>2</span><span>1</span></span> − <span class="cx"><span class="frac"><span>2</span><span>2</span></span></span>) + (<span class="cx"><span class="frac"><span>2</span><span>2</span></span></span> − <span class="cx"><span class="frac"><span>2</span><span>3</span></span></span>) + (<span class="cx"><span class="frac"><span>2</span><span>3</span></span></span> − <span class="cx"><span class="frac"><span>2</span><span>4</span></span></span>) + … + (<span class="cx"><span class="frac"><span>2</span><span>N</span></span></span> − <span class="frac"><span>2</span><span>N + 1</span></span>)</div></li>
+          <li><p class="what">Escribe lo que sobrevive.</p><p class="why">Solo quedan el primer pedazo y el último.</p><div class="mx">S<sub>N</sub> = 2 − <span class="frac"><span>2</span><span>N + 1</span></span></div></li>
+          <li><p class="what">Toma el límite.</p><p class="why">2/(N + 1) → 0 porque el 2 queda fijo y N + 1 crece.</p><div class="mx"><span class="lim">lim<small>N→∞</small></span> S<sub>N</sub> = 2 − 0 = 2</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge y vale 2. En el parcial se escribe: «Como S<sub>N</sub> = 2 − 2/(N + 1) → 2, la serie converge y su valor es 2».</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> S<sub>1</sub> = 1, S<sub>2</sub> = 4/3, S<sub>3</sub> = 3/2: se van acercando a 2. En el lab lo ves tachándose término por término.</p>
+      </article>
+      <div class="callout">
+        <h3>Cuando la resta salta más de un término</h3>
+        <p>Si el término queda como 1/(k + 1) − 1/(k + 3), cada pedazo se cancela con el de <b>dos</b> términos más adelante, y sobreviven los dos primeros positivos. Lo practicas en el taller con la hoja 11.2 (3).</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>La receta del P2: ¿me piden el valor?</h3>
+      <ol class="steps">
+        <li><span><b>¿Todo lo que tiene n está elevado a la n?</b> Es geométrica: encuentra r, revisa |r| &lt; 1 y usa primer término/(1 − r).</span></li>
+        <li><span><b>¿Es una fracción con un denominador que se factoriza?</b> Es telescópica: fracciones parciales, S<sub>N</sub>, tachar y límite.</span></li>
+        <li><span><b>¿Solo preguntan si converge?</b> Empieza por el criterio de divergencia. Si el término tiende a 0, necesitas M3 o M4.</span></li>
+      </ol>
+    </div>
+
+    <div class="block">
+      <h3>Resultados de memoria</h3>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Serie</th><th>Converge si…</th><th>Vale</th></tr></thead>
+        <tbody>
+          <tr><td>Geométrica con razón r</td><td class="mono">|r| &lt; 1</td><td class="mono">primer término/(1 − r)</td></tr>
+          <tr><td>Telescópica</td><td>S<sub>N</sub> tiene límite</td><td class="mono">lim S<sub>N</sub></td></tr>
+          <tr><td>Armónica Σ 1/n</td><td>nunca</td><td class="mono">diverge</td></tr>
+          <tr><td>Cualquiera con lim a<sub>n</sub> ≠ 0</td><td>nunca</td><td class="mono">diverge</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas</h3>
+      <p><b>El primer término sale del índice de abajo:</b> Σ desde n = 0 de 1/2<sup>n−1</sup> empieza en 2, no en 1.</p>
+      <p><b>Con |r| = 1 la geométrica diverge:</b> Σ 1<sup>n</sup> y Σ (−1)<sup>n</sup> no convergen.</p>
+      <p><b>Que el término tienda a 0 no dice que converja:</b> la armónica.</p>
+      <p><b>En la telescópica escribe varios términos y el último</b> antes de tachar, para ver bien qué sobrevive.</p>
+      <p><b>«Muestre que converge» se responde con el límite de S<sub>N</sub>:</b> sin esa frase, el profesor no da los puntos.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Mira cómo se mueven las sumas parciales de varias series, y cómo se tachan los términos de la telescópica del parcial.</p></div>
+    <div class="tabs" role="tablist" aria-label="Experimento">
+      <button type="button" role="tab" class="tab" id="tab-sum" aria-selected="true" aria-controls="lab-sum">Sumas parciales</button>
+      <button type="button" role="tab" class="tab" id="tab-tel" aria-selected="false" aria-controls="lab-tel">Telescópica</button>
+    </div>
+    <div class="lab" id="lab-sum" role="tabpanel" aria-labelledby="tab-sum">
+      <div class="lab-stage"><div id="sum-svg" class="lab-fig"></div><p class="small muted" id="sum-note"></p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="sum-sel">Serie</label><select id="sum-sel"></select></div>
+        <div class="ctl" id="sum-r-box" hidden><label for="sum-r" id="sum-r-lab">Razón r = 0,5</label><input type="range" id="sum-r" min="-1.2" max="1.2" step="0.05" value="0.5"></div>
+        <div class="ctl"><label for="sum-n" id="sum-n-lab">Términos sumados: N = 30</label><input type="range" id="sum-n" min="5" max="150" step="1" value="30"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Suma parcial S<sub>N</sub></span><b id="sum-sn">—</b></div>
+          <div class="ro"><span>Suma de la serie</span><b id="sum-s">—</b></div>
+          <div class="status" id="sum-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="lab" id="lab-tel" role="tabpanel" aria-labelledby="tab-tel" hidden>
+      <div class="lab-stage">
+        <p class="small muted">Σ 2/(k² + k) = Σ (2/k − 2/(k + 1)), la del P2 de 2025. Lo tachado se cancela; lo verde sobrevive.</p>
+        <div class="tele" id="tel-box" aria-live="polite"></div>
+        <p id="tel-res"></p>
+      </div>
+      <div class="lab-side">
+        <div class="ctl"><label for="tel-n" id="tel-n-lab">Términos: N = 3</label><input type="range" id="tel-n" min="1" max="8" step="1" value="3"></div>
+        <div class="readout">
+          <div class="ro"><span>S<sub>N</sub> = 2 − 2/(N + 1)</span><b id="tel-sn">—</b></div>
+          <div class="ro"><span>Cuando N → ∞</span><b>2</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary><span>Reto 1 · Escoge Σ 1/n. ¿Cuánto vale S<sub>N</sub> con N = 100? ¿Y con N = 150?</span></summary>
+          <div class="rev-body"><p><b>≈ 5,19 y ≈ 5,59.</b> Sube cada vez más despacio, pero nunca se detiene: diverge. Por eso no se decide «a ojo» con la calculadora.</p></div></details>
+        <details class="rev"><summary><span>Reto 2 · Escoge Σ r<sup>n</sup> con r = 0,9. ¿A qué se acerca? ¿Y con r = 1?</span></summary>
+          <div class="rev-body"><p><b>A 1/(1 − 0,9) = 10</b>, despacio. Con r = 1 cada término vale 1, así que S<sub>N</sub> = N: diverge. Con r = −1 salta entre 1 y 0: también diverge.</p></div></details>
+        <details class="rev"><summary>Reto 3 · En la telescópica, ¿qué sobrevive con N = 5?</summary>
+          <div class="rev-body"><p><b>2/1 − 2/6 = 5/3</b>: el primer pedazo y el último. Todo lo del medio se cancela.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>El P2 de tu parcial es el ejemplo 5. Aquí van la hoja 11.2 completa y variantes con la misma redacción del profesor.</p></div>
+    <p class="prose">Resuélvelos en papel. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M3 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M3 · Comparación y serie p (también hoy).</p>
+    <p>Fuente de los problemas: parcial 3 de 2025-10 y la hoja 11.2 del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const dec = (v, d) => v.toFixed(d).replace(".", ",");
+
+/* ---------- Notación ---------- */
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const SG = (lo, hi = "∞") => `<span class="sig"><small>${hi}</small><b>Σ</b><small>${lo}</small></span>`;
+const M = (x) => `<span class="m">${x}</span>`;
+
+/* ---------- Gráfica de una sucesión ---------- */
+function niceStep(span, count) {
+  const raw = span / count, mag = Math.pow(10, Math.floor(Math.log10(raw))), e = raw / mag;
+  return (e >= 7.5 ? 10 : e >= 3.5 ? 5 : e >= 1.5 ? 2 : 1) * mag;
+}
+function plotSeq(o) {
+  const W = o.W || 360, H = o.H || 220, ticks = !!o.ticks;
+  const ml = ticks ? 46 : 12, mr = 12, mt = 14, mb = ticks ? 32 : 14;
+  const n0 = o.n0 || 1, N = o.N;
+  const pts = []; for (let n = n0; n <= N; n++) pts.push([n, o.f(n)]);
+  let lo = Math.min(...pts.map((p) => p[1])), hi = Math.max(...pts.map((p) => p[1]));
+  if (o.L != null) { lo = Math.min(lo, o.L); hi = Math.max(hi, o.L); }
+  if (o.yMin != null) lo = Math.min(lo, o.yMin);
+  if (o.yMax != null) hi = Math.max(hi, o.yMax);
+  const pad = (hi - lo) * 0.08 || 0.5; lo -= pad; hi += pad;
+  const X = (n) => ml + (N === n0 ? 0 : (n - n0) / (N - n0)) * (W - ml - mr);
+  const Y = (y) => mt + (hi - y) / (hi - lo) * (H - mt - mb);
+  let g = "";
+  if (ticks) {
+    const st = niceStep(hi - lo, 4), d = Math.max(0, -Math.floor(Math.log10(st) + 1e-9));
+    for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) {
+      const vv = Math.abs(v) < st / 1e6 ? 0 : v;
+      g += `<line x1="${ml}" y1="${f1(Y(vv))}" x2="${W - mr}" y2="${f1(Y(vv))}" class="gr-grid"/><text x="${ml - 6}" y="${f1(Y(vv) + 3.5)}" class="gr-tick" text-anchor="end">${dec(vv, d)}</text>`;
+    }
+    const xt = [...new Set([n0, Math.round((n0 + N) / 2), N])];
+    xt.forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 14}" class="gr-tick" text-anchor="middle">${t}</text>`; });
+    g += `<text x="${(ml + W - mr) / 2}" y="${H - 3}" class="gr-lab" text-anchor="middle">${o.xlab || "términos sumados N"}</text>`;
+    g += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}" class="gr-axis"/>`;
+  } else {
+    g += `<line x1="${ml}" y1="${H - mb}" x2="${W - mr}" y2="${H - mb}" class="gr-axis"/><line x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}" class="gr-axis"/>`;
+    g += `<text x="${W - mr}" y="${H - mb - 4}" class="gr-lab" text-anchor="end">N</text>`;
+  }
+  if (o.L != null) {
+    g += `<line x1="${ml}" y1="${f1(Y(o.L))}" x2="${W - mr}" y2="${f1(Y(o.L))}" class="gr-L"/>`;
+    if (o.Llab) g += `<text x="${W - mr - 2}" y="${f1(Y(o.L) - 6)}" class="gr-Lt" text-anchor="end">${o.Llab}</text>`;
+  }
+  const r = N <= 30 ? 3.4 : N <= 80 ? 2.6 : 2;
+  pts.forEach(([n, y]) => { g += `<circle cx="${f1(X(n))}" cy="${f1(Y(y))}" r="${r}" class="gr-dot"/>`; });
+  if (o.note) g += `<text x="${ml + 8}" y="${mt + 12}" class="gr-ann">${o.note}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Sumas parciales de una serie"}">${g}</svg>`;
+}
+function partialSums(a, n0, Nmax) { const s = []; let acc = 0; for (let j = 0; j < Nmax; j++) { acc += a(n0 + j); s.push(acc); } return s; }
+
+/* Figuras de la teoría */
+const TFIGS = {
+  conv: () => { const s = partialSums((n) => Math.pow(0.5, n), 1, 16); return plotSeq({ f: (N) => s[N - 1], N: 16, L: 1, Llab: "1", W: 280, H: 150, yMin: 0, aria: "Sumas parciales de la serie de un medio a la n, que se acercan a 1" }); },
+  harm: () => { const s = partialSums((n) => 1 / n, 1, 60); return plotSeq({ f: (N) => s[N - 1], N: 60, W: 280, H: 150, yMin: 0, note: "sigue subiendo", aria: "Sumas parciales de la serie armónica, que siguen subiendo" }); }
+};
+document.querySelectorAll("[data-fig]").forEach((nd) => { nd.innerHTML = TFIGS[nd.dataset.fig](); });
+
+/* ---------- Lab 1: sumas parciales ---------- */
+const SERIES = [
+  { lab: "Σ (1/2)ⁿ, desde n = 1", a: (n) => Math.pow(0.5, n), n0: 1, S: 1, St: "1", note: "Geométrica con r = 1/2: cada suma parcial cubre la mitad de lo que faltaba para llegar a 1." },
+  { lab: "Σ 2ⁿ/3ⁿ⁺¹, desde n = 0 (ejemplo 2)", a: (n) => Math.pow(2, n) / Math.pow(3, n + 1), n0: 0, S: 1, St: "1", note: "Geométrica con r = 2/3 y primer término 1/3: vale (1/3)/(1 − 2/3) = 1." },
+  { lab: "Σ 2/(k² + k), desde k = 1 (2025 P2)", a: (n) => 2 / (n * n + n), n0: 1, S: 2, St: "2", note: "Telescópica: S_N = 2 − 2/(N + 1), que se acerca a 2." },
+  { lab: "Σ 1/n (la armónica)", a: (n) => 1 / n, n0: 1, S: null, St: "no existe (∞)", kind: "slow", note: "El término tiende a 0, pero las sumas parciales siguen subiendo sin parar, cada vez más despacio." },
+  { lab: "Σ n/(n + 1)", a: (n) => n / (n + 1), n0: 1, S: null, St: "no existe (∞)", kind: "lin", note: "Cada término vale casi 1: S_N crece más o menos como N (ejemplo 1)." },
+  { lab: "Σ (−1)ⁿ, desde n = 0", a: (n) => (n % 2 ? -1 : 1), n0: 0, S: null, St: "no existe", kind: "osc", note: "Las sumas parciales saltan entre 1 y 0 para siempre." },
+  { lab: "Σ rⁿ, desde n = 0 (escoge r)", geo: true, n0: 0, note: "Geométrica con primer término 1: si |r| < 1 vale 1/(1 − r)." }
+];
+const SM = { i: 0, N: 30, r: 0.5 };
+const fmtNum = (v) => (Math.abs(v) >= 1e6 ? v.toExponential(2).replace(".", ",") : Math.abs(v) >= 100 ? dec(v, 1) : dec(v, 4));
+function drawSum() {
+  const s = SERIES[SM.i], N = SM.N;
+  $("#sum-r-box").hidden = !s.geo;
+  let a = s.a, S = s.S, St = s.St, kind = s.kind;
+  if (s.geo) {
+    const r = SM.r; a = (n) => Math.pow(r, n);
+    $("#sum-r-lab").textContent = "Razón r = " + dec(r, 2);
+    if (Math.abs(r) < 1) { S = 1 / (1 - r); St = "1/(1 − r) = " + dec(S, 4); kind = null; }
+    else { S = null; St = "no existe"; kind = r >= 1 ? "geoUp" : "osc"; }
+  }
+  const sums = partialSums(a, s.n0, N);
+  $("#sum-svg").innerHTML = plotSeq({ f: (k) => sums[k - 1], N, L: S, Llab: S != null ? "S = " + (s.geo ? dec(S, 3) : St) : "", ticks: true, aria: "Sumas parciales de " + s.lab });
+  $("#sum-note").textContent = s.note;
+  $("#sum-n-lab").textContent = "Términos sumados: N = " + N;
+  $("#sum-sn").textContent = fmtNum(sums[N - 1]);
+  $("#sum-s").textContent = St;
+  const st = $("#sum-status");
+  if (S != null) { st.textContent = "Las sumas parciales se acercan a " + (s.geo ? dec(S, 3) : St) + ": la serie converge y ese es su valor."; st.className = "status ok"; }
+  else if (kind === "osc") { st.textContent = "Las sumas parciales saltan sin decidirse: la serie diverge."; st.className = "status bad"; }
+  else if (kind === "slow") { st.textContent = "Con N = " + N + " vale " + fmtNum(sums[N - 1]) + " y sigue subiendo: la serie diverge."; st.className = "status bad"; }
+  else { st.textContent = "Las sumas parciales crecen sin parar: la serie diverge."; st.className = "status bad"; }
+}
+SERIES.forEach((s, i) => { const o = el("option", "", s.lab); o.value = String(i); $("#sum-sel").appendChild(o); });
+$("#sum-sel").addEventListener("change", (e) => { SM.i = Number(e.target.value); drawSum(); });
+$("#sum-n").addEventListener("input", (e) => { SM.N = Number(e.target.value); drawSum(); });
+$("#sum-r").addEventListener("input", (e) => { SM.r = Number(e.target.value); drawSum(); });
+drawSum();
+
+/* ---------- Lab 2: telescópica ---------- */
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+function drawTel() {
+  const N = Number($("#tel-n").value);
+  $("#tel-n-lab").textContent = "Términos: N = " + N;
+  let h = "";
+  for (let k = 1; k <= N; k++) {
+    const left = `2/${k}`, right = `2/${k + 1}`;
+    const lcls = k === 1 ? "keep" : "cx", rcls = k === N ? "keep" : "cx";
+    h += (k > 1 ? " + " : "") + `<span class="par">(<span class="${lcls}">${left}</span> − <span class="${rcls}">${right}</span>)</span>`;
+  }
+  $("#tel-box").innerHTML = "S<sub>" + N + "</sub> = " + h;
+  const num = 2 * N, den = N + 1, g = gcd(num, den);
+  $("#tel-res").innerHTML = "Sobreviven el primer pedazo y el último: <b>2 − 2/" + (N + 1) + " = " + (num / g) + "/" + (den / g) + "</b> ≈ " + dec(num / den, 4);
+  $("#tel-sn").textContent = (num / g) + "/" + (den / g);
+}
+$("#tel-n").addEventListener("input", drawTel);
+drawTel();
+const TABS = ["sum", "tel"];
+TABS.forEach((on) => $("#tab-" + on).addEventListener("click", () => {
+  TABS.forEach((t) => { $("#lab-" + t).hidden = t !== on; $("#tab-" + t).setAttribute("aria-selected", t === on ? "true" : "false"); });
+}));
+
+/* ---------- Taller ---------- */
+const DIV = "Diverge";
+const PROBS = [
+  { n: "T1", t: "Telescópicas de la hoja", src: "Hoja 11.2 · ejercicio 3",
+    txt: `<p>Determina si la serie converge y, si converge, encuentra su valor.</p>
+      <ol class="items"><li>(a) ${M(SG("n=2") + " " + F("2", "n² − 1"))}</li><li>(b) ${M(SG("n=1") + " " + F("2", "n² + 4n + 3"))}</li><li>(c) ${M(SG("n=1") + " ln(" + F("n", "n + 1") + ")")}</li><li>(d) ${M(SG("n=1") + " [cos(" + F("1", "n²") + ") − cos(" + F("1", "(n + 1)²") + ")]")}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["1", F("3", "2"), "2", DIV], a: 1 }, { q: "(b)", opts: [F("5", "6"), F("1", "2"), F("1", "3"), DIV], a: 0 }, { q: "(c)", opts: ["0", "−1", "ln 2", DIV], a: 3 }, { q: "(d)", opts: ["cos 1", "cos 1 − 1", "1 − cos 1", DIV], a: 1 }],
+    hints: ["(a) n² − 1 = (n − 1)(n + 1). Queda 1/(n − 1) − 1/(n + 1): cada pedazo se cancela con el de dos términos más adelante.", "(b) n² + 4n + 3 = (n + 1)(n + 3).", "(c) ln(n/(n + 1)) = ln n − ln(n + 1).", "(d) Ya viene como resta: escribe S<sub>N</sub> y tacha."],
+    sol: ["<b>(a)</b> 2/(n² − 1) = 1/(n − 1) − 1/(n + 1). S<sub>N</sub> = (1 − 1/3) + (1/2 − 1/4) + (1/3 − 1/5) + … : sobreviven 1 y 1/2 al principio, y −1/N − 1/(N + 1) al final, que tienden a 0. S<sub>N</sub> → <b>3/2</b>.",
+      "<b>(b)</b> 2/((n + 1)(n + 3)) = 1/(n + 1) − 1/(n + 3). S<sub>N</sub> = (1/2 − 1/4) + (1/3 − 1/5) + (1/4 − 1/6) + … : sobreviven 1/2 y 1/3. S<sub>N</sub> → 1/2 + 1/3 = <b>5/6</b>.",
+      "<b>(c)</b> S<sub>N</sub> = (ln 1 − ln 2) + (ln 2 − ln 3) + … + (ln N − ln(N + 1)) = −ln(N + 1) → −∞: <b>diverge</b>. Ojo: el término ln(n/(n + 1)) sí tiende a ln 1 = 0, y aun así diverge.",
+      "<b>(d)</b> S<sub>N</sub> = cos 1 − cos(1/(N + 1)²) → cos 1 − cos 0 = <b>cos 1 − 1</b>: converge."] },
+  { n: "T2", t: "Geométricas de la hoja", src: "Hoja 11.2 · ejercicio 2",
+    txt: `<p>Determina si la serie converge y, si converge, encuentra su valor.</p>
+      <ol class="items"><li>(a) ${M(SG("n=1") + " " + F("1", "2<sup>n−1</sup>"))}</li><li>(c) ${M(SG("n=1") + " (" + F("2", "3") + ")<sup>n−1</sup>")}</li><li>(d) ${M(SG("n=0") + " 5(" + F("4", "7") + ")<sup>n</sup>")}</li><li>(f) ${M(SG("n=0") + " " + F("2<sup>2n</sup>", "3<sup>n</sup>"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["1", "2", "4", DIV], a: 1 }, { q: "(c)", opts: ["2", "3", F("2", "3"), DIV], a: 1 }, { q: "(d)", opts: ["5", F("35", "3"), F("20", "7"), DIV], a: 1 }, { q: "(f)", opts: ["3", "4", F("4", "3"), DIV], a: 3 }],
+    hints: ["El primer término sale de reemplazar el índice de abajo. En (a), con n = 1: 1/2<sup>0</sup> = 1.", "(f) 2<sup>2n</sup> = (2²)<sup>n</sup> = 4<sup>n</sup>."],
+    sol: ["<b>(a)</b> r = 1/2 y primer término (n = 1) igual a 1: S = 1/(1 − 1/2) = <b>2</b>.",
+      "<b>(c)</b> r = 2/3 y primer término (n = 1) igual a (2/3)<sup>0</sup> = 1: S = 1/(1/3) = <b>3</b>.",
+      "<b>(d)</b> r = 4/7 y primer término (n = 0) igual a 5: S = 5/(3/7) = <b>35/3</b>.",
+      "<b>(f)</b> 2<sup>2n</sup>/3<sup>n</sup> = (4/3)<sup>n</sup>: r = 4/3 &gt; 1, <b>diverge</b> (el término crece en vez de tender a 0)."] },
+  { n: "T3", t: "Geométricas con x", src: "Hoja 11.2 · ejercicio 4",
+    txt: `<p>Encuentra los valores de x para los que la serie converge y, en ese caso, su suma.</p>
+      <ol class="items"><li>(a) ${M(SG("n=1") + " " + F("x<sup>n</sup>", "4<sup>n</sup>"))}</li><li>(b) ${M(SG("n=0") + " 5<sup>n</sup>x<sup>n</sup>")}</li><li>(c) ${M(SG("n=0") + " " + F("cos<sup>n</sup> x", "3<sup>n</sup>"))}</li></ol>`,
+    checks: [{ q: "(a) ¿Para qué x converge?", opts: ["−4 &lt; x &lt; 4", "−1/4 &lt; x &lt; 1/4", "x &lt; 4", "Para todo x"], a: 0 }, { q: "(b) ¿Para qué x converge?", opts: ["−5 &lt; x &lt; 5", "−1/5 &lt; x &lt; 1/5", "−1 &lt; x &lt; 1", "x &lt; 1/5"], a: 1 }, { q: "(c) ¿Para qué x converge?", opts: ["−3 &lt; x &lt; 3", "Solo en x = 0", "Para todo x", "Para ningún x"], a: 2 }],
+    hints: ["(a) x<sup>n</sup>/4<sup>n</sup> = (x/4)<sup>n</sup>: la razón es x/4.", "(c) cos x siempre está entre −1 y 1, así que |cos x/3| ≤ 1/3."],
+    sol: ["<b>(a)</b> r = x/4; |x/4| &lt; 1 ⇔ <b>−4 &lt; x &lt; 4</b>. Primer término (n = 1): x/4. Suma: (x/4)/(1 − x/4) = <b>x/(4 − x)</b>.",
+      "<b>(b)</b> 5<sup>n</sup>x<sup>n</sup> = (5x)<sup>n</sup>: |5x| &lt; 1 ⇔ <b>−1/5 &lt; x &lt; 1/5</b>. Suma (desde n = 0): <b>1/(1 − 5x)</b>.",
+      "<b>(c)</b> r = cos x/3 y |r| ≤ 1/3 &lt; 1 para <b>todo x</b>. Suma: 1/(1 − cos x/3) = <b>3/(3 − cos x)</b>."] },
+  { n: "T4", t: "Muestra que divergen", src: "Hoja 11.2 · ejercicio 5",
+    txt: `<p>Muestra que las series divergen. Para cada una, ¿a qué tiende el término?</p>
+      <ol class="items"><li>(b) ${M(SG("n=0") + " cos(nπ)")}</li><li>(c) ${M(SG("n=0") + " " + F("n² + n − 1", "2n² + 1"))} <span class="small muted">(la hoja dice x; es con n)</span></li><li>(d) ${M(SG("n=0") + " arctan n")}</li></ol>`,
+    checks: [{ q: "(b) ¿A qué tiende el término?", opts: ["0", "1", "−1", "No existe"], a: 3 }, { q: "(c) ¿A qué tiende el término?", opts: ["0", F("1", "2"), "1", "∞"], a: 1 }, { q: "(d) ¿A qué tiende el término?", opts: ["0", F("π", "4"), F("π", "2"), "∞"], a: 2 }],
+    hints: ["(b) cos(nπ) vale 1 si n es par y −1 si es impar: es (−1)<sup>n</sup>."],
+    sol: ["<b>(b)</b> cos(nπ) = (−1)<sup>n</sup>: el término salta entre 1 y −1 y no tiende a 0. Por el criterio de divergencia, <b>diverge</b>.",
+      "<b>(c)</b> Mismo grado: el término tiende a <b>1/2 ≠ 0</b>. Diverge por el criterio de divergencia.",
+      "<b>(d)</b> arctan n → <b>π/2 ≠ 0</b>. Diverge por el criterio de divergencia.",
+      "La frase para el parcial: «Como lim a<sub>n</sub> = … ≠ 0, la serie diverge por el criterio de divergencia»."] },
+  { n: "T5", t: "Variantes tipo parcial", src: "Problemas nuevos · con la redacción del P2 de 2025",
+    txt: `<p>Muestre que la serie converge y encuentre el valor al cual converge.</p>
+      <ol class="items"><li>(a) ${M(SG("k=1") + " " + F("6", "k² + 3k"))}</li><li>(b) ${M(SG("n=1") + " " + F("2<sup>n</sup> + 3<sup>n</sup>", "6<sup>n</sup>"))}</li><li>(c) ${M(SG("k=2") + " " + F("4", "k² − 1"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["2", F("11", "3"), "3", DIV], a: 1 }, { q: "(b)", opts: [F("3", "2"), F("7", "2"), F("5", "6"), DIV], a: 0 }, { q: "(c)", opts: ["2", "3", "4", DIV], a: 1 }],
+    hints: ["(a) k² + 3k = k(k + 3): queda 2/k − 2/(k + 3), y sobreviven tres términos al principio.", "(b) Sepárala en dos geométricas: 2<sup>n</sup>/6<sup>n</sup> + 3<sup>n</sup>/6<sup>n</sup> = (1/3)<sup>n</sup> + (1/2)<sup>n</sup>.", "(c) 4/(k² − 1) = 2/(k − 1) − 2/(k + 1)."],
+    sol: ["<b>(a)</b> 6/(k(k + 3)) = 2/k − 2/(k + 3). Cada −2/(k + 3) se cancela tres términos más adelante: sobreviven 2/1 + 2/2 + 2/3 = <b>11/3</b>, y los pedazos del final tienden a 0. S<sub>N</sub> → 11/3: converge.",
+      "<b>(b)</b> (1/3)<sup>n</sup> + (1/2)<sup>n</sup>, las dos desde n = 1: (1/3)/(1 − 1/3) + (1/2)/(1 − 1/2) = 1/2 + 1 = <b>3/2</b>.",
+      "<b>(c)</b> 4/(k² − 1) = 2/(k − 1) − 2/(k + 1). Desde k = 2 sobreviven 2/1 + 2/2 = <b>3</b>."] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(elh("div", "prob-body", p.txt));
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(elh("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(elh("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => sb.appendChild(elh("p", "", s))); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M2", NEXT = "Aprobado. Pasas a M3: comparación y serie p.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "Si lim a<sub>n</sub> = 0, ¿qué puedes decir de la serie Σ a<sub>n</sub>?",
+      o: ["Converge a 0.", "Converge, pero no sabemos a qué.", "Nada: puede converger o diverger.", "Diverge."], a: 2,
+      e: "El criterio de divergencia solo funciona en una dirección. Σ 1/2<sup>n</sup> converge y Σ 1/n diverge, y en las dos el término tiende a 0." },
+    { k: "Conceptual", q: "¿Para qué valores de r converge la serie geométrica Σ r<sup>n</sup>?",
+      o: ["r &lt; 1", "|r| &lt; 1", "|r| ≤ 1", "r &gt; 1"], a: 1,
+      e: "Converge si la razón está estrictamente entre −1 y 1. Con r = 1 o r = −1 el término no tiende a 0 y la serie diverge." },
+    { k: "Conceptual", q: `¿Qué pasa con ${M(SG("n=1") + " " + F("n", "2n + 1"))}?`,
+      o: ["Converge a 1/2.", "Diverge, porque el término tiende a 1/2.", "Converge, porque cada término es menor que 1.", "No se puede saber."], a: 1,
+      e: "lim n/(2n + 1) = 1/2 ≠ 0, así que diverge por el criterio de divergencia. Ese 1/2 es el límite del término, no la suma." },
+    { k: "Tipo parcial", q: `¿Cuánto vale ${M(SG("n=0") + " 3·(" + F("2", "5") + ")<sup>n</sup>")}?`,
+      o: ["5", F("3", "5"), F("15", "2"), "Diverge"], a: 0,
+      e: "Geométrica con r = 2/5 y primer término (n = 0) igual a 3: S = 3/(1 − 2/5) = 3/(3/5) = 5." },
+    { k: "Tipo parcial", q: `Muestre que converge y encuentre su valor: ${M(SG("k=1") + " " + F("4", "k² + 2k"))}.`,
+      o: ["2", "3", "4", "Diverge"], a: 1,
+      e: "4/(k(k + 2)) = 2/k − 2/(k + 2). Sobreviven 2/1 + 2/2 = 3, y lo del final tiende a 0: S<sub>N</sub> → 3." }
+  ],
+  B: [
+    { k: "Conceptual", q: "Las sumas parciales de una serie son S<sub>N</sub> = 3 − 1/N. ¿Qué puedes decir de la serie?",
+      o: ["Diverge.", "Converge y vale 3.", "Converge y vale 0.", "Converge y vale 2."], a: 1,
+      e: "La serie vale el límite de sus sumas parciales: 3 − 1/N → 3." },
+    { k: "Conceptual", q: `¿Qué pasa con ${M(SG("n=0") + " (−1)<sup>n</sup>")}?`,
+      o: ["Converge a 0.", "Converge a 1/2.", "Diverge: el término no tiende a 0 y S<sub>N</sub> salta entre 1 y 0.", "Converge a 1."], a: 2,
+      e: "Es geométrica con r = −1, y |r| = 1: diverge. El término (−1)<sup>n</sup> no tiende a 0." },
+    { k: "Conceptual", q: `¿Cuál es el primer término de ${M(SG("n=2") + " (" + F("1", "3") + ")<sup>n</sup>")}?`,
+      o: ["1", F("1", "3"), F("1", "9"), F("1", "27")], a: 2,
+      e: "Se reemplaza el índice de abajo, n = 2: (1/3)² = 1/9. Con eso la suma es (1/9)/(1 − 1/3) = 1/6." },
+    { k: "Tipo parcial", q: `¿Cuánto vale ${M(SG("n=1") + " " + F("5", "4<sup>n</sup>"))}?`,
+      o: [F("5", "3"), F("20", "3"), F("5", "4"), "Diverge"], a: 0,
+      e: "r = 1/4 y primer término (n = 1) igual a 5/4: S = (5/4)/(1 − 1/4) = (5/4)/(3/4) = 5/3." },
+    { k: "Tipo parcial", q: `Muestre que converge y encuentre su valor: ${M(SG("k=1") + " " + F("3", "k² + 3k"))}.`,
+      o: [F("11", "6"), F("3", "2"), "1", "Diverge"], a: 0,
+      e: "3/(k(k + 3)) = 1/k − 1/(k + 3). Sobreviven 1 + 1/2 + 1/3 = 11/6, y lo del final tiende a 0." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(elh("span", "", it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(elh("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.innerHTML = (ok ? "Correcta. " : "Incorrecta. La respuesta es la " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

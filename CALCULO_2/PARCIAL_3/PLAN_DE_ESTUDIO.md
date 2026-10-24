@@ -93,6 +93,8 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
 - **Trampas:** (1 + 2/n)ⁿ tiende a e², no a 1 («1 elevado a infinito» no tiene valor fijo); creer que si el término tiende a 0 la serie converge.
 
 ### M2 — Series: geométrica, telescópica y criterio de divergencia
+> **Versión que se usa:** [M2 · Series: geométrica, telescópica y divergencia](https://claude.ai/artifact/KY9zgRfF2aiqytsvs3YZWp).
+
 *Libro: 11.2 · Visto en clase (25 de septiembre) · 7 pts en 2025 · ~1,5 h*
 
 - **Teoría:** una serie es una suma infinita; la suma parcial S_N suma los primeros términos; la serie converge si S_N tiene límite. **Geométrica** Σ a·rⁿ: converge si |r| < 1 y vale (primer término)/(1 − r). **Telescópica:** fracciones parciales, escribir S_N, tachar lo que se cancela y tomar el límite. **Criterio de divergencia:** si aₙ no tiende a 0, la serie diverge; si aₙ → 0, el criterio no dice nada.
@@ -102,6 +104,8 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
 - **Trampas:** la fórmula usa el **primer término de la suma**, que no siempre es a; usar el criterio de divergencia para «probar» que una serie converge.
 
 ### M3 — Comparación directa, comparación en el límite y serie p
+> **Versión que se usa:** [M3 · Comparación y serie p](https://claude.ai/artifact/FcYHimB26pxcfGEbXNdQif).
+
 *Libro: 11.3–11.4 · Visto en clase · 24 pts históricos · ~1,5 h (jueves 22)*
 
 - **Teoría:** serie p: Σ 1/nᵖ converge si y solo si p > 1 (de dónde sale, con el criterio de la integral en versión corta). **Comparación directa:** si 0 ≤ aₙ ≤ bₙ y Σ bₙ converge, Σ aₙ converge; si aₙ ≥ bₙ ≥ 0 y Σ bₙ diverge, Σ aₙ diverge. **Seno y coseno acotados:** 0 ≤ sen² n ≤ 1. **Comparación en el límite:** si lim aₙ/bₙ = L con 0 < L < ∞, las dos series hacen lo mismo. **Receta para escoger bₙ:** quedarse con el término dominante de arriba y de abajo.
@@ -120,6 +124,8 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
 - **Trampas:** con L = 1 el criterio no concluye (las series p siempre dan 1); el profesor le dice **«test del radio»** al cociente, que no es el radio de convergencia; verificar «decreciente» con la derivada; simplificar mal (n + 1)!/n! = n + 1.
 
 ### M5 — ¿Qué criterio uso? Estrategia y redacción
+> **Ajuste del 24 de octubre:** M5 ya no va aparte. El árbol de decisión y las frases van dentro de M4, y la práctica mezclada va en el taller de M4 y en el simulacro.
+
 *Libro: 11.7 · El bloque de criterios vale 36–60 % del parcial · ~1,5–2 h (sábado 24)*
 
 - **Teoría:** el árbol de decisión en 7 preguntas:
@@ -187,7 +193,8 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | — | **Lun 26 oct** | — | 30 min con la hoja mental y la clave, y **PARCIAL 3** (O_102) | — |
 
 **Ajuste del 21 de octubre:** M1 pasó al miércoles junto con M2, y M3 va completo el jueves.
-**Si te atrasas:** recorta primero los extras del taller y el lab de M5. Si ya dominas un módulo, haz el quiz primero y sáltalo con ≥ 4/5. **Nunca recortes M6 (14 pts), M7 (11 pts) ni el simulacro.**
+**Ajuste del 24 de octubre:** M1 se terminó el viernes, así que quedan dos días. El sábado van M2, M3 y M4, y la estrategia de M5 queda dentro de M4. El domingo van M6, M7 y el simulacro.
+**Si te atrasas:** recorta primero los extras del taller y los labs. Si el sábado no terminas M4, el domingo empieza igual por M6 y M7: valen 25 pts y son las más mecánicas. **Nunca recortes M6 (14 pts), M7 (11 pts) ni el simulacro.**
 **Si vas adelantado:** adelanta M6. Para hallar el radio solo necesitas el criterio del cociente de M4.
 
 ---
@@ -196,11 +203,11 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 
 | Módulo | Teoría | Lab | Taller | Quiz (nota) | Estado |
 |---|---|---|---|---|---|
-| M1 Sucesiones y límites | ☐ | ☐ | ☐ | — | ⏳ |
-| M2 Series básicas | ☐ | ☐ | ☐ | — | 🔒 |
+| M1 Sucesiones y límites | ✅ | ✅ | ✅ | 4/5 (Quiz B) | ✅ |
+| M2 Series básicas | ☐ | ☐ | ☐ | — | ⏳ |
 | M3 Comparación + serie p | ☐ | ☐ | ☐ | — | 🔒 |
-| M4 Alternantes, cociente y raíz | ☐ | ☐ | ☐ | — | 🔒 |
-| M5 ¿Qué criterio uso? | ☐ | ☐ | ☐ | — | 🔒 |
+| M4 Raíz, cociente, alternantes y estrategia | ☐ | ☐ | ☐ | — | 🔒 |
+| M5 ¿Qué criterio uso? | — | — | — | — | Dentro de M4 |
 | M6 Series de potencias | ☐ | ☐ | ☐ | — | 🔒 |
 | M7 Taylor | ☐ | ☐ | ☐ | — | 🔒 |
 | M8 Simulacro | — | — | — | —/50 | 🔒 |
