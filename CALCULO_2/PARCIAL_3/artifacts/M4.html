@@ -1,0 +1,1110 @@
+<title>M4 Raíz, cociente y alternantes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de M1, M2 y M3, acento violeta de Cálculo). Columna de lectura ≤ 860px con barra de secciones fija; el lab grafica el cociente o la raíz contra la frontera 1, el zigzag de las sumas parciales de una alternante y un clasificador para escoger el criterio. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:8px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.rule-box ul{padding-left:20px; display:grid; gap:4px}
+.tri{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tri div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.tri div.yes{border-color:var(--green); background:var(--green-soft)}
+.tri div.bad{border-color:var(--red); background:var(--red-soft)}
+.tri div.no{border-style:dashed}
+@media (max-width:620px){ .tri{grid-template-columns:1fr} }
+
+/* El árbol de decisión */
+.flow{list-style:none; margin:0; padding:0; display:grid; counter-reset:f}
+.flow li{display:grid; grid-template-columns:2rem minmax(0,1.15fr) minmax(0,1fr); gap:4px 12px; padding:11px 12px; background:var(--surface); border:1px solid var(--rule); border-top:0; counter-increment:f; align-items:baseline}
+.flow li::before{content:counter(f); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; grid-row:1 / span 2}
+.flow li:first-child{border-top:1px solid var(--rule); border-radius:var(--r) var(--r) 0 0}
+.flow li:last-child{border-radius:0 0 var(--r) var(--r)}
+.flow .fq{font-weight:600}
+.flow .fa{font-weight:600; color:var(--green)}
+.flow .fe{grid-column:2 / -1; font-size:.87rem; color:var(--muted); line-height:1.9}
+@media (max-width:620px){ .flow li{grid-template-columns:1.6rem minmax(0,1fr)} .flow .fa{grid-column:2} .flow li::before{grid-row:1 / span 3} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-conv{fill:var(--green-soft); fill-opacity:.75}
+.gr-div{fill:var(--red-soft); fill-opacity:.75}
+.gr-one{stroke:var(--red); stroke-width:1.6}
+.gr-onet{fill:var(--red); font-family:var(--f-mono); font-size:10px; font-weight:500}
+.gr-leg{fill:var(--muted); font-family:var(--f-body); font-size:10.5px}
+.lg-c{fill:var(--green-soft); stroke:var(--green)} .lg-d{fill:var(--red-soft); stroke:var(--red)} .lg-b{fill:var(--accent-soft); stroke:var(--accent)}
+.gr-band{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.5}
+.gr-zz{fill:none; stroke:var(--accent); stroke-width:1.3; stroke-opacity:.7}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.cls-stage{padding:16px; gap:14px}
+.cls-series{font-size:1.25rem; padding:18px 12px; text-align:center; background:var(--paper); border:1px solid var(--rule); border-radius:8px; overflow-x:auto; line-height:2.2}
+.cls-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:6px}
+.crit{font:inherit; font-size:.88rem; font-weight:600; text-align:left; padding:8px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; line-height:1.35}
+.crit:hover{border-color:var(--accent)}
+.crit.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.crit.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.crit:disabled{cursor:default}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.pri{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+.pri.hi{color:var(--red); border-color:currentColor}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/Ra9LHTCCAvquo8459V5bhS" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>45 min</span></a>
+    <a href="#lab">2 Lab <span>10 min</span></a>
+    <a href="#taller">3 Taller <span>50 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Parcial 3 · Módulo 4</p>
+    <h1>Raíz, cociente, alternantes y ¿qué criterio uso?</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>Sábado 24 de octubre · ~2 h</span>
+      <span>Libro 11.5–11.7 · 24 pts en tus dos parciales</span>
+    </div>
+    <p class="prose">En el punto 1 del parcial siempre hay una serie con todo elevado a la n, que se decide con el criterio de la raíz: salió en los dos parciales. En 2023 además hubo una con factorial (criterio del cociente) y una alternante. Entre los dos parciales fueron 4 ejercicios de 6 puntos, y los cuatro son ejemplos resueltos de este módulo. Al final está la estrategia para escoger el criterio, que sirve para todo el punto 1.</p>
+    <div class="callout">
+      <h3>Dónde aparece en tus parciales</h3>
+      <p>2023-19 P1b (2<sup>n−1</sup>/(n + 1)!, cociente), 2023-19 P1d ((2n²/(n² + 3))<sup>n</sup>, raíz), 2025-10 P1b (((n + 2)/n)<sup>n²</sup>, raíz) y 2023-19 P1c ((−1)<sup>n</sup>·2n/(n² + 1), alternante). Además, el cociente vuelve en M6: con él se halla el radio de la serie de potencias, que vale 14 pts.</p>
+    </div>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M6 (la estrategia de M5 quedó dentro de este módulo).</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>El cociente, la raíz, las series alternantes y la estrategia para escoger el criterio. Seis ejemplos resueltos: cuatro son tus parciales y dos son de la hoja 11.6.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">n!</td><td>«ene factorial»</td><td>El producto 1·2·3·…·n. Por definición, 0! = 1.</td><td>4! = 1·2·3·4 = 24</td></tr>
+          <tr><td class="mono">(n + 1)!</td><td>«ene más uno factorial»</td><td>El factorial que sigue: es el anterior por un factor más, (n + 1)! = (n + 1)·n!</td><td>5! = 5·4! = 5·24 = 120</td></tr>
+          <tr><td class="mono">a<sub>n+1</sub></td><td>«a sub ene más uno»</td><td>El término que sigue: cambias cada n de a<sub>n</sub> por (n + 1).</td><td>Si a<sub>n</sub> = 2<sup>n−1</sup>, a<sub>n+1</sub> = 2<sup>n</sup></td></tr>
+          <tr><td class="mono">|a<sub>n</sub>|</td><td>«valor absoluto de a sub ene»</td><td>El término sin su signo.</td><td>|(−1)<sup>n</sup>·5| = 5</td></tr>
+          <tr><td class="mono">L</td><td>«ele»</td><td>En el cociente y la raíz, el límite que se compara con 1. No es la suma de la serie.</td><td>L = 2 &gt; 1: diverge</td></tr>
+          <tr><td class="mono">(…)<sup>1/n</sup></td><td>«raíz ene-ésima»</td><td>Elevar a 1/n deshace un exponente n: los exponentes se multiplican.</td><td>(5<sup>n</sup>)<sup>1/n</sup> = 5<sup>n·(1/n)</sup> = 5</td></tr>
+          <tr><td class="mono">e</td><td>«e»</td><td>El número de Euler, e ≈ 2,718. Sale en (1 + a/n)<sup>n</sup> → e<sup>a</sup> (M1).</td><td>(1 + 2/n)<sup>n</sup> → e² ≈ 7,39</td></tr>
+          <tr><td class="mono">(−1)<sup>n</sup></td><td>«menos uno a la ene»</td><td>Alterna el signo: +1 si n es par, −1 si n es impar. Con (−1)<sup>n+1</sup> se empieza al revés.</td><td>(−1)² = 1, (−1)³ = −1</td></tr>
+          <tr><td class="mono">b<sub>n</sub></td><td>«be sub ene»</td><td>En una serie alternante, la parte positiva del término: a<sub>n</sub> = (−1)<sup>n</sup>·b<sub>n</sub>. Ojo: en M3, b<sub>n</sub> era la serie con que comparabas.</td><td>En (−1)<sup>n</sup>·2n/(n² + 1), b<sub>n</sub> = 2n/(n² + 1)</td></tr>
+          <tr><td class="mono">f′(x)</td><td>«efe prima de equis»</td><td>La derivada de f. Si f′(x) &lt; 0, f va bajando: así se prueba que b<sub>n</sub> decrece.</td><td>f(x) = 2x/(x² + 1)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo es un ejercicio de tus parciales o de las hojas, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Lo tachado en rojo es lo que se cancela. Los límites ya los hiciste en M1: aquí se usan. El último paso siempre es la frase que se escribe en el parcial: sin ella, el profesor pone cero.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 1 · factoriales</span><h3>El criterio del cociente (el «test del radio» del profesor)</h3></div>
+      <p class="prose">En una geométrica, cada término es el anterior multiplicado por la misma razón r, y converge si |r| &lt; 1 (M2). El cociente mira si tu serie se comporta así al final: divide cada término entre el anterior y mira a qué se acerca esa razón. Si se acerca a un L menor que 1, al final cada término es más o menos L veces el anterior: la serie se porta como una geométrica que converge.</p>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p>Calcula <span class="m">L = <span class="lim">lim<small>n→∞</small></span> |<span class="frac"><span>a<sub>n+1</sub></span><span>a<sub>n</sub></span></span>|</span>.</p>
+      </div>
+      <div class="tri">
+        <div class="yes"><b>L &lt; 1</b> → converge (absolutamente).</div>
+        <div class="bad"><b>L &gt; 1</b> (o L = ∞) → diverge.</div>
+        <div class="no"><b>L = 1</b> → no dice nada: usa otro criterio.</div>
+      </div>
+      <ol class="steps">
+        <li><span><b>Escribe a<sub>n+1</sub>:</b> cambia cada n por (n + 1), con paréntesis, también en los exponentes y en los factoriales.</span></li>
+        <li><span><b>Arma el cociente:</b> dividir entre a<sub>n</sub> es multiplicar por a<sub>n</sub> volteada.</span></li>
+        <li><span><b>Simplifica:</b> las potencias de la misma base se restan los exponentes, y los factoriales se cancelan casi completos.</span></li>
+        <li><span><b>Calcula L, compáralo con 1</b> y escribe la frase.</span></li>
+      </ol>
+      <div class="rule-box">
+        <b class="k">Para simplificar</b>
+        <ul>
+          <li><span class="m">(n + 2)! = (n + 2)·(n + 1)!</span>, así que <span class="m">(n + 1)!/(n + 2)! = 1/(n + 2)</span>.</li>
+          <li><span class="m">(n + 1)!/n! = n + 1</span>.</li>
+          <li><span class="m">2<sup>n</sup>/2<sup>n−1</sup> = 2<sup>n−(n−1)</sup> = 2</span> y <span class="m">4<sup>2n+3</sup>/4<sup>2n+1</sup> = 4² = 16</span>.</li>
+        </ul>
+      </div>
+
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · Parcial 2023-19 P1b (6 pts)</span>
+            <h4 id="wx1-h">Factorial abajo: converge</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> <span class="frac"><span>2<sup>n−1</sup></span><span>(n + 1)!</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca la señal.</p><p class="why">Hay un factorial. Con factoriales, comparar es difícil; el cociente los cancela casi completos.</p><div class="mx">(n + 1)! abajo<span class="ar">→</span>criterio del cociente</div></li>
+          <li><p class="what">Escribe a<sub>n</sub> y a<sub>n+1</sub>.</p><p class="why">Cambias cada n por (n + 1): el exponente queda (n + 1) − 1 = n, y el factorial, ((n + 1) + 1)! = (n + 2)!.</p><div class="mx">a<sub>n</sub> = <span class="frac"><span>2<sup>n−1</sup></span><span>(n + 1)!</span></span><span class="ar">→</span>a<sub>n+1</sub> = <span class="frac"><span>2<sup>n</sup></span><span>(n + 2)!</span></span></div></li>
+          <li><p class="what">Arma el cociente.</p><p class="why">Dividir entre a<sub>n</sub> es multiplicar por a<sub>n</sub> volteada. Todos los términos son positivos, así que el valor absoluto no cambia nada.</p><div class="mx"><span class="frac"><span>a<sub>n+1</sub></span><span>a<sub>n</sub></span></span> = <span class="frac"><span>2<sup>n</sup></span><span>(n + 2)!</span></span>·<span class="frac"><span>(n + 1)!</span><span>2<sup>n−1</sup></span></span> = <span class="frac"><span>2<sup>n</sup></span><span>2<sup>n−1</sup></span></span>·<span class="frac"><span>(n + 1)!</span><span>(n + 2)!</span></span></div></li>
+          <li><p class="what">Simplifica las potencias de 2.</p><p class="why">Misma base: se restan los exponentes, n − (n − 1) = 1. Es el ejemplo 3 de M1.</p><div class="mx"><span class="frac"><span>2<sup>n</sup></span><span>2<sup>n−1</sup></span></span> = 2<sup>1</sup> = 2</div></li>
+          <li><p class="what">Simplifica los factoriales.</p><p class="why">(n + 2)! es (n + 1)! multiplicado por el último factor, n + 2. El (n + 1)! se cancela.</p><div class="mx"><span class="frac"><span>(n + 1)!</span><span>(n + 2)!</span></span> = <span class="frac"><span><span class="cx">(n + 1)!</span></span><span>(n + 2)·<span class="cx">(n + 1)!</span></span></span> = <span class="frac"><span>1</span><span>n + 2</span></span></div></li>
+          <li><p class="what">Calcula L.</p><p class="why">Un número fijo entre algo que crece tiende a 0.</p><div class="mx">L = <span class="lim">lim<small>n→∞</small></span> 2·<span class="frac"><span>1</span><span>n + 2</span></span> = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2</span><span>n + 2</span></span> = 0</div></li>
+          <li><p class="what">Compara con 1 y escribe la frase.</p><div class="mx txt">Como L = lim |a<sub>n+1</sub>/a<sub>n</sub>| = lim 2/(n + 2) = 0 &lt; 1, por el criterio del cociente la serie converge (absolutamente).</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El factorial le gana a cualquier potencia como 2<sup>n</sup> (la escalera de M1): cada término es mucho más pequeño que el anterior. Que la suma empiece en n = 0 no cambia nada.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · Hoja 11.6 (g) · con la trampa 1<sup>∞</sup></span>
+            <h4 id="wx2-h">Factorial contra n<sup>n</sup>: el cociente da 1/e</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>n!</span><span>n<sup>n</sup></span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca la señal.</p><p class="why">Hay un factorial arriba: cociente.</p><div class="mx">n! arriba<span class="ar">→</span>criterio del cociente</div></li>
+          <li><p class="what">Escribe a<sub>n+1</sub>.</p><p class="why">Cambias cada n por (n + 1), también la base y el exponente de abajo.</p><div class="mx">a<sub>n</sub> = <span class="frac"><span>n!</span><span>n<sup>n</sup></span></span><span class="ar">→</span>a<sub>n+1</sub> = <span class="frac"><span>(n + 1)!</span><span>(n + 1)<sup>n+1</sup></span></span></div></li>
+          <li><p class="what">Arma el cociente.</p><p class="why">Multiplicas por a<sub>n</sub> volteada y juntas factoriales con factoriales.</p><div class="mx"><span class="frac"><span>a<sub>n+1</sub></span><span>a<sub>n</sub></span></span> = <span class="frac"><span>(n + 1)!</span><span>(n + 1)<sup>n+1</sup></span></span>·<span class="frac"><span>n<sup>n</sup></span><span>n!</span></span> = <span class="frac"><span>(n + 1)!</span><span>n!</span></span>·<span class="frac"><span>n<sup>n</sup></span><span>(n + 1)<sup>n+1</sup></span></span></div></li>
+          <li><p class="what">Simplifica los factoriales.</p><p class="why">(n + 1)! es n! por el último factor, n + 1.</p><div class="mx"><span class="frac"><span>(n + 1)·<span class="cx">n!</span></span><span><span class="cx">n!</span></span></span> = n + 1</div></li>
+          <li><p class="what">Simplifica las potencias de (n + 1).</p><p class="why">(n + 1)<sup>n+1</sup> es (n + 1)<sup>n</sup> por un (n + 1) más. Ese (n + 1) se cancela con el que dejaron los factoriales.</p><div class="mx"><span class="frac"><span><span class="cx">(n + 1)</span>·n<sup>n</sup></span><span><span class="cx">(n + 1)</span>·(n + 1)<sup>n</sup></span></span> = <span class="frac"><span>n<sup>n</sup></span><span>(n + 1)<sup>n</sup></span></span> = (<span class="frac"><span>n</span><span>n + 1</span></span>)<sup>n</sup></div></li>
+          <li><p class="what">Reconoce la trampa 1<sup>∞</sup>.</p><p class="why">La base n/(n + 1) tiende a 1 y el exponente a ∞. No es 1 (M1, ejemplo 5): voltea la fracción para que quede la regla del número e.</p><div class="mx">(<span class="frac"><span>n</span><span>n + 1</span></span>)<sup>n</sup> = <span class="frac"><span>1</span><span>(<span class="frac"><span>n + 1</span><span>n</span></span>)<sup>n</sup></span></span> = <span class="frac"><span>1</span><span>(1 + <span class="frac"><span>1</span><span>n</span></span>)<sup>n</sup></span></span></div></li>
+          <li><p class="what">Calcula L.</p><p class="why">(1 + 1/n)<sup>n</sup> → e<sup>1</sup> = e (regla del número e con a = 1).</p><div class="mx">L = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>1</span><span>(1 + 1/n)<sup>n</sup></span></span> = <span class="frac"><span>1</span><span>e</span></span> ≈ 0,37</div></li>
+          <li><p class="what">Compara con 1 y escribe la frase.</p><div class="mx txt">Como L = lim |a<sub>n+1</sub>/a<sub>n</sub>| = lim (n/(n + 1))<sup>n</sup> = 1/e ≈ 0,37 &lt; 1, por el criterio del cociente la serie converge.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> n<sup>n</sup> = n·n·…·n tiene n factores iguales a n, y n! = 1·2·…·n tiene factores más pequeños: abajo crece más rápido (en la escalera de M1, n<sup>n</sup> está a la derecha de n!). Si escribes «la base tiende a 1, así que L = 1 y no se puede decidir», pierdes el punto.</p>
+      </article>
+    </div>
+
+    <!-- Idea 2 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 2 · todo elevado a la n</span><h3>El criterio de la raíz</h3></div>
+      <p class="prose">Si el término entero está elevado a la n, como (algo)<sup>n</sup>, sacarle la raíz n-ésima deshace el exponente y deja solo «el algo». Si «el algo» se acerca a un L menor que 1, el término se parece a L<sup>n</sup>: una geométrica que converge.</p>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p>Calcula <span class="m">L = <span class="lim">lim<small>n→∞</small></span> |a<sub>n</sub>|<sup>1/n</sup></span>. Las conclusiones son las mismas del cociente: <b>L &lt; 1</b> converge (absolutamente), <b>L &gt; 1</b> diverge y <b>L = 1</b> no dice nada.</p>
+      </div>
+      <div class="rule-box">
+        <b class="k">Para simplificar: los exponentes se multiplican</b>
+        <ul>
+          <li><span class="m">(algo<sup>n</sup>)<sup>1/n</sup> = algo<sup>n·(1/n)</sup> = algo</span>: el exponente desaparece.</li>
+          <li><span class="m">(algo<sup>n²</sup>)<sup>1/n</sup> = algo<sup>n²/n</sup> = algo<sup>n</sup></span>: el exponente <b>no desaparece</b>, baja de n² a n.</li>
+          <li><span class="m">(algo<sup>5n</sup>)<sup>1/n</sup> = algo<sup>5</sup></span>.</li>
+        </ul>
+      </div>
+
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · Parcial 2023-19 P1d (6 pts)</span>
+            <h4 id="wx3-h">Todo elevado a la n: diverge</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> (<span class="frac"><span>2n²</span><span>n² + 3</span></span>)<sup>n</sup></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca la señal.</p><p class="why">Todo el término está elevado a la n: la raíz n-ésima lo deshace.</p><div class="mx">(…)<sup>n</sup><span class="ar">→</span>criterio de la raíz</div></li>
+          <li><p class="what">Saca la raíz n-ésima.</p><p class="why">El término es positivo, así que |a<sub>n</sub>| = a<sub>n</sub>. Los exponentes se multiplican: n·(1/n) = 1.</p><div class="mx">|a<sub>n</sub>|<sup>1/n</sup> = [(<span class="frac"><span>2n²</span><span>n² + 3</span></span>)<sup>n</sup>]<sup>1/n</sup> = (<span class="frac"><span>2n²</span><span>n² + 3</span></span>)<sup>n·(1/n)</sup> = <span class="frac"><span>2n²</span><span>n² + 3</span></span></div></li>
+          <li><p class="what">Calcula L.</p><p class="why">Mismo grado arriba y abajo: divides todo entre n² (M1, ejemplo 1).</p><div class="mx">L = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2n²</span><span>n² + 3</span></span> = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2</span><span>1 + 3/n²</span></span> = <span class="frac"><span>2</span><span>1 + 0</span></span> = 2</div></li>
+          <li><p class="what">Compara con 1 y escribe la frase.</p><div class="mx txt">Como L = lim |a<sub>n</sub>|<sup>1/n</sup> = lim 2n²/(n² + 3) = 2 &gt; 1, por el criterio de la raíz la serie diverge.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> diverge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El término se parece a 2<sup>n</sup>, que crece sin parar: ni siquiera tiende a 0. Siempre que la raíz o el cociente dan L &gt; 1, el término no tiende a 0.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · Parcial 2025-10 P1b (6 pts)</span>
+            <h4 id="wx4-h">Elevado a n²: la raíz da e²</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> (<span class="frac"><span>n + 2</span><span>n</span></span>)<sup>n²</sup></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca la señal.</p><p class="why">Todo el término está elevado a n²: raíz.</p><div class="mx">(…)<sup>n²</sup><span class="ar">→</span>criterio de la raíz</div></li>
+          <li><p class="what">Saca la raíz n-ésima.</p><p class="why">Los exponentes se multiplican: n²·(1/n) = n. El exponente no desaparece, baja de n² a n. Esta es la diferencia con el ejemplo anterior.</p><div class="mx">|a<sub>n</sub>|<sup>1/n</sup> = [(<span class="frac"><span>n + 2</span><span>n</span></span>)<sup>n²</sup>]<sup>1/n</sup> = (<span class="frac"><span>n + 2</span><span>n</span></span>)<sup>n²/n</sup> = (<span class="frac"><span>n + 2</span><span>n</span></span>)<sup>n</sup></div></li>
+          <li><p class="what">Reescribe la base.</p><p class="why">Partes la fracción en dos y simplificas n/n (M1, ejemplo 5).</p><div class="mx"><span class="frac"><span>n + 2</span><span>n</span></span> = <span class="frac"><span><span class="cx">n</span></span><span><span class="cx">n</span></span></span> + <span class="frac"><span>2</span><span>n</span></span> = 1 + <span class="frac"><span>2</span><span>n</span></span></div></li>
+          <li><p class="what">Reconoce la trampa 1<sup>∞</sup> y usa la regla del número e.</p><p class="why">La base tiende a 1 y el exponente a ∞: no es 1. La regla (1 + a/n)<sup>n</sup> → e<sup>a</sup> con a = 2.</p><div class="mx">L = <span class="lim">lim<small>n→∞</small></span> (1 + <span class="frac"><span>2</span><span>n</span></span>)<sup>n</sup> = e² ≈ 7,39</div></li>
+          <li><p class="what">Compara con 1 y escribe la frase.</p><div class="mx txt">Como L = lim |a<sub>n</sub>|<sup>1/n</sup> = lim (1 + 2/n)<sup>n</sup> = e² ≈ 7,39 &gt; 1, por el criterio de la raíz la serie diverge.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> diverge.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> La hoja 11.6 (i) es la misma serie con 1 + 1/n: L = e &gt; 1, diverge. El profesor tomó el ejercicio de la hoja y cambió el 1 por un 2. Quien escribe «la base tiende a 1, así que L = 1» pierde los 6 puntos.</p>
+      </article>
+    </div>
+
+    <!-- Idea 3 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 3 · cuándo no usarlos</span><h3>Si L = 1, el criterio no dice nada</h3></div>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Serie</th><th>|a<sub>n+1</sub>/a<sub>n</sub>|</th><th>L</th><th>¿Qué hace la serie?</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Σ 1/n</td><td class="mono">n/(n + 1)</td><td class="mono">1</td><td>Diverge (serie p, p = 1)</td></tr>
+          <tr><td class="mono">Σ 1/n²</td><td class="mono">n²/(n + 1)²</td><td class="mono">1</td><td>Converge (serie p, p = 2)</td></tr>
+          <tr><td class="mono">Σ n/(2n³ + 1) <span class="muted">(hoja 11.4 a)</span></td><td class="mono">…</td><td class="mono">1</td><td>Converge (M3: compara con 1/n²)</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose">Las dos primeras dan L = 1 y hacen cosas distintas: por eso con L = 1 no se concluye nada. Pasa siempre con las fracciones de potencias de n, las de M3: el cociente y la raíz dan 1. Ahí no pierdas tiempo; compara con una serie p desde el principio. El cociente y la raíz sirven cuando hay factoriales o algo elevado a la n.</p>
+    </div>
+
+    <!-- Idea 4 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 4 · signos que alternan</span><h3>Series alternantes: absoluta, condicional o diverge</h3></div>
+      <p class="prose">Una serie alternante suma y resta: b<sub>1</sub> − b<sub>2</sub> + b<sub>3</sub> − b<sub>4</sub> + … Las sumas parciales van en zigzag: suben, bajan, suben. Si cada paso es más corto que el anterior (b<sub>n</sub> decrece) y los pasos se encogen hasta 0 (b<sub>n</sub> → 0), el zigzag se va cerrando sobre un número: la serie converge. Lo ves en el lab.</p>
+      <div class="rule-box">
+        <b class="k">Criterio de series alternantes (Leibniz)</b>
+        <p>Si la serie es Σ (−1)<sup>n</sup>·b<sub>n</sub> (o con (−1)<sup>n+1</sup>), con b<sub>n</sub> &gt; 0, y además</p>
+        <ul>
+          <li><b>(i) b<sub>n</sub> es decreciente:</b> b<sub>n+1</sub> ≤ b<sub>n</sub>, al menos desde algún n en adelante, y</li>
+          <li><b>(ii) <span class="m"><span class="lim">lim<small>n→∞</small></span> b<sub>n</sub> = 0</span>,</b></li>
+        </ul>
+        <p>entonces la serie converge.</p>
+      </div>
+      <p class="prose"><b>Cómo probar que b<sub>n</sub> decrece:</b> cambia n por x y deriva. Si f′(x) &lt; 0 desde algún x, b<sub>n</sub> decrece desde ahí. Para fracciones usas la regla del cociente de Cálculo 1: (u/v)′ = (u′·v − u·v′)/v².</p>
+      <div class="tri">
+        <div class="yes"><b>Converge absolutamente:</b> Σ |a<sub>n</sub>| converge. Entonces Σ a<sub>n</sub> también converge.</div>
+        <div class="yes"><b>Converge condicionalmente:</b> Σ a<sub>n</sub> converge, pero Σ |a<sub>n</sub>| diverge. Converge gracias a los signos.</div>
+        <div class="bad"><b>Diverge:</b> Σ a<sub>n</sub> diverge.</div>
+      </div>
+      <h3>La receta para una serie con (−1)<sup>n</sup></h3>
+      <ol class="steps">
+        <li><span><b>¿|a<sub>n</sub>| tiende a 0?</b> Si no, diverge por el criterio de divergencia (M2) y ya. Leibniz no aplica.</span></li>
+        <li><span><b>Quita el signo:</b> estudia Σ |a<sub>n</sub>| con M3 (comparación) o con cociente o raíz. Si converge, la serie <b>converge absolutamente</b> y terminaste.</span></li>
+        <li><span><b>Si Σ |a<sub>n</sub>| diverge, usa Leibniz:</b> b<sub>n</sub> decreciente (con la derivada) y b<sub>n</sub> → 0. Si cumple, la serie <b>converge condicionalmente</b>.</span></li>
+      </ol>
+
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5 · Parcial 2023-19 P1c (6 pts)</span>
+            <h4 id="wx5-h">Alternante que converge condicionalmente</h4>
+            <p>Determine si la serie converge o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=2</small></span> (−1)<sup>n</sup> <span class="frac"><span>2n</span><span>n² + 1</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca la señal y separa b<sub>n</sub>.</p><p class="why">El (−1)<sup>n</sup> la hace alternante. b<sub>n</sub> es lo que queda sin el signo, y es positivo.</p><div class="mx">a<sub>n</sub> = (−1)<sup>n</sup>·<span class="frac"><span>2n</span><span>n² + 1</span></span><span class="ar">→</span>b<sub>n</sub> = <span class="frac"><span>2n</span><span>n² + 1</span></span> &gt; 0</div></li>
+          <li><p class="what">Paso 1 de la receta: ¿b<sub>n</sub> tiende a 0?</p><p class="why">Grado 1 arriba y grado 2 abajo: divides entre n² (M1).</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2n</span><span>n² + 1</span></span> = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2/n</span><span>1 + 1/n²</span></span> = <span class="frac"><span>0</span><span>1</span></span> = 0<span class="ar">→</span>sigue</div></li>
+          <li><p class="what">Paso 2: quita el signo y compara (M3).</p><p class="why">Términos dominantes: 2n/n² = 2/n, así que comparas con 1/n. Dividir entre 1/n es multiplicar por n.</p><div class="mx">L = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2n</span><span>n² + 1</span></span>·n = <span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>2n²</span><span>n² + 1</span></span> = 2<span class="ar">y</span>Σ <span class="frac"><span>1</span><span>n</span></span> diverge</div></li>
+          <li><p class="what">Concluye el paso 2.</p><p class="why">L = 2 es finito y positivo, así que Σ |a<sub>n</sub>| hace lo mismo que la armónica: diverge. No es absoluta, pero eso no dice que la serie diverja: falta Leibniz.</p><div class="mx">Σ |a<sub>n</sub>| = Σ <span class="frac"><span>2n</span><span>n² + 1</span></span> diverge</div></li>
+          <li><p class="what">Paso 3, Leibniz (i): deriva para ver si b<sub>n</sub> decrece.</p><p class="why">Cambias n por x y usas la regla del cociente con u = 2x (u′ = 2) y v = x² + 1 (v′ = 2x).</p><div class="mx">f(x) = <span class="frac"><span>2x</span><span>x² + 1</span></span><span class="ar">→</span>f′(x) = <span class="frac"><span>2·(x² + 1) − 2x·2x</span><span>(x² + 1)²</span></span> = <span class="frac"><span>2 − 2x²</span><span>(x² + 1)²</span></span></div></li>
+          <li><p class="what">Mira el signo de la derivada.</p><p class="why">Abajo hay un cuadrado: siempre positivo. Arriba, 2 − 2x² es negativo cuando x² &gt; 1, o sea x &gt; 1. La serie empieza en n = 2, así que b<sub>n</sub> decrece en todos sus términos.</p><div class="mx">x &gt; 1 ⇒ 2 − 2x² &lt; 0 ⇒ f′(x) &lt; 0 ✓</div></li>
+          <li><p class="what">Leibniz (ii): b<sub>n</sub> → 0.</p><p class="why">Ya lo calculaste en el paso 1.</p><div class="mx"><span class="lim">lim<small>n→∞</small></span> b<sub>n</sub> = 0 ✓</div></li>
+          <li><p class="what">Escribe la frase.</p><div class="mx txt">La serie es alternante con b<sub>n</sub> = 2n/(n² + 1) &gt; 0, que es decreciente para n ≥ 2 (f′(x) &lt; 0 para x &gt; 1) y tiende a 0. Por el criterio de series alternantes, la serie converge. Como Σ |a<sub>n</sub>| diverge (comparación en el límite con Σ 1/n, L = 2), la serie converge condicionalmente.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge (condicionalmente).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Sin los signos se parece a 2/n, que diverge. Con los signos, cada término cancela casi todo el anterior, como en 1 − 1/2 + 1/3 − 1/4 + …, que converge a ln 2 (míralo en el lab). En 2023 solo preguntaban «converge o diverge», así que con Leibniz bastaba; pero si preguntan «absoluta o condicional», como la hoja 11.6, hace falta el paso 2.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx6-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 6 · Hoja 11.6 (e)</span>
+            <h4 id="wx6-h">Alternante que converge absolutamente</h4>
+            <p>Determine si la serie converge absolutamente, condicionalmente o diverge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>(−1)<sup>n</sup> arctan(n)</span><span>n²</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca la señal y quita el signo.</p><p class="why">Hay (−1)<sup>n</sup>: primero se prueba el valor absoluto. Para n ≥ 1, arctan n es positivo.</p><div class="mx">|a<sub>n</sub>| = <span class="frac"><span>arctan(n)</span><span>n²</span></span></div></li>
+          <li><p class="what">Acota el arctan.</p><p class="why">El arctan nunca pasa de π/2 ≈ 1,57, su techo (M1). Divides entre n², que es positivo, así que las desigualdades no se voltean.</p><div class="mx">0 &lt; arctan n &lt; <span class="frac"><span>π</span><span>2</span></span><span class="ar">⇒</span>0 &lt; <span class="frac"><span>arctan(n)</span><span>n²</span></span> &lt; <span class="frac"><span>π/2</span><span>n²</span></span></div></li>
+          <li><p class="what">Decide la serie de la derecha.</p><p class="why">Es π/2 por una serie p con p = 2. Multiplicar por un número fijo no cambia si converge.</p><div class="mx">Σ <span class="frac"><span>π/2</span><span>n²</span></span> = <span class="frac"><span>π</span><span>2</span></span>·Σ <span class="frac"><span>1</span><span>n²</span></span>: p = 2 &gt; 1, converge</div></li>
+          <li><p class="what">Escribe la frase.</p><div class="mx txt">Como 0 &lt; |a<sub>n</sub>| = arctan(n)/n² &lt; (π/2)/n² y Σ (π/2)/n² converge (serie p con p = 2), Σ |a<sub>n</sub>| converge por comparación directa. Entonces la serie converge absolutamente.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> converge absolutamente.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Cuando la serie converge absolutamente, ya terminaste: no hace falta Leibniz. Por eso conviene probar primero |a<sub>n</sub>|.</p>
+      </article>
+    </div>
+
+    <!-- Idea 5 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 5 · la estrategia del punto 1</span><h3>¿Qué criterio uso?</h3></div>
+      <p class="prose">Lo difícil del punto 1 no es la cuenta: es escoger el criterio. Mira la forma del término y recorre esta lista en orden. En cuanto una respuesta sea «sí», ese es tu criterio.</p>
+      <ol class="flow">
+        <li><span class="fq">¿El término no tiende a 0?</span><span class="fa">Diverge. Criterio de divergencia (M2).</span><span class="fe">Σ n/(2n + 1): el término tiende a 1/2 ≠ 0, así que diverge. Ese 1/2 no es la suma.</span></li>
+        <li><span class="fq">¿Es geométrica o serie p?</span><span class="fa">Se decide de una: |r| &lt; 1 o p &gt; 1 (M2, M3).</span><span class="fe">Σ 3·(2/5)<sup>n</sup>, Σ 1/n<sup>3/2</sup>.</span></li>
+        <li><span class="fq">¿Todo está elevado a n o a n²?</span><span class="fa">Raíz.</span><span class="fe">2023 P1d (2n²/(n² + 3))<sup>n</sup> · 2025 P1b ((n + 2)/n)<sup>n²</sup>.</span></li>
+        <li><span class="fq">¿Hay factoriales, o c<sup>n</sup> junto a potencias de n?</span><span class="fa">Cociente.</span><span class="fe">2023 P1b 2<sup>n−1</sup>/(n + 1)! · hoja 11.6 (c) y (d).</span></li>
+        <li><span class="fq">¿Tiene (−1)<sup>n</sup>?</span><span class="fa">Primero Σ |a<sub>n</sub>|; si diverge, Leibniz.</span><span class="fe">2023 P1c. Para Σ |a<sub>n</sub>| vuelves a recorrer esta lista.</span></li>
+        <li><span class="fq">¿Tiene sen n, cos n o arctan n?</span><span class="fa">Acota y usa comparación directa (M3).</span><span class="fe">2023 P1e sen² n/n³ · 2025 P1c (1 + sen² n)/n.</span></li>
+        <li><span class="fq">¿Es una fracción con potencias o raíces de n?</span><span class="fa">Comparación en el límite con 1/n<sup>p</sup> (M3).</span><span class="fe">2023 P1a √(n + 1)/(n + 2) · 2025 P1a √(n³ + 5)/(n³ − 3).</span></li>
+      </ol>
+      <p class="prose muted">Si te piden el valor de la suma (no solo si converge), es telescópica o geométrica: M2, como el 2025 P2.</p>
+    </div>
+
+    <div class="block">
+      <h3>Las frases para el parcial</h3>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Criterio</th><th>Lo que escribes</th></tr></thead>
+        <tbody>
+          <tr><td>Divergencia</td><td>Como lim a<sub>n</sub> = … ≠ 0, la serie diverge por el criterio de divergencia.</td></tr>
+          <tr><td>Cociente</td><td>Como L = lim |a<sub>n+1</sub>/a<sub>n</sub>| = … &lt; 1, la serie converge (absolutamente) por el criterio del cociente. <span class="muted">(Con L &gt; 1: diverge.)</span></td></tr>
+          <tr><td>Raíz</td><td>Como L = lim |a<sub>n</sub>|<sup>1/n</sup> = … &gt; 1, la serie diverge por el criterio de la raíz. <span class="muted">(Con L &lt; 1: converge absolutamente.)</span></td></tr>
+          <tr><td>Leibniz</td><td>La serie es alternante con b<sub>n</sub> = … &gt; 0, que es decreciente (f′(x) &lt; 0 para x &gt; …) y tiende a 0. Por el criterio de series alternantes, la serie converge.</td></tr>
+          <tr><td>Absoluta</td><td>Como Σ |a<sub>n</sub>| converge (por …), la serie converge absolutamente.</td></tr>
+          <tr><td>Condicional</td><td>La serie converge por Leibniz, pero Σ |a<sub>n</sub>| diverge (por …): converge condicionalmente.</td></tr>
+          <tr><td>Comparaciones</td><td>Las de M3.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas</h3>
+      <p><b>L = 1 no dice nada.</b> Las fracciones de potencias de n siempre dan 1: ahí usa comparación (M3) desde el principio.</p>
+      <p><b>1<sup>∞</sup> no es 1:</b> (1 + 2/n)<sup>n</sup> → e² y (n/(n + 1))<sup>n</sup> → 1/e. Es la que costó el 2025 P1b.</p>
+      <p><b>(algo<sup>n²</sup>)<sup>1/n</sup> = algo<sup>n</sup></b>, no «algo»: el exponente baja de n² a n.</p>
+      <p><b>Simplifica con cuidado:</b> (n + 2)! = (n + 2)·(n + 1)!, y 4<sup>2(n+1)+1</sup> = 4<sup>2n+3</sup>.</p>
+      <p><b>Que Σ |a<sub>n</sub>| diverja no significa que la serie diverja:</b> solo que no es absoluta. Falta Leibniz.</p>
+      <p><b>Leibniz pide dos cosas:</b> decreciente y que tienda a 0. Si b<sub>n</sub> crece al principio, no importa: basta desde algún n.</p>
+      <p><b>El límite del término no es la suma:</b> si a<sub>n</sub> → 1/2, la serie diverge; no «vale 1/2».</p>
+      <p><b>«Test del radio» es el cociente.</b> Así lo llama el profesor; no es el radio de convergencia de M6, aunque allá lo vas a usar para hallarlo.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Mira a qué se acerca el cociente o la raíz y de qué lado de 1 queda, mira el zigzag de una alternante y practica escoger el criterio.</p></div>
+    <div class="tabs" role="tablist" aria-label="Experimento">
+      <button type="button" role="tab" class="tab" id="tab-rt" aria-selected="true" aria-controls="lab-rt">Cociente y raíz</button>
+      <button type="button" role="tab" class="tab" id="tab-alt" aria-selected="false" aria-controls="lab-alt">Zigzag alternante</button>
+      <button type="button" role="tab" class="tab" id="tab-cls" aria-selected="false" aria-controls="lab-cls">¿Qué criterio uso?</button>
+    </div>
+    <div class="lab" id="lab-rt" role="tabpanel" aria-labelledby="tab-rt">
+      <div class="lab-stage"><div id="rt-svg" class="lab-fig"></div><p class="small muted" id="rt-note"></p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="rt-sel">Serie</label><select id="rt-sel"></select></div>
+        <div class="ctl"><label for="rt-crit">Criterio</label><select id="rt-crit"><option value="q">Cociente: |aₙ₊₁/aₙ|</option><option value="r">Raíz: |aₙ|^(1/n)</option></select></div>
+        <div class="ctl"><label for="rt-n" id="rt-n-lab">Hasta n = 25</label><input type="range" id="rt-n" min="5" max="40" step="1" value="25"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span id="rt-v-lab">Valor en n = 25</span><b id="rt-v">—</b></div>
+          <div class="ro"><span>L (el límite)</span><b id="rt-L">—</b></div>
+          <div class="status" id="rt-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="lab" id="lab-alt" role="tabpanel" aria-labelledby="tab-alt" hidden>
+      <div class="lab-stage"><div id="alt-svg" class="lab-fig"></div><p class="small muted" id="alt-note"></p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="alt-sel">Serie</label><select id="alt-sel"></select></div>
+        <div class="ctl"><label for="alt-n" id="alt-n-lab">Sumar hasta N = 20</label><input type="range" id="alt-n" min="5" max="60" step="1" value="20"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span id="alt-sn-lab">Suma parcial hasta N = 20</span><b id="alt-sn">—</b></div>
+          <div class="ro"><span>Suma de la serie</span><b id="alt-s">—</b></div>
+          <div class="ro"><span>Último salto, |a<sub>N</sub>|</span><b id="alt-j">—</b></div>
+          <div class="status" id="alt-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="lab" id="lab-cls" role="tabpanel" aria-labelledby="tab-cls" hidden>
+      <div class="lab-stage cls-stage">
+        <p class="small muted" id="cls-count">Serie 1 de 16</p>
+        <div class="cls-series" id="cls-series"></div>
+        <div class="cls-btns" id="cls-btns"></div>
+      </div>
+      <div class="lab-side">
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Aciertos</span><b id="cls-score">0 de 0</b></div>
+          <div class="status" id="cls-status">¿Qué criterio usarías primero?</div>
+          <p class="small" id="cls-why"></p>
+        </div>
+        <button type="button" class="btn" id="cls-next" disabled>Siguiente serie</button>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · En «Cociente y raíz», escoge 2025 P1b. Antes de mirar: ¿a qué se acerca la raíz? ¿Queda arriba o abajo de 1?</summary>
+          <div class="rev-body"><p><b>A e² ≈ 7,39, muy por encima de 1:</b> diverge. Si pensabas que daba 1 (la trampa 1<sup>∞</sup>), la gráfica te muestra que no.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Escoge Σ 1/n y después Σ 1/n². ¿Qué L dan? ¿Las dos series hacen lo mismo?</summary>
+          <div class="rev-body"><p><b>Las dos dan L = 1</b>, pero Σ 1/n diverge y Σ 1/n² converge. Con L = 1 el criterio no decide.</p></div></details>
+        <details class="rev"><summary>Reto 3 · Escoge la hoja 11.6 (g) y cambia entre cociente y raíz. ¿Llegan al mismo L?</summary>
+          <div class="rev-body"><p><b>Sí, los dos van a 1/e ≈ 0,37</b>, pero la raíz llega más despacio. Con factoriales, el cociente es el que se calcula fácil a mano.</p></div></details>
+        <details class="rev"><summary>Reto 4 · En «Zigzag», compara 2023 P1c con la hoja 11.5 (j). ¿En cuál se cierra el zigzag?</summary>
+          <div class="rev-body"><p><b>En 2023 P1c sí:</b> los saltos b<sub>n</sub> se achican hacia 0 y las sumas quedan atrapadas en la zona sombreada, que se cierra sobre ≈ 0,461. <b>En 11.5 (j) no:</b> los saltos miden casi 1 siempre (cos(π/n) → 1), así que diverge.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Tus cuatro ejercicios de parcial son los ejemplos resueltos. Aquí van las hojas 11.5 y 11.6 (de la 11.6 salió el 2025 P1b), los 8 del punto 1 mezclados y variantes nuevas.</p></div>
+    <p class="prose">Para cada serie: escoge el criterio, haz la cuenta y escribe la frase completa en papel. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. <b>Si vas con poco tiempo, haz T1 a T4</b>, que están marcados como prioridad. Si quieres que te corrija la redacción, mándame una foto o escríbela en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M6 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M6 · Series de potencias: radio e intervalo de convergencia (domingo). El radio se halla con el cociente de este módulo.</p>
+    <p>Fuente de los problemas: parciales 3 de 2023-19 y 2025-10 y las hojas 11.4, 11.5 y 11.6 del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const dec = (v, d) => v.toFixed(d).replace(".", ",");
+
+/* ---------- Notación ---------- */
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const SG = (lo, hi = "∞") => `<span class="sig"><small>${hi}</small><b>Σ</b><small>${lo}</small></span>`;
+const SQ = (x) => `√<span class="rad">${x}</span>`;
+const M = (x) => `<span class="m">${x}</span>`;
+
+/* ---------- Gráficas ---------- */
+function niceStep(span, count) {
+  const raw = span / count, mag = Math.pow(10, Math.floor(Math.log10(raw))), e = raw / mag;
+  return (e >= 7.5 ? 10 : e >= 3.5 ? 5 : e >= 1.5 ? 2 : 1) * mag;
+}
+/* Una sucesión de puntos. Opciones: one (frontera en 1 con zonas), L (línea punteada), zig (unir los puntos), band (embudo [abajo, arriba] por n), legend (arriba, fuera de los datos). */
+function chart(o) {
+  const W = 360, H = 230, ml = 46, mr = 12, mt = o.legend ? 26 : 14, mb = 32;
+  const n0 = o.n0, N = o.N, ys = [];
+  for (let n = n0; n <= N; n++) ys.push(o.f(n));
+  let lo = Math.min(...ys), hi = Math.max(...ys);
+  const inc = (v) => { if (v != null && isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } };
+  inc(o.L);
+  if (o.one) { inc(0); inc(1.25); }
+  if (o.band) for (let n = n0; n <= N; n++) { const b = o.band(n); inc(b[0]); inc(b[1]); }
+  const pad = (hi - lo) * 0.08 || 0.5; hi += pad; lo = o.one ? 0 : lo - pad;
+  const X = (n) => ml + (N === n0 ? 0 : (n - n0) / (N - n0)) * (W - ml - mr);
+  const Y = (y) => mt + (hi - y) / (hi - lo) * (H - mt - mb);
+  let g = "";
+  if (o.one) {
+    g += `<rect x="${ml}" y="${mt}" width="${W - mr - ml}" height="${f1(Y(1) - mt)}" class="gr-div"/>`;
+    g += `<rect x="${ml}" y="${f1(Y(1))}" width="${W - mr - ml}" height="${f1(Y(lo) - Y(1))}" class="gr-conv"/>`;
+  }
+  const st = niceStep(hi - lo, 4), d = Math.max(0, -Math.floor(Math.log10(st) + 1e-9));
+  let oneTick = false;
+  for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) {
+    const vv = Math.abs(v) < st / 1e6 ? 0 : v, isOne = o.one && Math.abs(vv - 1) < st / 1e6;
+    if (isOne) oneTick = true;
+    g += `<line x1="${ml}" y1="${f1(Y(vv))}" x2="${W - mr}" y2="${f1(Y(vv))}" class="gr-grid"/><text x="${ml - 6}" y="${f1(Y(vv) + 3.5)}" class="${isOne ? "gr-onet" : "gr-tick"}" text-anchor="end">${dec(vv, d)}</text>`;
+  }
+  if (o.one && !oneTick) g += `<text x="${ml - 6}" y="${f1(Y(1) + 3.5)}" class="gr-onet" text-anchor="end">1</text>`;
+  [...new Set([n0, Math.round((n0 + N) / 2), N])].forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 14}" class="gr-tick" text-anchor="middle">${t}</text>`; });
+  g += `<text x="${(ml + W - mr) / 2}" y="${H - 3}" class="gr-lab" text-anchor="middle">${o.xlab}</text>`;
+  g += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}" class="gr-axis"/>`;
+  if (o.band) {
+    const up = [], dn = [];
+    for (let n = n0; n <= N; n++) { const b = o.band(n); up.push(`${f1(X(n))},${f1(Y(b[1]))}`); dn.unshift(`${f1(X(n))},${f1(Y(b[0]))}`); }
+    g += `<polygon points="${up.concat(dn).join(" ")}" class="gr-band"/>`;
+  }
+  if (o.one) g += `<line x1="${ml}" y1="${f1(Y(1))}" x2="${W - mr}" y2="${f1(Y(1))}" class="gr-one"/>`;
+  if (o.L != null) g += `<line x1="${ml}" y1="${f1(Y(o.L))}" x2="${W - mr}" y2="${f1(Y(o.L))}" class="gr-L"/>`;
+  if (o.zig) g += `<polyline points="${ys.map((y, i) => `${f1(X(n0 + i))},${f1(Y(y))}`).join(" ")}" class="gr-zz"/>`;
+  const r = N - n0 <= 30 ? 3.2 : 2.6;
+  ys.forEach((y, i) => { g += `<circle cx="${f1(X(n0 + i))}" cy="${f1(Y(y))}" r="${r}" class="gr-dot"/>`; });
+  if (o.legend) {
+    let x = 8;
+    o.legend.forEach((it) => {
+      const w = it.box ? 10 : 16;
+      g += it.box ? `<rect x="${x}" y="5" width="10" height="10" class="${it.cls}"/>` : `<line x1="${x}" y1="10" x2="${x + w}" y2="10" class="${it.cls}"/>`;
+      g += `<text x="${x + w + 4}" y="14" class="gr-leg">${it.txt}</text>`;
+      x += w + 4 + it.txt.replace(/&[a-z]+;/g, "x").length * 5.7 + 12;
+    });
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
+}
+
+/* ---------- Lab 1: cociente y raíz ---------- */
+const LF = [0]; for (let i = 1; i <= 120; i++) LF[i] = LF[i - 1] + Math.log(i); /* ln n! */
+const RT = [
+  { lab: "2023 P1b: 2ⁿ⁻¹/(n + 1)!", la: (n) => (n - 1) * Math.LN2 - LF[n + 1], L: 0, Ltxt: "0", best: "q",
+    note: "Hay factorial: el cociente queda 2/(n + 2) y baja a 0. Converge." },
+  { lab: "Hoja 11.6 (g): n!/nⁿ", la: (n) => LF[n] - n * Math.log(n), L: 1 / Math.E, Ltxt: "1/e ≈ 0,37", best: "q",
+    note: "El cociente queda (n/(n + 1))ⁿ → 1/e ≈ 0,37. No es 1: es la trampa 1^∞. Converge." },
+  { lab: "2023 P1d: (2n²/(n² + 3))ⁿ", la: (n) => n * Math.log(2 * n * n / (n * n + 3)), L: 2, Ltxt: "2", best: "r",
+    note: "Todo elevado a n: la raíz queda 2n²/(n² + 3) → 2. Diverge." },
+  { lab: "2025 P1b: ((n + 2)/n)^(n²)", la: (n) => n * n * Math.log((n + 2) / n), L: Math.E * Math.E, Ltxt: "e² ≈ 7,39", best: "r",
+    note: "La raíz queda (1 + 2/n)ⁿ → e² ≈ 7,39, muy lejos de 1. Diverge." },
+  { lab: "Hoja 11.6 (c): 10ⁿ/((n + 1)·4²ⁿ⁺¹)", la: (n) => n * Math.LN10 - Math.log(n + 1) - (2 * n + 1) * Math.log(4), L: 5 / 8, Ltxt: "5/8 = 0,625", best: "q",
+    note: "El cociente queda 10(n + 1)/(16(n + 2)) → 10/16 = 5/8. Converge." },
+  { lab: "Σ 1/n (armónica)", la: (n) => -Math.log(n), L: 1, Ltxt: "1", best: "q", pconv: false,
+    note: "L = 1: el criterio no decide. Esta serie diverge (serie p con p = 1)." },
+  { lab: "Σ 1/n²", la: (n) => -2 * Math.log(n), L: 1, Ltxt: "1", best: "q", pconv: true,
+    note: "L = 1 otra vez, pero esta converge (serie p con p = 2). Por eso L = 1 no dice nada." }
+];
+const rtVal = (s, crit, n) => crit === "q" ? Math.exp(s.la(n + 1) - s.la(n)) : Math.exp(s.la(n) / n);
+function drawRT() {
+  const s = RT[Number($("#rt-sel").value)], crit = $("#rt-crit").value, N = Number($("#rt-n").value);
+  $("#rt-svg").innerHTML = chart({ n0: 1, N, f: (n) => rtVal(s, crit, n), one: true, L: s.L, xlab: "n",
+    legend: [{ box: true, cls: "lg-c", txt: "L &lt; 1: converge" }, { box: true, cls: "lg-d", txt: "L &gt; 1: diverge" }, { cls: "gr-L", txt: "L = " + s.Ltxt }],
+    aria: (crit === "q" ? "Cociente" : "Raíz") + " de la serie " + s.lab + " contra la frontera 1" });
+  $("#rt-note").textContent = s.note;
+  $("#rt-n-lab").textContent = "Hasta n = " + N;
+  $("#rt-v-lab").textContent = "Valor en n = " + N;
+  $("#rt-v").textContent = dec(rtVal(s, crit, N), 4);
+  $("#rt-L").textContent = s.Ltxt;
+  const st = $("#rt-status");
+  if (s.L < 1) { st.textContent = "L = " + s.Ltxt + " < 1: converge (absolutamente)."; st.className = "status ok"; }
+  else if (s.L > 1) { st.textContent = "L = " + s.Ltxt + " > 1: diverge."; st.className = "status bad"; }
+  else { st.textContent = "L = 1: no decide. La serie " + (s.pconv ? "converge" : "diverge") + ", pero eso lo dice la serie p, no este criterio."; st.className = "status"; }
+}
+RT.forEach((s, i) => { const o = el("option", "", s.lab); o.value = String(i); $("#rt-sel").appendChild(o); });
+$("#rt-sel").addEventListener("change", () => { $("#rt-crit").value = RT[Number($("#rt-sel").value)].best; drawRT(); });
+["#rt-crit", "#rt-n"].forEach((s) => $(s).addEventListener("input", drawRT));
+drawRT();
+
+/* ---------- Lab 2: zigzag de una alternante ---------- */
+const sgn = (n) => (n % 2 ? -1 : 1);
+const fact = (n) => Math.exp(LF[n]);
+const ALT = [
+  { lab: "2023 P1c: (−1)ⁿ·2n/(n² + 1), desde n = 2", n0: 2, a: (n) => sgn(n) * 2 * n / (n * n + 1), S: 0.460779, kind: "cond",
+    note: "Converge condicionalmente: el zigzag se cierra porque bₙ = 2n/(n² + 1) decrece y tiende a 0. La zona sombreada es la suma ± el siguiente salto." },
+  { lab: "Armónica alternante: (−1)ⁿ⁺¹/n", n0: 1, a: (n) => -sgn(n) / n, S: Math.LN2, kind: "cond",
+    note: "Converge a ln 2 ≈ 0,693 aunque Σ 1/n diverge: converge condicionalmente." },
+  { lab: "Hoja 11.5 (i): (−1)ⁿ/n!", n0: 0, a: (n) => sgn(n) / fact(n), S: 1 / Math.E, kind: "abs",
+    note: "Converge absolutamente, y muy rápido: Σ 1/n! converge por el cociente. La suma es 1/e ≈ 0,368." },
+  { lab: "Hoja 11.5 (j): (−1)ⁿ·cos(π/n)", n0: 1, a: (n) => sgn(n) * Math.cos(Math.PI / n), S: null, kind: "div",
+    note: "Diverge: |aₙ| = cos(π/n) → 1, así que los saltos no se achican y el zigzag nunca se cierra." }
+];
+function drawAlt() {
+  const s = ALT[Number($("#alt-sel").value)], N = Number($("#alt-n").value);
+  const part = []; let acc = 0; for (let n = s.n0; n <= N; n++) { acc += s.a(n); part.push(acc); }
+  const band = s.S != null ? (n) => { const j = Math.abs(s.a(n + 1)); return [s.S - j, s.S + j]; } : null;
+  $("#alt-svg").innerHTML = chart({ n0: s.n0, N, f: (n) => part[n - s.n0], zig: true, L: s.S, band, xlab: "sumas parciales hasta N",
+    legend: s.S != null ? [{ cls: "gr-L", txt: "suma ≈ " + dec(s.S, 3) }, { box: true, cls: "lg-b", txt: "suma ± el siguiente salto" }] : [{ cls: "gr-zz", txt: "sumas parciales: el zigzag no se cierra" }],
+    aria: "Sumas parciales en zigzag de la serie " + s.lab });
+  $("#alt-note").textContent = s.note;
+  $("#alt-n-lab").textContent = "Sumar hasta N = " + N;
+  $("#alt-sn-lab").textContent = "Suma parcial hasta N = " + N;
+  $("#alt-sn").textContent = dec(part[part.length - 1], 4);
+  $("#alt-s").textContent = s.S != null ? "≈ " + dec(s.S, 4) : "no existe";
+  $("#alt-j").textContent = dec(Math.abs(s.a(N)), 4);
+  const st = $("#alt-status");
+  if (s.kind === "div") { st.textContent = "El salto no tiende a 0: diverge."; st.className = "status bad"; }
+  else { st.textContent = s.kind === "abs" ? "Converge absolutamente." : "Converge condicionalmente."; st.className = "status ok"; }
+}
+ALT.forEach((s, i) => { const o = el("option", "", s.lab); o.value = String(i); $("#alt-sel").appendChild(o); });
+$("#alt-sel").addEventListener("change", drawAlt);
+$("#alt-n").addEventListener("input", drawAlt);
+drawAlt();
+
+/* ---------- Lab 3: clasificador ---------- */
+const CRIT = ["Divergencia: el término no → 0", "Geométrica o serie p", "Cociente", "Raíz", "Alternante: |aₙ| y luego Leibniz", "Comparación directa (acotar)", "Comparación en el límite"];
+const CLS = [
+  { s: M(SG("n=1") + " " + F("n²", "n² + 1")), ok: [0], res: "Diverge", why: "El término tiende a 1 ≠ 0 (mismo grado arriba y abajo): diverge sin hacer nada más." },
+  { s: M(SG("n=1") + " " + F("5<sup>n</sup>", "n!")), ok: [2], res: "Converge", why: "Hay factorial: cociente. a<sub>n+1</sub>/a<sub>n</sub> = 5/(n + 1) → 0 &lt; 1." },
+  { s: M(SG("n=1") + " (" + F("3n", "4n + 1") + ")<sup>n</sup>"), ok: [3], res: "Converge", why: "Todo está elevado a la n: raíz. L = 3/4 &lt; 1." },
+  { s: M(SG("n=1") + " " + F("(−1)<sup>n</sup>", SQ("n"))), ok: [4], res: "Converge condicionalmente", why: "Σ 1/√n diverge (p = 1/2): no es absoluta. Leibniz: 1/√n decrece y tiende a 0." },
+  { s: M(SG("n=1") + " " + F("cos² n", "n²")), ok: [5], res: "Converge", why: "Hay coseno: 0 ≤ cos² n/n² ≤ 1/n², y Σ 1/n² converge." },
+  { s: M(SG("n=1") + " " + F(SQ("n"), "n² + 1")), ok: [6], res: "Converge", why: "Fracción con raíces: compara con 1/n<sup>3/2</sup> (L = 1). p = 3/2 &gt; 1." },
+  { s: M(SG("n=1") + " " + F("4", "3<sup>n</sup>")), ok: [1], res: "Converge", why: "Es geométrica con r = 1/3: converge sin más criterio." },
+  { s: M(SG("n=1") + " " + F("1", "n<sup>5/4</sup>")), ok: [1], res: "Converge", why: "Serie p con p = 5/4 &gt; 1." },
+  { s: M(SG("n=1") + " " + F("n!", "10<sup>n</sup>")), ok: [2, 0], res: "Diverge", why: "Cociente: L = lim (n + 1)/10 = ∞. También sirve la divergencia: n! le gana a 10<sup>n</sup> (la escalera de M1), así que el término → ∞." },
+  { s: M(SG("n=1") + " (1 − " + F("1", "n") + ")<sup>n²</sup>"), ok: [3], res: "Converge", why: "Todo elevado a n²: raíz. Queda (1 − 1/n)<sup>n</sup> → 1/e &lt; 1. No es 1." },
+  { s: M(SG("n=1") + " (−1)<sup>n</sup> " + F("n", "n + 1")), ok: [0], res: "Diverge", why: "Antes de Leibniz, mira el término: |a<sub>n</sub>| = n/(n + 1) → 1 ≠ 0. Diverge." },
+  { s: M(SG("n=1") + " " + F("2 + sen n", "n³")), ok: [5], res: "Converge", why: "Hay seno: 0 &lt; (2 + sen n)/n³ ≤ 3/n³, y Σ 3/n³ converge." },
+  { s: M(SG("n=2") + " " + F("n + 1", "n³ − 2")), ok: [6], res: "Converge", why: "Fracción de potencias: compara con 1/n² (L = 1). Ojo: el cociente daría 1 y no decidiría." },
+  { s: M(SG("n=1") + " " + F("(−1)<sup>n</sup>", "n³ + 1")), ok: [4, 5], res: "Converge absolutamente", why: "Tiene (−1)<sup>n</sup>: primero |a<sub>n</sub>| = 1/(n³ + 1) ≤ 1/n³, que converge por comparación directa. Converge absolutamente." },
+  { s: M(SG("n=1") + " " + F("1", "n·2<sup>n</sup>")), ok: [5, 2], res: "Converge", why: "1/(n·2<sup>n</sup>) ≤ (1/2)<sup>n</sup>, una geométrica que converge. El cociente también sirve: L = 1/2." },
+  { s: M(SG("n=1") + " (" + F("n", "2n + 1") + ")<sup>n</sup>"), ok: [3], res: "Converge", why: "Raíz: L = lim n/(2n + 1) = 1/2 &lt; 1." }
+];
+let clsOrder = [], clsPos = 0, clsHits = 0, clsTries = 0, clsDone = false;
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function showCls() {
+  const it = CLS[clsOrder[clsPos]];
+  $("#cls-count").textContent = "Serie " + (clsPos + 1) + " de " + CLS.length;
+  $("#cls-series").innerHTML = it.s;
+  $("#cls-btns").querySelectorAll(".crit").forEach((b) => { b.classList.remove("right", "wrong"); b.disabled = false; });
+  $("#cls-status").textContent = "¿Qué criterio usarías primero?"; $("#cls-status").className = "status";
+  $("#cls-why").textContent = "";
+  $("#cls-next").disabled = true; clsDone = false;
+}
+CRIT.forEach((c, ci) => {
+  const b = el("button", "crit", c); b.type = "button";
+  b.addEventListener("click", () => {
+    if (clsDone) return;
+    const it = CLS[clsOrder[clsPos]], ok = it.ok.includes(ci);
+    clsDone = true; clsTries++; if (ok) clsHits++;
+    $("#cls-btns").querySelectorAll(".crit").forEach((x, xi) => { x.disabled = true; if (it.ok.includes(xi)) x.classList.add("right"); });
+    if (!ok) b.classList.add("wrong");
+    $("#cls-status").textContent = (ok ? "Bien. " : "No es el mejor. ") + "Resultado: " + it.res.toLowerCase() + ".";
+    $("#cls-status").className = "status " + (ok ? "ok" : "bad");
+    $("#cls-why").innerHTML = it.why;
+    $("#cls-score").textContent = clsHits + " de " + clsTries;
+    $("#cls-next").disabled = false;
+    $("#cls-next").textContent = clsPos === CLS.length - 1 ? "Empezar otra vuelta" : "Siguiente serie";
+  });
+  $("#cls-btns").appendChild(b);
+});
+$("#cls-next").addEventListener("click", () => {
+  clsPos++;
+  if (clsPos >= CLS.length) { clsOrder = shuffle(CLS.map((_, i) => i)); clsPos = 0; clsHits = 0; clsTries = 0; $("#cls-score").textContent = "0 de 0"; }
+  showCls();
+});
+clsOrder = shuffle(CLS.map((_, i) => i)); showCls();
+
+const TABS = ["rt", "alt", "cls"];
+TABS.forEach((on) => $("#tab-" + on).addEventListener("click", () => {
+  TABS.forEach((t) => { $("#lab-" + t).hidden = t !== on; $("#tab-" + t).setAttribute("aria-selected", t === on ? "true" : "false"); });
+}));
+
+/* ---------- Taller ---------- */
+const ACD = ["Converge absolutamente", "Converge condicionalmente", "Diverge"];
+const PROBS = [
+  { n: "T1", t: "Cociente y raíz", pri: true, src: "Hoja 11.6 · (c), (d), (h), (i) y (f)",
+    txt: `<p>Decide con cociente o raíz: escribe a<sub>n+1</sub> (o saca la raíz), simplifica, calcula L y escribe la frase.</p>
+      <ol class="items"><li>(c) ${M(SG("n=1") + " " + F("10<sup>n</sup>", "(n + 1)·4<sup>2n+1</sup>"))}</li><li>(d) ${M(SG("n=1") + " " + F("(−1)<sup>n+1</sup> n²·2<sup>n</sup>", "n!"))}</li><li>(h) ${M(SG("n=1") + " (" + F("−2n", "n + 1") + ")<sup>5n</sup>")}</li><li>(i) ${M(SG("n=1") + " (1 + " + F("1", "n") + ")<sup>n²</sup>")}</li><li>(f) ${M(SG("n=1") + " " + F("n² + 1", "2n² + 1"))} tal como está en la hoja, y también con exponente n: ${M(SG("n=1") + " (" + F("n² + 1", "2n² + 1") + ")<sup>n</sup>")}</li></ol>`,
+    checks: [{ q: "(c)", opts: ["Diverge: L = 5/2", "Converge: L = 5/8", "No decide: L = 1", "Converge: L = 0"], a: 1 },
+      { q: "(d)", opts: ["Converge condicionalmente", "Diverge: L = 2", "Converge absolutamente: L = 0", "No decide: L = 1"], a: 2 },
+      { q: "(h)", opts: ["Diverge: L = 32", "Diverge: L = 2", "Converge: L = 1/32", "No decide: L = 1"], a: 0 },
+      { q: "(i)", opts: ["No decide: L = 1", "Converge: L = 1/e", "Diverge: L = ∞", "Diverge: L = e"], a: 3 },
+      { q: "(f), las dos versiones", opts: ["Las dos convergen (L = 1/2)", "Sin exponente diverge (el término → 1/2); con exponente n converge (L = 1/2)", "Las dos divergen", "No decide: L = 1"], a: 1 }],
+    hints: ["(c) 4<sup>2(n+1)+1</sup> = 4<sup>2n+3</sup>, y 4<sup>2n+3</sup>/4<sup>2n+1</sup> = 4² = 16.", "(d) El (−1)<sup>n+1</sup> desaparece con el valor absoluto. Y (n + 1)!/n! = n + 1.", "(h) Raíz: (algo<sup>5n</sup>)<sup>1/n</sup> = algo<sup>5</sup>. El signo menos desaparece con el valor absoluto.", "(i) Es la misma idea del 2025 P1b: después de la raíz queda (1 + 1/n)<sup>n</sup>.", "(f) Sin exponente, mira primero el término."],
+    sol: ["<b>(c)</b> a<sub>n+1</sub>/a<sub>n</sub> = 10<sup>n+1</sup>/((n + 2)·4<sup>2n+3</sup>) · (n + 1)·4<sup>2n+1</sup>/10<sup>n</sup> = 10(n + 1)/(16(n + 2)) → 10/16 = 5/8 &lt; 1: <b>converge</b> (absolutamente) por el cociente.",
+      "<b>(d)</b> |a<sub>n+1</sub>/a<sub>n</sub>| = (n + 1)²·2<sup>n+1</sup>/(n + 1)! · n!/(n²·2<sup>n</sup>) = 2(n + 1)²/(n²(n + 1)) = 2(n + 1)/n² → 0 &lt; 1: <b>converge absolutamente</b> por el cociente.",
+      "<b>(h)</b> |a<sub>n</sub>|<sup>1/n</sup> = (2n/(n + 1))<sup>5</sup> → 2<sup>5</sup> = 32 &gt; 1: <b>diverge</b> por la raíz.",
+      "<b>(i)</b> |a<sub>n</sub>|<sup>1/n</sup> = (1 + 1/n)<sup>n</sup> → e ≈ 2,72 &gt; 1: <b>diverge</b> por la raíz. 1<sup>∞</sup> no es 1.",
+      "<b>(f)</b> Tal como está: (n² + 1)/(2n² + 1) → 1/2 ≠ 0, <b>diverge</b> por el criterio de divergencia. Con exponente n: |a<sub>n</sub>|<sup>1/n</sup> = (n² + 1)/(2n² + 1) → 1/2 &lt; 1, <b>converge</b> por la raíz. (A la hoja parece que se le perdió el exponente; por eso se practican las dos.)"] },
+  { n: "T2", t: "Alternantes: absoluta, condicional o diverge", pri: true, src: "Hoja 11.5 · (h), (l) y (j) · hoja 11.6 · (b)",
+    txt: `<p>Sigue la receta de tres pasos: término, valor absoluto, Leibniz.</p>
+      <ol class="items"><li>(11.5 h) ${M(SG("n=1") + " (−1)<sup>n</sup> " + F("n²", "n³ + 4"))}</li><li>(11.5 l) ${M(SG("n=4") + " (−1)<sup>n−1</sup> " + F("ln n", "n"))}</li><li>(11.5 j) ${M(SG("n=1") + " (−1)<sup>n</sup> cos(" + F("π", "n") + ")")}</li><li>(11.6 b) ${M(SG("n=1") + " " + F("(−1)<sup>n+1</sup>", "<sup>4</sup>√n"))}</li></ol>`,
+    checks: [{ q: "(11.5 h)", opts: ACD, a: 1 }, { q: "(11.5 l)", opts: ACD, a: 1 }, { q: "(11.5 j)", opts: ACD, a: 2 }, { q: "(11.6 b)", opts: ACD, a: 1 }],
+    hints: ["(11.5 h) Σ |a<sub>n</sub>| se compara con 1/n. Para Leibniz: f′(x) = x(8 − x³)/(x³ + 4)². ¿Desde qué x es negativa?", "(11.5 l) ln n/n ≥ 1/n cuando ln n ≥ 1, o sea desde n = 3. La derivada de ln x/x es (1 − ln x)/x².", "(11.5 j) Paso 1: ¿a qué tiende cos(π/n)? (M1)", "(11.6 b) <sup>4</sup>√n = n<sup>1/4</sup>: Σ |a<sub>n</sub>| es una serie p."],
+    sol: ["<b>(11.5 h)</b> |a<sub>n</sub>| = n²/(n³ + 4): comparada con 1/n, L = lim n³/(n³ + 4) = 1, y Σ 1/n diverge: no es absoluta. Leibniz: f′(x) = x(8 − x³)/(x³ + 4)² &lt; 0 para x &gt; 2, así que b<sub>n</sub> decrece desde n = 2 (b<sub>1</sub> = 1/5 &lt; b<sub>2</sub> = 1/3, pero el primero no importa), y b<sub>n</sub> → 0. <b>Converge condicionalmente.</b>",
+      "<b>(11.5 l)</b> |a<sub>n</sub>| = ln n/n ≥ 1/n para n ≥ 3, y Σ 1/n diverge: no es absoluta (comparación directa). Leibniz: (1 − ln x)/x² &lt; 0 para x &gt; e ≈ 2,72, así que decrece desde n = 3; y ln n/n → 0 (la escalera de M1). <b>Converge condicionalmente.</b>",
+      "<b>(11.5 j)</b> |a<sub>n</sub>| = |cos(π/n)| → cos 0 = 1 ≠ 0: el término no tiende a 0. <b>Diverge</b> por el criterio de divergencia. Leibniz no aplica.",
+      "<b>(11.6 b)</b> Σ |a<sub>n</sub>| = Σ 1/n<sup>1/4</sup>: serie p con p = 1/4 ≤ 1, diverge. Leibniz: 1/n<sup>1/4</sup> decrece (el denominador crece) y tiende a 0. <b>Converge condicionalmente.</b>"] },
+  { n: "T3", t: "Clasificación rápida", pri: true, src: "Hoja 11.5 · (a), (b), (c), (d), (e), (f), (g), (i) y (k)",
+    txt: `<p>Una línea de justificación por serie: ¿absoluta, condicional o diverge? Todas se deciden con el paso 1 de la receta o estudiando Σ |a<sub>n</sub>| con lo de M2 y M3.</p>
+      <ol class="items"><li>(a) ${M(SG("n=0") + " (−1)<sup>n</sup> " + F("n", "2n³ + 1"))}</li><li>(b) ${M(SG("n=0") + " (−1)<sup>n</sup> " + F("4 + 3<sup>n</sup>", "2<sup>n</sup>"))}</li><li>(c) ${M(SG("n=1") + " (−1)<sup>n</sup> " + F("n² − 1", "3n⁴ + 1"))}</li><li>(d) ${M(SG("n=0") + " " + F("(−1)<sup>n</sup>", "1 + 2<sup>n</sup>"))}</li><li>(e) ${M(SG("n=2") + " (−1)<sup>n</sup> " + F("sen² n", "n³"))}</li><li>(f) ${M(SG("n=0") + " " + F("(−1)<sup>n</sup>", SQ("4n⁴ + 1")))}</li><li>(g) ${M(SG("n=3") + " (−1)<sup>n</sup> " + F("cos² n", "n³ + 1"))}</li><li>(i) ${M(SG("n=0") + " " + F("(−1)<sup>n</sup>", "n!"))}</li><li>(k) ${M(SG("n=1") + " (−" + F("n", "5") + ")<sup>n</sup>")}</li></ol>`,
+    checks: ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(i)", "(k)"].map((q, i) => ({ q, opts: ACD, a: [0, 2, 0, 0, 0, 0, 0, 0, 2][i] })),
+    hints: ["Primero mira si |a<sub>n</sub>| tiende a 0. Si sí, estudia Σ |a<sub>n</sub>| con M3.", "(b) (4 + 3<sup>n</sup>)/2<sup>n</sup> = 4/2<sup>n</sup> + (3/2)<sup>n</sup>.", "(k) |a<sub>n</sub>| = (n/5)<sup>n</sup>."],
+    sol: ["<b>(a)</b> |a<sub>n</sub>| = n/(2n³ + 1): con 1/n², L = 1/2. <b>Absolutamente.</b>",
+      "<b>(b)</b> |a<sub>n</sub>| = 4/2<sup>n</sup> + (3/2)<sup>n</sup> → ∞: <b>diverge</b> (el término no tiende a 0).",
+      "<b>(c)</b> |a<sub>n</sub>| = (n² − 1)/(3n⁴ + 1): con 1/n², L = 1/3. <b>Absolutamente.</b>",
+      "<b>(d)</b> |a<sub>n</sub>| = 1/(1 + 2<sup>n</sup>) ≤ (1/2)<sup>n</sup>, una geométrica que converge. <b>Absolutamente.</b>",
+      "<b>(e)</b> |a<sub>n</sub>| = sen² n/n³ ≤ 1/n³. <b>Absolutamente.</b>",
+      "<b>(f)</b> |a<sub>n</sub>| = 1/√(4n⁴ + 1): con 1/n², L = 1/√4 = 1/2. <b>Absolutamente.</b>",
+      "<b>(g)</b> |a<sub>n</sub>| = cos² n/(n³ + 1) ≤ 1/n³. <b>Absolutamente.</b>",
+      "<b>(i)</b> |a<sub>n</sub>| = 1/n!: cociente, L = lim 1/(n + 1) = 0. <b>Absolutamente.</b>",
+      "<b>(k)</b> |a<sub>n</sub>| = (n/5)<sup>n</sup> → ∞ (con la raíz: n/5 → ∞): <b>diverge</b>."] },
+  { n: "T4", t: "Los 8 del punto 1, mezclados", pri: true, src: "Parciales 2023-19 y 2025-10 · simulacro relámpago",
+    txt: `<p>Así se ve el punto 1. Para cada serie di solo el criterio y si converge: <b>1 minuto por serie</b>. Después escribe completas, con frase, las dos que más dudes, y compáralas con el ejemplo resuelto.</p>
+      <ol class="items"><li>(1) ${M(SG("n=2") + " " + F("sen²(n)", "n³"))}</li><li>(2) ${M(SG("n=1") + " (" + F("n + 2", "n") + ")<sup>n²</sup>")}</li><li>(3) ${M(SG("n=1") + " " + F(SQ("n + 1"), "n + 2"))}</li><li>(4) ${M(SG("n=0") + " " + F("2<sup>n−1</sup>", "(n + 1)!"))}</li><li>(5) ${M(SG("n=1") + " " + F("1 + sen²(n)", "n"))}</li><li>(6) ${M(SG("n=2") + " (−1)<sup>n</sup> " + F("2n", "n² + 1"))}</li><li>(7) ${M(SG("n=1") + " " + F(SQ("n³ + 5"), "n³ − 3"))}</li><li>(8) ${M(SG("n=0") + " (" + F("2n²", "n² + 3") + ")<sup>n</sup>")}</li></ol>`,
+    checks: [{ q: "(1)", opts: ["Diverge: comparación con 1/n", "No se puede: sen n no tiene límite", "Converge: comparación directa con 1/n³", "Converge: el término → 0"], a: 2 },
+      { q: "(2)", opts: ["Diverge: raíz, L = e²", "No decide: raíz, L = 1", "Converge: raíz, L = 1/e²", "Converge: el término → 1"], a: 0 },
+      { q: "(3)", opts: ["Converge: límite con 1/n<sup>3/2</sup>", "Diverge: límite con 1/√n, L = 1", "Converge: el término → 0", "Diverge: el término no → 0"], a: 1 },
+      { q: "(4)", opts: ["Diverge: cociente, L = 2", "No decide: cociente, L = 1", "Converge: raíz, L = 1/2", "Converge: cociente, L = 0"], a: 3 },
+      { q: "(5)", opts: ["Converge: es ≤ 2/n", "Diverge: es ≥ 1/n", "Converge: el término → 0", "Diverge: el término no → 0"], a: 1 },
+      { q: "(6)", opts: ["Converge absolutamente", "Diverge: Σ |a<sub>n</sub>| diverge", "Converge condicionalmente", "Diverge: el término no → 0"], a: 2 },
+      { q: "(7)", opts: ["Converge: límite con 1/n<sup>3/2</sup>, L = 1", "Diverge: límite con 1/n, L = 1", "Diverge: el primer término es negativo", "No decide: cociente, L = 1"], a: 0 },
+      { q: "(8)", opts: ["Converge: raíz, L = 1/2", "Diverge: raíz, L = 2", "No decide: raíz, L = 1", "Converge: cociente, L = 0"], a: 1 }],
+    hints: ["Usa la lista «¿Qué criterio uso?» de la teoría: busca la señal (factorial, todo elevado a n, (−1)<sup>n</sup>, seno, fracción de potencias).", "Si en el parcial te demoras más de 6 minutos en una, sáltala y vuelve al final."],
+    sol: ["<b>(1) 2023 P1e.</b> 0 ≤ sen² n/n³ ≤ 1/n³ y Σ 1/n³ converge (p = 3): <b>converge</b> por comparación directa. (M3, ejemplo 2)",
+      "<b>(2) 2025 P1b.</b> |a<sub>n</sub>|<sup>1/n</sup> = ((n + 2)/n)<sup>n</sup> = (1 + 2/n)<sup>n</sup> → e² &gt; 1: <b>diverge</b> por la raíz. (M4, ejemplo 4)",
+      "<b>(3) 2023 P1a.</b> Comparada con 1/√n, L = 1, y Σ 1/√n diverge (p = 1/2): <b>diverge</b> por comparación en el límite. (M3, ejemplo 5)",
+      "<b>(4) 2023 P1b.</b> a<sub>n+1</sub>/a<sub>n</sub> = 2/(n + 2) → 0 &lt; 1: <b>converge</b> por el cociente. (M4, ejemplo 1)",
+      "<b>(5) 2025 P1c.</b> (1 + sen² n)/n ≥ 1/n &gt; 0 y Σ 1/n diverge: <b>diverge</b> por comparación directa. (M3, ejemplo 3)",
+      "<b>(6) 2023 P1c.</b> Leibniz: b<sub>n</sub> = 2n/(n² + 1) decrece desde n = 2 y tiende a 0, así que converge; Σ |a<sub>n</sub>| diverge (L = 2 con 1/n): <b>converge condicionalmente</b>. (M4, ejemplo 5)",
+      "<b>(7) 2025 P1a.</b> Comparada con 1/n<sup>3/2</sup>, L = 1, y p = 3/2 &gt; 1: <b>converge</b> por comparación en el límite. (M3, ejemplo 4)",
+      "<b>(8) 2023 P1d.</b> |a<sub>n</sub>|<sup>1/n</sup> = 2n²/(n² + 3) → 2 &gt; 1: <b>diverge</b> por la raíz. (M4, ejemplo 3)"] },
+  { n: "T5", t: "Variantes nuevas, todos los criterios", pri: false, src: "Problemas nuevos al estilo del profesor · y la hoja 11.6 (j)",
+    txt: `<p>Como en el punto 1 del parcial: criterio, cuenta y frase.</p>
+      <ol class="items"><li>(a) ${M(SG("n=1") + " (" + F("n", "n + 3") + ")<sup>n²</sup>")}</li><li>(b) ${M(SG("n=1") + " (−1)<sup>n</sup> " + F(SQ("n"), "n + 1"))}</li><li>(c) ${M(SG("n=1") + " " + F("n·3<sup>n</sup>", "(n + 1)!"))}</li><li>(d) ${M(SG("n=1") + " (−1)<sup>n</sup> " + F("3n", "4n − 1"))}</li><li>(e) ${M(SG("n=1") + " " + F("n + 5", "n³ + 2"))}</li><li>(f) Hoja 11.6 (j): ${M(SG("n=1") + " " + F("3 − cos n", "n<sup>2/3</sup> − 2"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["No decide: raíz, L = 1", "Diverge: raíz, L = e³", "Converge: raíz, L = e<sup>−3</sup>", "Converge: raíz, L = 0"], a: 2 },
+      { q: "(b)", opts: ACD, a: 1 },
+      { q: "(c)", opts: ["Converge: cociente, L = 0", "Diverge: cociente, L = 3", "No decide: L = 1", "Diverge: el término no → 0"], a: 0 },
+      { q: "(d)", opts: ACD, a: 2 },
+      { q: "(e)", opts: ["No se sabe: el cociente da 1", "Diverge: comparación con 1/n", "Converge: comparación en el límite con 1/n²", "Converge: cociente, L = 0"], a: 2 },
+      { q: "(f)", opts: ["Converge: es ≤ 4/n<sup>2/3</sup>", "Diverge: es ≥ 2/n<sup>2/3</sup> desde n = 3", "Converge: cociente", "Diverge: el término no → 0"], a: 1 }],
+    hints: ["(a) Después de la raíz queda (n/(n + 3))<sup>n</sup> = 1/(1 + 3/n)<sup>n</sup>.", "(b) Σ |a<sub>n</sub>| se compara con 1/√n. Para Leibniz: la derivada de √x/(x + 1) es (1 − x)/(2√x·(x + 1)²).", "(c) (n + 2)!/(n + 1)! = n + 2.", "(e) Fracción de potencias: el cociente da 1 y no sirve. Usa M3.", "(f) 3 − cos n ≥ 2, y desde n = 3, n<sup>2/3</sup> − 2 &gt; 0."],
+    sol: ["<b>(a)</b> |a<sub>n</sub>|<sup>1/n</sup> = (n/(n + 3))<sup>n</sup> = 1/(1 + 3/n)<sup>n</sup> → 1/e³ = e<sup>−3</sup> ≈ 0,05 &lt; 1: <b>converge</b> por la raíz.",
+      "<b>(b)</b> Σ |a<sub>n</sub>| = Σ √n/(n + 1): con 1/√n, L = 1, diverge: no es absoluta. Leibniz: f′(x) = (1 − x)/(2√x·(x + 1)²) &lt; 0 para x &gt; 1, así que decrece; y √n/(n + 1) → 0. <b>Converge condicionalmente.</b>",
+      "<b>(c)</b> a<sub>n+1</sub>/a<sub>n</sub> = (n + 1)·3<sup>n+1</sup>/(n + 2)! · (n + 1)!/(n·3<sup>n</sup>) = 3(n + 1)/(n(n + 2)) → 0 &lt; 1: <b>converge</b> por el cociente.",
+      "<b>(d)</b> |a<sub>n</sub>| = 3n/(4n − 1) → 3/4 ≠ 0: <b>diverge</b> por el criterio de divergencia. Leibniz no se puede usar.",
+      "<b>(e)</b> El cociente da L = 1: no decide. Con 1/n²: L = lim n²(n + 5)/(n³ + 2) = 1, y Σ 1/n² converge: <b>converge</b> por comparación en el límite.",
+      "<b>(f)</b> Para n ≥ 3: 3 − cos n ≥ 2 y 0 &lt; n<sup>2/3</sup> − 2 &lt; n<sup>2/3</sup>, así que a<sub>n</sub> ≥ 2/(n<sup>2/3</sup> − 2) &gt; 2/n<sup>2/3</sup>. Σ 2/n<sup>2/3</sup> diverge (p = 2/3 ≤ 1): <b>diverge</b> por comparación directa. Los términos de n = 1 y 2 son negativos, pero unos pocos términos no cambian nada."] },
+  { n: "Extra", t: "Valores de p", pri: false, src: "Hoja 11.5 · (2a) y (2b) · nunca ha salido en el parcial",
+    txt: `<p>¿Para qué valores de p converge cada serie? Hazlo solo si te sobra tiempo.</p>
+      <ol class="items"><li>(2a) ${M(SG("n=1") + " " + F("(−1)<sup>n−1</sup>", "n<sup>p</sup>"))}</li><li>(2b) ${M(SG("n=1") + " " + F("(−1)<sup>n−1</sup>", "n + p"))}</li></ol>`,
+    checks: [{ q: "(2a)", opts: ["p &gt; 1", "p &gt; 0", "p ≥ 1", "Todo p"], a: 1 },
+      { q: "(2b)", opts: ["p &gt; 0", "Ningún p", "Todo p que no sea un entero negativo", "p &gt; 1"], a: 2 }],
+    hints: ["(2a) Si p ≤ 0, ¿el término tiende a 0? Si p &gt; 0, revisa Leibniz.", "(2b) Si p = −3, el término de n = 3 es 1/0."],
+    sol: ["<b>(2a)</b> Si p &gt; 0: 1/n<sup>p</sup> decrece y tiende a 0, así que converge por Leibniz (absolutamente si p &gt; 1, condicionalmente si 0 &lt; p ≤ 1). Si p ≤ 0: |a<sub>n</sub>| = n<sup>−p</sup> no tiende a 0 (vale 1 o crece), así que diverge. <b>Converge para p &gt; 0.</b>",
+      "<b>(2b)</b> Si p es un entero negativo, algún término es 1/0 y la serie no está definida. Si no, desde algún n se cumple n + p &gt; 0, y 1/(n + p) decrece y tiende a 0: converge por Leibniz (condicionalmente, porque se compara con 1/n). <b>Converge para todo p que no sea un entero negativo.</b>"] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t));
+    h.appendChild(el("span", "pri" + (p.pri ? " hi" : ""), p.pri ? "Prioridad" : (p.n === "Extra" ? "Extra" : "Si te sobra tiempo")));
+    h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(elh("div", "prob-body", p.txt));
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(elh("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu frase."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(elh("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => sb.appendChild(elh("p", "", s))); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M4", NEXT = "Aprobado. Pasas a M6: series de potencias, radio e intervalo de convergencia.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "Al aplicar el criterio del cociente a una serie da L = 1. ¿Qué puedes concluir?",
+      o: ["Que converge.", "Que diverge.", "Nada: hay que usar otro criterio.", "Que converge condicionalmente."], a: 2,
+      e: "Con L = 1 el cociente no decide: Σ 1/n y Σ 1/n² dan las dos L = 1, y una diverge y la otra converge. Pasa siempre con las fracciones de potencias de n: ahí se usa comparación (M3)." },
+    { k: "Conceptual", q: `¿Qué criterio usarías para ${M(SG("n=1") + " " + F("5<sup>n</sup>", "n!"))}?`,
+      o: ["Raíz", "Comparación en el límite con una serie p", "Series alternantes (Leibniz)", "Cociente"], a: 3,
+      e: "Hay factorial: cociente. a<sub>n+1</sub>/a<sub>n</sub> = 5<sup>n+1</sup>/(n + 1)! · n!/5<sup>n</sup> = 5/(n + 1) → 0 &lt; 1, así que converge." },
+    { k: "Conceptual", q: `Al aplicar la raíz a ${M(SG("n=1") + " (" + F("n + 3", "n") + ")<sup>n²</sup>")}, ¿cuánto da L?`,
+      o: ["1, así que no se puede decidir.", "e³ ≈ 20, así que diverge.", "3, así que diverge.", "0, así que converge."], a: 1,
+      e: "La raíz deja ((n + 3)/n)<sup>n</sup> = (1 + 3/n)<sup>n</sup> → e³. Es la trampa 1<sup>∞</sup>: la base tiende a 1, pero el resultado no es 1." },
+    { k: "Tipo parcial", q: `Determine si converge absolutamente, condicionalmente o diverge: ${M(SG("n=1") + " (−1)<sup>n</sup> " + F("n", "n² + 4"))}.`,
+      o: ["Converge absolutamente.", "Diverge, porque Σ |a<sub>n</sub>| diverge.", "Converge condicionalmente.", "Diverge, porque b<sub>n</sub> crece al principio (b<sub>1</sub> = 1/5 &lt; b<sub>2</sub> = 1/4)."], a: 2,
+      e: "Σ n/(n² + 4) diverge (comparada con 1/n, L = 1): no es absoluta. Pero eso no dice que la serie diverja: falta Leibniz. f′(x) = (4 − x²)/(x² + 4)² &lt; 0 para x &gt; 2, así que b<sub>n</sub> decrece desde n = 2 (que crezca al principio no importa), y b<sub>n</sub> → 0. Converge condicionalmente." },
+    { k: "Tipo parcial", q: `Determine si converge: ${M(SG("n=0") + " " + F("3<sup>n+1</sup>", "(n + 2)!"))}.`,
+      o: ["Converge: el cociente da L = 0.", "Diverge: el cociente da L = 3.", "Converge: el cociente da L = 1/3.", "No se puede decidir: el cociente da L = 1."], a: 0,
+      e: "a<sub>n+1</sub>/a<sub>n</sub> = 3<sup>n+2</sup>/(n + 3)! · (n + 2)!/3<sup>n+1</sup> = 3/(n + 3) → 0 &lt; 1: converge por el cociente. Es el 2023 P1b con otros números." }
+  ],
+  B: [
+    { k: "Conceptual", q: "¿En cuál de estas series el cociente da L = 1 (y no sirve)?",
+      o: [M("Σ 2<sup>n</sup>/n!"), M("Σ n/3<sup>n</sup>"), M("Σ (n + 1)/(n³ + 2)"), M("Σ (1/2)<sup>n</sup>")], a: 2,
+      e: "En una fracción de potencias de n el cociente siempre da 1. Σ (n + 1)/(n³ + 2) se decide con comparación en el límite con 1/n² (converge). Las otras dan L = 0, 1/3 y 1/2." },
+    { k: "Conceptual", q: `¿Qué criterio usarías para ${M(SG("n=1") + " (" + F("3n", "5n + 1") + ")<sup>n</sup>")}?`,
+      o: ["Cociente", "Raíz", "Comparación directa", "Series alternantes"], a: 1,
+      e: "Todo está elevado a la n: raíz. |a<sub>n</sub>|<sup>1/n</sup> = 3n/(5n + 1) → 3/5 &lt; 1, así que converge." },
+    { k: "Conceptual", q: "Si Σ |a<sub>n</sub>| converge, ¿qué pasa con Σ a<sub>n</sub>?",
+      o: ["Puede diverger: hay que revisar con Leibniz.", "Converge condicionalmente.", "Diverge.", "Converge absolutamente."], a: 3,
+      e: "Eso es justo lo que significa converger absolutamente, y la serie con signos también converge: no hace falta Leibniz. Por eso se prueba primero |a<sub>n</sub>|." },
+    { k: "Tipo parcial", q: `Determine si converge absolutamente, condicionalmente o diverge: ${M(SG("n=1") + " (−1)<sup>n</sup> " + F("n", "n² + 9"))}.`,
+      o: ["Diverge, porque b<sub>n</sub> crece al principio (b<sub>1</sub> &lt; b<sub>2</sub> &lt; b<sub>3</sub>).", "Converge condicionalmente.", "Converge absolutamente, porque b<sub>n</sub> → 0.", "Diverge, porque Σ |a<sub>n</sub>| diverge."], a: 1,
+      e: "Σ n/(n² + 9) diverge (con 1/n, L = 1): no es absoluta. Leibniz: f′(x) = (9 − x²)/(x² + 9)² &lt; 0 para x &gt; 3, así que b<sub>n</sub> decrece desde n = 3, y b<sub>n</sub> → 0. Converge condicionalmente. Que b<sub>n</sub> → 0 no basta para «absolutamente»." },
+    { k: "Tipo parcial", q: `Determine si converge: ${M(SG("n=1") + " (" + F("n", "n + 2") + ")<sup>n²</sup>")}.`,
+      o: ["No se puede decidir: la raíz da L = 1.", "Diverge: la raíz da L = e².", "Converge: la raíz da L = 0.", "Converge: la raíz da L = e<sup>−2</sup>."], a: 3,
+      e: "La raíz deja (n/(n + 2))<sup>n</sup> = 1/(1 + 2/n)<sup>n</sup> → 1/e² = e<sup>−2</sup> ≈ 0,14 &lt; 1: converge. Es el 2025 P1b volteado." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(elh("span", "", it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(elh("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.innerHTML = (ok ? "Correcta. " : "Incorrecta. La respuesta es la " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

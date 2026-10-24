@@ -115,7 +115,9 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
 - **Trampas:** ser menor que una serie divergente no prueba nada; no decir que L es finito y positivo; los términos negativos del principio (2025 P1a con n = 1) no cambian la conclusión, porque quitar finitos términos no cambia la convergencia.
 
 ### M4 — Alternantes, convergencia absoluta, cociente y raíz
-*Libro: 11.5–11.6 · Visto en clase · 24 pts históricos · ~2 h (viernes 23)*
+> **Versión que se usa:** [M4 · Raíz, cociente, alternantes y ¿qué criterio uso?](https://claude.ai/artifact/Hwk6wh6if4YTKyEPgNBC2V). Trae también la estrategia de M5: la lista «¿qué criterio uso?», las frases para el parcial, un clasificador en el lab y los 8 del punto 1 mezclados en el taller.
+
+*Libro: 11.5–11.6 · Visto en clase · 24 pts históricos · ~2 h (sábado 24)*
 
 - **Teoría:** **criterio de Leibniz** para series alternantes: bₙ decreciente y bₙ → 0. Convergencia **absoluta** (Σ |aₙ| converge) y **condicional**. **Cociente:** L = lim |aₙ₊₁/aₙ|. **Raíz:** L = lim |aₙ|^(1/n). Con L < 1 converge absolutamente, con L > 1 diverge y con L = 1 no dice nada. Cuándo usar cada uno: factoriales y rⁿ → cociente; todo elevado a n o a n² → raíz.
 - **Lab / visual:** el zigzag de las sumas parciales de una alternante encerrando el límite; la razón aₙ₊₁/aₙ graficada contra n, con la línea L = 1.
@@ -204,8 +206,8 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | Módulo | Teoría | Lab | Taller | Quiz (nota) | Estado |
 |---|---|---|---|---|---|
 | M1 Sucesiones y límites | ✅ | ✅ | ✅ | 4/5 (Quiz B) | ✅ |
-| M2 Series básicas | ☐ | ☐ | ☐ | — | ⏳ |
-| M3 Comparación + serie p | ☐ | ☐ | ☐ | — | 🔒 |
+| M2 Series básicas | ✅ | ✅ | ✅ | 4/5 (Quiz A) | ✅ |
+| M3 Comparación + serie p | ☐ | ☐ | ☐ | — | ⏳ |
 | M4 Raíz, cociente, alternantes y estrategia | ☐ | ☐ | ☐ | — | 🔒 |
 | M5 ¿Qué criterio uso? | — | — | — | — | Dentro de M4 |
 | M6 Series de potencias | ☐ | ☐ | ☐ | — | 🔒 |
