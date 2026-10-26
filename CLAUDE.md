@@ -51,6 +51,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Cálculo 2 | M2 · Series: geométrica, telescópica y divergencia | https://claude.ai/artifact/KY9zgRfF2aiqytsvs3YZWp | `CALCULO_2/PARCIAL_3/artifacts/M2.html` |
 | Cálculo 2 | M3 · Comparación y serie p (M5 se fusionó con M4; no hay doc `M5`) | https://claude.ai/artifact/FcYHimB26pxcfGEbXNdQif | `CALCULO_2/PARCIAL_3/artifacts/M3.html` |
 | Cálculo 2 | M4 · Raíz, cociente, alternantes y ¿qué criterio uso? (incluye la estrategia de M5) | https://claude.ai/artifact/Hwk6wh6if4YTKyEPgNBC2V | `CALCULO_2/PARCIAL_3/artifacts/M4.html` |
+| Cálculo 2 | M6 · Series de potencias: radio e intervalo de convergencia | https://claude.ai/artifact/2B2r4zNC2NfohFrv2GW7Z1 | `CALCULO_2/PARCIAL_3/artifacts/M6.html` |
 
 ## Convenciones
 

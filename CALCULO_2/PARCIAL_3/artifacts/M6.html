@@ -1,0 +1,819 @@
+<title>M6 Radio e intervalo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de M1 a M4, acento violeta de Cálculo). Columna de lectura ≤ 860px con barra de secciones fija; la recta numérica muestra el centro, el radio y los extremos, y el lab mueve x por la recta y grafica las sumas parciales en ese punto. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:8px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.rule-box ul{padding-left:20px; display:grid; gap:4px}
+.tri{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tri div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.tri div.yes{border-color:var(--green); background:var(--green-soft)}
+.tri div.bad{border-color:var(--red); background:var(--red-soft)}
+.tri div.no{border-style:dashed}
+@media (max-width:620px){ .tri{grid-template-columns:1fr} }
+
+/* El árbol de decisión */
+.flow{list-style:none; margin:0; padding:0; display:grid; counter-reset:f}
+.flow li{display:grid; grid-template-columns:2rem minmax(0,1.15fr) minmax(0,1fr); gap:4px 12px; padding:11px 12px; background:var(--surface); border:1px solid var(--rule); border-top:0; counter-increment:f; align-items:baseline}
+.flow li::before{content:counter(f); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; grid-row:1 / span 2}
+.flow li:first-child{border-top:1px solid var(--rule); border-radius:var(--r) var(--r) 0 0}
+.flow li:last-child{border-radius:0 0 var(--r) var(--r)}
+.flow .fq{font-weight:600}
+.flow .fa{font-weight:600; color:var(--green)}
+.flow .fe{grid-column:2 / -1; font-size:.87rem; color:var(--muted); line-height:1.9}
+@media (max-width:620px){ .flow li{grid-template-columns:1.6rem minmax(0,1fr)} .flow .fa{grid-column:2} .flow li::before{grid-row:1 / span 3} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-conv{fill:var(--green-soft); fill-opacity:.75}
+.gr-div{fill:var(--red-soft); fill-opacity:.75}
+.gr-one{stroke:var(--red); stroke-width:1.6}
+.gr-onet{fill:var(--red); font-family:var(--f-mono); font-size:10px; font-weight:500}
+.gr-leg{fill:var(--muted); font-family:var(--f-body); font-size:10.5px}
+.lg-c{fill:var(--green-soft); stroke:var(--green)} .lg-d{fill:var(--red-soft); stroke:var(--red)} .lg-b{fill:var(--accent-soft); stroke:var(--accent)}
+.gr-band{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.5}
+.gr-zz{fill:none; stroke:var(--accent); stroke-width:1.3; stroke-opacity:.7}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.cls-stage{padding:16px; gap:14px}
+.cls-series{font-size:1.25rem; padding:18px 12px; text-align:center; background:var(--paper); border:1px solid var(--rule); border-radius:8px; overflow-x:auto; line-height:2.2}
+.cls-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:6px}
+.crit{font:inherit; font-size:.88rem; font-weight:600; text-align:left; padding:8px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; line-height:1.35}
+.crit:hover{border-color:var(--accent)}
+.crit.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.crit.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.crit:disabled{cursor:default}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.pri{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+.pri.hi{color:var(--red); border-color:currentColor}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+/* Recta numérica */
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+.nl-fig{max-width:560px}
+.nl-axis{stroke:var(--muted); stroke-width:1.4}
+.nl-int{stroke:var(--accent); stroke-width:7; stroke-opacity:.35}
+.nl-t{fill:var(--ink); font-family:var(--f-mono); font-size:11px}
+.nl-R{fill:var(--accent); font-family:var(--f-mono); font-size:11px; font-weight:500}
+.nl-in{fill:var(--accent); stroke:var(--accent); stroke-width:2}
+.nl-out{fill:var(--surface); stroke:var(--accent); stroke-width:2}
+.nl-x{fill:var(--ink); font-family:var(--f-mono); font-size:11px; font-weight:500}
+.nl-xok{fill:var(--green)} .nl-xno{fill:var(--red)}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/Ra9LHTCCAvquo8459V5bhS" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>30 min</span></a>
+    <a href="#lab">2 Lab <span>5 min</span></a>
+    <a href="#taller">3 Taller <span>30 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Parcial 3 · Módulo 6</p>
+    <h1>Series de potencias: radio e intervalo de convergencia</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>~1,25 h</span>
+      <span>Libro 11.8 · 28 pts en tus dos parciales</span>
+    </div>
+    <p class="prose">El P2 de 2023 y el P3 de 2025 fueron el mismo ejercicio, idéntico: hallar el radio y el intervalo de convergencia de Σ (−1)<sup>n</sup>(x + 2)<sup>n</sup>/(3<sup>n</sup>(n² + 1)). Vale 14 de 50 puntos. Es el punto que más vale y el más mecánico: una receta de 5 pasos que usa el cociente de M4 y los criterios de M2 a M4 en los extremos.</p>
+    <div class="callout">
+      <h3>Dónde aparece en tus parciales</h3>
+      <p>2023-19 P2 y 2025-10 P3 (14 pts cada uno): el mismo ejercicio. Y en el 2025 P4 (M7) piden el intervalo de la serie de Taylor, que se halla igual.</p>
+    </div>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M7.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es una serie de potencias, la receta de 5 pasos y por qué los extremos se prueban aparte. Tres ejemplos resueltos: el del parcial, la serie del 2025 P4b y una de la hoja 11.2.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">x</td><td>«equis»</td><td>La variable: un número que tú escoges. Para cada x, la serie se vuelve una serie de números como las de M2 a M4.</td><td>Con x = 1, (x + 2)<sup>n</sup> = 3<sup>n</sup></td></tr>
+          <tr><td class="mono">a</td><td>«a», el centro</td><td>El número que vuelve cero el paréntesis (x − a). En x = a la serie siempre converge.</td><td>(x + 2) = (x − (−2)): a = −2</td></tr>
+          <tr><td class="mono">Σ c<sub>n</sub>(x − a)<sup>n</sup></td><td>«serie de potencias centrada en a»</td><td>Una serie en la que cada término lleva (x − a) elevado a la n. c<sub>n</sub> es todo lo demás: el coeficiente.</td><td>c<sub>n</sub> = (−1)<sup>n</sup>/(3<sup>n</sup>(n² + 1))</td></tr>
+          <tr><td class="mono">|x − a|</td><td>«valor absoluto de x menos a»</td><td>La distancia de x al centro.</td><td>Con x = 1: |1 + 2| = 3</td></tr>
+          <tr><td class="mono">R</td><td>«radio de convergencia»</td><td>Hasta qué distancia del centro converge: converge si |x − a| &lt; R y diverge si |x − a| &gt; R.</td><td>R = 3</td></tr>
+          <tr><td class="mono">L(x)</td><td>«ele de equis»</td><td>El límite del cociente de M4, que ahora depende de x.</td><td>L(x) = |x + 2|/3</td></tr>
+          <tr><td class="mono">[ ] y ( )</td><td>«corchete» y «paréntesis»</td><td>En un intervalo, el corchete incluye el extremo y el paréntesis no.</td><td>[−5, 1) incluye −5 pero no 1</td></tr>
+          <tr><td class="mono">intervalo</td><td>«intervalo de convergencia»</td><td>Todos los x donde la serie converge: de a − R hasta a + R, más los extremos que sí convergen.</td><td>[−5, 1]</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo es un ejercicio de tus parciales o de las hojas, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Lo tachado en rojo es lo que se cancela. El último paso es lo que escribes en el parcial.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 1 · una serie para cada x</span><h3>Qué es una serie de potencias</h3></div>
+      <p class="prose">Una serie de potencias tiene una x adentro. Cuando escoges un número para x, te queda una serie de números como las de M2 a M4, que converge o diverge. La pregunta del parcial es: ¿para qué valores de x converge? La respuesta siempre tiene la misma forma: <b>converge cerca del centro y diverge lejos de él</b>. La frontera está a una distancia R del centro, hacia los dos lados.</p>
+      <figure class="nl-fig"><div id="fig-nl"></div><figcaption class="small muted">El intervalo del parcial: centro −2, radio 3. Los extremos −5 y 1 se prueban aparte; en este ejercicio los dos convergen.</figcaption></figure>
+
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · Hoja 11.2 (4d) · ya la viste en M2</span>
+            <h4 id="wx1-h">La geométrica es una serie de potencias</h4>
+            <p>Encuentre los valores de x para los cuales la serie converge: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> (<span class="frac"><span>x + 2</span><span>5</span></span>)<sup>n</sup></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Reconoce la geométrica.</p><p class="why">Todo está elevado a la n: la razón es lo de adentro (M2).</p><div class="mx">r = <span class="frac"><span>x + 2</span><span>5</span></span></div></li>
+          <li><p class="what">Pide |r| &lt; 1.</p><p class="why">Una geométrica converge si y solo si |r| &lt; 1. Multiplicas por 5 a los dos lados.</p><div class="mx">|<span class="frac"><span>x + 2</span><span>5</span></span>| &lt; 1<span class="ar">⇔</span>|x + 2| &lt; 5</div></li>
+          <li><p class="what">Lee el centro y el radio.</p><p class="why">|x + 2| = |x − (−2)| es la distancia de x a −2. La serie converge cuando esa distancia es menor que 5.</p><div class="mx">centro a = −2<span class="ar">y</span>radio R = 5</div></li>
+          <li><p class="what">Quita el valor absoluto.</p><p class="why">|algo| &lt; 5 quiere decir −5 &lt; algo &lt; 5. Restas 2 en las tres partes.</p><div class="mx">−5 &lt; x + 2 &lt; 5<span class="ar">⇔</span>−7 &lt; x &lt; 3</div></li>
+          <li><p class="what">Prueba los extremos.</p><p class="why">En x = 3 la razón es 1 y en x = −7 es −1: con |r| = 1 la geométrica diverge porque el término no tiende a 0.</p><div class="mx">x = 3: Σ 1<sup>n</sup> diverge<span class="ar">·</span>x = −7: Σ (−1)<sup>n</sup> diverge</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> centro −2, radio 5, intervalo (−7, 3).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Toda serie de potencias se porta así: converge en un intervalo alrededor del centro. Lo que cambia en el parcial es que en los extremos no siempre diverge: hay que probar cada uno.</p>
+      </article>
+    </div>
+
+    <!-- Idea 2 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 2 · el ejercicio de 14 pts</span><h3>La receta para el radio y el intervalo</h3></div>
+      <ol class="steps">
+        <li><span><b>Centro:</b> el número que vuelve cero el paréntesis. (x + 2) → a = −2.</span></li>
+        <li><span><b>Cociente con valor absoluto</b> (M4): L(x) = lim |a<sub>n+1</sub>/a<sub>n</sub>|. Como x no depende de n, |x − a| sale del límite.</span></li>
+        <li><span><b>Radio:</b> pide L(x) &lt; 1 y despeja |x − a| &lt; R.</span></li>
+        <li><span><b>Extremos:</b> reemplaza x = a − R y x = a + R en la serie <b>original</b> y decide cada serie de números con M2 a M4. En los extremos el cociente da 1, así que no sirve: hay que usar otro criterio.</span></li>
+        <li><span><b>Intervalo:</b> corchete en el extremo que converge, paréntesis en el que diverge.</span></li>
+      </ol>
+
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · Parcial 2025-10 P3 = 2023-19 P2 (14 pts)</span>
+            <h4 id="wx2-h">El ejercicio que salió idéntico dos veces</h4>
+            <p>Hallar el radio y el intervalo de convergencia de la siguiente serie de potencias: <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> (−1)<sup>n</sup> <span class="frac"><span>(x + 2)<sup>n</sup></span><span>3<sup>n</sup>(n² + 1)</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Encuentra el centro.</p><p class="why">Lo que vuelve cero el paréntesis: x + 2 = 0.</p><div class="mx">(x + 2) = (x − (−2))<span class="ar">→</span>a = −2</div></li>
+          <li><p class="what">Escribe a<sub>n</sub> y a<sub>n+1</sub>.</p><p class="why">Cambias cada n por (n + 1). La x se queda quieta: es un número fijo.</p><div class="mx">a<sub>n</sub> = (−1)<sup>n</sup><span class="frac"><span>(x + 2)<sup>n</sup></span><span>3<sup>n</sup>(n² + 1)</span></span><span class="ar">→</span>a<sub>n+1</sub> = (−1)<sup>n+1</sup><span class="frac"><span>(x + 2)<sup>n+1</sup></span><span>3<sup>n+1</sup>((n + 1)² + 1)</span></span></div></li>
+          <li><p class="what">Arma el cociente con valor absoluto.</p><p class="why">El valor absoluto borra el (−1): |(−1)<sup>n+1</sup>/(−1)<sup>n</sup>| = |−1| = 1. Multiplicas por a<sub>n</sub> volteada y juntas lo parecido.</p><div class="mx">|<span class="frac"><span>a<sub>n+1</sub></span><span>a<sub>n</sub></span></span>| = <span class="frac"><span>|x + 2|<sup>n+1</sup></span><span>|x + 2|<sup>n</sup></span></span>·<span class="frac"><span>3<sup>n</sup></span><span>3<sup>n+1</sup></span></span>·<span class="frac"><span>n² + 1</span><span>(n + 1)² + 1</span></span></div></li>
+          <li><p class="what">Simplifica las potencias.</p><p class="why">Misma base: se restan los exponentes. (n + 1) − n = 1 arriba, y n − (n + 1) = −1 con el 3.</p><div class="mx"><span class="frac"><span>|x + 2|<sup>n+1</sup></span><span>|x + 2|<sup>n</sup></span></span> = |x + 2|<span class="ar">y</span><span class="frac"><span>3<sup>n</sup></span><span>3<sup>n+1</sup></span></span> = <span class="frac"><span>1</span><span>3</span></span></div></li>
+          <li><p class="what">Toma el límite.</p><p class="why">|x + 2| no depende de n: sale del límite. La fracción que queda tiene grado 2 arriba y abajo, así que tiende a 1 (M1).</p><div class="mx">L(x) = <span class="frac"><span>|x + 2|</span><span>3</span></span>·<span class="lim">lim<small>n→∞</small></span> <span class="frac"><span>n² + 1</span><span>(n + 1)² + 1</span></span> = <span class="frac"><span>|x + 2|</span><span>3</span></span>·1 = <span class="frac"><span>|x + 2|</span><span>3</span></span></div></li>
+          <li><p class="what">Pide L(x) &lt; 1 y lee el radio.</p><p class="why">El cociente dice que converge (absolutamente) si L &lt; 1 y diverge si L &gt; 1. Multiplicas por 3.</p><div class="mx"><span class="frac"><span>|x + 2|</span><span>3</span></span> &lt; 1<span class="ar">⇔</span>|x + 2| &lt; 3<span class="ar">→</span>R = 3</div></li>
+          <li><p class="what">Quita el valor absoluto.</p><p class="why">|x + 2| &lt; 3 quiere decir −3 &lt; x + 2 &lt; 3. Restas 2 en las tres partes. Los extremos son a ± R = −2 ± 3.</p><div class="mx">−3 &lt; x + 2 &lt; 3<span class="ar">⇔</span>−5 &lt; x &lt; 1</div></li>
+          <li><p class="what">Extremo derecho: x = 1.</p><p class="why">Reemplazas en la serie original: x + 2 = 3, y el 3<sup>n</sup> se cancela.</p><div class="mx">(−1)<sup>n</sup><span class="frac"><span><span class="cx">3<sup>n</sup></span></span><span><span class="cx">3<sup>n</sup></span>(n² + 1)</span></span> = <span class="frac"><span>(−1)<sup>n</sup></span><span>n² + 1</span></span></div></li>
+          <li><p class="what">Decide la serie de x = 1.</p><p class="why">Sin el signo, 1/(n² + 1) ≤ 1/n² para n ≥ 1, y Σ 1/n² converge (p = 2). El término de n = 0 es uno solo y no cambia nada.</p><div class="mx">Σ |<span class="frac"><span>(−1)<sup>n</sup></span><span>n² + 1</span></span>| converge<span class="ar">→</span>converge absolutamente: x = 1 entra</div></li>
+          <li><p class="what">Extremo izquierdo: x = −5.</p><p class="why">x + 2 = −3, y (−3)<sup>n</sup> = (−1)<sup>n</sup>·3<sup>n</sup>. Los dos (−1)<sup>n</sup> se multiplican: (−1)<sup>n</sup>·(−1)<sup>n</sup> = (−1)<sup>2n</sup> = 1. Los signos se cancelan.</p><div class="mx">(−1)<sup>n</sup><span class="frac"><span>(−3)<sup>n</sup></span><span>3<sup>n</sup>(n² + 1)</span></span> = (−1)<sup>n</sup>(−1)<sup>n</sup><span class="frac"><span><span class="cx">3<sup>n</sup></span></span><span><span class="cx">3<sup>n</sup></span>(n² + 1)</span></span> = <span class="frac"><span>1</span><span>n² + 1</span></span></div></li>
+          <li><p class="what">Decide la serie de x = −5.</p><p class="why">Es positiva y 1/(n² + 1) ≤ 1/n² para n ≥ 1: comparación directa con la serie p, p = 2.</p><div class="mx">Σ <span class="frac"><span>1</span><span>n² + 1</span></span> converge<span class="ar">→</span>x = −5 entra</div></li>
+          <li><p class="what">Escribe la respuesta.</p><div class="mx txt">Por el criterio del cociente, L(x) = |x + 2|/3, así que la serie converge absolutamente si |x + 2| &lt; 3 y diverge si |x + 2| &gt; 3: el radio es R = 3. En x = 1 queda Σ (−1)<sup>n</sup>/(n² + 1), que converge absolutamente porque 1/(n² + 1) ≤ 1/n² y Σ 1/n² converge. En x = −5 queda Σ 1/(n² + 1), que converge por comparación con Σ 1/n². El intervalo de convergencia es [−5, 1].</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> R = 3 e intervalo [−5, 1].</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El centro −2 está justo en la mitad de −5 y 1, y de −2 a cada extremo hay 3: el radio. Los extremos son más o menos la mitad del puntaje: sin ellos, el ejercicio queda a medias.</p>
+      </article>
+    </div>
+
+    <!-- Idea 3 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 3 · por qué se prueban los dos</span><h3>Los extremos pueden dar distinto</h3>
+      </div>
+      <p class="prose">En los extremos L(x) = 1, y con L = 1 el cociente no decide (M4). Cada extremo es una serie de números distinta, y puede pasar que una converja y la otra no. Lo ves en esta serie, que es la que sale en el 2025 P4b cuando hallas la serie de Taylor del logaritmo (M7).</p>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · La serie del Parcial 2025-10 P4b</span>
+            <h4 id="wx3-h">Un extremo entra y el otro no</h4>
+            <p>Hallar el radio y el intervalo de convergencia de <span class="m"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> (−1)<sup>n−1</sup> <span class="frac"><span>3(x − 5)<sup>n</sup></span><span>n</span></span></span>.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Encuentra el centro.</p><div class="mx">(x − 5)<span class="ar">→</span>a = 5</div></li>
+          <li><p class="what">Arma el cociente con valor absoluto.</p><p class="why">El (−1) desaparece con el valor absoluto, el 3 se cancela y las potencias de |x − 5| dejan una sola.</p><div class="mx">|<span class="frac"><span>a<sub>n+1</sub></span><span>a<sub>n</sub></span></span>| = <span class="frac"><span><span class="cx">3</span>|x − 5|<sup>n+1</sup></span><span>n + 1</span></span>·<span class="frac"><span>n</span><span><span class="cx">3</span>|x − 5|<sup>n</sup></span></span> = |x − 5|·<span class="frac"><span>n</span><span>n + 1</span></span></div></li>
+          <li><p class="what">Toma el límite y lee el radio.</p><p class="why">n/(n + 1) → 1. Pides L(x) &lt; 1.</p><div class="mx">L(x) = |x − 5| &lt; 1<span class="ar">→</span>R = 1<span class="ar">→</span>4 &lt; x &lt; 6</div></li>
+          <li><p class="what">Extremo derecho: x = 6.</p><p class="why">x − 5 = 1 y 1<sup>n</sup> = 1. Queda 3 veces la armónica alternante: b<sub>n</sub> = 1/n decrece y tiende a 0, así que converge por Leibniz (M4).</p><div class="mx">Σ (−1)<sup>n−1</sup><span class="frac"><span>3</span><span>n</span></span> = 3(1 − <span class="frac"><span>1</span><span>2</span></span> + <span class="frac"><span>1</span><span>3</span></span> − …) converge<span class="ar">→</span>x = 6 entra</div></li>
+          <li><p class="what">Extremo izquierdo: x = 4.</p><p class="why">x − 5 = −1, así que (−1)<sup>n−1</sup>(−1)<sup>n</sup> = (−1)<sup>2n−1</sup> = −1 siempre. Queda −3 veces la armónica, que diverge.</p><div class="mx">Σ <span class="frac"><span>−3</span><span>n</span></span> = −3·Σ <span class="frac"><span>1</span><span>n</span></span> diverge<span class="ar">→</span>x = 4 no entra</div></li>
+          <li><p class="what">Escribe la respuesta.</p><div class="mx txt">R = 1. En x = 6 la serie converge (criterio de series alternantes) y en x = 4 diverge (es −3 por la armónica). El intervalo de convergencia es (4, 6].</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> R = 1 e intervalo (4, 6].</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Con 1/n abajo, un extremo da la armónica (diverge) y el otro la armónica alternante (converge). Con 1/(n² + 1) abajo, como en el parcial, los dos convergen. Con n arriba, el término no tiende a 0 y los dos divergen.</p>
+      </article>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Lo que queda en los extremos</th><th>¿Converge?</th><th>Con qué</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Σ 1/(n² + 1) o Σ (−1)<sup>n</sup>/(n² + 1)</td><td>Sí, los dos</td><td>Comparación con 1/n² (M3)</td></tr>
+          <tr><td class="mono">Σ (−1)<sup>n</sup>/n</td><td>Sí (condicionalmente)</td><td>Leibniz (M4)</td></tr>
+          <tr><td class="mono">Σ 1/n</td><td>No</td><td>Serie p con p = 1 (M3)</td></tr>
+          <tr><td class="mono">Σ (−1)<sup>n</sup> o Σ n</td><td>No</td><td>El término no tiende a 0 (M2)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>Dos casos que no han salido</h3>
+      <p class="prose muted">Basta con saber leerlos. Si el cociente da 0 para todo x, converge en toda la recta: R = ∞. Si da ∞ para todo x ≠ 0, solo converge en el centro: R = 0.</p>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Serie</th><th>L(x)</th><th>Radio</th><th>Intervalo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Σ x<sup>n</sup>/n!</td><td class="mono">|x|·lim 1/(n + 1) = 0</td><td class="mono">∞</td><td class="mono">(−∞, ∞)</td></tr>
+          <tr><td class="mono">Σ n!·x<sup>n</sup></td><td class="mono">|x|·lim (n + 1) = ∞ si x ≠ 0</td><td class="mono">0</td><td>solo x = 0</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>La frase para el parcial</h3>
+      <div class="mx txt">Por el criterio del cociente, L(x) = |x − a|/R, así que la serie converge absolutamente si |x − a| &lt; R y diverge si |x − a| &gt; R: el radio es R. En x = a + R queda Σ …, que [converge o diverge] por … . En x = a − R queda Σ …, que [converge o diverge] por … . El intervalo de convergencia es … .</div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas</h3>
+      <p><b>No olvides los extremos:</b> son más o menos la mitad del puntaje.</p>
+      <p><b>En los extremos se reemplaza x en la serie original,</b> no en L(x): ahí L = 1 y no dice nada.</p>
+      <p><b>En x = −5, (−1)<sup>n</sup>(−3)<sup>n</sup> = 3<sup>n</sup>:</b> los signos se cancelan y la serie queda positiva.</p>
+      <p><b>El radio no es el intervalo:</b> R = 3 es un número; el intervalo es [−5, 1].</p>
+      <p><b>Corchete = incluye, paréntesis = no incluye.</b> Si escribes (−5, 1) en el parcial, dices que los extremos divergen.</p>
+      <p><b>Ojo con un número delante de x:</b> |2x − 1| &lt; 1 es |x − 1/2| &lt; 1/2, así que R = 1/2, no 1. No ha salido, pero es la trampa clásica.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Mueve x por la recta y mira qué hacen las sumas parciales: dentro del intervalo se estabilizan, fuera explotan y en los extremos depende de la serie.</p></div>
+    <div class="lab">
+      <div class="lab-stage"><div id="ps-line" class="lab-fig"></div><div id="ps-svg" class="lab-fig"></div><p class="small muted" id="ps-note"></p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="ps-sel">Serie</label><select id="ps-sel"></select></div>
+        <div class="ctl"><label for="ps-x" id="ps-x-lab">x = 0</label><input type="range" id="ps-x" min="0" max="30" step="1" value="20"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Distancia al centro, |x − a|</span><b id="ps-d">—</b></div>
+          <div class="ro"><span id="ps-L-lab">L(x)</span><b id="ps-L">—</b></div>
+          <div class="ro"><span>Suma de la serie</span><b id="ps-s">—</b></div>
+          <div class="status" id="ps-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Con la serie del parcial, pon x = 1,6 y después x = −5. ¿Qué pasa con las sumas parciales en cada caso?</summary>
+          <div class="rev-body"><p><b>En x = 1,6 explotan:</b> |x + 2| = 3,6 &gt; 3, así que L = 1,2 &gt; 1 y diverge. <b>En x = −5 se estabilizan</b> en ≈ 2,077: es el extremo, y ahí queda Σ 1/(n² + 1), que converge.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Con la serie del 2025 P4b, compara x = 6 con x = 4. ¿En cuál se estabilizan?</summary>
+          <div class="rev-body"><p><b>En x = 6</b>, en zigzag hacia 3·ln 2 ≈ 2,079 (la armónica alternante). <b>En x = 4</b> bajan sin parar, despacio, como −3 por la armónica: diverge. Por eso el intervalo es (4, 6].</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero el ejercicio del parcial sin mirar, después variantes con la misma plantilla y extremos que dan distinto.</p></div>
+    <p class="prose">Hazlos en papel, con la frase completa. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. Si quieres que te corrija la redacción, mándame una foto o escríbela en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas a M7 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M7 · Series de Taylor con la geométrica (2025 P4 y 2023 P3).</p>
+    <p>Fuente de los problemas: parciales 3 de 2023-19 y 2025-10 y la hoja 11.2 del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const dec = (v, d) => v.toFixed(d).replace(".", ",").replace(/^-/, "−");
+const num = (v) => (Math.abs(v - Math.round(v)) < 1e-9 ? String(Math.round(v)) : dec(v, 1)).replace(/^-/, "−");
+
+/* ---------- Notación ---------- */
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const SG = (lo, hi = "∞") => `<span class="sig"><small>${hi}</small><b>Σ</b><small>${lo}</small></span>`;
+const M = (x) => `<span class="m">${x}</span>`;
+
+/* ---------- Gráficas ---------- */
+function niceStep(span, count) {
+  const raw = span / count, mag = Math.pow(10, Math.floor(Math.log10(raw))), e = raw / mag;
+  return (e >= 7.5 ? 10 : e >= 3.5 ? 5 : e >= 1.5 ? 2 : 1) * mag;
+}
+/* La recta numérica: centro, radio, extremos (lleno = entra, vacío = no entra) y, si se pasa, la posición de x. */
+function numberLine(o) {
+  const W = 360, H = o.x != null ? 70 : 58, y0 = o.x != null ? 40 : 28, pad = 18;
+  const lo = o.a - 1.6 * o.R, hi = o.a + 1.6 * o.R;
+  const X = (v) => pad + (v - lo) / (hi - lo) * (W - 2 * pad);
+  let g = `<line x1="${pad - 6}" y1="${y0}" x2="${W - pad + 6}" y2="${y0}" class="nl-axis"/>`;
+  g += `<line x1="${f1(X(o.a - o.R))}" y1="${y0}" x2="${f1(X(o.a + o.R))}" y2="${y0}" class="nl-int"/>`;
+  [[o.a - o.R, o.inL], [o.a, null], [o.a + o.R, o.inR]].forEach(([v, inc]) => {
+    g += `<line x1="${f1(X(v))}" y1="${y0 - 5}" x2="${f1(X(v))}" y2="${y0 + 5}" class="nl-axis"/>`;
+    g += `<text x="${f1(X(v))}" y="${y0 + 20}" class="nl-t" text-anchor="middle">${num(v)}${inc === null ? " (centro)" : ""}</text>`;
+    if (inc !== null) g += `<circle cx="${f1(X(v))}" cy="${y0}" r="5.5" class="${inc ? "nl-in" : "nl-out"}"/>`;
+  });
+  if (o.x == null) g += `<text x="${f1((X(o.a) + X(o.a + o.R)) / 2)}" y="${y0 - 9}" class="nl-R" text-anchor="middle">R = ${num(o.R)}</text>`;
+  if (o.x != null) {
+    const cx = X(o.x);
+    g += `<path d="M${f1(cx)} ${y0 - 4} l-6 -10 h12 z" class="${o.ok ? "nl-xok" : "nl-xno"}"/><text x="${f1(Math.min(Math.max(cx, 34), W - 34))}" y="11" class="nl-x" text-anchor="middle">x = ${dec(o.x, 1)}</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
+}
+/* Sumas parciales: puntos unidos, línea punteada en la suma y leyenda arriba. */
+function chart(o) {
+  const W = 360, H = 210, ml = 46, mr = 12, mt = o.legend ? 26 : 14, mb = 32;
+  const n0 = o.n0, N = o.N, ys = [];
+  for (let n = n0; n <= N; n++) ys.push(o.f(n));
+  let lo = Math.min(...ys), hi = Math.max(...ys);
+  if (o.L != null) { lo = Math.min(lo, o.L); hi = Math.max(hi, o.L); }
+  const pad = (hi - lo) * 0.08 || 0.5; hi += pad; lo -= pad;
+  const X = (n) => ml + (N === n0 ? 0 : (n - n0) / (N - n0)) * (W - ml - mr);
+  const Y = (y) => mt + (hi - y) / (hi - lo) * (H - mt - mb);
+  let g = "";
+  const st = niceStep(hi - lo, 4), d = Math.max(0, -Math.floor(Math.log10(st) + 1e-9));
+  for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) {
+    const vv = Math.abs(v) < st / 1e6 ? 0 : v;
+    g += `<line x1="${ml}" y1="${f1(Y(vv))}" x2="${W - mr}" y2="${f1(Y(vv))}" class="gr-grid"/><text x="${ml - 6}" y="${f1(Y(vv) + 3.5)}" class="gr-tick" text-anchor="end">${dec(vv, d)}</text>`;
+  }
+  [...new Set([n0, Math.round((n0 + N) / 2), N])].forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 14}" class="gr-tick" text-anchor="middle">${t}</text>`; });
+  g += `<text x="${(ml + W - mr) / 2}" y="${H - 3}" class="gr-lab" text-anchor="middle">${o.xlab}</text>`;
+  g += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}" class="gr-axis"/>`;
+  if (o.L != null) g += `<line x1="${ml}" y1="${f1(Y(o.L))}" x2="${W - mr}" y2="${f1(Y(o.L))}" class="gr-L"/>`;
+  g += `<polyline points="${ys.map((y, i) => `${f1(X(n0 + i))},${f1(Y(y))}`).join(" ")}" class="gr-zz"/>`;
+  ys.forEach((y, i) => { g += `<circle cx="${f1(X(n0 + i))}" cy="${f1(Y(y))}" r="2.8" class="gr-dot"/>`; });
+  if (o.legend) {
+    let x = 8;
+    o.legend.forEach((it) => {
+      g += `<line x1="${x}" y1="10" x2="${x + 16}" y2="10" class="${it.cls}"/><text x="${x + 20}" y="14" class="gr-leg">${it.txt}</text>`;
+      x += 20 + it.txt.length * 5.7 + 12;
+    });
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
+}
+
+$("#fig-nl").innerHTML = numberLine({ a: -2, R: 3, inL: true, inR: true, aria: "Recta numérica: centro −2, radio 3, intervalo de −5 a 1 con los dos extremos incluidos" });
+
+/* ---------- Lab: la recta y las sumas parciales ---------- */
+const sgn = (n) => (n % 2 ? -1 : 1);
+const PS = [
+  { lab: "Parcial (2023 P2 = 2025 P3): Σ (−1)ⁿ(x + 2)ⁿ/(3ⁿ(n² + 1))", a: -2, R: 3, n0: 0, inL: true, inR: true, Lt: "|x + 2|/3",
+    term: (n, x) => sgn(n) * Math.pow((x + 2) / 3, n) / (n * n + 1), endS: { L: 2.076674, R: 0.636015 },
+    endTxt: { L: "Extremo x = −5: queda Σ 1/(n² + 1), que converge. Entra.", R: "Extremo x = 1: queda Σ (−1)ⁿ/(n² + 1), que converge. Entra." } },
+  { lab: "La serie del 2025 P4b: Σ (−1)ⁿ⁻¹·3(x − 5)ⁿ/n", a: 5, R: 1, n0: 1, inL: false, inR: true, Lt: "|x − 5|",
+    term: (n, x) => -sgn(n) * 3 * Math.pow(x - 5, n) / n, endS: { L: null, R: 3 * Math.LN2 },
+    endTxt: { L: "Extremo x = 4: queda −3·Σ 1/n, la armónica. Diverge: no entra.", R: "Extremo x = 6: queda 3·Σ (−1)ⁿ⁻¹/n, la armónica alternante. Converge: entra." } },
+  { lab: "Hoja 11.2 (4d): Σ ((x + 2)/5)ⁿ", a: -2, R: 5, n0: 0, inL: false, inR: false, Lt: "|x + 2|/5",
+    term: (n, x) => Math.pow((x + 2) / 5, n), endS: { L: null, R: null },
+    endTxt: { L: "Extremo x = −7: queda Σ (−1)ⁿ. Diverge: no entra.", R: "Extremo x = 3: queda Σ 1ⁿ. Diverge: no entra." } }
+];
+const xOf = (s, k) => Math.round((s.a + (k - 15) * s.R / 10) * 1000) / 1000;
+function drawPS() {
+  const s = PS[Number($("#ps-sel").value)], k = Number($("#ps-x").value), x = xOf(s, k), N = 60;
+  const dist = Math.abs(x - s.a), side = x > s.a ? "R" : "L";
+  const inside = dist < s.R - 1e-9, edge = Math.abs(dist - s.R) < 1e-9;
+  const conv = inside || (edge && (side === "R" ? s.inR : s.inL));
+  const part = []; let acc = 0; for (let n = s.n0; n <= N; n++) { acc += s.term(n, x); part.push(acc); }
+  let S = null;
+  if (inside) { S = 0; for (let n = s.n0; n <= 3000; n++) S += s.term(n, x); }
+  else if (edge && conv) S = s.endS[side];
+  $("#ps-line").innerHTML = numberLine({ a: s.a, R: s.R, inL: s.inL, inR: s.inR, x, ok: conv, aria: "Recta numérica con el intervalo de convergencia y la posición de x" });
+  $("#ps-svg").innerHTML = chart({ n0: s.n0, N, f: (n) => part[n - s.n0], L: S, xlab: "términos sumados N",
+    legend: S != null ? [{ cls: "gr-zz", txt: "sumas parciales" }, { cls: "gr-L", txt: "suma ≈ " + dec(S, 3) }] : [{ cls: "gr-zz", txt: "sumas parciales: no se estabilizan" }],
+    aria: "Sumas parciales de la serie en x = " + dec(x, 1) });
+  $("#ps-x-lab").textContent = "x = " + dec(x, 1);
+  $("#ps-d").textContent = dec(dist, 2);
+  $("#ps-L-lab").textContent = "L(x) = " + s.Lt;
+  $("#ps-L").textContent = dec(dist / s.R, 2);
+  $("#ps-s").textContent = S != null ? "≈ " + dec(S, 4) : "no existe";
+  const st = $("#ps-status");
+  if (inside) { st.textContent = "Dentro: L(x) < 1, converge (absolutamente)."; st.className = "status ok"; }
+  else if (edge) { st.textContent = s.endTxt[side]; st.className = "status " + (conv ? "ok" : "bad"); }
+  else { st.textContent = "Fuera: L(x) > 1, diverge. El término crece."; st.className = "status bad"; }
+  $("#ps-note").textContent = "Centro " + num(s.a) + ", radio " + num(s.R) + ". Los extremos se deciden aparte: en ellos L(x) = 1.";
+}
+PS.forEach((s, i) => { const o = el("option", "", s.lab); o.value = String(i); $("#ps-sel").appendChild(o); });
+$("#ps-sel").addEventListener("change", drawPS);
+$("#ps-x").addEventListener("input", drawPS);
+drawPS();
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "El del parcial, sin mirar", pri: true, src: "Parcial 2023-19 P2 = 2025-10 P3 · 14 pts",
+    txt: `<p>Hállalo completo en papel, en 15 minutos y sin mirar el ejemplo 2. Escribe los 5 pasos y la frase.</p>
+      <p>Hallar el radio y el intervalo de convergencia de la siguiente serie de potencias: ${M(SG("n=0") + " (−1)<sup>n</sup> " + F("(x + 2)<sup>n</sup>", "3<sup>n</sup>(n² + 1)"))}.</p>`,
+    checks: [{ q: "Centro y radio", opts: ["a = 2, R = 3", "a = −2, R = 3", "a = −2, R = 1/3", "a = −2, R = 9"], a: 1 },
+      { q: "En x = 1 queda…", opts: ["Σ (−1)<sup>n</sup>/(n² + 1): converge", "Σ 3<sup>n</sup>/(n² + 1): diverge", "Σ 1/(n² + 1): converge", "Σ (−1)<sup>n</sup>: diverge"], a: 0 },
+      { q: "En x = −5 queda…", opts: ["Σ (−1)<sup>n</sup>/(n² + 1): converge", "Σ 1/(n² + 1): converge", "Σ (−3)<sup>n</sup>/(n² + 1): diverge", "Σ (−1)<sup>n</sup>·3<sup>n</sup>/(n² + 1): diverge"], a: 1 },
+      { q: "Intervalo de convergencia", opts: ["(−5, 1)", "[−5, 1)", "[−5, 1]", "(−5, 1]"], a: 2 }],
+    hints: ["El cociente deja |x + 2|/3 por una fracción que tiende a 1.", "En x = −5: (−1)<sup>n</sup>(−3)<sup>n</sup> = (−1)<sup>n</sup>(−1)<sup>n</sup>3<sup>n</sup> = 3<sup>n</sup>."],
+    sol: ["<b>Centro:</b> a = −2. <b>Cociente:</b> |a<sub>n+1</sub>/a<sub>n</sub>| = (|x + 2|/3)·(n² + 1)/((n + 1)² + 1) → |x + 2|/3. <b>Radio:</b> |x + 2|/3 &lt; 1 ⇔ |x + 2| &lt; 3, así que R = 3 y −5 &lt; x &lt; 1.",
+      "<b>x = 1:</b> queda Σ (−1)<sup>n</sup>/(n² + 1); como 1/(n² + 1) ≤ 1/n² y Σ 1/n² converge, converge absolutamente. Entra.",
+      "<b>x = −5:</b> queda Σ 1/(n² + 1), que converge por comparación con Σ 1/n². Entra.",
+      "<b>Intervalo: [−5, 1].</b>"] },
+  { n: "T2", t: "Variantes: la misma plantilla, otros extremos", pri: true, src: "Problemas nuevos al estilo del profesor",
+    txt: `<p>Para cada serie: centro, radio y los dos extremos. Fíjate en lo que tiene abajo: decide qué pasa en los extremos.</p>
+      <ol class="items"><li>(a) ${M(SG("n=0") + " (−1)<sup>n</sup> " + F("(x − 1)<sup>n</sup>", "2<sup>n</sup>(n + 1)"))}</li><li>(b) ${M(SG("n=1") + " " + F("(x + 3)<sup>n</sup>", "n·4<sup>n</sup>"))}</li><li>(c) ${M(SG("n=0") + " " + F("(x − 2)<sup>n</sup>", "5<sup>n</sup>(n² + 1)"))}</li><li>(d) ${M(SG("n=0") + " " + F("n(x + 1)<sup>n</sup>", "3<sup>n</sup>"))}</li></ol>`,
+    checks: [{ q: "(a)", opts: ["(−1, 3]", "[−1, 3)", "[−1, 3]", "(−1, 3)"], a: 0 },
+      { q: "(b)", opts: ["(−7, 1]", "[−7, 1)", "(−7, 1)", "[−7, 1]"], a: 1 },
+      { q: "(c)", opts: ["(−3, 7)", "[−3, 7)", "[−3, 7]", "(−3, 7]"], a: 2 },
+      { q: "(d)", opts: ["[−4, 2]", "(−4, 2]", "[−4, 2)", "(−4, 2)"], a: 3 }],
+    hints: ["(a) En x = 3 queda (−1)<sup>n</sup>/(n + 1). En x = −1, (−1)<sup>n</sup>(−2)<sup>n</sup> = 2<sup>n</sup>, y queda 1/(n + 1).", "(b) En x = 1 queda la armónica; en x = −7, la armónica alternante.", "(d) En los extremos el término es n o (−1)<sup>n</sup>·n: ¿tiende a 0?"],
+    sol: ["<b>(a)</b> a = 1, L(x) = |x − 1|/2, R = 2. x = 3: Σ (−1)<sup>n</sup>/(n + 1), converge por Leibniz. x = −1: Σ 1/(n + 1), diverge (armónica). <b>(−1, 3].</b>",
+      "<b>(b)</b> a = −3, L(x) = |x + 3|/4, R = 4. x = 1: Σ 1/n, diverge. x = −7: Σ (−1)<sup>n</sup>/n, converge por Leibniz. <b>[−7, 1).</b>",
+      "<b>(c)</b> a = 2, L(x) = |x − 2|/5, R = 5. x = 7: Σ 1/(n² + 1), converge. x = −3: Σ (−1)<sup>n</sup>/(n² + 1), converge absolutamente. <b>[−3, 7].</b>",
+      "<b>(d)</b> a = −1, L(x) = |x + 1|/3 (porque (n + 1)/n → 1), R = 3. x = 2: Σ n, el término no tiende a 0, diverge. x = −4: Σ (−1)<sup>n</sup>·n, tampoco. <b>(−4, 2).</b>"] },
+  { n: "Extra", t: "Casos que no han salido", pri: false, src: "Solo si te sobra tiempo",
+    txt: `<ol class="items"><li>(e) ${M(SG("n=0") + " " + F("(2x − 1)<sup>n</sup>", "n² + 1"))}</li><li>(f) ${M(SG("n=0") + " " + F("x<sup>n</sup>", "n!"))}</li><li>(g) ${M(SG("n=0") + " n!·x<sup>n</sup>")}</li></ol>`,
+    checks: [{ q: "(e)", opts: ["R = 1/2, [0, 1]", "R = 1, [−1, 1]", "R = 1/2, (0, 1)", "R = 2, [−3/2, 5/2]"], a: 0 },
+      { q: "(f)", opts: ["Converge para todo x", "Solo en x = 0", "(−1, 1)", "[−1, 1]"], a: 0 },
+      { q: "(g)", opts: ["Converge para todo x", "Solo en x = 0", "(−1, 1)", "Nunca converge"], a: 1 }],
+    hints: ["(e) L(x) = |2x − 1| &lt; 1 ⇔ |x − 1/2| &lt; 1/2.", "(f) y (g): mira la tabla «Dos casos que no han salido»."],
+    sol: ["<b>(e)</b> |2x − 1| &lt; 1 ⇔ −1 &lt; 2x − 1 &lt; 1 ⇔ 0 &lt; x &lt; 1: centro 1/2 y R = 1/2. x = 1: Σ 1/(n² + 1), converge. x = 0: Σ (−1)<sup>n</sup>/(n² + 1), converge. <b>[0, 1].</b>",
+      "<b>(f)</b> L(x) = |x|·lim 1/(n + 1) = 0 &lt; 1 para todo x: <b>R = ∞</b>, converge en toda la recta.",
+      "<b>(g)</b> L(x) = |x|·lim (n + 1) = ∞ si x ≠ 0: <b>R = 0</b>, solo converge en x = 0."] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t));
+    h.appendChild(el("span", "pri" + (p.pri ? " hi" : ""), p.pri ? "Prioridad" : "Extra"));
+    h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(elh("div", "prob-body", p.txt));
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(elh("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu frase."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(elh("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => sb.appendChild(elh("p", "", s))); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M6", NEXT = "Aprobado. Pasas a M7: series de Taylor con la geométrica.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "Al aplicar el cociente a una serie de potencias te queda L(x) = |x − 4|/2. ¿Cuáles son el centro y el radio?",
+      o: ["Centro 2 y radio 4.", "Centro 4 y radio 1/2.", "Centro 4 y radio 2.", "Centro −4 y radio 2."], a: 2,
+      e: "|x − 4|/2 &lt; 1 ⇔ |x − 4| &lt; 2: la distancia a 4 tiene que ser menor que 2. Centro 4, radio 2." },
+    { k: "Conceptual", q: "Una serie de potencias tiene centro −2 y radio 3. ¿Qué puntos tienes que probar aparte?",
+      o: ["x = −3 y x = 3.", "x = −5 y x = 1.", "x = −2 y x = 3.", "Ninguno: el cociente ya lo decide todo."], a: 1,
+      e: "Los extremos son centro ± radio: −2 − 3 = −5 y −2 + 3 = 1. En ellos L(x) = 1, así que el cociente no decide y hay que probar cada serie." },
+    { k: "Conceptual", q: "En x = −5, ¿en qué se convierte (−1)<sup>n</sup>(x + 2)<sup>n</sup>?",
+      o: ["3<sup>n</sup>", "(−3)<sup>n</sup>", "(−1)<sup>n</sup>·3<sup>n</sup>", "−3<sup>n</sup>"], a: 0,
+      e: "(−1)<sup>n</sup>(−3)<sup>n</sup> = (−1)<sup>n</sup>(−1)<sup>n</sup>3<sup>n</sup> = (−1)<sup>2n</sup>3<sup>n</sup> = 3<sup>n</sup>. Los signos se cancelan." },
+    { k: "Tipo parcial", q: `Halle el intervalo de convergencia de ${M(SG("n=1") + " " + F("(x − 1)<sup>n</sup>", "n·2<sup>n</sup>"))}.`,
+      o: ["(−1, 3]", "[−1, 3)", "[−1, 3]", "(−1, 3)"], a: 1,
+      e: "L(x) = |x − 1|/2, R = 2. En x = 3 queda Σ 1/n: diverge. En x = −1 queda Σ (−1)<sup>n</sup>/n: converge por Leibniz. Intervalo [−1, 3)." },
+    { k: "Tipo parcial", q: `Halle el intervalo de convergencia de ${M(SG("n=0") + " " + F("(x + 4)<sup>n</sup>", "5<sup>n</sup>(n² + 1)"))}.`,
+      o: ["(−9, 1)", "[−1, 9]", "(−9, 1]", "[−9, 1]"], a: 3,
+      e: "L(x) = |x + 4|/5, R = 5, de −9 a 1. En x = 1 queda Σ 1/(n² + 1) y en x = −9 queda Σ (−1)<sup>n</sup>/(n² + 1): las dos convergen (comparación con 1/n²). Intervalo [−9, 1]." }
+  ],
+  B: [
+    { k: "Conceptual", q: "El cociente da L(x) = 3|x + 1|. ¿Cuál es el radio?",
+      o: ["3", "1/3", "1", "−1"], a: 1,
+      e: "3|x + 1| &lt; 1 ⇔ |x + 1| &lt; 1/3. El radio es 1/3 (y el centro, −1)." },
+    { k: "Conceptual", q: "¿Qué dice el intervalo de convergencia (−5, 1]?",
+      o: ["Que converge para −5 ≤ x ≤ 1.", "Que converge para −5 &lt; x ≤ 1: en x = 1 converge y en x = −5 no.", "Que converge para −5 ≤ x &lt; 1.", "Que el radio es 6."], a: 1,
+      e: "El paréntesis no incluye el extremo y el corchete sí. El radio es la mitad del largo: 6/2 = 3." },
+    { k: "Conceptual", q: "En un extremo te quedó Σ 1/(n² + 1). ¿Qué haces con ese extremo?",
+      o: ["Lo incluyes: converge por comparación con Σ 1/n².", "Lo excluyes: en los extremos siempre diverge.", "Lo excluyes: el cociente da 1.", "Lo incluyes porque el término tiende a 0."], a: 0,
+      e: "1/(n² + 1) ≤ 1/n² y Σ 1/n² converge (p = 2). Que el término tienda a 0 no basta: hay que justificar con un criterio." },
+    { k: "Tipo parcial", q: `Halle el intervalo de convergencia de ${M(SG("n=0") + " (−1)<sup>n</sup> " + F("(x − 3)<sup>n</sup>", "4<sup>n</sup>(n + 1)"))}.`,
+      o: ["[−1, 7)", "(−1, 7]", "[−1, 7]", "(−1, 7)"], a: 1,
+      e: "L(x) = |x − 3|/4, R = 4. En x = 7 queda Σ (−1)<sup>n</sup>/(n + 1): converge por Leibniz. En x = −1, (−1)<sup>n</sup>(−4)<sup>n</sup> = 4<sup>n</sup> y queda Σ 1/(n + 1): diverge. Intervalo (−1, 7]." },
+    { k: "Tipo parcial", q: `Halle el intervalo de convergencia de ${M(SG("n=0") + " " + F("n(x + 2)<sup>n</sup>", "3<sup>n</sup>"))}.`,
+      o: ["[−5, 1]", "(−5, 1]", "[−5, 1)", "(−5, 1)"], a: 3,
+      e: "L(x) = |x + 2|/3, R = 3. En x = 1 queda Σ n y en x = −5 queda Σ (−1)<sup>n</sup>·n: en los dos el término no tiende a 0, así que divergen. Intervalo (−5, 1)." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(elh("span", "", it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(elh("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.innerHTML = (ok ? "Correcta. " : "Incorrecta. La respuesta es la " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

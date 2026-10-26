@@ -146,6 +146,8 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
 - **Trampas:** usar el cociente con una fracción de potencias (da 1 y se pierde el tiempo); no escribir la conclusión.
 
 ### M6 — Series de potencias: radio e intervalo de convergencia
+> **Versión que se usa:** [M6 · Series de potencias: radio e intervalo de convergencia](https://claude.ai/artifact/2B2r4zNC2NfohFrv2GW7Z1).
+
 *Libro: 11.8 · Visto en clase (19 de octubre) · 28 % del parcial, idéntico 2 veces · ~2–2,5 h (sábado 24)*
 
 - **Teoría:** Σ cₙ(x − a)ⁿ tiene centro a y radio R. Receta en 4 pasos:
@@ -208,9 +210,9 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | M1 Sucesiones y límites | ✅ | ✅ | ✅ | 4/5 (Quiz B) | ✅ |
 | M2 Series básicas | ✅ | ✅ | ✅ | 4/5 (Quiz A) | ✅ |
 | M3 Comparación + serie p | ☐ | ☐ | ☐ | 4/5 (Quiz A) | ✅ |
-| M4 Raíz, cociente, alternantes y estrategia | ☐ | ☐ | ☐ | — | ⏳ |
+| M4 Raíz, cociente, alternantes y estrategia | ✅ | ✅ | ✅ | 4/5 (Quiz A) | ✅ |
 | M5 ¿Qué criterio uso? | — | — | — | — | Dentro de M4 |
-| M6 Series de potencias | ☐ | ☐ | ☐ | — | 🔒 |
+| M6 Series de potencias | ☐ | ☐ | ☐ | — | ⏳ |
 | M7 Taylor | ☐ | ☐ | ☐ | — | 🔒 |
 | M8 Simulacro | — | — | — | —/50 | 🔒 |
 
