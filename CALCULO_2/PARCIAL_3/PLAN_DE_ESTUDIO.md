@@ -163,6 +163,8 @@ M1 Límites ─► M2 Series básicas ─► M3 Comparación + serie p ─► M4
 - **Trampas:** olvidar los extremos (son la mitad del puntaje); en x = −5, (−1)ⁿ(−3)ⁿ = 3ⁿ: los signos se cancelan; escribir el radio como si fuera el intervalo.
 
 ### M7 — Representación de funciones y series de Taylor
+> **Versión que se usa:** [M7 · Series de Taylor con la geométrica](https://claude.ai/artifact/1CqgP2hEhtPdqfHwKDdUJ8).
+
 *Libro: 11.9–11.10 (hasta el ejemplo 6) · 17 % del parcial · lo ves en clase hoy (11.9) y el viernes (11.10) · ~2,5–3 h (domingo 25)*
 
 - **Teoría:** la geométrica como molde: 1/(1 − u) = Σ uⁿ si |u| < 1. **Receta para A/(x − c) centrada en a:** escribir x − c = (a − c) + (x − a), sacar (a − c) como factor común y usar u = −(x − a)/(a − c). Derivar e integrar término a término (ln, arctan, 1/(1 − x)²): el radio no cambia, pero los extremos hay que revisarlos de nuevo. **Taylor:** cₙ = f⁽ⁿ⁾(a)/n!; Maclaurin de eˣ, sen x y cos x, y cómo multiplicar por x o cambiar x por x².
@@ -212,8 +214,8 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | M3 Comparación + serie p | ☐ | ☐ | ☐ | 4/5 (Quiz A) | ✅ |
 | M4 Raíz, cociente, alternantes y estrategia | ✅ | ✅ | ✅ | 4/5 (Quiz A) | ✅ |
 | M5 ¿Qué criterio uso? | — | — | — | — | Dentro de M4 |
-| M6 Series de potencias | ☐ | ☐ | ☐ | — | ⏳ |
-| M7 Taylor | ☐ | ☐ | ☐ | — | 🔒 |
+| M6 Series de potencias | ☐ | ☐ | ☐ | 5/5 (Quiz A) | ✅ |
+| M7 Taylor | ☐ | ☐ | ☐ | — | ⏳ |
 | M8 Simulacro | — | — | — | —/50 | 🔒 |
 
 ---

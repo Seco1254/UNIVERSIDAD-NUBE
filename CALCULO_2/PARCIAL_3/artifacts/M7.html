@@ -1,0 +1,735 @@
+<title>M7 Series de Taylor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de M1 a M6, acento violeta de Cálculo). Columna de lectura ≤ 860px con barra de secciones fija; el lab dibuja la función y su serie de Taylor hasta n = N sobre la franja del intervalo de convergencia. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:8px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.rule-box ul{padding-left:20px; display:grid; gap:4px}
+.tri{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tri div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.tri div.yes{border-color:var(--green); background:var(--green-soft)}
+.tri div.bad{border-color:var(--red); background:var(--red-soft)}
+.tri div.no{border-style:dashed}
+@media (max-width:620px){ .tri{grid-template-columns:1fr} }
+
+/* El árbol de decisión */
+.flow{list-style:none; margin:0; padding:0; display:grid; counter-reset:f}
+.flow li{display:grid; grid-template-columns:2rem minmax(0,1.15fr) minmax(0,1fr); gap:4px 12px; padding:11px 12px; background:var(--surface); border:1px solid var(--rule); border-top:0; counter-increment:f; align-items:baseline}
+.flow li::before{content:counter(f); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; grid-row:1 / span 2}
+.flow li:first-child{border-top:1px solid var(--rule); border-radius:var(--r) var(--r) 0 0}
+.flow li:last-child{border-radius:0 0 var(--r) var(--r)}
+.flow .fq{font-weight:600}
+.flow .fa{font-weight:600; color:var(--green)}
+.flow .fe{grid-column:2 / -1; font-size:.87rem; color:var(--muted); line-height:1.9}
+@media (max-width:620px){ .flow li{grid-template-columns:1.6rem minmax(0,1fr)} .flow .fa{grid-column:2} .flow li::before{grid-row:1 / span 3} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-conv{fill:var(--green-soft); fill-opacity:.75}
+.gr-div{fill:var(--red-soft); fill-opacity:.75}
+.gr-one{stroke:var(--red); stroke-width:1.6}
+.gr-onet{fill:var(--red); font-family:var(--f-mono); font-size:10px; font-weight:500}
+.gr-leg{fill:var(--muted); font-family:var(--f-body); font-size:10.5px}
+.lg-c{fill:var(--green-soft); stroke:var(--green)} .lg-d{fill:var(--red-soft); stroke:var(--red)} .lg-b{fill:var(--accent-soft); stroke:var(--accent)}
+.gr-band{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.5}
+.gr-zz{fill:none; stroke:var(--accent); stroke-width:1.3; stroke-opacity:.7}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.cls-stage{padding:16px; gap:14px}
+.cls-series{font-size:1.25rem; padding:18px 12px; text-align:center; background:var(--paper); border:1px solid var(--rule); border-radius:8px; overflow-x:auto; line-height:2.2}
+.cls-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:6px}
+.crit{font:inherit; font-size:.88rem; font-weight:600; text-align:left; padding:8px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; line-height:1.35}
+.crit:hover{border-color:var(--accent)}
+.crit.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.crit.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.crit:disabled{cursor:default}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.pri{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+.pri.hi{color:var(--red); border-color:currentColor}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+/* Lab: la función contra su serie */
+.ft-int{fill:var(--green-soft); fill-opacity:.7}
+.ft-int.lg{stroke:var(--green)}
+.ft-f{fill:none; stroke:var(--orange); stroke-width:2.2}
+.ft-t{fill:none; stroke:var(--accent); stroke-width:1.8; stroke-dasharray:5 3}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/Ra9LHTCCAvquo8459V5bhS" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>30 min</span></a>
+    <a href="#lab">2 Lab <span>5 min</span></a>
+    <a href="#taller">3 Taller <span>25 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Parcial 3 · Módulo 7</p>
+    <h1>Series de Taylor con la geométrica</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>~1,25 h</span>
+      <span>Libro 11.9–11.10 · 17 pts en tus dos parciales</span>
+    </div>
+    <p class="prose">En los dos parciales hubo una serie de Taylor de una función A/(x − c) centrada en x = c + 1: 2/(x + 3) centrada en −2 (2023) y 3/(x − 4) centrada en 5 (2025). En 2025 además pidieron la de 3 ln(x − 4), que sale integrando la anterior. Las tres se hacen con una sola plantilla: el molde de la serie geométrica. Y siempre hay que dar el intervalo de convergencia, que se halla como en M6.</p>
+    <div class="callout">
+      <h3>Dónde aparece en tus parciales</h3>
+      <p>2023-19 P3 (6 pts): 2/(x + 3) centrada en x = −2. 2025-10 P4a (6 pts): 3/(x − 4) centrada en x = 5. 2025-10 P4b (5 pts): 3 ln(x − 4) centrada en x = 5. El enunciado dice: «no olvide indicar el intervalo de convergencia en cada caso».</p>
+    </div>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, terminaste los módulos: queda el simulacro.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>El molde geométrico, la plantilla para A/(x − c), la comprobación con derivadas y cómo se integra para el logaritmo. Tres ejemplos resueltos, todos del 2025.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">f(x)</td><td>«efe de equis»</td><td>La función que te dan.</td><td>f(x) = 3/(x − 4)</td></tr>
+          <tr><td class="mono">a</td><td>«el centro»</td><td>El punto alrededor del cual se arma la serie: «centrada en x = a». La serie se escribe con potencias de (x − a).</td><td>a = 5: potencias de (x − 5)</td></tr>
+          <tr><td class="mono">1/(1 − u) = Σ u<sup>n</sup></td><td>«el molde geométrico»</td><td>La geométrica de M2 con primer término 1 y razón u. Vale solo si |u| &lt; 1.</td><td>u = 1/2: 1/(1 − 1/2) = 2</td></tr>
+          <tr><td class="mono">u</td><td>«u»</td><td>Lo que pones en el lugar de la razón del molde.</td><td>u = −(x − 5)</td></tr>
+          <tr><td class="mono">f<sup>(n)</sup>(a)</td><td>«derivada ene-ésima de f en a»</td><td>Derivas n veces y reemplazas x = a.</td><td>f″(5) = 6 para f = 3/(x − 4)</td></tr>
+          <tr><td class="mono">c<sub>n</sub> = f<sup>(n)</sup>(a)/n!</td><td>«coeficiente de Taylor»</td><td>El número que acompaña a (x − a)<sup>n</sup> en la serie de Taylor.</td><td>c<sub>2</sub> = 6/2! = 3</td></tr>
+          <tr><td class="mono">∫ … dx</td><td>«integral»</td><td>La operación inversa de derivar.</td><td>∫ (x − 5)<sup>n</sup> dx = (x − 5)<sup>n+1</sup>/(n + 1) + C</td></tr>
+          <tr><td class="mono">C</td><td>«constante de integración»</td><td>El número que aparece al integrar. Se halla evaluando en el centro.</td><td>C = 0</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo es un ejercicio de tus parciales, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Lo tachado en rojo es lo que se cancela. El último paso es lo que escribes en el parcial.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 1 · el molde</span><h3>La geométrica convierte una fracción en serie</h3></div>
+      <p class="prose">En M2 viste que la geométrica 1 + u + u² + u³ + … suma 1/(1 − u) cuando |u| &lt; 1. Leída al revés, dice que la fracción 1/(1 − u) <b>es</b> una serie de potencias. Si logras escribir tu función como un número por 1/(1 − u), con u hecho de (x − a), ya tienes su serie de Taylor.</p>
+      <div class="rule-box">
+        <b class="k">El molde</b>
+        <p><span class="m"><span class="frac"><span>1</span><span>1 − u</span></span> = <span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> u<sup>n</sup> = 1 + u + u² + u³ + …</span>, válido si <b>|u| &lt; 1</b>.</p>
+      </div>
+    </div>
+
+    <!-- Idea 2 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 2 · la plantilla de los parciales</span><h3>A/(x − c) centrada en a</h3></div>
+      <ol class="steps">
+        <li><span><b>Reescribe el denominador con (x − a):</b> sumas y restas a. En los parciales siempre queda 1 + (x − a).</span></li>
+        <li><span><b>Ponlo con la forma del molde:</b> 1 + algo = 1 − (−algo), así que u = −(x − a).</span></li>
+        <li><span><b>Usa el molde:</b> A·Σ u<sup>n</sup> = Σ A(−1)<sup>n</sup>(x − a)<sup>n</sup>.</span></li>
+        <li><span><b>Intervalo:</b> el molde vale si |u| &lt; 1, o sea |x − a| &lt; 1. Prueba los dos extremos en la serie, como en M6.</span></li>
+      </ol>
+
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · Parcial 2025-10 P4a (6 pts)</span>
+            <h4 id="wx1-h">3/(x − 4) centrada en x = 5</h4>
+            <p>Encuentre la serie de Taylor para f(x) = <span class="m"><span class="frac"><span>3</span><span>x − 4</span></span></span> = 3(x − 4)<sup>−1</sup> centrada en x = 5. No olvide indicar el intervalo de convergencia.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Mira qué hay que fabricar.</p><p class="why">Centrada en 5 quiere decir que la serie lleva potencias de (x − 5).</p><div class="mx">a = 5<span class="ar">→</span>necesitas (x − 5)<sup>n</sup></div></li>
+          <li><p class="what">Reescribe el denominador con (x − 5).</p><p class="why">Restas y sumas 5: x − 4 = x − 5 + 5 − 4.</p><div class="mx">x − 4 = (x − 5) + 1 = 1 + (x − 5)</div></li>
+          <li><p class="what">Ponlo con la forma del molde.</p><p class="why">El molde tiene 1 − u abajo. Sumar algo es restar su negativo: 1 + (x − 5) = 1 − (−(x − 5)).</p><div class="mx"><span class="frac"><span>3</span><span>x − 4</span></span> = 3·<span class="frac"><span>1</span><span>1 − (−(x − 5))</span></span><span class="ar">→</span>u = −(x − 5)</div></li>
+          <li><p class="what">Usa el molde.</p><p class="why">Cambias u por −(x − 5). Y (−(x − 5))<sup>n</sup> = (−1)<sup>n</sup>(x − 5)<sup>n</sup>: el signo sale como (−1)<sup>n</sup>.</p><div class="mx">3·<span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> (−(x − 5))<sup>n</sup> = <span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> 3(−1)<sup>n</sup>(x − 5)<sup>n</sup></div></li>
+          <li><p class="what">Pide |u| &lt; 1.</p><p class="why">El molde solo vale ahí. El valor absoluto borra el signo menos.</p><div class="mx">|−(x − 5)| = |x − 5| &lt; 1<span class="ar">⇔</span>4 &lt; x &lt; 6<span class="ar">→</span>R = 1</div></li>
+          <li><p class="what">Prueba los extremos en la serie.</p><p class="why">En x = 6, (x − 5)<sup>n</sup> = 1; en x = 4, (x − 5)<sup>n</sup> = (−1)<sup>n</sup> y los signos se cancelan. En los dos el término no tiende a 0 (M2).</p><div class="mx">x = 6: Σ 3(−1)<sup>n</sup> diverge<span class="ar">·</span>x = 4: Σ 3(−1)<sup>n</sup>(−1)<sup>n</sup> = Σ 3 diverge</div></li>
+          <li><p class="what">Escribe la respuesta.</p><div class="mx txt">3/(x − 4) = 3/(1 + (x − 5)) = 3·Σ (−(x − 5))<sup>n</sup> = Σ<sub>n=0</sub><sup>∞</sup> 3(−1)<sup>n</sup>(x − 5)<sup>n</sup>, válida si |x − 5| &lt; 1. En x = 6 y x = 4 el término no tiende a 0, así que el intervalo de convergencia es (4, 6).</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> Σ 3(−1)<sup>n</sup>(x − 5)<sup>n</sup>, intervalo (4, 6).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> En x = 5 la serie da 3 + 0 + 0 + … = 3, y f(5) = 3/1 = 3. Además, f explota en x = 4 (se divide entre 0): la serie no puede pasar de ahí, y como el intervalo es simétrico alrededor de 5, por el otro lado se detiene en 6.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · El mismo P4a con la fórmula de Taylor</span>
+            <h4 id="wx2-h">Comprobación con derivadas</h4>
+            <p>La serie de Taylor es Σ c<sub>n</sub>(x − 5)<sup>n</sup> con c<sub>n</sub> = f<sup>(n)</sup>(5)/n!. ¿Da lo mismo?</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Deriva varias veces y busca el patrón.</p><p class="why">f = 3(x − 4)<sup>−1</sup>. Cada derivada baja el exponente y lo multiplica adelante: sale un signo menos y un factorial.</p><div class="mx">f′ = −3(x − 4)<sup>−2</sup><span class="ar">·</span>f″ = 3·2(x − 4)<sup>−3</sup><span class="ar">·</span>f‴ = −3·3!(x − 4)<sup>−4</sup><span class="ar">→</span>f<sup>(n)</sup> = 3(−1)<sup>n</sup>n!(x − 4)<sup>−(n+1)</sup></div></li>
+          <li><p class="what">Evalúa en el centro.</p><p class="why">En x = 5, x − 4 = 1, y 1 elevado a cualquier cosa es 1.</p><div class="mx">f<sup>(n)</sup>(5) = 3(−1)<sup>n</sup>n!</div></li>
+          <li><p class="what">Divide entre n!.</p><div class="mx">c<sub>n</sub> = <span class="frac"><span>3(−1)<sup>n</sup><span class="cx">n!</span></span><span><span class="cx">n!</span></span></span> = 3(−1)<sup>n</sup><span class="ar">→</span>Σ 3(−1)<sup>n</sup>(x − 5)<sup>n</sup></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> la misma serie del ejemplo 1.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Siempre da lo mismo: una función tiene una sola serie de potencias alrededor de cada centro. Usa el método que te salga más rápido. Con fracciones A/(x − c), la geométrica es más corta y no hay que adivinar patrones.</p>
+      </article>
+    </div>
+
+    <!-- Idea 3 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 3 · el logaritmo</span><h3>Integrar término a término</h3></div>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p>Si f(x) = Σ c<sub>n</sub>(x − a)<sup>n</sup> para |x − a| &lt; R, entonces ∫ f(x) dx = C + Σ c<sub>n</sub>(x − a)<sup>n+1</sup>/(n + 1), con el <b>mismo radio R</b>. Los extremos hay que revisarlos otra vez: pueden cambiar. C se halla evaluando en el centro.</p>
+      </div>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · Parcial 2025-10 P4b (5 pts)</span>
+            <h4 id="wx3-h">3 ln(x − 4) centrada en x = 5</h4>
+            <p>Encuentre la serie de Taylor para f(x) = 3 ln(x − 4) centrada en x = 5. No olvide indicar el intervalo de convergencia.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Conecta con el ejemplo 1.</p><p class="why">La derivada de 3 ln(x − 4) es 3/(x − 4), y esa ya la tienes en serie.</p><div class="mx"><span class="frac"><span>d</span><span>dx</span></span>[3 ln(x − 4)] = <span class="frac"><span>3</span><span>x − 4</span></span> = <span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> 3(−1)<sup>n</sup>(x − 5)<sup>n</sup></div></li>
+          <li><p class="what">Integra los dos lados término a término.</p><p class="why">Integrar deshace la derivada a la izquierda. A la derecha, ∫ (x − 5)<sup>n</sup> dx = (x − 5)<sup>n+1</sup>/(n + 1): el exponente sube en 1 y divides entre el nuevo exponente.</p><div class="mx">3 ln(x − 4) = C + <span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> 3(−1)<sup>n</sup><span class="frac"><span>(x − 5)<sup>n+1</sup></span><span>n + 1</span></span></div></li>
+          <li><p class="what">Halla C evaluando en el centro.</p><p class="why">En x = 5: a la izquierda, 3 ln(1) = 0. A la derecha, cada término tiene (5 − 5)<sup>n+1</sup> = 0.</p><div class="mx">3 ln(1) = C + 0<span class="ar">→</span>0 = C</div></li>
+          <li><p class="what">Escribe la serie.</p><p class="why">Si quieres, cambias el índice para que empiece en 1: con m = n + 1 queda Σ<sub>m=1</sub> 3(−1)<sup>m−1</sup>(x − 5)<sup>m</sup>/m. Las dos formas valen.</p><div class="mx">3 ln(x − 4) = <span class="sig"><small>∞</small><b>Σ</b><small>n=0</small></span> 3(−1)<sup>n</sup><span class="frac"><span>(x − 5)<sup>n+1</sup></span><span>n + 1</span></span> = 3(x − 5) − <span class="frac"><span>3(x − 5)²</span><span>2</span></span> + <span class="frac"><span>3(x − 5)³</span><span>3</span></span> − …</div></li>
+          <li><p class="what">El radio no cambia.</p><p class="why">Es el mismo de la serie que integraste.</p><div class="mx">R = 1<span class="ar">→</span>4 &lt; x &lt; 6</div></li>
+          <li><p class="what">Extremo derecho: x = 6.</p><p class="why">(x − 5)<sup>n+1</sup> = 1. Queda una alternante con b<sub>n</sub> = 3/(n + 1), que decrece y tiende a 0: converge por Leibniz (M4).</p><div class="mx">Σ 3(−1)<sup>n</sup><span class="frac"><span>1</span><span>n + 1</span></span> converge<span class="ar">→</span>x = 6 entra</div></li>
+          <li><p class="what">Extremo izquierdo: x = 4.</p><p class="why">(x − 5)<sup>n+1</sup> = (−1)<sup>n+1</sup>, y (−1)<sup>n</sup>(−1)<sup>n+1</sup> = (−1)<sup>2n+1</sup> = −1 siempre. Queda −3 por la armónica.</p><div class="mx">Σ <span class="frac"><span>−3</span><span>n + 1</span></span> diverge<span class="ar">→</span>x = 4 no entra</div></li>
+          <li><p class="what">Escribe la respuesta.</p><div class="mx txt">Como d/dx [3 ln(x − 4)] = 3/(x − 4) = Σ 3(−1)<sup>n</sup>(x − 5)<sup>n</sup>, integrando término a término: 3 ln(x − 4) = C + Σ 3(−1)<sup>n</sup>(x − 5)<sup>n+1</sup>/(n + 1). En x = 5, 0 = C. El radio es 1; en x = 6 converge (Leibniz) y en x = 4 diverge (armónica). El intervalo de convergencia es (4, 6].</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> Σ 3(−1)<sup>n</sup>(x − 5)<sup>n+1</sup>/(n + 1), intervalo (4, 6].</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es la serie del ejemplo 3 de M6, escrita desde n = 0. Al integrar, el extremo x = 6 ganó: en el ejemplo 1 divergía y ahora converge. Y x = 4 tenía que quedar afuera, porque ln 0 no existe.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>Lo que no ha salido (extra)</h3>
+      <details class="rev"><summary><span>Cuando a − c no es 1</span></summary>
+        <div class="rev-body"><p>Si el denominador no queda 1 + (x − a), sacas factor común. Por ejemplo, 3/(x − 1) centrada en 3: x − 1 = 2 + (x − 3) = 2[1 + (x − 3)/2]. Queda (3/2)·1/(1 − u) con u = −(x − 3)/2, así que la serie es Σ 3(−1)<sup>n</sup>(x − 3)<sup>n</sup>/2<sup>n+1</sup> y |u| &lt; 1 da |x − 3| &lt; 2: R = 2. Es el «Extra» del taller.</p></div>
+      </details>
+      <details class="rev"><summary><span>Las de Maclaurin (centradas en 0) que trae el libro</span></summary>
+        <div class="rev-body">
+          <p>e<sup>x</sup> = Σ x<sup>n</sup>/n!, sen x = Σ (−1)<sup>n</sup>x<sup>2n+1</sup>/(2n + 1)!, cos x = Σ (−1)<sup>n</sup>x<sup>2n</sup>/(2n)!. Las tres convergen para todo x (R = ∞). Nunca han salido en tus parciales.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="callout trap"><h3>Trampas</h3>
+      <p><b>No olvides el intervalo:</b> el enunciado lo pide en cada caso, y vale puntos.</p>
+      <p><b>El signo:</b> 1 + (x − 5) = 1 − (−(x − 5)), así que u = −(x − 5) y sale (−1)<sup>n</sup>. Si escribes u = x − 5, te queda la serie de 3/(6 − x), otra función.</p>
+      <p><b>Al integrar:</b> el exponente sube a n + 1, divides entre n + 1 y aparece la constante C, que se halla evaluando en el centro.</p>
+      <p><b>Al integrar, revisa los extremos otra vez:</b> el radio no cambia, pero los extremos sí pueden cambiar, de (4, 6) a (4, 6].</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Suma más y más términos de la serie de Taylor y mira cómo se pega a la función, pero solo dentro del intervalo de convergencia.</p></div>
+    <div class="lab">
+      <div class="lab-stage"><div id="ft-svg" class="lab-fig"></div><p class="small muted" id="ft-note"></p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="ft-sel">Función</label><select id="ft-sel"></select></div>
+        <div class="ctl"><label for="ft-n" id="ft-n-lab">Términos sumados: hasta n = 3</label><input type="range" id="ft-n" min="0" max="20" step="1" value="3"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span id="ft-in-lab">Dentro, en x = 5,5</span><b id="ft-in">—</b></div>
+          <div class="ro"><span id="ft-out-lab">Fuera, en x = 6,5</span><b id="ft-out">—</b></div>
+          <div class="status" id="ft-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Con 3/(x − 4), sube los términos hasta n = 20. ¿Qué pasa dentro de (4, 6) y qué pasa fuera?</summary>
+          <div class="rev-body"><p><b>Dentro, la serie se pega a la función</b>; fuera, se despega cada vez más rápido. La serie solo representa a la función en su intervalo de convergencia.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Con 3 ln(x − 4), mira el borde x = 6 con muchos términos. ¿Se pega?</summary>
+          <div class="rev-body"><p><b>Sí, aunque despacio:</b> en x = 6 la serie converge (es el extremo que entra) y vale 3 ln 2 ≈ 2,08. En x = 4 la función ni existe.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero el de 2023 sin mirar, después variantes con la misma plantilla y una del logaritmo.</p></div>
+    <p class="prose">Hazlos en papel, con el intervalo. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. Si quieres que te corrija, mándame una foto.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: el simulacro (M8). Si no alcanzas, repasa el T1 de M6 y el T1 de este módulo: valen 14 y 6 pts y el profesor los repite.</p>
+    <p>Fuente de los problemas: parciales 3 de 2023-19 y 2025-10 del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const dec = (v, d) => v.toFixed(d).replace(".", ",").replace(/^-/, "−");
+const num = (v) => (Math.abs(v - Math.round(v)) < 1e-9 ? String(Math.round(v)) : dec(v, 1)).replace(/^-/, "−");
+
+/* ---------- Notación ---------- */
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const SG = (lo, hi = "∞") => `<span class="sig"><small>${hi}</small><b>Σ</b><small>${lo}</small></span>`;
+const M = (x) => `<span class="m">${x}</span>`;
+
+/* ---------- Lab: la función contra la serie hasta n = N ---------- */
+const FT = [
+  { lab: "2025 P4a: 3/(x − 4), centrada en 5", a: 5, ylo: -12, yhi: 12, inR: false, f: (x) => (x > 4 || x < 4) ? 3 / (x - 4) : NaN,
+    T: (x, N) => { let s = 0; for (let n = 0; n <= N; n++) s += 3 * Math.pow(-(x - 5), n); return s; }, intTxt: "(4, 6)" },
+  { lab: "2025 P4b: 3 ln(x − 4), centrada en 5", a: 5, ylo: -9, yhi: 5, inR: true, f: (x) => x > 4 ? 3 * Math.log(x - 4) : NaN,
+    T: (x, N) => { let s = 0; for (let n = 0; n < N; n++) s += 3 * Math.pow(-1, n) * Math.pow(x - 5, n + 1) / (n + 1); return s; }, intTxt: "(4, 6]" },
+  { lab: "2023 P3: 2/(x + 3), centrada en −2", a: -2, ylo: -10, yhi: 10, inR: false, f: (x) => 2 / (x + 3),
+    T: (x, N) => { let s = 0; for (let n = 0; n <= N; n++) s += 2 * Math.pow(-(x + 2), n); return s; }, intTxt: "(−3, −1)" }
+];
+function plotFT(s, N) {
+  const W = 360, H = 240, ml = 40, mr = 10, mt = 26, mb = 30, lo = s.a - 1.8, hi = s.a + 1.8;
+  const X = (x) => ml + (x - lo) / (hi - lo) * (W - ml - mr);
+  const Y = (y) => mt + (s.yhi - y) / (s.yhi - s.ylo) * (H - mt - mb);
+  let g = `<rect x="${f1(X(s.a - 1))}" y="${mt}" width="${f1(X(s.a + 1) - X(s.a - 1))}" height="${H - mt - mb}" class="ft-int"/>`;
+  const st = (s.yhi - s.ylo) > 15 ? 5 : 2;
+  for (let v = Math.ceil(s.ylo / st) * st; v <= s.yhi; v += st) g += `<line x1="${ml}" y1="${f1(Y(v))}" x2="${W - mr}" y2="${f1(Y(v))}" class="gr-grid"/><text x="${ml - 5}" y="${f1(Y(v) + 3.5)}" class="gr-tick" text-anchor="end">${num(v)}</text>`;
+  [s.a - 1, s.a, s.a + 1].forEach((t) => { g += `<text x="${f1(X(t))}" y="${H - mb + 14}" class="gr-tick" text-anchor="middle">${num(t)}</text>`; });
+  g += `<text x="${(ml + W - mr) / 2}" y="${H - 3}" class="gr-lab" text-anchor="middle">x</text><line x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}" class="gr-axis"/>`;
+  const path = (fn) => {
+    let d = "", pen = false;
+    for (let i = 0; i <= 360; i++) {
+      const x = lo + (hi - lo) * i / 360, y = fn(x);
+      if (!isFinite(y) || y < s.ylo || y > s.yhi) { pen = false; continue; }
+      d += (pen ? "L" : "M") + f1(X(x)) + " " + f1(Y(y)); pen = true;
+    }
+    return d;
+  };
+  g += `<path d="${path(s.f)}" class="ft-f"/><path d="${path((x) => s.T(x, N))}" class="ft-t"/>`;
+  g += `<line x1="8" y1="10" x2="24" y2="10" class="ft-f"/><text x="28" y="14" class="gr-leg">f(x)</text>`;
+  g += `<line x1="70" y1="10" x2="86" y2="10" class="ft-t"/><text x="90" y="14" class="gr-leg">la serie hasta n = ${N}</text>`;
+  g += `<rect x="212" y="5" width="10" height="10" class="ft-int lg"/><text x="226" y="14" class="gr-leg">intervalo ${s.intTxt}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="La función y su serie de Taylor hasta n = ${N}">${g}</svg>`;
+}
+function drawFT() {
+  const s = FT[Number($("#ft-sel").value)], N = Number($("#ft-n").value);
+  $("#ft-svg").innerHTML = plotFT(s, N);
+  $("#ft-n-lab").textContent = "Términos sumados: hasta n = " + N;
+  const xi = s.a + 0.5, xo = s.a + 1.5;
+  $("#ft-in-lab").textContent = "Dentro, en x = " + dec(xi, 1) + ": f y la serie";
+  $("#ft-in").textContent = dec(s.f(xi), 3) + " y " + dec(s.T(xi, N), 3);
+  $("#ft-out-lab").textContent = "Fuera, en x = " + dec(xo, 1) + ": f y la serie";
+  const to = s.T(xo, N);
+  $("#ft-out").textContent = dec(s.f(xo), 3) + " y " + (Math.abs(to) > 9999 ? (to > 0 ? "" : "−") + "enorme" : dec(to, 2));
+  $("#ft-status").textContent = "Dentro del intervalo " + s.intTxt + " la serie se pega a f al sumar más términos; fuera se despega.";
+  $("#ft-status").className = "status ok";
+  $("#ft-note").textContent = "La franja es el intervalo de convergencia. Las curvas se cortan donde se salen de la gráfica.";
+}
+FT.forEach((s, i) => { const o = el("option", "", s.lab); o.value = String(i); $("#ft-sel").appendChild(o); });
+$("#ft-sel").addEventListener("change", drawFT);
+$("#ft-n").addEventListener("input", drawFT);
+drawFT();
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "El de 2023, sin mirar", pri: true, src: "Parcial 2023-19 P3 · 6 pts",
+    txt: `<p>Encuentre la serie de Taylor para f(x) = ${M(F("2", "x + 3"))} = 2(x + 3)<sup>−1</sup> centrada en x = −2, con su intervalo de convergencia.</p>`,
+    checks: [{ q: "¿Cómo reescribes x + 3?", opts: ["1 − (x + 2)", "(x − 2) + 5", "1 + (x + 2)", "3 + x"], a: 2 },
+      { q: "La serie", opts: ["Σ 2(x + 2)<sup>n</sup>", "Σ 2(−1)<sup>n</sup>(x + 2)<sup>n</sup>", "Σ (−1)<sup>n</sup>(x + 2)<sup>n</sup>/2", "Σ 2(−1)<sup>n</sup>(x − 2)<sup>n</sup>"], a: 1 },
+      { q: "Intervalo de convergencia", opts: ["(−3, −1)", "[−3, −1]", "(−1, 3)", "(−3, −1]"], a: 0 }],
+    hints: ["Centrada en −2: necesitas potencias de (x + 2) = (x − (−2)). Y x + 3 = (x + 2) + 1.", "En los extremos, x = −1 y x = −3, mira si el término tiende a 0."],
+    sol: ["x + 3 = 1 + (x + 2), así que 2/(x + 3) = 2·1/(1 − (−(x + 2))) = 2·Σ (−(x + 2))<sup>n</sup> = <b>Σ<sub>n=0</sub><sup>∞</sup> 2(−1)<sup>n</sup>(x + 2)<sup>n</sup></b>.",
+      "Vale si |x + 2| &lt; 1, o sea −3 &lt; x &lt; −1 (R = 1). En x = −1 queda Σ 2(−1)<sup>n</sup> y en x = −3 queda Σ 2: en los dos el término no tiende a 0, así que divergen. <b>Intervalo (−3, −1).</b>"] },
+  { n: "T2", t: "Variantes de la plantilla", pri: true, src: "Problemas nuevos al estilo del profesor",
+    txt: `<p>Serie de Taylor e intervalo de convergencia de cada una.</p>
+      <ol class="items"><li>(a) ${M(F("5", "x − 1"))} centrada en x = 2</li><li>(b) ${M(F("4", "x + 6"))} centrada en x = −5</li><li>(c) 2 ln(x + 3) centrada en x = −2 (usa el T1)</li></ol>`,
+    checks: [{ q: "(a)", opts: ["Σ 5(−1)<sup>n</sup>(x − 2)<sup>n</sup>, intervalo (1, 3)", "Σ 5(x − 2)<sup>n</sup>, intervalo (1, 3)", "Σ 5(−1)<sup>n</sup>(x − 1)<sup>n</sup>, intervalo (0, 2)", "Σ 5(−1)<sup>n</sup>(x − 2)<sup>n</sup>, intervalo [1, 3]"], a: 0 },
+      { q: "(b)", opts: ["Σ 4(−1)<sup>n</sup>(x − 5)<sup>n</sup>, intervalo (4, 6)", "Σ 4(−1)<sup>n</sup>(x + 5)<sup>n</sup>, intervalo (−6, −4)", "Σ 4(x + 5)<sup>n</sup>, intervalo (−6, −4)", "Σ 4(−1)<sup>n</sup>(x + 6)<sup>n</sup>, intervalo (−7, −5)"], a: 1 },
+      { q: "(c)", opts: ["Σ 2(−1)<sup>n</sup>(x + 2)<sup>n+1</sup>/(n + 1), intervalo (−3, −1)", "Σ 2(−1)<sup>n</sup>(x + 2)<sup>n+1</sup>/(n + 1), intervalo [−3, −1)", "Σ 2(−1)<sup>n</sup>(x + 2)<sup>n+1</sup>/(n + 1), intervalo (−3, −1]", "Σ 2(−1)<sup>n</sup>(x + 2)<sup>n</sup>/n, intervalo (−3, −1]"], a: 2 }],
+    hints: ["(a) x − 1 = 1 + (x − 2). (b) x + 6 = 1 + (x + 5).", "(c) La derivada de 2 ln(x + 3) es 2/(x + 3), la del T1. Integra y halla C en x = −2.", "(c) En x = −1 queda una alternante; en x = −3, (−1)<sup>n</sup>(−1)<sup>n+1</sup> = −1."],
+    sol: ["<b>(a)</b> 5/(1 + (x − 2)) = Σ 5(−1)<sup>n</sup>(x − 2)<sup>n</sup>; |x − 2| &lt; 1. En x = 3 y x = 1 el término no tiende a 0: <b>(1, 3)</b>.",
+      "<b>(b)</b> 4/(1 + (x + 5)) = Σ 4(−1)<sup>n</sup>(x + 5)<sup>n</sup>; |x + 5| &lt; 1. Los extremos divergen: <b>(−6, −4)</b>.",
+      "<b>(c)</b> 2 ln(x + 3) = C + Σ 2(−1)<sup>n</sup>(x + 2)<sup>n+1</sup>/(n + 1). En x = −2: 2 ln 1 = 0 = C. R = 1. En x = −1 queda Σ 2(−1)<sup>n</sup>/(n + 1), converge por Leibniz. En x = −3 queda Σ −2/(n + 1), diverge. <b>(−3, −1]</b>."] },
+  { n: "Extra", t: "Cuando a − c no es 1", pri: false, src: "No ha salido en el parcial",
+    txt: `<p>Serie de Taylor de ${M(F("3", "x − 1"))} centrada en x = 3, con su intervalo de convergencia.</p>`,
+    checks: [{ q: "Serie e intervalo", opts: ["Σ 3(−1)<sup>n</sup>(x − 3)<sup>n</sup>, intervalo (2, 4)", "Σ 3(−1)<sup>n</sup>(x − 3)<sup>n</sup>/2<sup>n+1</sup>, intervalo (1, 5)", "Σ 3(x − 3)<sup>n</sup>/2<sup>n</sup>, intervalo (1, 5)", "Σ 3(−1)<sup>n</sup>(x − 3)<sup>n</sup>/2<sup>n+1</sup>, intervalo [1, 5]"], a: 1 }],
+    hints: ["x − 1 = 2 + (x − 3) = 2[1 + (x − 3)/2]: saca el 2 como factor común."],
+    sol: ["3/(x − 1) = (3/2)·1/(1 + (x − 3)/2) = (3/2)·Σ (−(x − 3)/2)<sup>n</sup> = <b>Σ 3(−1)<sup>n</sup>(x − 3)<sup>n</sup>/2<sup>n+1</sup></b>. Vale si |x − 3|/2 &lt; 1, o sea |x − 3| &lt; 2: R = 2. En x = 5 y x = 1 el término no tiende a 0: <b>(1, 5)</b>."] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t));
+    h.appendChild(el("span", "pri" + (p.pri ? " hi" : ""), p.pri ? "Prioridad" : "Extra"));
+    h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(elh("div", "prob-body", p.txt));
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(elh("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(elh("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => sb.appendChild(elh("p", "", s))); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M7", NEXT = "Aprobado. Terminaste los módulos: queda el simulacro.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "¿Para qué valores de u vale 1/(1 − u) = Σ u<sup>n</sup>?",
+      o: ["Para todo u.", "|u| &lt; 1", "u &lt; 1", "|u| ≤ 1"], a: 1,
+      e: "Es la geométrica de M2: converge solo si la razón cumple |u| &lt; 1. Con |u| = 1 el término no tiende a 0." },
+    { k: "Conceptual", q: "Para la serie de 3/(x − 4) centrada en x = 5, ¿cómo reescribes x − 4?",
+      o: ["1 − (x − 5)", "(x + 5) − 9", "5 − (x − 4)", "1 + (x − 5)"], a: 3,
+      e: "x − 4 = (x − 5) + 1. Así aparece el (x − 5) que pide el centro y el 1 que pide el molde." },
+    { k: "Conceptual", q: "Al integrar término a término una serie de potencias, ¿qué pasa con el radio y con los extremos?",
+      o: ["El radio es el mismo, pero los extremos hay que revisarlos otra vez.", "Cambian los dos.", "No cambia nada: el intervalo es el mismo.", "El radio se duplica."], a: 0,
+      e: "El radio no cambia, pero un extremo puede pasar de diverger a converger: 3/(x − 4) tiene intervalo (4, 6) y 3 ln(x − 4) tiene (4, 6]." },
+    { k: "Tipo parcial", q: `Serie de Taylor de ${M(F("6", "x − 2"))} centrada en x = 3, con su intervalo.`,
+      o: ["Σ 6(x − 3)<sup>n</sup>, intervalo (2, 4)", "Σ 6(−1)<sup>n</sup>(x − 3)<sup>n</sup>, intervalo (2, 4)", "Σ 6(−1)<sup>n</sup>(x − 2)<sup>n</sup>, intervalo (1, 3)", "Σ 6(−1)<sup>n</sup>(x − 3)<sup>n</sup>, intervalo [2, 4]"], a: 1,
+      e: "x − 2 = 1 + (x − 3), así que u = −(x − 3) y la serie es Σ 6(−1)<sup>n</sup>(x − 3)<sup>n</sup> con |x − 3| &lt; 1. En x = 4 y x = 2 el término no tiende a 0: (2, 4)." },
+    { k: "Tipo parcial", q: "Serie de Taylor de 6 ln(x − 2) centrada en x = 3, con su intervalo.",
+      o: ["Σ 6(−1)<sup>n</sup>(x − 3)<sup>n+1</sup>/(n + 1), intervalo (2, 4)", "Σ 6(−1)<sup>n</sup>(x − 3)<sup>n+1</sup>/(n + 1), intervalo [2, 4)", "Σ 6(−1)<sup>n</sup>(x − 3)<sup>n</sup>, intervalo (2, 4]", "Σ 6(−1)<sup>n</sup>(x − 3)<sup>n+1</sup>/(n + 1), intervalo (2, 4]"], a: 3,
+      e: "Integras la anterior: 6 ln(x − 2) = C + Σ 6(−1)<sup>n</sup>(x − 3)<sup>n+1</sup>/(n + 1), y en x = 3, 6 ln 1 = 0 = C. En x = 4 queda una alternante que converge por Leibniz; en x = 2 queda −6 por la armónica, que diverge: (2, 4]." }
+  ],
+  B: [
+    { k: "Conceptual", q: "¿A qué serie es igual 1/(1 + u) si |u| &lt; 1?",
+      o: ["Σ u<sup>n</sup>", "Σ (−1)<sup>n</sup>u<sup>n</sup>", "Σ (−u)<sup>n+1</sup>", "Σ u<sup>n</sup>/n"], a: 1,
+      e: "1 + u = 1 − (−u): en el molde cambias u por −u, y (−u)<sup>n</sup> = (−1)<sup>n</sup>u<sup>n</sup>." },
+    { k: "Conceptual", q: "Para 2/(x + 3) centrada en x = −2, ¿cuál es la u del molde?",
+      o: ["u = x + 2", "u = x + 3", "u = −(x + 2)", "u = −(x + 3)"], a: 2,
+      e: "x + 3 = 1 + (x + 2) = 1 − (−(x + 2)), así que u = −(x + 2)." },
+    { k: "Conceptual", q: "Al integrar término a término, ¿cómo encuentras la constante C?",
+      o: ["Evaluando los dos lados en el centro x = a.", "Siempre es 0.", "Evaluando en un extremo del intervalo.", "Derivando otra vez."], a: 0,
+      e: "En el centro todos los términos de la serie valen 0, así que queda f(a) = C. En los ejemplos dio 0 porque ln 1 = 0, pero no siempre es así." },
+    { k: "Tipo parcial", q: `Serie de Taylor de ${M(F("4", "x + 1"))} centrada en x = 0, con su intervalo.`,
+      o: ["Σ 4x<sup>n</sup>, intervalo (−1, 1)", "Σ 4(−1)<sup>n</sup>x<sup>n</sup>, intervalo [−1, 1]", "Σ 4(−1)<sup>n</sup>(x + 1)<sup>n</sup>, intervalo (−2, 0)", "Σ 4(−1)<sup>n</sup>x<sup>n</sup>, intervalo (−1, 1)"], a: 3,
+      e: "x + 1 = 1 − (−x), así que u = −x y la serie es Σ 4(−1)<sup>n</sup>x<sup>n</sup> con |x| &lt; 1. En x = ±1 el término no tiende a 0: (−1, 1)." },
+    { k: "Tipo parcial", q: "Serie de Taylor de 4 ln(x + 1) centrada en x = 0, con su intervalo.",
+      o: ["Σ 4(−1)<sup>n</sup>x<sup>n+1</sup>/(n + 1), intervalo (−1, 1]", "Σ 4(−1)<sup>n</sup>x<sup>n+1</sup>/(n + 1), intervalo [−1, 1)", "Σ 4(−1)<sup>n</sup>x<sup>n</sup>, intervalo (−1, 1]", "4 + Σ 4(−1)<sup>n</sup>x<sup>n+1</sup>/(n + 1), intervalo (−1, 1)"], a: 0,
+      e: "Integras la anterior: 4 ln(x + 1) = C + Σ 4(−1)<sup>n</sup>x<sup>n+1</sup>/(n + 1), y en x = 0, 4 ln 1 = 0 = C. En x = 1 converge por Leibniz; en x = −1 queda −4 por la armónica: (−1, 1]." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(elh("span", "", it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(elh("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.innerHTML = (ok ? "Correcta. " : "Incorrecta. La respuesta es la " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
