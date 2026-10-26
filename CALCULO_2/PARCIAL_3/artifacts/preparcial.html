@@ -1,0 +1,220 @@
+<title>Preparcial Cálculo 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de M1 a M7, acento violeta de Cálculo). Una columna estrecha como la hoja del parcial: cronómetro arriba y los cuatro puntos en orden. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --red:#c23b3b; --red-soft:#fbe6e6; --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --red:#ff8a8a; --red-soft:#3b1c20; --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --red:#ff8a8a; --red-soft:#3b1c20; --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:760px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:28px 72px; display:grid; gap:28px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.35rem; font-weight:800; font-stretch:106%}
+p{margin:0}
+ul,ol{margin:0}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+header{display:grid; gap:12px}
+header p{max-width:62ch}
+.m{font-family:var(--f-mono); font-size:.98em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.big{font-size:1.25rem}
+
+/* Cronómetro */
+.timer{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:18px 20px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px 20px}
+.clock{font-family:var(--f-mono); font-size:clamp(2.4rem,9vw,3.4rem); font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1}
+.clock.done{color:var(--red)}
+.tbtns{display:flex; flex-wrap:wrap; gap:8px}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.tstatus{flex-basis:100%; font-size:.9rem; color:var(--muted)}
+.tstatus.done{color:var(--red); font-weight:600}
+
+/* Puntos del examen */
+.points{display:grid; gap:18px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:20px; display:grid; gap:14px; min-width:0}
+.qhead{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 14px}
+.pts{font-family:var(--f-mono); font-size:.8rem; letter-spacing:.04em; padding:3px 9px; border-radius:999px; background:var(--accent-soft); color:var(--accent); white-space:nowrap}
+.items{list-style:none; padding:0; display:grid; gap:14px}
+.items li{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px}
+.lab{font-family:var(--f-mono); color:var(--muted); min-width:2.2em}
+.tip{font-size:.88rem; color:var(--muted)}
+.q.extra{background:transparent; border-style:dashed}
+
+/* Cierre */
+.send{border-left:3px solid var(--accent); padding:4px 0 4px 16px; display:grid; gap:10px}
+.send ul{padding-left:1.2em; display:grid; gap:4px}
+.goal{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font-size:.85rem; padding:4px 10px; border-radius:999px; border:1px solid var(--rule); background:var(--surface)}
+.chip strong{color:var(--green)}
+</style>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Cálculo 2 · Parcial 3 · lunes 26 de octubre</p>
+    <h1>Preparcial de 30 minutos</h1>
+    <p>Sin apuntes y sin calculadora, como el parcial. En cada punto escribe en papel el criterio, la cuenta y la frase final: sin justificación, el punto vale cero.</p>
+  </header>
+
+  <section class="timer" aria-label="Cronómetro">
+    <div class="clock" id="clock" aria-live="off">30:00</div>
+    <div class="tbtns">
+      <button class="btn" id="t-start" type="button">Empezar</button>
+      <button class="btn ghost" id="t-pause" type="button">Pausar</button>
+      <button class="btn ghost" id="t-reset" type="button">Reiniciar</button>
+    </div>
+    <p class="tstatus" id="tstatus" aria-live="polite">Reparto sugerido: P1 en 10 min, P2 en 12 min y P3 en 8 min.</p>
+  </section>
+
+  <section class="points" aria-label="Preguntas">
+    <article class="q">
+      <div class="qhead">
+        <h2>P1 · Determine si la serie converge o diverge</h2>
+        <span class="pts">6 pts c/u</span>
+      </div>
+      <ol class="items">
+        <li><span class="lab">(a)</span><span class="m big"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>n + 1</span><span>√<span class="rad">n³ + 2</span></span></span></span></li>
+        <li><span class="lab">(b)</span><span class="m big"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> (<span class="frac"><span>n + 3</span><span>n</span></span>)<sup>n²</sup></span></li>
+      </ol>
+    </article>
+
+    <article class="q">
+      <div class="qhead">
+        <h2>P2 · Radio e intervalo de convergencia</h2>
+        <span class="pts">12 pts</span>
+      </div>
+      <p>Encuentre el radio y el intervalo de convergencia de la serie de potencias</p>
+      <p class="m big"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>(x − 1)<sup>n</sup></span><span>2<sup>n</sup>·n</span></span></p>
+      <p class="tip">Revise los dos extremos por separado y diga qué criterio usa en cada uno.</p>
+    </article>
+
+    <article class="q">
+      <div class="qhead">
+        <h2>P3 · Serie de Taylor</h2>
+        <span class="pts">6 pts</span>
+      </div>
+      <p>Encuentre la serie de Taylor de <span class="m big">f(x) = <span class="frac"><span>4</span><span>x − 2</span></span></span> centrada en <span class="m">x = 3</span>. No olvide indicar el intervalo de convergencia.</p>
+    </article>
+
+    <article class="q extra">
+      <div class="qhead">
+        <h2>Extra · si te sobra tiempo</h2>
+        <span class="pts">no cuenta</span>
+      </div>
+      <ol class="items">
+        <li><span class="lab">(c)</span><span class="m big"><span class="sig"><small>∞</small><b>Σ</b><small>n=1</small></span> <span class="frac"><span>sen²(n)</span><span>n² + 1</span></span></span><span class="tip">Converge o diverge, con la frase.</span></li>
+      </ol>
+    </article>
+  </section>
+
+  <section class="send" aria-label="Cuando termines">
+    <h2>Cuando termines</h2>
+    <p>Mándame en el chat una foto de la hoja o escribe lo esencial de cada punto:</p>
+    <ul>
+      <li><strong>P1 (a) y (b):</strong> el criterio, la cuenta clave (bₙ y L, o la raíz) y si converge o diverge.</li>
+      <li><strong>P2:</strong> R, qué te dio en cada extremo y por qué, y el intervalo.</li>
+      <li><strong>P3:</strong> la serie con sumatoria y el intervalo.</li>
+    </ul>
+    <div class="goal">
+      <span class="chip">Total: 30 pts</span>
+      <span class="chip">Meta: <strong>24/30 o más</strong>, que equivale a 40/50</span>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  const TOTAL = 30 * 60 * 1000;
+  const clock = document.getElementById("clock");
+  const status = document.getElementById("tstatus");
+  const startBtn = document.getElementById("t-start");
+  let remaining = TOTAL;
+  let endAt = null;
+  let tick = null;
+
+  function fmt(ms) {
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(s / 60);
+    return String(m).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  }
+  function render() {
+    const left = endAt ? endAt - Date.now() : remaining;
+    clock.textContent = fmt(left);
+    if (left <= 0) {
+      stop();
+      remaining = 0;
+      clock.classList.add("done");
+      status.classList.add("done");
+      status.textContent = "Se acabó el tiempo. Suelta el lápiz y mándame lo que tengas.";
+    }
+  }
+  function stop() {
+    if (endAt) remaining = Math.max(0, endAt - Date.now());
+    endAt = null;
+    clearInterval(tick);
+    tick = null;
+  }
+  startBtn.addEventListener("click", function () {
+    if (endAt || remaining <= 0) return;
+    endAt = Date.now() + remaining;
+    tick = setInterval(render, 250);
+    startBtn.textContent = "Seguir";
+    status.textContent = "Corriendo. P1 en 10 min, P2 en 12 min y P3 en 8 min.";
+    render();
+  });
+  document.getElementById("t-pause").addEventListener("click", function () {
+    if (!endAt) return;
+    stop();
+    render();
+    status.textContent = "En pausa.";
+  });
+  document.getElementById("t-reset").addEventListener("click", function () {
+    stop();
+    remaining = TOTAL;
+    clock.classList.remove("done");
+    status.classList.remove("done");
+    startBtn.textContent = "Empezar";
+    status.textContent = "Reparto sugerido: P1 en 10 min, P2 en 12 min y P3 en 8 min.";
+    render();
+  });
+})();
+</script>

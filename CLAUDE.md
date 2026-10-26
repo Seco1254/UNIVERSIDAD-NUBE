@@ -36,6 +36,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | M6–M7 · Trabajo y energía (un solo artifact; progreso en docs `M6` y `M7`) | https://claude.ai/artifact/LAXsJHjUXs6ZQQHD7LbsEF | `FISICA_1/PARCIAL_2/artifacts/M6-M7.html` |
 | Física 1 | M8 · Circular + energía | https://claude.ai/artifact/Rj8DvvQmetU9UpmZ2vKJCs | `FISICA_1/PARCIAL_2/artifacts/M8.html` |
 | Física 1 | M9 · Mini-simulacro de 40 min (intentos en `intentos/`, nota sobre 70) | https://claude.ai/artifact/UXeERsnHz1KwRKXLtDuVpi | `FISICA_1/PARCIAL_2/artifacts/M9.html` |
+| Cálculo 2 | Preparcial de 30 min (sobre 30; se corrige en el chat) | https://claude.ai/artifact/3oqPHJ7Yb4afpJ3MZ5bfaA | `CALCULO_2/PARCIAL_3/artifacts/preparcial.html` |
 
 ## Convenciones
 
