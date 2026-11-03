@@ -1,6 +1,6 @@
 # UNIVERSIDAD-NUBE
 
-Repositorio de estudio universitario (Universidad de los Andes). Cada materia tiene su carpeta (por ejemplo, `FISICA_1/`).
+Repositorio de estudio universitario (Universidad de los Andes). Cada materia tiene su carpeta (por ejemplo, `FISICA_1/` y `DPOO/`).
 
 ## Metodología de estudio (úsala siempre)
 
@@ -10,6 +10,19 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 2. **Lab / visual**: simulación interactiva, diagrama animado o experimento casero. Lo más visual posible.
 3. **Taller**: problemas tipo parcial que el estudiante resuelve y Claude corrige paso a paso. Primero los de parciales anteriores (en `material/`), luego variantes nuevas.
 4. **Quiz de paso**: 5 preguntas (3 cortas o conceptuales y 2 tipo parcial). Se pasa al siguiente módulo con **≥ 4/5**. Si no pasa: repaso del error y Quiz B con preguntas nuevas. El estudiante puede hacer el quiz primero para saltarse un módulo que ya domina.
+
+### Ajuste por materia: DPOO (pidió esto el 3 de noviembre)
+
+Cada rama se estudia distinto. En DPOO se mantienen las 4 secciones, pero así:
+
+1. **Teoría**: intuición + receta por tipo de pregunta. Los ejemplos resueltos son **código paso a paso** (qué se escribe, por qué y cómo queda); en los refactors, lo que se borra va tachado y lo nuevo resaltado (antes/después).
+2. **Lab de código**: interactivos para ver el diseño (UML ↔ Java, tarjetas CRC, pila de llamadas de una excepción, predecir si una prueba pasa) + un experimento corto en el IDE.
+3. **Taller en el IDE, cronometrado**: primero el material del profe, luego variantes; cada ejercicio con tiempo meta. El estudiante manda el código (pegado o ZIP) y Claude lo corrige con rúbrica tipo profe.
+4. **Quiz de paso**: 3 de selección múltiple con caso (estilo Parcial 1, explicando cada opción) + 2 de código corto (completar, corregir o escribir). Se pasa con ≥ 4/5.
+
+- La tabla inicial es **«Vocabulario de este módulo»** (término, cómo se ve en Java o UML, qué significa). La figura de cada pregunta es su **UML en SVG o su código**.
+- **Plantillas de memoria**: cada módulo deja 1–2 esqueletos de código para escribir sin pensar (la hoja de fórmulas de DPOO).
+- Las preferencias de masa M, ángulos y «solo con letras» son de Física.
 
 ## Preferencias del estudiante
 
@@ -36,6 +49,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | M6–M7 · Trabajo y energía (un solo artifact; progreso en docs `M6` y `M7`) | https://claude.ai/artifact/LAXsJHjUXs6ZQQHD7LbsEF | `FISICA_1/PARCIAL_2/artifacts/M6-M7.html` |
 | Física 1 | M8 · Circular + energía | https://claude.ai/artifact/Rj8DvvQmetU9UpmZ2vKJCs | `FISICA_1/PARCIAL_2/artifacts/M8.html` |
 | Física 1 | M9 · Mini-simulacro de 40 min (intentos en `intentos/`, nota sobre 70) | https://claude.ai/artifact/UXeERsnHz1KwRKXLtDuVpi | `FISICA_1/PARCIAL_2/artifacts/M9.html` |
+| DPOO | Plan Examen 2 (tracker de progreso en `progreso/`) | https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug | `DPOO/EXAMEN_2/artifacts/plan.html` |
 
 ## Convenciones
 

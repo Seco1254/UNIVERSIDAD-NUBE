@@ -1,0 +1,689 @@
+<title>Plan Examen 2 DPOO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el mismo cuaderno del plan de Física, ahora sobre un lienzo de puntos como el de un editor de UML. Una columna de lectura (≤ 900px): «hoy» arriba, la semana como tira de días con medidor de carga, la metodología como 4 pasos en orden y los módulos como cajas de clase UML con compartimentos. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb; --code-bg:#efedf6;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9; --yellow:#8a6e00; --yellow-soft:#f8f0c9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350; --code-bg:#24212f;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350; --code-bg:#24212f;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.55;
+}
+.wrap{max-width:900px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:28px 64px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.1}
+h1{font-size:clamp(2.6rem,9vw,4.4rem); font-weight:900; font-stretch:112%; letter-spacing:-.02em}
+h2{font-size:1.55rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.08rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--code-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.small{font-size:.88rem}
+section{display:grid; gap:16px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:68ch}
+
+/* Encabezado */
+.top{display:grid; gap:14px}
+.lede{font-size:1.1rem; max-width:60ch}
+.stats{display:flex; flex-wrap:wrap; gap:10px 28px; align-items:end; margin-top:6px}
+.stat{display:grid; gap:2px}
+.stat b{font-family:var(--f-display); font-size:2rem; font-weight:800; font-stretch:110%; line-height:1; font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem; color:var(--muted)}
+.bar{height:8px; background:var(--rule); border-radius:99px; overflow:hidden; width:min(260px,100%)}
+.bar i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .4s}
+
+/* Hoy */
+.today{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:18px 20px; display:grid; gap:10px; box-shadow:4px 4px 0 var(--ink)}
+.today .row{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.today h3{font-size:1.35rem}
+.hoy-note{font-size:.95rem; max-width:62ch}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.link{font-weight:600; font-size:.92rem}
+
+/* Medidor de carga */
+.load{display:inline-flex; align-items:center; gap:7px; font-size:.82rem; font-weight:600}
+.load .m{display:inline-flex; gap:2px; align-items:flex-end; height:14px}
+.load .m i{width:4px; background:var(--rule); border-radius:1px}
+.load .m i:nth-child(1){height:5px}.load .m i:nth-child(2){height:8px}.load .m i:nth-child(3){height:11px}.load .m i:nth-child(4){height:14px}
+.load .m i.on{background:var(--accent)}
+
+/* Semana */
+.legend{display:flex; flex-wrap:wrap; gap:8px 18px; color:var(--muted); font-size:.88rem}
+.days{display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr)); gap:10px}
+.day{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 13px; display:grid; gap:6px; align-content:start; min-width:0}
+.day .dn{display:flex; justify-content:space-between; align-items:baseline; gap:6px}
+.day .dn b{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.day .dn span{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.day .w{font-size:.92rem; line-height:1.35}
+.day .h{font-family:var(--f-mono); font-size:.78rem; color:var(--muted)}
+.day .tags{display:flex; flex-wrap:wrap; gap:4px}
+.day.is-today{border:1.5px solid var(--ink); background:linear-gradient(var(--hi),var(--hi)) left top/100% 5px no-repeat, var(--surface)}
+.day.is-past{opacity:.6}
+.day.exam{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.day.exam .dn span,.day.exam .h{color:var(--paper); opacity:.75}
+.tag{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.02em; padding:1px 6px; border-radius:4px; border:1px solid var(--rule); color:var(--muted); white-space:nowrap}
+.tag.due{border-color:var(--red); color:var(--red); background:var(--red-soft)}
+.tag-today{font-family:var(--f-mono); font-size:.7rem; background:var(--hi); color:var(--hi-ink); padding:1px 6px; border-radius:4px; justify-self:start}
+.rules{display:grid; gap:8px; font-size:.93rem; max-width:72ch}
+
+/* Metodología */
+.steps{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr)); gap:12px}
+.step{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px 18px; display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px 14px; align-content:start; min-width:0}
+.step-n{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2rem; line-height:1; color:var(--accent)}
+.step-b{display:grid; gap:8px; min-width:0}
+.was{font-size:.84rem; color:var(--muted)}
+.diff{font-family:var(--f-mono); font-size:.78rem; line-height:1.7; background:var(--code-bg); border-radius:6px; padding:6px 0; overflow-x:auto}
+.diff div{white-space:pre; padding:0 10px; min-width:max-content}
+.diff .rm{background:var(--red-soft); color:var(--red)}
+.diff .rm s{text-decoration-thickness:1.5px}
+.diff .ad{background:var(--green-soft); color:var(--green)}
+.marks{list-style:none; padding:0; display:grid; gap:10px; max-width:72ch}
+.marks li{position:relative; padding-left:20px}
+.marks li::before{content:""; position:absolute; left:2px; top:.55em; width:8px; height:8px; border:1.5px solid var(--accent); border-radius:1px}
+.tpl{list-style:none; padding:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.tpl li{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; padding:10px 14px; border-bottom:1px solid var(--rule); align-items:center}
+.tpl li:last-child{border-bottom:0}
+.tpl .tx{display:grid; gap:3px; min-width:0}
+.tpl .snip{font-family:var(--f-mono); font-size:.82rem; white-space:nowrap; overflow-x:auto; padding-bottom:1px}
+.tpl .ds{font-size:.86rem; color:var(--muted)}
+.mchip{font-family:var(--f-mono); font-size:.72rem; font-weight:600; color:var(--accent); border:1px solid currentColor; border-radius:4px; padding:0 6px; white-space:nowrap}
+
+/* Módulos: cajas de clase UML */
+.dbnote{font-size:.85rem; color:var(--muted); font-style:italic}
+.mods{display:grid; gap:12px}
+.mod{background:var(--surface); border:1px solid var(--rule); border-radius:4px; display:grid; min-width:0}
+.mod > *{padding:14px 16px; min-width:0}
+.mod > * + *{border-top:1px solid var(--rule)}
+.mod.done{border-color:var(--green)}
+.mod.is-today{border:1.5px solid var(--ink); box-shadow:3px 3px 0 var(--ink)}
+.mod-head{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:4px 14px; align-items:start}
+.code{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:1.5rem; line-height:1; padding-top:2px; min-width:2.2em}
+.stereo{font-family:var(--f-mono); font-size:.74rem; color:var(--muted); margin-bottom:2px}
+.mod-meta{font-size:.84rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:4px}
+.pill{font-size:.75rem; font-weight:600; padding:3px 9px; border-radius:99px; white-space:nowrap; background:var(--rule); color:var(--ink)}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.go{background:var(--accent-soft); color:var(--accent)}
+.pill.today{background:var(--hi); color:var(--hi-ink)}
+.pill.late{background:var(--orange-soft); color:var(--orange)}
+.pill.lock{background:transparent; border:1px dashed var(--rule); color:var(--muted)}
+.prog{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.tog{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:.88rem; padding:6px 11px; border-radius:8px; border:1px solid var(--rule); background:transparent; color:var(--ink); cursor:pointer}
+.tog .box{width:15px; height:15px; border:1.5px solid var(--muted); border-radius:4px; display:grid; place-items:center; font-size:11px; line-height:1}
+.tog[aria-pressed="true"]{border-color:var(--green); background:var(--green-soft)}
+.tog[aria-pressed="true"] .box{background:var(--green); border-color:var(--green); color:var(--surface)}
+.tog:disabled{cursor:default; opacity:.7}
+.quizsel{display:inline-flex; align-items:center; gap:7px; font-size:.88rem; padding:4px 6px 4px 11px; border-radius:8px; border:1px solid var(--rule)}
+.quizsel select,.quizsel input{font:inherit; font-family:var(--f-mono); background:var(--paper); color:var(--ink); border:1px solid var(--rule); border-radius:6px; padding:3px 6px}
+.quizsel input{width:4.5em}
+.open{margin-left:auto; font-weight:600; font-size:.9rem; text-decoration:none}
+a.open:hover{text-decoration:underline}
+details.more summary{cursor:pointer; font-size:.88rem; color:var(--muted); list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+ "; font-family:var(--f-mono)}
+details.more[open] summary::before{content:"− "}
+.more-body{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:12px}
+.more-body h4{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
+.more-body ul{margin:0; padding-left:18px; font-size:.9rem; display:grid; gap:4px}
+.src{grid-column:1 / -1; font-size:.84rem; color:var(--muted)}
+.prio{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:1px; flex:none}
+.prio.alta{background:var(--red)} .prio.media{background:var(--orange)} .prio.baja{background:var(--yellow)}
+
+/* Qué sale */
+.fmt{margin:0; display:grid; gap:10px}
+.fmt-bar{display:grid; grid-template-columns:3fr 7fr; height:44px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.fmt-bar div{display:flex; align-items:center; padding:0 12px; font-family:var(--f-display); font-weight:800; font-size:1.05rem; font-variant-numeric:tabular-nums; white-space:nowrap}
+.fmt-bar .sm{background:var(--accent-soft); color:var(--accent)}
+.fmt-bar .pr{background:var(--accent); color:var(--accent-ink)}
+.fmt-key{display:grid; gap:4px; font-size:.9rem}
+.fmt-key span{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:10px; height:10px; border-radius:2px; flex:none}
+.sw.sm{background:var(--accent-soft); border:1px solid var(--accent)}
+.sw.pr{background:var(--accent)}
+.temas{display:grid; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.tema{display:grid; gap:6px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.tema:last-child{border-bottom:0}
+.tema-h{display:flex; align-items:baseline; gap:4px 8px; flex-wrap:wrap}
+.tema-h b{font-weight:600}
+.tema-d{display:flex; flex-wrap:wrap; gap:4px 18px; margin:0; font-size:.86rem}
+.tema-d div{display:flex; gap:6px}
+.tema-d dt{color:var(--muted)}
+.tema-d dd{margin:0; font-weight:500}
+
+/* Por confirmar */
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:12px}
+.box{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px 18px; display:grid; gap:10px; align-content:start; min-width:0}
+.qs,.mat{padding-left:20px; display:grid; gap:8px; font-size:.93rem}
+.mat li::marker{font-family:var(--f-mono); color:var(--accent); font-weight:600}
+.first{font-family:var(--f-mono); font-size:.68rem; padding:1px 6px; border-radius:4px; background:var(--hi); color:var(--hi-ink); white-space:nowrap}
+footer{font-size:.82rem; color:var(--muted); max-width:72ch}
+@media (prefers-reduced-motion: reduce){ .bar i{transition:none} }
+@media (max-width:560px){
+  .mod-head{grid-template-columns:auto minmax(0,1fr)}
+  .mod-head .pill{grid-column:2; justify-self:start}
+  .open{margin-left:0}
+  .step{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">ISIS-1226 · Diseño y Programación OO · Sección 5 · Prof. Manuel Porras</p>
+    <h1>Examen 2</h1>
+    <p class="lede">Todo lo visto después del Examen 1 (clases 12 a 26). Vale el 25 % de la nota. Martes 10 de noviembre de 2026 a las 11:00, si el profe confirma la fecha del cronograma.</p>
+    <div class="stats">
+      <div class="stat"><b id="dias">7</b><span id="dias-lab">días para el examen</span></div>
+      <div class="stat"><b id="aprob">0/9</b><span>módulos aprobados</span></div>
+      <div class="stat" style="align-self:center"><div class="bar" aria-hidden="true"><i id="aprob-bar"></i></div></div>
+    </div>
+  </header>
+
+  <section aria-labelledby="hoy-h">
+    <div class="today" id="hoy">
+      <p class="eyebrow" id="hoy-h">Hoy</p>
+      <h3 id="hoy-t">M1 De UML a Java</h3>
+      <p class="hoy-note" id="hoy-note"></p>
+      <div class="row" id="hoy-row"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sem-h">
+    <div class="sec-head">
+      <h2 id="sem-h">Tu semana</h2>
+      <p class="note">Martes y jueves son tus días más pesados, y este jueves además entregas el Proyecto 2, así que ahí va lo corto. Primero va lo que sostiene la práctica de 70 pts (UML → Java y errores), que también te sirve para cerrar el proyecto. El diseño, que es lo más conceptual y lo que más clases tuvo, va el sábado y el domingo.</p>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="days" id="days"></div>
+    <div class="rules">
+      <p><b>El Proyecto 2 va primero hasta el jueves.</b> Si te come el día, haz la teoría y el quiz del módulo y usa tu proyecto como taller.</p>
+      <p><b>Si te atrasas:</b> recorta primero M3 (deja solo el quiz) y después los labs. Nunca recortes M2, M5, M6 ni el simulacro.</p>
+      <p><b>Si vas adelantado:</b> en M1 y M4 haz el quiz primero; si sacas 4/5, ese tiempo va para M5 y M6.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="met-h">
+    <div class="sec-head">
+      <h2 id="met-h">Cómo se adapta la metodología</h2>
+      <p class="note">Las cuatro partes de siempre se quedan, en el mismo orden. Cambia lo que pasa en cada una, porque este examen no pide plantear y despejar: pide entender el porqué de las decisiones de diseño (la selección múltiple) y programar rápido y bien en Java (la práctica de 70 pts).</p>
+    </div>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-n">1</span>
+        <div class="step-b">
+          <h3>Teoría</h3>
+          <p class="was">En Física: intuición, fórmulas, ejemplos con letras y una receta.</p>
+          <p>Intuición primero y una receta para cada tipo de pregunta. Los ejemplos resueltos son <b>código paso a paso</b>: cada paso dice qué se escribe, por qué y cómo queda. Cuando se mejora un diseño ves el antes y el después:</p>
+          <div class="diff" aria-label="Ejemplo de antes y después">
+            <div class="rm">− <s>if (socio.getTipo().equals("oro")) total = total * 0.8;</s></div>
+            <div class="ad">+ total = socio.getPlan().aplicarDescuento(total);</div>
+          </div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-n">2</span>
+        <div class="step-b">
+          <h3>Lab de código</h3>
+          <p class="was">En Física: simulaciones para ver las fuerzas.</p>
+          <p>Interactivos para ver lo que el código no muestra: traducir UML ↔ Java, armar tarjetas CRC, seguir una excepción por la pila de llamadas y predecir si una prueba pasa o falla. Y un experimento corto para correr en tu IDE.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-n">3</span>
+        <div class="step-b">
+          <h3>Taller en el IDE</h3>
+          <p class="was">En Física: problemas de parciales, en papel.</p>
+          <p>Primero el material del profe (Talleres 4 y 5, Nam, SpotiAlpes, los UML de parciales) y después variantes nuevas. Cada ejercicio tiene un <b>tiempo meta</b>, porque la práctica es contra reloj. Me mandas el código y te lo corrijo paso a paso con una rúbrica tipo profe.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-n">4</span>
+        <div class="step-b">
+          <h3>Quiz de paso</h3>
+          <p class="was">En Física: 3 cortas y 2 tipo parcial.</p>
+          <p><b>3 de selección múltiple con caso</b>, como las del Parcial 1, con la razón de cada opción, y <b>2 de código corto</b>: completar, corregir o escribir. Pasas con 4/5; si no, repasamos el error y haces el Quiz B. Puedes hacer el quiz primero para saltarte un módulo.</p>
+        </div>
+      </li>
+    </ol>
+    <ul class="marks">
+      <li><b>Sigue igual:</b> asumo que no sabes nada más allá de los módulos anteriores. Cada módulo abre con una tabla, que ahora es de <b>vocabulario</b> (término, cómo se ve en Java o en UML, qué significa), y trae al menos un ejemplo resuelto por idea clave. En el taller respondo solo lo que preguntas.</li>
+      <li><b>La figura ahora es el diagrama o el código:</b> toda pregunta con un caso trae su UML o su fragmento de Java, como en el examen.</li>
+      <li><b>Los casos son los del profe:</b> Club Deportivo Séneca, Nam, Cines, Hamburguesas, SpotiAlpes y la tienda de coleccionables, con nombres en español como en clase.</li>
+      <li><b>Nuevo, las plantillas de memoria:</b> son la hoja de fórmulas de DPOO. Esqueletos de código que escribes sin pensar, porque en 80 minutos no hay tiempo de buscarlos. Cada módulo te deja una o dos, y el lunes las repasas todas:</li>
+    </ul>
+    <ul class="tpl" id="tpl"></ul>
+  </section>
+
+  <section aria-labelledby="mod-h">
+    <div class="sec-head">
+      <h2 id="mod-h">Módulos</h2>
+      <p class="note">Van en el orden de tu semana. La etiqueta «Después de…» dice qué módulo conviene tener aprobado antes. Pasas con 4/5 o más en el quiz; si no, repasamos el error y haces el Quiz B.</p>
+      <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
+    </div>
+    <div class="mods" id="mods"></div>
+  </section>
+
+  <section aria-labelledby="sale-h">
+    <div class="sec-head">
+      <h2 id="sale-h">Qué sale en el examen</h2>
+      <p class="note">En el paquete no hay exámenes 2 anteriores. Esta estimación sale del formato del Parcial 1 y de cuántas clases tuvo cada tema, y supone que el formato se repite.</p>
+    </div>
+    <figure class="fmt">
+      <figcaption class="eyebrow">Así fue el Parcial 1 · 80 minutos en computador</figcaption>
+      <div class="fmt-bar" aria-hidden="true"><div class="sm">30</div><div class="pr">70 pts</div></div>
+      <div class="fmt-key">
+        <span><i class="sw sm"></i>4 preguntas de selección múltiple con un caso corto, de 7,5 pts cada una.</span>
+        <span><i class="sw pr"></i>Práctica: implementar en Java la aplicación de un diagrama UML y entregarla en ZIP.</span>
+      </div>
+    </figure>
+    <div class="legend"><span><i class="prio alta"></i>Prioridad alta</span><span><i class="prio media"></i>Media</span><span><i class="prio baja"></i>Baja</span></div>
+    <div class="temas" id="temas"></div>
+  </section>
+
+  <section aria-labelledby="profe-h">
+    <div class="sec-head">
+      <h2 id="profe-h">Lo que sabemos del profe</h2>
+      <p class="note">Sale del Parcial 1 y de lo que dijo en clase.</p>
+    </div>
+    <ul class="marks">
+      <li><b>Pregunta el porqué, no la definición.</b> Las 4 de selección múltiple traen un caso corto, por ejemplo una interfaz con varias clases que la implementan.</li>
+      <li><b>La práctica vale el 70 %:</b> «implementa en Java una aplicación basada en el siguiente diagrama UML», en 80 minutos y en computador, y se entrega en ZIP. Algunos métodos son libres; en otros espera la funcionalidad mínima «según lo visto en el curso».</li>
+      <li><b>Recalcó <code>super(...)</code>:</b> si la clase padre tiene constructor, la hija lo llama.</li>
+      <li><b>A las 12:20 todos entregan lo que tengan.</b> Exporta un ZIP que compile desde temprano y vuelve a exportarlo al final.</li>
+      <li><b>Antes del Parcial 1 publicó dos UML de semestres anteriores.</b> Revisa Bloque Neón esta semana: si publica algo, entra al taller.</li>
+      <li><b>Usa sus propios casos</b>, y los módulos también: Club Deportivo Séneca, Nam – Núcleo de Pedidos, procesador de imágenes, SpotiAlpes, Cines, Hamburguesas y la tienda de coleccionables.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="conf-h" id="confirmar">
+    <div class="sec-head">
+      <h2 id="conf-h">Por confirmar y por subir</h2>
+    </div>
+    <div class="two">
+      <div class="box">
+        <h3>Pregúntale al profe</h3>
+        <p class="muted small">Hoy en clase o el jueves. Con las respuestas ajusto el simulacro y los talleres.</p>
+        <ul class="qs">
+          <li>¿El examen es el martes 10 de noviembre a las 11:00, en la sala Turing? La fecha sale del cronograma.</li>
+          <li>¿Tiene la misma estructura del Parcial 1: selección múltiple con caso y una práctica en Java?</li>
+          <li>En la práctica, ¿dan el UML o hay que diseñarlo a partir de historias de usuario? ¿Hay que escribir pruebas JUnit?</li>
+          <li>¿Entran la clase de hoy (librerías y frameworks) y la de Swing del jueves?</li>
+          <li>¿Se pueden usar apuntes o la documentación de Java?</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Súbeme el material, en este orden</h3>
+        <p class="muted small">Por ahora solo tengo el LEEME. Con lo demás, los módulos usan el vocabulario del profe y te digo de qué diapositiva sale cada idea.</p>
+        <ol class="mat">
+          <li><b>Carpeta 06, formato de examen</b> <span class="first">PRIMERO</span>: tu intento del Parcial 1 y los UML. Con eso veo dónde perdiste puntos y armo M1 y el simulacro.</li>
+          <li><b>Carpeta 02, presentaciones del profe:</b> para usar su vocabulario y citar la diapositiva. «03 Diseño.pdf» pesa unos 45 MB: mándalo aparte o dividido.</li>
+          <li><b>Carpeta 04, talleres:</b> el Taller 4 (Cines), el Taller 5 (Hamburguesas) con su esqueleto, que dice qué versión de JUnit usa el curso, y la hoja del procesador de imágenes.</li>
+          <li><b>Carpetas 05 y 03:</b> el enunciado y las historias de usuario del Club Deportivo Séneca, y las presentaciones oficiales para llenar huecos.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fuente: el LEEME del paquete del Examen 2 (Bloque Neón, descargado el 2 de noviembre de 2026). El progreso se guarda en esta página; Claude actualiza la nota del quiz cuando lo apruebas.</footer>
+</div>
+
+<script>
+const EXAM = new Date(2026, 10, 10, 11, 0);
+const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
+const DAYS = [
+  {d:"2026-11-03", n:"Mar", f:"3 nov", load:1, what:"M1 De UML a Java", mods:["M1"], h:"1–1,5 h", tags:[["Clase 25",""]],
+    note:"Hoy hay clase (librerías y frameworks): pregúntale al profe lo de «Por confirmar» y súbeme la carpeta 06.", link:["#confirmar","Qué preguntar y qué subir →"]},
+  {d:"2026-11-04", n:"Mié", f:"4 nov", load:3, what:"M2 Manejo de errores", mods:["M2"], h:"2,5–3 h", tags:[],
+    note:"Mañana entregas el Proyecto 2. Si te come el día, haz la teoría y el quiz, y como taller agrégale excepciones propias a tu proyecto."},
+  {d:"2026-11-05", n:"Jue", f:"5 nov", load:1, what:"M3 Librerías, frameworks y APIs (+ Swing)", mods:["M3"], h:"~1 h", tags:[["Clase 26",""],["Entrega Proyecto 2","due"]],
+    note:"Hoy es la clase de Swing y entregas el Proyecto 2. M3 es corto a propósito."},
+  {d:"2026-11-06", n:"Vie", f:"6 nov", load:2, what:"M4 Análisis y modelo del mundo", mods:["M4"], h:"~2 h", tags:[],
+    note:"Ya practicaste análisis en el Taller 4 y en el Proyecto 1. Si te sientes bien, haz el quiz primero."},
+  {d:"2026-11-07", n:"Sáb", f:"7 nov", load:4, what:"M5 Diseño: roles, responsabilidades y colaboraciones + M6 Pruebas con JUnit", mods:["M5","M6"], h:"4–5 h", tags:[],
+    note:"Bloque largo: diseño en la mañana y pruebas en la tarde."},
+  {d:"2026-11-08", n:"Dom", f:"8 nov", load:4, what:"M7 Principios SOLID + M8 Patrones", mods:["M7","M8"], h:"4–5 h", tags:[],
+    note:"Principios primero: los patrones se apoyan en ellos."},
+  {d:"2026-11-09", n:"Lun", f:"9 nov", load:2, what:"M9 Simulacro de 80 min + repaso de plantillas", mods:["M9"], h:"~2 h", tags:[],
+    note:"Simulacro en tu IDE, sin internet y con cronómetro. Después lo corregimos y repasas tus plantillas."},
+  {d:"2026-11-10", n:"Mar", f:"10 nov", load:0, what:"30 min con tus plantillas, y Examen 2", mods:[], h:"11:00 · Llega temprano", exam:true,
+    note:"Repasa tus plantillas de memoria 30 minutos y llega temprano: a las 12:20 todos entregan."}
+];
+const MODS = [
+  {id:"M1", t:"De UML a Java", kind:"refuerzo", dayIso:"2026-11-03", day:"Mar 3", h:"1–1,5 h", prio:"alta", deps:[], extra:"Base de la práctica de 70 pts",
+    src:"repaso_base/UML (carpeta 02) · 2. UML (carpeta 03) · UML de parciales anteriores (carpeta 06)",
+    dominar:["Leer todo el diagrama: visibilidad (`+` `-` `#`), tipos, abstractos en cursiva, estáticos subrayados e «interface».","Traducir cada flecha: asociación y multiplicidad (`0..*` → `ArrayList`), herencia (`extends` y `super`), realización (`implements`) y dependencia.","El orden para implementar un UML en 80 minutos, compilando seguido y exportando el ZIP con tiempo."],
+    taller:["El UML de tu Parcial 1 (tienda de coleccionables), rehecho contra reloj","Los UML de 2025-20 y 2026-10 que publicó el profe","Una variante nueva con interfaz y clase abstracta"],
+    trampas:["Olvidar `super(...)` en el constructor de la hija: el profe lo recalcó.","No crear la lista en el constructor (`NullPointerException` al agregar).","Comparar textos con `==` en vez de `equals`."]},
+  {id:"M2", t:"Manejo de errores", dayIso:"2026-11-04", day:"Mié 4", h:"2,5–3 h", prio:"alta", deps:["M1"], extra:"Clase 24 + excepciones del Examen 1",
+    src:"13b. Estrategias para el manejo de errores · 4. Excepciones (carpeta 03) · repaso_base/Excepciones (carpeta 02) · lectura [23]",
+    dominar:["Checked o unchecked, `throw` o `throws`, y qué corre en cada camino de un `try/catch/finally`.","Crear excepciones propias con un mensaje que diga qué falló y con qué dato.","Dónde se lanza y dónde se atrapa: el modelo valida y lanza; la interfaz atrapa y le avisa al usuario."],
+    taller:["6 trazas de `try/catch/finally` para predecir la salida","Excepciones propias para la tienda de coleccionables o tu Proyecto 2","Cambiar códigos de error y `null` por excepciones"],
+    trampas:["El `catch` vacío que se traga el error.","Atrapar `Exception` antes que la específica: no compila.","Retornar `null` para avisar que algo falló."]},
+  {id:"M3", t:"Librerías, frameworks y APIs (+ Swing)", dayIso:"2026-11-05", day:"Jue 5", h:"~1 h", prio:"baja", deps:[], extra:"Clases 25 y 26: las ves esta semana",
+    src:"12a. Reutilización (carpeta 03) · lecturas [19] [20] · tus notas de las clases del martes y el jueves",
+    dominar:["Librería o framework: a la librería la llamas tú; el framework te llama a ti.","Qué es una API (local o un servicio remoto) y qué la hace buena, según Bloch.","Swing en lo básico: una ventana, sus componentes y un listener que reacciona a un clic."],
+    taller:["Clasificar herramientas que ya usaste: JUnit, Swing, `java.util`…","Criticar y rediseñar la API de una clase del Club Deportivo Séneca"],
+    trampas:["Creer que un framework es solo una librería grande.","Confundir API con interfaz gráfica."]},
+  {id:"M4", t:"Análisis: el modelo del mundo del problema", dayIso:"2026-11-06", day:"Vie 6", h:"~2 h", prio:"media", deps:[], extra:"Clase 12 + Taller 4",
+    src:"01 El mundo del problema · 02 Análisis y problema del mundo (carpeta 02) · 5. Análisis y modelo del mundo (carpeta 03) · lectura [5]",
+    dominar:["Qué va en el modelo del mundo (conceptos del negocio) y qué no (clases de software).","Requerimientos funcionales, no funcionales y restricciones; historias de usuario con criterios de aceptación.","Del enunciado al diagrama: sustantivos → clases o atributos, verbos → responsabilidades, y luego relaciones con multiplicidad."],
+    taller:["Taller 4 (Cines), rehecho contra reloj","El análisis del Proyecto 1 (Club Deportivo Séneca), revisado con la receta","Un enunciado nuevo"],
+    trampas:["Meter software en el modelo del mundo: menú, controlador, archivo.","Atributos que en realidad son relaciones con otra clase.","Requerimientos que no se pueden verificar: «rápido», «fácil de usar»."]},
+  {id:"M5", t:"Diseño: roles, responsabilidades y colaboraciones", dayIso:"2026-11-07", day:"Sáb 7", h:"2,5–3 h", prio:"alta", deps:["M4"], extra:"El tema con más clases (14 y 17–19)",
+    src:"03 Diseño · 04 Diseño 2 · 06 Nam – Núcleo de Pedidos (carpeta 02) · 6. El proceso de diseño · Historias de usuario a diseño de objetos (carpeta 03) · lectura [9]",
+    dominar:["Responsabilidades (saber, hacer, decidir) y a qué objeto asignarlas: al que tiene la información.","Los 6 estereotipos de rol de Wirfs-Brock y los estilos de control: centralizado, delegado y disperso.","De una historia de usuario a tarjetas CRC y a las colaboraciones entre objetos."],
+    taller:["Nam – Núcleo de Pedidos, el caso de clase","Hoja de trabajo del procesador de imágenes","Competencia y Banco de Historias de Usuario","El diseño de tu Proyecto 2, revisado con el checklist"],
+    trampas:["La clase que controla todo.","Asignar una responsabilidad a quien no tiene la información.","Confundir el estereotipo de una clase con su nombre."]},
+  {id:"M6", t:"Pruebas unitarias con JUnit", dayIso:"2026-11-07", day:"Sáb 7", h:"~2 h", prio:"alta", deps:["M2"], extra:"Clases 20–21 + Taller 5",
+    src:"07 Diseño de pruebas unitarias · 08 Diseño de pruebas 2 (carpeta 02) · 14 y 15 (carpeta 03) · Taller 5 · lectura [24]",
+    dominar:["Diseñar los casos antes del código: el normal, los límites y los de error, en una tabla.","Escenarios con `@BeforeEach` y la estructura preparar → ejecutar → verificar.","Los asserts que más salen: `assertEquals`, `assertTrue`, `assertNull` y `assertThrows`."],
+    taller:["Taller 5 (Hamburguesas) con su esqueleto, rehecho","Pruebas para la tienda de coleccionables, con las excepciones de M2","Encontrar el error que tus pruebas no detectan"],
+    trampas:["Invertir esperado y obtenido en `assertEquals`.","Comparar `double` sin margen de error.","Probar solo el caso feliz."]},
+  {id:"M7", t:"Principios: acoplamiento, cohesión y SOLID", dayIso:"2026-11-08", day:"Dom 8", h:"~2 h", prio:"media", deps:["M5"], extra:"Clases 15 y 22",
+    src:"05 Aspectos metodológicos (carpeta 02) · 6b. Aspectos metodológicos · 11a. Principios de diseño · Ejemplo SOLID SpotiAlpes (carpeta 03) · lecturas [10] [14]",
+    dominar:["Acoplamiento y cohesión: cómo se ven en el código y por qué se busca bajo y alta.","Los 5 principios SOLID, cada uno con su olor (cómo se ve la violación) y su arreglo.","Responder «¿qué principio viola?» imaginando un requerimiento nuevo: ¿cuántas clases tocas y por qué?"],
+    taller:["El ejemplo SOLID de SpotiAlpes, rehecho","Violaciones nuevas para encontrar y arreglar","Tu Proyecto 2, revisado con los 5 principios"],
+    trampas:["Creer que responsabilidad única es «un método por clase».","Pensar que si compila, la herencia está bien: Liskov pide que la hija cumpla lo que promete el padre.","Confundir inversión de dependencias con inyección de dependencias."]},
+  {id:"M8", t:"Patrones de diseño", dayIso:"2026-11-08", day:"Dom 8", h:"2–2,5 h", prio:"media", deps:["M7"], extra:"Clase 23",
+    src:"09 Patrones de Diseño (carpeta 02) · 11b. Patrones de diseño (carpeta 03) · lecturas [16] [17] [18]",
+    dominar:["Qué es un patrón (nombre, problema, solución, consecuencias) y las 3 familias del Gang of Four.","Singleton, Facade y Adapter (diapositivas) y Strategy (lectura [17]): el problema, su UML y su esqueleto en Java.","Reconocer el patrón a partir de un caso corto, que es como sale en selección múltiple."],
+    taller:["Cada patrón implementado en el Club Deportivo Séneca","Reconocer patrones en código que no los nombra"],
+    trampas:["Un Singleton con constructor público: deja de ser único.","Confundir Adapter (hace encajar una interfaz) con Facade (simplifica un subsistema).","Meter patrones donde no hacen falta."]},
+  {id:"M9", t:"Simulacro de 80 minutos, estilo Porras", kind:"simulacro", sim:true, dayIso:"2026-11-09", day:"Lun 9", h:"~2 h", prio:"alta", deps:["M1","M2","M4","M5","M6","M7","M8"], extra:"En tu IDE, sin internet",
+    src:"Formato del Parcial 1 (carpeta 06) y lo que confirme el profe",
+    dominar:["4 de selección múltiple con caso (7,5 pts c/u) y una práctica de 70 pts: un UML nuevo para implementar con excepciones y pruebas, y entregar en ZIP.","Cronometrado: 80 minutos, como en la sala Turing.","Rúbrica tipo profe: estructura según el UML, funcionalidad mínima, excepciones y pruebas, por separado."],
+    taller:[],
+    trampas:["80/100 o más.","Si sacas menos, el lunes en la noche repasamos solo lo que perdió puntos."]}
+];
+const TEMAS = [
+  {t:"De UML a Java", m:"M1", p:"alta", sm:"Posible", pr:"Seguro", c:"Base del Examen 1"},
+  {t:"Manejo de errores", m:"M2", p:"alta", sm:"Probable", pr:"Muy probable", c:"1 (la 24) + Examen 1"},
+  {t:"Diseño: roles, responsabilidades y colaboraciones", m:"M5", p:"alta", sm:"Muy probable", pr:"Posible", c:"4 (14 y 17–19)"},
+  {t:"Pruebas unitarias con JUnit", m:"M6", p:"alta", sm:"Probable", pr:"Probable", c:"2 (20–21) + Taller 5"},
+  {t:"Principios: acoplamiento, cohesión y SOLID", m:"M7", p:"media", sm:"Probable", pr:"Posible", c:"2 (15 y 22)"},
+  {t:"Patrones de diseño", m:"M8", p:"media", sm:"Probable", pr:"Posible", c:"1 (la 23)"},
+  {t:"Análisis y modelo del mundo", m:"M4", p:"media", sm:"Probable", pr:"Posible", c:"1 (la 12) + Taller 4"},
+  {t:"Librerías, frameworks y APIs", m:"M3", p:"baja", sm:"Posible", pr:"Poco probable", c:"1 (la 25, hoy)"},
+  {t:"Swing", m:"M3", p:"baja", sm:"Poco probable", pr:"No: el Taller 6 es después", c:"1 (la 26, el jueves)"}
+];
+const TPL = [
+  {c:"super(nombre, precio);", d:"Clase hija: llama al constructor del padre y sobrescribe con `@Override`.", m:"M1"},
+  {c:"this.socios = new ArrayList<>();", d:"Asociación `0..*`: la lista se crea en el constructor, con métodos para agregar y buscar.", m:"M1"},
+  {c:"public abstract class Coleccionable implements Vendible", d:"Clase abstracta e interfaz con `implements`.", m:"M1"},
+  {c:"throw new CupoLlenoException(nombreClase);", d:"Excepción propia: `extends Exception`, `throw`, `throws` y `try/catch`.", m:"M2"},
+  {c:"Clase · Responsabilidades · Colaboradores", d:"Tarjeta CRC para una historia de usuario.", m:"M5"},
+  {c:"assertThrows(CupoLlenoException.class, () -> club.inscribir(socio));", d:"Clase de prueba: escenario con `@BeforeEach`, `assertEquals` y `assertThrows`.", m:"M6"},
+  {c:"public static Club getInstancia()", d:"Singleton, Facade, Adapter y Strategy.", m:"M8"}
+];
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Texto con `código` entre comillas invertidas → nodos <code>, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    parent.appendChild(i % 2 ? el("code", "", part) : document.createTextNode(part));
+  });
+  return parent;
+}
+const pad = (n) => String(n).padStart(2, "0");
+const now = new Date();
+const todayIso = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+const byId = (id) => MODS.find((x) => x.id === id);
+
+function loadMeter(level) {
+  const w = el("span", "load");
+  const m = el("span", "m"); m.setAttribute("aria-hidden", "true");
+  for (let i = 1; i <= 4; i++) m.appendChild(el("i", i <= level ? "on" : ""));
+  w.appendChild(m); w.appendChild(el("span", "", LOADS[level]));
+  return w;
+}
+
+/* Cuenta regresiva en días de calendario */
+(function () {
+  const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const e0 = new Date(EXAM.getFullYear(), EXAM.getMonth(), EXAM.getDate());
+  const d = Math.round((e0 - t0) / 86400000);
+  const end = new Date(EXAM.getTime() + 80 * 60000);
+  if (d < 0 || (d === 0 && now > end)) { $("#dias").textContent = "—"; $("#dias-lab").textContent = "el examen ya pasó"; }
+  else if (d === 0) { $("#dias").textContent = "Hoy"; $("#dias-lab").textContent = "es el examen"; }
+  else { $("#dias").textContent = d; $("#dias-lab").textContent = d === 1 ? "día para el examen" : "días para el examen"; }
+})();
+
+/* Semana */
+(function () {
+  const lg = $("#legend");
+  [[1,"Mar y jue · 1–1,5 h"],[2,"Lun y vie · ~2 h"],[3,"Mié · 2,5–3 h"],[4,"Sáb y dom · 4–5 h"]].forEach(([l, t]) => {
+    const s = el("span"); s.appendChild(loadMeter(l)); s.appendChild(document.createTextNode(" " + t)); lg.appendChild(s);
+  });
+  const box = $("#days");
+  DAYS.forEach((d) => {
+    const c = el("article", "day" + (d.exam ? " exam" : "") + (d.d === todayIso ? " is-today" : "") + (d.d < todayIso ? " is-past" : ""));
+    const dn = el("div", "dn"); dn.appendChild(el("b", "", d.n)); dn.appendChild(el("span", "", d.f)); c.appendChild(dn);
+    if (d.d === todayIso) c.appendChild(el("span", "tag-today", "HOY"));
+    if (!d.exam) c.appendChild(loadMeter(d.load));
+    c.appendChild(el("p", "w", d.what));
+    c.appendChild(el("p", "h", d.h));
+    if (d.tags && d.tags.length) {
+      const tg = el("div", "tags");
+      d.tags.forEach(([t, k]) => tg.appendChild(el("span", "tag" + (k ? " " + k : ""), t)));
+      c.appendChild(tg);
+    }
+    box.appendChild(c);
+  });
+})();
+
+/* Plantillas de memoria */
+(function () {
+  const ul = $("#tpl");
+  TPL.forEach((x) => {
+    const li = el("li");
+    const tx = el("div", "tx");
+    tx.appendChild(el("code", "snip", x.c));
+    tx.appendChild(rich(el("span", "ds"), x.d));
+    li.appendChild(tx);
+    li.appendChild(el("span", "mchip", x.m));
+    ul.appendChild(li);
+  });
+})();
+
+/* Qué sale */
+(function () {
+  const box = $("#temas");
+  const PN = {alta:"Prioridad alta", media:"Prioridad media", baja:"Prioridad baja"};
+  TEMAS.forEach((x) => {
+    const r = el("div", "tema");
+    const h = el("div", "tema-h");
+    const dot = el("i", "prio " + x.p); dot.title = PN[x.p]; dot.setAttribute("aria-label", PN[x.p]); dot.setAttribute("role", "img");
+    h.appendChild(dot); h.appendChild(el("b", "", x.t)); h.appendChild(el("span", "mchip", x.m));
+    r.appendChild(h);
+    const dl = el("dl", "tema-d");
+    [["Selección múltiple", x.sm], ["Práctica", x.pr], ["Clases", x.c]].forEach(([k, v]) => {
+      const g = el("div"); g.appendChild(el("dt", "", k + ":")); g.appendChild(el("dd", "", v)); dl.appendChild(g);
+    });
+    r.appendChild(dl);
+    box.appendChild(r);
+  });
+})();
+
+/* Progreso */
+let progress = {};
+let db = null, canWrite = false;
+const writeQueue = {};
+
+function isPassed(m, p) { if (!m || !p || p.quiz == null || p.quiz === "") return false; return m.sim ? Number(p.quiz) >= 80 : Number(p.quiz) >= 4; }
+function status(m) {
+  const p = progress[m.id] || {};
+  if (isPassed(m, p)) return ["Aprobado", "ok"];
+  if (p.teoria || p.lab || p.taller || (p.quiz != null && p.quiz !== "")) return ["En curso", "go"];
+  if (m.dayIso === todayIso) return ["Hoy", "today"];
+  if (m.dayIso < todayIso) return ["Pendiente", "late"];
+  const miss = (m.deps || []).filter((id) => !isPassed(byId(id), progress[id]));
+  if (miss.length) return [m.sim ? "Al final" : "Después de " + miss[0], "lock"];
+  return ["Pendiente", ""];
+}
+
+function renderMods() {
+  const box = $("#mods"); box.textContent = "";
+  let passed = 0;
+  MODS.forEach((m) => {
+    const p = progress[m.id] || {};
+    const ok = isPassed(m, p);
+    if (ok) passed++;
+    const card = el("article", "mod" + (ok ? " done" : "") + (!ok && m.dayIso === todayIso ? " is-today" : ""));
+
+    const head = el("div", "mod-head");
+    head.appendChild(el("span", "code", m.id));
+    const tbox = el("div"); tbox.style.minWidth = "0";
+    if (m.kind) tbox.appendChild(el("p", "stereo", "«" + m.kind + "»"));
+    tbox.appendChild(el("h3", "", m.t));
+    const meta = el("div", "mod-meta");
+    const pr = el("span"); pr.appendChild(el("i", "prio " + m.prio)); pr.appendChild(document.createTextNode("Prioridad " + m.prio)); meta.appendChild(pr);
+    meta.appendChild(el("span", "", m.day + " · " + m.h));
+    if (m.extra) meta.appendChild(el("span", "", m.extra));
+    tbox.appendChild(meta); head.appendChild(tbox);
+    const [st, cls] = status(m);
+    head.appendChild(el("span", "pill" + (cls ? " " + cls : ""), st));
+    card.appendChild(head);
+
+    const prog = el("div", "prog");
+    if (!m.sim) {
+      [["teoria", "Teoría"], ["lab", "Lab"], ["taller", "Taller"]].forEach(([k, lab]) => {
+        const b = el("button", "tog"); b.type = "button"; b.id = "tog-" + m.id + "-" + k;
+        b.setAttribute("aria-pressed", p[k] ? "true" : "false");
+        const bx = el("span", "box", p[k] ? "✓" : ""); bx.setAttribute("aria-hidden", "true");
+        b.appendChild(bx); b.appendChild(document.createTextNode(lab));
+        b.disabled = !canWrite;
+        b.addEventListener("click", () => save(m.id, { [k]: !p[k] }));
+        prog.appendChild(b);
+      });
+    }
+    const q = el("label", "quizsel"); q.htmlFor = "quiz-" + m.id;
+    q.appendChild(document.createTextNode(m.sim ? "Simulacro" : "Quiz"));
+    let inp;
+    if (m.sim) {
+      inp = el("input"); inp.type = "number"; inp.min = 0; inp.max = 100; inp.placeholder = "—";
+      inp.value = p.quiz != null ? p.quiz : "";
+      inp.addEventListener("change", () => { const v = inp.value === "" ? null : Math.max(0, Math.min(100, Number(inp.value))); save(m.id, { quiz: v }); });
+      q.appendChild(inp); q.appendChild(document.createTextNode("/100"));
+    } else {
+      inp = el("select");
+      const o0 = el("option", "", "—"); o0.value = ""; inp.appendChild(o0);
+      for (let i = 0; i <= 5; i++) { const o = el("option", "", i + "/5"); o.value = String(i); inp.appendChild(o); }
+      inp.value = p.quiz != null ? String(p.quiz) : "";
+      inp.addEventListener("change", () => save(m.id, { quiz: inp.value === "" ? null : Number(inp.value) }));
+      q.appendChild(inp);
+    }
+    inp.id = "quiz-" + m.id; inp.disabled = !canWrite;
+    prog.appendChild(q);
+    if (p.url) { const a = el("a", "open", "Abrir módulo →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; prog.appendChild(a); }
+    else prog.appendChild(el("span", "open muted", "Módulo aún no creado"));
+    card.appendChild(prog);
+
+    const det = el("details", "more");
+    det.appendChild(el("summary", "", "Qué incluye"));
+    const body = el("div", "more-body");
+    const cols = m.sim ? [["Formato", m.dominar], ["Meta", m.trampas]] : [["Vas a dominar", m.dominar], ["Taller", m.taller], ["Trampas", m.trampas]];
+    cols.forEach(([h, list]) => {
+      const col = el("div"); col.appendChild(el("h4", "", h));
+      const ul = el("ul"); list.forEach((x) => ul.appendChild(rich(el("li"), x))); col.appendChild(ul); body.appendChild(col);
+    });
+    body.appendChild(el("p", "src", "Material: " + m.src));
+    det.appendChild(body); card.appendChild(det);
+    box.appendChild(card);
+  });
+  $("#aprob").textContent = passed + "/" + MODS.length;
+  $("#aprob-bar").style.width = (passed / MODS.length * 100) + "%";
+  renderToday();
+}
+
+function renderToday() {
+  let d = DAYS.find((x) => x.d === todayIso);
+  if (!d && todayIso < DAYS[0].d) d = DAYS[0];
+  const row = $("#hoy-row"); row.textContent = "";
+  const note = $("#hoy-note"); note.textContent = "";
+  if (!d) { $("#hoy-h").textContent = "Después del examen"; $("#hoy-t").textContent = "El Examen 2 ya pasó."; note.hidden = true; return; }
+  $("#hoy-h").textContent = (d.d === todayIso ? "Hoy · " : "Primer día · ") + d.n + " " + d.f;
+  $("#hoy-t").textContent = d.what;
+  if (d.note) { rich(note, d.note); note.hidden = false; } else note.hidden = true;
+  if (!d.exam) row.appendChild(loadMeter(d.load));
+  row.appendChild(el("span", "mono muted", d.h));
+  d.mods.forEach((id) => {
+    const p = progress[id] || {};
+    if (p.url) { const a = el("a", "btn", "Abrir " + id + " →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a); }
+  });
+  if (d.link) { const a = el("a", "link", d.link[1]); a.href = d.link[0]; row.appendChild(a); }
+}
+
+async function save(id, patch) {
+  if (!db || !canWrite) return;
+  progress[id] = Object.assign({}, progress[id] || {}, patch);
+  renderMods();
+  const prev = writeQueue[id] || Promise.resolve();
+  const run = prev.then(() => db.collection("progreso").doc(id).set(Object.assign({}, progress[id]))).catch((e) => {
+    if (e && e.code === "invalid_argument") { canWrite = false; $("#dbnote").textContent = "Esta vista es de solo lectura: no se pudo guardar el cambio."; renderMods(); }
+    else { $("#dbnote").textContent = "No se pudo guardar el cambio. Vuelve a intentarlo en un momento."; }
+  });
+  writeQueue[id] = run;
+  return run;
+}
+
+renderMods();
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) { $("#dbnote").textContent = "Abre esta página en claude.ai con tu cuenta para guardar y ver tu progreso."; return; }
+  let user = null;
+  try { user = await window.claude.use("user"); } catch (e) { user = null; }
+  let cw = null;
+  try { cw = user ? await user.can("data.write") : null; } catch (e) { cw = null; }
+  canWrite = cw !== false;
+  const ready = canWrite ? "Marca cada parte cuando la termines. Claude actualiza la nota del quiz cuando lo apruebas." : "Estás viendo el progreso en modo lectura.";
+  $("#dbnote").textContent = ready;
+  const timer = setTimeout(() => { $("#dbnote").textContent = "Tu progreso está tardando en cargar. Recarga la página si no aparece."; }, 10000);
+  db.collection("progreso").onSnapshot((snap) => {
+    clearTimeout(timer);
+    $("#dbnote").textContent = ready;
+    const next = {};
+    snap.docs.forEach((d) => { if (d.exists) next[d.id] = Object.assign({}, d.data()); });
+    progress = next;
+    renderMods();
+  }, () => { clearTimeout(timer); $("#dbnote").textContent = "Se perdió la conexión con tu progreso. Recarga la página."; });
+})();
+</script>
