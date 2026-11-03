@@ -1,0 +1,604 @@
+<title>Plan Parcial 3 y Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio. Una columna (≤ 900px) sobre papel milimetrado tenue: hoy arriba, luego fechas clave, el cronograma en dos fases como tiras de días con medidor de carga, y los módulos de cada fase con chips de progreso. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9; --yellow:#8a6e00; --yellow-soft:#f8f0c9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914; --yellow:#e4c955; --yellow-soft:#322b10;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.55;
+}
+.wrap{max-width:900px; margin:0 auto; padding-inline:16px; padding-block:28px 64px; display:grid; gap:44px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.1}
+h1{font-size:clamp(2.6rem,9vw,4.4rem); font-weight:900; font-stretch:112%; letter-spacing:-.02em}
+h2{font-size:1.55rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.08rem; font-weight:700}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+
+/* Header */
+.top{display:grid; gap:14px}
+.lede{font-size:1.1rem; max-width:60ch}
+.stats{display:flex; flex-wrap:wrap; gap:10px 28px; align-items:end; margin-top:6px}
+.stat{display:grid; gap:2px}
+.stat b{font-family:var(--f-display); font-size:2rem; font-weight:800; font-stretch:110%; line-height:1; font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem; color:var(--muted)}
+.bar{height:8px; background:var(--rule); border-radius:99px; overflow:hidden; width:min(260px,100%)}
+.bar i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .4s}
+
+/* Hoy */
+.today{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:18px 20px; display:grid; gap:10px; box-shadow:4px 4px 0 var(--ink)}
+.today .row{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.today h3{font-size:1.35rem}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+
+/* Load meter */
+.load{display:inline-flex; align-items:center; gap:7px; font-size:.82rem; font-weight:600}
+.load .m{display:inline-flex; gap:2px; align-items:flex-end; height:14px}
+.load .m i{width:4px; background:var(--rule); border-radius:1px}
+.load .m i:nth-child(1){height:5px}.load .m i:nth-child(2){height:8px}.load .m i:nth-child(3){height:11px}.load .m i:nth-child(4){height:14px}
+.load .m i.on{background:var(--accent)}
+
+/* Semana */
+.legend{display:flex; flex-wrap:wrap; gap:8px 18px; color:var(--muted); font-size:.88rem}
+.days{display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr)); gap:10px}
+.day{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 13px; display:grid; gap:6px; align-content:start; min-width:0}
+.day .dn{display:flex; justify-content:space-between; align-items:baseline; gap:6px}
+.day .dn b{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.day .dn span{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.day .w{font-size:.92rem; line-height:1.35}
+.day .h{font-family:var(--f-mono); font-size:.78rem; color:var(--muted)}
+.day.is-today{border:1.5px solid var(--ink); background:linear-gradient(var(--hi),var(--hi)) left top/100% 5px no-repeat, var(--surface)}
+.day.is-past{opacity:.6}
+.day.exam{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.day.exam .dn span,.day.exam .h{color:var(--paper); opacity:.75}
+.tag-today{font-family:var(--f-mono); font-size:.7rem; background:var(--hi); color:var(--hi-ink); padding:1px 6px; border-radius:4px}
+
+/* Módulos */
+.note{font-size:.95rem; max-width:68ch}
+.dbnote{font-size:.85rem; color:var(--muted); font-style:italic}
+.mods{display:grid; gap:12px}
+.mod{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px 18px; display:grid; gap:12px; min-width:0}
+.mod.done{border-color:var(--green)}
+.mod-head{display:grid; grid-template-columns:auto 1fr auto; gap:4px 14px; align-items:start}
+.code{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:1.5rem; line-height:1; padding-top:2px; min-width:2.2em}
+.mod-meta{font-size:.84rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:4px}
+.pill{font-size:.75rem; font-weight:600; padding:3px 9px; border-radius:99px; white-space:nowrap; background:var(--rule); color:var(--ink)}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.go{background:var(--accent-soft); color:var(--accent)}
+.pill.lock{background:transparent; border:1px dashed var(--rule); color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.chip-hot{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.prog{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.tog{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:.88rem; padding:6px 11px; border-radius:8px; border:1px solid var(--rule); background:transparent; color:var(--ink); cursor:pointer}
+.tog .box{width:15px; height:15px; border:1.5px solid var(--muted); border-radius:4px; display:grid; place-items:center; font-size:11px; line-height:1}
+.tog[aria-pressed="true"]{border-color:var(--green); background:var(--green-soft)}
+.tog[aria-pressed="true"] .box{background:var(--green); border-color:var(--green); color:var(--surface)}
+.tog:disabled{cursor:default; opacity:.7}
+.quizsel{display:inline-flex; align-items:center; gap:7px; font-size:.88rem; padding:4px 6px 4px 11px; border-radius:8px; border:1px solid var(--rule)}
+.quizsel select,.quizsel input{font:inherit; font-family:var(--f-mono); background:var(--paper); color:var(--ink); border:1px solid var(--rule); border-radius:6px; padding:3px 6px}
+.quizsel input{width:4.5em}
+.open{margin-left:auto; font-weight:600; font-size:.9rem; text-decoration:none}
+.open:hover{text-decoration:underline}
+details.more summary{cursor:pointer; font-size:.88rem; color:var(--muted); list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+ "; font-family:var(--f-mono)}
+details.more[open] summary::before{content:"− "}
+.more-body{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:12px}
+.more-body h4{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
+.more-body ul{margin:0; padding-left:18px; font-size:.9rem; display:grid; gap:4px}
+
+/* Qué sale */
+.freq{display:grid; gap:12px}
+.fr{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:baseline}
+.fr .lab{font-weight:600}
+.fr .lab small{font-weight:400; color:var(--muted)}
+.fr .val{font-family:var(--f-mono); font-size:.85rem; font-variant-numeric:tabular-nums; color:var(--muted)}
+.fr .track{grid-column:1 / -1; height:12px; background:var(--rule); border-radius:3px; overflow:hidden}
+.fr .track i{display:block; height:100%; border-radius:3px}
+.p-alta i{background:var(--red)} .p-media i{background:var(--orange)} .p-baja i{background:var(--yellow)}
+.prio{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:1px}
+.prio.alta{background:var(--red)} .prio.media{background:var(--orange)} .prio.baja{background:var(--yellow)}
+.patterns{display:grid; gap:10px; padding:0; margin:0; list-style:none; counter-reset:p}
+.patterns li{display:grid; grid-template-columns:2rem 1fr; gap:10px; counter-increment:p}
+.patterns li::before{content:counter(p); font-family:var(--f-display); font-weight:900; font-size:1.3rem; color:var(--accent); line-height:1.2}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.9rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td.ans{font-family:var(--f-mono); font-size:.85rem}
+.warn{color:var(--red); font-weight:600}
+.fix{background:var(--red-soft)}
+section{display:grid; gap:16px; min-width:0}
+.sec-head{display:grid; gap:6px}
+footer{font-size:.82rem; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ .bar i{transition:none} }
+@media (max-width:560px){
+  .mod-head{grid-template-columns:auto 1fr}
+  .mod-head .pill{grid-column:2; justify-self:start}
+  .open{margin-left:0}
+}
+
+/* Parcial 3 y Final */
+.phase-h{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:1.08rem; margin-top:6px}
+.phase-h .ph{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; background:var(--ink); color:var(--paper); padding:2px 8px; border-radius:4px}
+.dates{display:grid; gap:8px}
+.date{display:grid; grid-template-columns:11.5rem minmax(0,1fr); gap:4px 16px; align-items:baseline; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px 14px}
+.date .df{font-family:var(--f-mono); font-size:.82rem; color:var(--muted)}
+.date div{display:grid; gap:2px}
+.date .muted{font-size:.88rem}
+.date.big{border:1.5px solid var(--ink); box-shadow:3px 3px 0 var(--ink)}
+.date.big b{font-family:var(--f-display); font-size:1.12rem}
+.date.is-past{opacity:.55}
+.mod.express{border-style:dashed}
+.replinks{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px}
+.rl{display:grid; gap:2px; text-decoration:none; color:var(--ink); background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px 12px}
+.rl:hover{border-color:var(--accent)}
+.rl b{font-family:var(--f-display); font-weight:800; color:var(--accent)}
+.rl span{font-size:.88rem}
+@media (max-width:560px){ .date{grid-template-columns:1fr} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">FISI 1518 · Física 1 · Prof. Carlos Ávila</p>
+    <h1>Parcial 3 y Final</h1>
+    <p class="lede"><b>Fase 1:</b> Parcial 3, jueves 19 de noviembre a las 12:30. Capítulos 8, 9, 10 y 13; vale el 15 %. <b>Fase 2:</b> examen final, lunes 30 de noviembre a las 15:00, 3 horas. Todo el curso más el capítulo 14; vale el 25 %.</p>
+    <div class="stats">
+      <div class="stat"><b id="dias-p3">16</b><span id="dias-p3-lab">días para el Parcial 3</span></div>
+      <div class="stat"><b id="dias-fin">27</b><span id="dias-fin-lab">días para el final</span></div>
+      <div class="stat"><b id="aprob">0/13</b><span>módulos aprobados</span></div>
+      <div class="stat" style="align-self:center"><div class="bar" aria-hidden="true"><i id="aprob-bar"></i></div></div>
+    </div>
+  </header>
+
+  <section aria-labelledby="hoy-h">
+    <div class="today" id="hoy">
+      <p class="eyebrow" id="hoy-h">Hoy</p>
+      <h3 id="hoy-t">M1 · Momento lineal, impulso y choques</h3>
+      <div class="row" id="hoy-row"></div>
+      <p class="note muted" id="hoy-note" hidden></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="fechas-h">
+    <div class="sec-head">
+      <h2 id="fechas-h">Fechas que no se te pueden pasar</h2>
+    </div>
+    <div class="dates" id="dates"></div>
+  </section>
+
+  <section aria-labelledby="sem-h">
+    <div class="sec-head">
+      <h2 id="sem-h">Tu cronograma</h2>
+      <p class="note">La carga sigue tu semana: martes y jueves, liviana; lunes y viernes, suave; miércoles, media; sábado y domingo, pesada. Lo nuevo y difícil va el fin de semana.</p>
+      <div class="legend" id="legend"></div>
+    </div>
+    <h3 class="phase-h"><span class="ph">Fase 1</span> Parcial 3 · del 3 al 19 de noviembre</h3>
+    <div class="days" id="days-1"></div>
+    <h3 class="phase-h"><span class="ph">Fase 2</span> Examen final · del 20 al 30 de noviembre</h3>
+    <div class="days" id="days-2"></div>
+    <p class="note muted"><b>Si te atrasas:</b> recorta primero el lab de M3 y el repaso del bloque 1 del Parcial 2. Nunca recortes los simulacros. Cuando termines un quiz, mándame la nota y ajusto el plan.</p>
+  </section>
+
+  <section aria-labelledby="mod-h">
+    <div class="sec-head">
+      <h2 id="mod-h">Módulos</h2>
+      <p class="note">Cada módulo tiene cuatro partes: teoría, lab visual, taller y quiz. Pasas al siguiente con 4/5 o más; si no, repasamos el error y haces el Quiz B. El exprés es corto y sirve para la evaluación de la Tarea 9 del miércoles 4.</p>
+      <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
+    </div>
+    <h3 class="phase-h"><span class="ph">Fase 1</span> Parcial 3</h3>
+    <div class="mods" id="mods-1"></div>
+    <h3 class="phase-h"><span class="ph">Fase 2</span> Examen final</h3>
+    <div class="mods" id="mods-2"></div>
+  </section>
+
+  <section aria-labelledby="pto-h">
+    <div class="sec-head">
+      <h2 id="pto-h">Tu punto de partida</h2>
+      <p class="note">Así se calcula la nota de cada parcial en Bloque Neón: <b>(escrito + asistencia + quiz bono) / 105 × 5</b>. Con eso cuadran tus dos notas.</p>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Parcial</th><th>Escrito</th><th>Asistencia</th><th>Quiz bono</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td>Parcial 1 · caps. 1–3</td><td class="ans">69/90</td><td class="ans warn">6/10</td><td class="ans">5/5</td><td class="ans"><b>3,80</b></td></tr>
+        <tr><td>Parcial 2 · caps. 4–7</td><td class="ans">58/90</td><td class="ans">9/10</td><td class="ans warn">3/5</td><td class="ans"><b>3,33</b></td></tr>
+      </tbody>
+    </table></div>
+    <ol class="patterns">
+      <li><span><b>Lo más barato de ganar son 15 puntos:</b> la asistencia (10) y el quiz bono (5). En el Parcial 1 se fueron 4 de asistencia y en el Parcial 2, 2 del bono. Ve a todas las clases y presenta el quiz bono, que en el Parcial 2 fue el martes antes del parcial.</span></li>
+      <li><span><b>El formato no cambia:</b> 3 preguntas de selección múltiple de 10 pts que hay que justificar, y 3 problemas abiertos de 20 pts con literales (diagrama, ecuaciones, resultado con letras).</span></li>
+      <li><span><b>No hay Parcial 3 ni finales anteriores.</b> Los problemas se van a parecer a los ejemplos que el profe resuelve en las diapositivas 17, 18 y 19 y a las tareas 8 y 9 de la complementaria. Por eso los simulacros los escribo yo, con el formato de tus parciales.</span></li>
+      <li><span><b>Los capítulos 11 y 12 no se ven en clase:</b> quedan por fuera, salvo que el profe diga lo contrario.</span></li>
+      <li><span><b>Bono PRISMA:</b> cada tutoría suma 0,05 a la nota de la complementaria, una por periodo. Te quedan dos: hasta el 6 de noviembre y del 7 al 23 (reserva en prisma.bookeau.com).</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <div class="sec-head">
+      <h2 id="src-h">De dónde salen los problemas del Parcial 3</h2>
+      <p class="note">Sin parciales anteriores, estas son las mejores pistas: lo que el profe resolvió en clase y lo que la complementaria puso de tarea.</p>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Tema</th><th>El profe lo resolvió en clase</th><th>Complementaria</th><th>Módulo</th></tr></thead>
+      <tbody id="src"></tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="rep-h">
+    <div class="sec-head">
+      <h2 id="rep-h">Módulos del Parcial 2 para el repaso del final</h2>
+      <p class="note">Ya los aprobaste. En la fase 2 vuelves a ellos para hacer el Quiz B y repasar lo que salga flojo.</p>
+    </div>
+    <div class="replinks" id="replinks"></div>
+  </section>
+
+  <footer>Fuente: programa FISI 1518 2026-2, LEEME del 3 de noviembre, diapositivas del profe Ávila, tus parciales 1 y 2 de 2026-2 y las tareas de la complementaria E2. El progreso se guarda en esta página; Claude lo actualiza cuando pasas un quiz.</footer>
+</div>
+
+<script>
+const P3 = new Date(2026, 10, 19, 12, 30), FINAL = new Date(2026, 10, 30, 15, 0);
+const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
+const DATES = [
+  {d:"2026-11-04", f:"Mié 4 nov · 17:00", t:"Quiz 4 de la complementaria + evaluación de la Tarea 9", x:"Centro de masa, explosión, momento de inercia y torque. Llega con M1, M2 y el exprés."},
+  {d:"2026-11-06", f:"Hasta el vie 6 nov", t:"Periodo 1 del bono PRISMA", x:"Una tutoría suma 0,05 a la complementaria."},
+  {d:"2026-11-17", f:"Mar 17 nov (probable)", t:"Quiz bono del Parcial 3", x:"Vale 5 de los 105 puntos del parcial."},
+  {d:"2026-11-18", f:"Mié 18 nov", t:"Quiz 5 de la complementaria", x:""},
+  {d:"2026-11-19", f:"Jue 19 nov · 12:30", t:"Parcial 3", x:"Caps. 8, 9, 10 y 13 · 15 %", big:true},
+  {d:"2026-11-23", f:"Hasta el lun 23 nov", t:"Periodo 2 del bono PRISMA", x:"Otra tutoría: 0,05 más."},
+  {d:"2026-11-30", f:"Lun 30 nov · 15:00", t:"Examen final · 3 horas", x:"Todo el curso + cap. 14 · 25 %. Es el mismo para todas las secciones.", big:true}
+];
+const DAYS = [
+  {p:1, d:"2026-11-03", n:"Mar", f:"3 nov", load:1, what:"M1 Momento lineal y choques: teoría y lab", mods:["M1"], h:"1–1,5 h"},
+  {p:1, d:"2026-11-04", n:"Mié", f:"4 nov", load:3, what:"M1 taller y quiz · M2 Centro de masa · Exprés de inercia y torque → Quiz 4 y Tarea 9 a las 17:00", mods:["M1","M2","X1"], h:"2,5–3 h antes de las 17:00"},
+  {p:1, d:"2026-11-05", n:"Jue", f:"5 nov", load:1, what:"M3 Cinemática rotacional", mods:["M3"], h:"1–1,5 h"},
+  {p:1, d:"2026-11-06", n:"Vie", f:"6 nov", load:2, what:"M4 Momento de inercia y energía rotacional: teoría y lab", mods:["M4"], h:"~2 h"},
+  {p:1, d:"2026-11-07", n:"Sáb", f:"7 nov", load:4, what:"M4 taller y quiz · M5 Torque: teoría y lab", mods:["M4","M5"], h:"4–5 h"},
+  {p:1, d:"2026-11-08", n:"Dom", f:"8 nov", load:4, what:"M5 taller y quiz · M6 Momento angular: teoría", mods:["M5","M6"], h:"4–5 h"},
+  {p:1, d:"2026-11-09", n:"Lun", f:"9 nov", load:2, what:"M6 lab y taller", mods:["M6"], h:"~2 h"},
+  {p:1, d:"2026-11-10", n:"Mar", f:"10 nov", load:1, what:"M6 quiz", mods:["M6"], h:"1 h"},
+  {p:1, d:"2026-11-11", n:"Mié", f:"11 nov", load:3, what:"M7 Gravitación: teoría, lab y taller", mods:["M7"], h:"2,5–3 h"},
+  {p:1, d:"2026-11-12", n:"Jue", f:"12 nov", load:1, what:"M7 quiz", mods:["M7"], h:"1 h"},
+  {p:1, d:"2026-11-13", n:"Vie", f:"13 nov", load:2, what:"Quiz B de los módulos flojos + hoja de fórmulas del Parcial 3", mods:[], h:"~2 h"},
+  {p:1, d:"2026-11-14", n:"Sáb", f:"14 nov", load:4, what:"M8 simulacro de 80 min + corrección con rúbrica + repaso de lo que falló", mods:["M8"], h:"4–5 h"},
+  {p:1, d:"2026-11-15", n:"Dom", f:"15 nov", load:4, what:"Repaso dirigido de los errores del simulacro + tareas 8 y 9", mods:[], h:"4 h"},
+  {p:1, d:"2026-11-16", n:"Lun", f:"16 nov · festivo", load:2, what:"Mini-simulacro de 40 min + hoja de fórmulas", mods:["M8"], h:"~2 h"},
+  {p:1, d:"2026-11-17", n:"Mar", f:"17 nov", load:1, what:"Repaso ligero (probable quiz bono en clase)", mods:[], h:"1 h"},
+  {p:1, d:"2026-11-18", n:"Mié", f:"18 nov", load:3, what:"Hoja de fórmulas → Quiz 5 de la complementaria", mods:[], h:"1,5 h"},
+  {p:1, d:"2026-11-19", n:"Jue", f:"19 nov · 12:30", load:0, what:"30 min con la hoja de fórmulas, y Parcial 3", mods:[], h:"Llega descansado", exam:true},
+  {p:2, d:"2026-11-20", n:"Vie", f:"20 nov", load:2, what:"F1 Vectores y cinemática 1D", mods:["F1"], h:"~2 h"},
+  {p:2, d:"2026-11-21", n:"Sáb", f:"21 nov", load:4, what:"F2 Movimiento armónico simple · F3 teoría y lab", mods:["F2","F3"], h:"4–5 h"},
+  {p:2, d:"2026-11-22", n:"Dom", f:"22 nov", load:4, what:"F3 taller y quiz · F4 Proyectiles, circular y velocidad relativa", mods:["F3","F4"], h:"4–5 h"},
+  {p:2, d:"2026-11-23", n:"Lun", f:"23 nov", load:2, what:"Repaso P2, bloque 1: Quiz B de M1–M4 (Newton, poleas, fricción, sistemas)", mods:[], h:"~2 h"},
+  {p:2, d:"2026-11-24", n:"Mar", f:"24 nov", load:1, what:"Repaso P2, bloque 2: Quiz B de M5–M8 (circular y energía)", mods:[], h:"1,5 h"},
+  {p:2, d:"2026-11-25", n:"Mié", f:"25 nov", load:3, what:"Repaso P3, bloque 1: choques, centro de masa, rotación e inercia", mods:[], h:"2,5–3 h"},
+  {p:2, d:"2026-11-26", n:"Jue", f:"26 nov", load:1, what:"Repaso P3, bloque 2: torque, momento angular y gravitación", mods:[], h:"1,5 h"},
+  {p:2, d:"2026-11-27", n:"Vie", f:"27 nov", load:2, what:"Hoja de fórmulas de todo el curso + errores frecuentes", mods:[], h:"~2 h"},
+  {p:2, d:"2026-11-28", n:"Sáb", f:"28 nov", load:4, what:"F5 simulacro final de 3 h + corrección", mods:["F5"], h:"4–5 h"},
+  {p:2, d:"2026-11-29", n:"Dom", f:"29 nov", load:4, what:"Repaso dirigido de lo que falló en el simulacro", mods:[], h:"4 h"},
+  {p:2, d:"2026-11-30", n:"Lun", f:"30 nov · 15:00", load:0, what:"1 h con la hoja de fórmulas en la mañana, y examen final", mods:[], h:"Llega descansado", exam:true}
+];
+const MODS = [
+  {p:1, id:"M1", t:"Momento lineal, impulso y choques", day:"Mar 3 y Mié 4", h:"2,5 h", libro:"8.1–8.4", hot:true, extra:"Quiz 4",
+    dominar:["p = M·v; impulso = cambio de p.","Cuándo se conserva el momento: sin fuerza externa en esa dirección.","Choques elásticos, inelásticos y perfectamente inelásticos; cuánta energía se pierde.","Problemas por etapas: energía → choque → energía."],
+    taller:["Profe: M contra 2M (K_f/K_i = 1/3)","Profe: riel rugoso + choque (sube H/12)","Profe: pelota que rebota (impulso)","Tarea 8: flecha + bloque + plano con fricción","Tarea 8 y semana 12: tazón","Tarea 8: choques en 1D y 2D"],
+    trampas:["Usar conservación de energía en un choque inelástico.","Olvidar que el momento es un vector: signos y componentes."]},
+  {p:1, id:"M2", t:"Centro de masa y explosiones", day:"Mié 4", h:"1 h", libro:"8.5", extra:"Tarea 9",
+    dominar:["CM de masas puntuales y de láminas por partes.","El CM se mueve como una sola partícula con toda la masa.","Sin fuerza externa, el CM no se mueve (barca, canoa).","En una explosión, el CM sigue la parábola."],
+    taller:["Profe: 3 masas, triángulo, esfera que se parte en el aire, niño en la barca","Tarea 9: granada y lámina","Semana 12: canoa"],
+    trampas:["Medir todas las posiciones desde el mismo origen.","Olvidar que la barca también se mueve."]},
+  {p:1, id:"X1", t:"Exprés: momento de inercia y torque", day:"Mié 4", h:"45 min", libro:"9.5–9.6, 10.1", express:true, extra:"Tarea 9",
+    dominar:["I = Σ M·r² y la tabla de momentos de inercia.","Teorema de ejes paralelos: I = I_CM + M·D².","Torque: τ = r·F·sen φ y su signo."],
+    taller:["Tarea 9, ejercicio 3: dos anillos unidos","Tarea 9, ejercicio 4: torque sobre una placa"],
+    trampas:["D en ejes paralelos es la distancia del CM al eje nuevo.","El signo del torque depende del sentido de giro."]},
+  {p:1, id:"M3", t:"Cinemática rotacional", day:"Jue 5", h:"1,5 h", libro:"9.1–9.3",
+    dominar:["θ, ω y α, y sus unidades (rad, rad/s, rad/s²).","Ecuaciones con α constante: las mismas del movimiento 1D.","v = R·ω, a_t = R·α, a_c = R·ω²."],
+    taller:["Rueda que frena hasta detenerse","Poleas unidas por una correa","Problemas del libro, cap. 9"],
+    trampas:["Mezclar revoluciones, grados y radianes.","Confundir a_t con a_c."]},
+  {p:1, id:"M4", t:"Momento de inercia y energía rotacional", day:"Vie 6 y Sáb 7", h:"3 h", libro:"9.4–9.6",
+    dominar:["K = ½·I·ω².","I de sistemas de masas y de barra, anillo, disco y esfera.","Ejes paralelos.","Conservación de la energía con algo que gira."],
+    taller:["Profe: 3 masas con alambres, barra por el extremo y por el centro","Tarea 9: dos anillos","Bloque colgado de una polea con masa","Barra que cae girando sobre un pivote"],
+    trampas:["Olvidar la energía de rotación de la polea.","Usar I_CM cuando el eje no pasa por el CM."]},
+  {p:1, id:"M5", t:"Torque y dinámica rotacional", day:"Sáb 7 y Dom 8", h:"3,5 h", libro:"10.1–10.3", hot:true,
+    dominar:["τ = r × F, en magnitud y signo.","Στ = I·α.","Polea con masa: la tensión cambia de un lado al otro.","Rodar sin deslizar: v = R·ω; objetos que ruedan por un plano."],
+    taller:["Tarea 9: torque sobre una placa","Polea con masa + bloque","Atwood con polea pesada","Carrera de objetos que ruedan"],
+    trampas:["Poner la misma tensión a ambos lados de una polea con masa.","Olvidar la fricción estática que hace rodar."]},
+  {p:1, id:"M6", t:"Momento angular, trabajo y potencia en rotación", day:"Dom 8 a Mar 10", h:"3 h", libro:"10.4–10.7",
+    dominar:["W = τ·Δθ y P = τ·ω.","L = I·ω y L = r × p.","Si no hay torque externo, L se conserva.","La energía cinética cambia aunque L se conserve."],
+    taller:["Patinadora que cierra los brazos","Disco que cae sobre otro disco","Bala que se incrusta en una barra","Persona que camina en una plataforma"],
+    trampas:["Conservar la energía en un «choque» rotacional.","Medir r desde un punto que no es el eje."]},
+  {p:1, id:"M7", t:"Gravitación y satélites", day:"Mié 11 y Jue 12", h:"3,5 h", libro:"13.1–13.7",
+    dominar:["F = G·M·m/r² y g a una altura h.","U = −G·M·m/r y velocidad de escape.","Órbita circular: v = √(G·M/r), periodo, energía.","Leyes de Kepler; peso aparente."],
+    taller:["Satélite en órbita circular","Velocidad de escape","Tercera ley de Kepler","Peso dentro de la Tierra"],
+    trampas:["Usar r = altura en vez de r = R + h.","Usar M·g·h lejos de la superficie."]},
+  {p:1, id:"M8", t:"Simulacro del Parcial 3", day:"Sáb 14", h:"80 min + corrección", libro:"caps. 8–10, 13", sim:true, max:90, extra:"sin apuntes",
+    dominar:["3 de selección múltiple + 3 abiertos de 20 pts, como tus parciales.","Rúbrica tipo profe: diagrama, ecuaciones y resultado por separado.","Hoja de fórmulas del Parcial 3."],
+    taller:["Un parcial nuevo escrito al estilo del profe","Mini-simulacro de 40 min el lunes 16"],
+    trampas:["Meta: 72/90 o más."]},
+  {p:2, id:"F1", t:"Repaso P1: vectores y cinemática 1D", day:"Vie 20", h:"2 h", libro:"caps. 1–2",
+    dominar:["Análisis dimensional y vectores (producto punto, ángulos).","Persecuciones y alcances.","Caída libre y gráficas v–t."],
+    taller:["Parciales 1 de 2024-2 a 2026-1","Tu Parcial 1 de 2026-2"],
+    trampas:["El signo de g según el eje que escojas.","Leer distancia en vez de desplazamiento en una gráfica."]},
+  {p:2, id:"F2", t:"Oscilaciones I: movimiento armónico simple", day:"Sáb 21", h:"2 h", libro:"14.1–14.3",
+    dominar:["x(t) = A·cos(ω·t + φ), ω = √(k/M), periodo y frecuencia.","v_máx = A·ω y a_máx = A·ω².","Energía: ½·k·A² repartida entre K y U."],
+    taller:["Masa–resorte horizontal","Encontrar A y φ con las condiciones iniciales","Energía en el MAS"],
+    trampas:["Confundir ω (rad/s) con f (Hz).","Olvidar que A depende de cómo lo sueltas."]},
+  {p:2, id:"F3", t:"Oscilaciones II: péndulos, amortiguadas y forzadas", day:"Sáb 21 y Dom 22", h:"3 h", libro:"14.4–14.8",
+    dominar:["Péndulo simple: T = 2π·√(L/g).","Péndulo físico: T = 2π·√(I/(M·g·d)), con el I de M4.","Resorte vertical; amortiguamiento y resonancia."],
+    taller:["Péndulo físico de una barra","Resorte vertical con una masa","Preguntas conceptuales de resonancia"],
+    trampas:["Usar la fórmula del péndulo simple para un cuerpo extendido."]},
+  {p:2, id:"F4", t:"Repaso P1: proyectiles, circular y velocidad relativa", day:"Dom 22", h:"2 h", libro:"cap. 3",
+    dominar:["Lanzamientos horizontales y oblicuos.","Dos objetos que chocan en el aire.","Movimiento circular uniforme y velocidad relativa."],
+    taller:["Parciales 1 de 2024-2 a 2026-1 (problema 3 de cada uno)"],
+    trampas:["Usar la misma t para los dos objetos cuando no salen juntos."]},
+  {p:2, id:"F5", t:"Simulacro final", day:"Sáb 28", h:"3 h + corrección", libro:"todo el curso", sim:true, max:100, extra:"sin apuntes",
+    dominar:["Todo el curso, en 3 horas, como el examen final.","Corrección con rúbrica y lista de errores para el domingo."],
+    taller:["Un examen nuevo de todo el curso"],
+    trampas:["Meta: 80/100 o más."]}
+];
+const SRC = [
+  ["Momento lineal e impulso","Pelota que rebota a H/2: impulso del piso","—","M1"],
+  ["Choque perfectamente inelástico","M contra 2M: v_f = v₀/3, K_f/K_i = 1/3","Tarea 8: tazón con masas iguales · semana 12: tazón con m₂ = 2m₁","M1"],
+  ["Choque por etapas (energía → choque → energía)","Riel con tramo rugoso + choque con 2M: sube H/12","Tarea 8: flecha que se incrusta en un bloque que sube un plano con fricción","M1"],
+  ["Choque elástico","En 2D: m₁ sale a −90° con v₀/2 y m₂ a 45° → m₂ = m₁/3","Tarea 8: pelota de tenis sobre balón · asteroides en 2D","M1"],
+  ["Centro de masa","3 masas: R_CM = (5b/6, a/2) · triángulo: x_CM = 2b/3","Tarea 9: lámina irregular","M2"],
+  ["CM sin fuerza externa","Niño en la barca: no alcanza la tortuga · esfera que se parte en el aire: cae a 3R/2","Tarea 9: granada · semana 12: canoa","M2"],
+  ["Momento de inercia y ejes paralelos","3 masas con alambres: 5ma² y 7ma² · barra: ML²/3 y ML²/12 · anillo, disco, tabla","Tarea 9: dos anillos unidos","X1 · M4"],
+  ["Torque","Aún sin diapositivas","Tarea 9: torque neto sobre una placa","X1 · M5"],
+  ["Cinemática rotacional","v = rω, a_t = rα, a_c = rω²; ecuaciones con α constante","—","M3"],
+  ["Momento angular y gravitación","Aún sin diapositivas (clases del 29 oct, 3 y 5 nov)","—","M6 · M7"]
+];
+const REPLINKS = [
+  ["M1","Newton, DCL y planos inclinados","https://claude.ai/artifact/RdHQeTYL9rNrrrPoWXiTMj"],
+  ["M2","Poleas y equilibrio","https://claude.ai/artifact/EqMXyQkmpP6WHALnRDwgxb"],
+  ["M3","Fricción y rangos","https://claude.ai/artifact/5CnY6wiw24huhhHCzGno4n"],
+  ["M4","Sistemas con aceleración","https://claude.ai/artifact/6fQ5K7ULHJgLiQmeRBe2dC"],
+  ["M5","Movimiento circular","https://claude.ai/artifact/QbkVzzqRuiU8tyMrPnCbUw"],
+  ["M6–M7","Trabajo y energía","https://claude.ai/artifact/LAXsJHjUXs6ZQQHD7LbsEF"],
+  ["M8","Circular + energía","https://claude.ai/artifact/Rj8DvvQmetU9UpmZ2vKJCs"],
+  ["M9","Mini-simulacro del Parcial 2","https://claude.ai/artifact/UXeERsnHz1KwRKXLtDuVpi"]
+];
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const pad = (n) => String(n).padStart(2, "0");
+const now = new Date();
+const todayIso = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+
+function loadMeter(level) {
+  const w = el("span", "load");
+  const m = el("span", "m"); m.setAttribute("aria-hidden", "true");
+  for (let i = 1; i <= 4; i++) m.appendChild(el("i", i <= level ? "on" : ""));
+  w.appendChild(m); w.appendChild(el("span", "", LOADS[level]));
+  return w;
+}
+
+/* Cuenta regresiva */
+function countdown(date, numSel, labSel, name) {
+  const ms = date - now, d = Math.ceil(ms / 86400000);
+  if (ms <= 0) { $(numSel).textContent = "✓"; $(labSel).textContent = name + " ya pasó"; }
+  else { $(numSel).textContent = d; $(labSel).textContent = (d === 1 ? "día para " : "días para ") + name; }
+}
+countdown(P3, "#dias-p3", "#dias-p3-lab", "el Parcial 3");
+countdown(FINAL, "#dias-fin", "#dias-fin-lab", "el final");
+
+/* Fechas */
+(function () {
+  const box = $("#dates");
+  DATES.forEach((x) => {
+    const r = el("div", "date" + (x.big ? " big" : "") + (x.d < todayIso ? " is-past" : ""));
+    r.appendChild(el("span", "df", x.f));
+    const t = el("div"); t.appendChild(el("b", "", x.t)); if (x.x) t.appendChild(el("span", "muted", x.x)); r.appendChild(t);
+    box.appendChild(r);
+  });
+})();
+
+/* Cronograma */
+(function () {
+  const lg = $("#legend");
+  [[1,"Mar y jue · 1–1,5 h"],[2,"Lun y vie · ~2 h"],[3,"Mié · 2,5–3 h"],[4,"Sáb y dom · 4–5 h"]].forEach(([l, t]) => {
+    const s = el("span"); s.appendChild(loadMeter(l)); s.appendChild(document.createTextNode(" " + t)); lg.appendChild(s);
+  });
+  DAYS.forEach((d) => {
+    const c = el("article", "day" + (d.exam ? " exam" : "") + (d.d === todayIso ? " is-today" : "") + (d.d < todayIso ? " is-past" : ""));
+    const dn = el("div", "dn"); dn.appendChild(el("b", "", d.n)); dn.appendChild(el("span", "", d.f)); c.appendChild(dn);
+    if (d.d === todayIso) { const t = el("span", "tag-today", "HOY"); t.style.justifySelf = "start"; c.appendChild(t); }
+    if (!d.exam) c.appendChild(loadMeter(d.load));
+    c.appendChild(el("p", "w", d.what));
+    c.appendChild(el("p", "h", d.h));
+    $("#days-" + d.p).appendChild(c);
+  });
+})();
+
+/* Fuentes */
+(function () {
+  const tb = $("#src");
+  SRC.forEach((r) => {
+    const tr = el("tr");
+    tr.appendChild(el("td", "", r[0])); tr.appendChild(el("td", "", r[1])); tr.appendChild(el("td", "", r[2])); tr.appendChild(el("td", "mono", r[3]));
+    tb.appendChild(tr);
+  });
+  const rl = $("#replinks");
+  REPLINKS.forEach(([c, t, u]) => { const a = el("a", "rl"); a.href = u; a.target = "_blank"; a.rel = "noopener"; a.appendChild(el("b", "", c)); a.appendChild(el("span", "", t)); rl.appendChild(a); });
+})();
+
+/* Progreso */
+let progress = {};
+let db = null, canWrite = false;
+const writeQueue = {};
+
+function isPassed(m, p) { if (!p || p.quiz == null || p.quiz === "") return false; return m.sim ? Number(p.quiz) >= 0.8 * m.max : Number(p.quiz) >= 4; }
+function status(m) {
+  const p = progress[m.id] || {};
+  if (isPassed(m, p)) return ["Aprobado", "ok"];
+  if (p.teoria || p.lab || p.taller || (p.quiz != null && p.quiz !== "")) return ["En curso", "go"];
+  if (m.express) return ["Para el miércoles 4", "go"];
+  if (m.p === 2 && todayIso < "2026-11-20") return ["Después del Parcial 3", "lock"];
+  const seq = MODS.filter((x) => x.p === m.p && !x.express);
+  const i = seq.indexOf(m);
+  if (i > 0 && !isPassed(seq[i - 1], progress[seq[i - 1].id])) return ["Después de " + seq[i - 1].id, "lock"];
+  return ["Siguiente", "go"];
+}
+
+function renderMods() {
+  $("#mods-1").textContent = ""; $("#mods-2").textContent = "";
+  let passed = 0;
+  const counted = MODS.filter((m) => !m.express);
+  MODS.forEach((m) => {
+    const p = progress[m.id] || {};
+    if (!m.express && isPassed(m, p)) passed++;
+    const card = el("article", "mod" + (isPassed(m, p) ? " done" : "") + (m.express ? " express" : ""));
+    const head = el("div", "mod-head");
+    head.appendChild(el("span", "code", m.id));
+    const tbox = el("div"); tbox.style.minWidth = "0";
+    tbox.appendChild(el("h3", "", m.t));
+    const meta = el("div", "mod-meta");
+    if (m.express) meta.appendChild(el("span", "chip-ref", "Exprés"));
+    if (m.hot) meta.appendChild(el("span", "chip-hot", "Pesa mucho"));
+    meta.appendChild(el("span", "", m.day + " · " + m.h));
+    meta.appendChild(el("span", "", "Libro " + m.libro));
+    if (m.extra) meta.appendChild(el("span", "", m.extra));
+    tbox.appendChild(meta); head.appendChild(tbox);
+    const [st, cls] = status(m);
+    head.appendChild(el("span", "pill " + cls, st));
+    card.appendChild(head);
+
+    const prog = el("div", "prog");
+    if (!m.sim) {
+      const parts = m.express ? [["teoria", "Teoría"], ["taller", "Taller"]] : [["teoria", "Teoría"], ["lab", "Lab"], ["taller", "Taller"]];
+      parts.forEach(([k, lab]) => {
+        const b = el("button", "tog"); b.type = "button";
+        b.setAttribute("aria-pressed", p[k] ? "true" : "false");
+        const bx = el("span", "box", p[k] ? "✓" : ""); bx.setAttribute("aria-hidden", "true");
+        b.appendChild(bx); b.appendChild(document.createTextNode(lab));
+        b.disabled = !canWrite;
+        b.addEventListener("click", () => save(m.id, { [k]: !p[k] }));
+        prog.appendChild(b);
+      });
+    }
+    const q = el("label", "quizsel"); q.htmlFor = "quiz-" + m.id;
+    q.appendChild(document.createTextNode(m.sim ? "Simulacro" : "Quiz"));
+    let inp;
+    if (m.sim) {
+      inp = el("input"); inp.type = "number"; inp.min = 0; inp.max = m.max; inp.placeholder = "—";
+      inp.value = p.quiz != null ? p.quiz : "";
+      inp.addEventListener("change", () => { const v = inp.value === "" ? null : Math.max(0, Math.min(m.max, Number(inp.value))); save(m.id, { quiz: v }); });
+      q.appendChild(inp); q.appendChild(document.createTextNode("/" + m.max));
+    } else {
+      inp = el("select");
+      const o0 = el("option", "", "—"); o0.value = ""; inp.appendChild(o0);
+      for (let i = 0; i <= 5; i++) { const o = el("option", "", i + "/5"); o.value = String(i); inp.appendChild(o); }
+      inp.value = p.quiz != null ? String(p.quiz) : "";
+      inp.addEventListener("change", () => save(m.id, { quiz: inp.value === "" ? null : Number(inp.value) }));
+      q.appendChild(inp);
+    }
+    inp.id = "quiz-" + m.id; inp.disabled = !canWrite;
+    prog.appendChild(q);
+    if (p.url) { const a = el("a", "open", "Abrir →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; prog.appendChild(a); }
+    else prog.appendChild(el("span", "open muted", "Aún no creado"));
+    card.appendChild(prog);
+
+    const det = el("details", "more");
+    det.appendChild(el("summary", "", "Qué incluye"));
+    const body = el("div", "more-body");
+    [["Vas a dominar", m.dominar], [m.sim ? "Formato" : "Taller", m.taller], [m.sim ? "Meta" : "Trampas", m.trampas]].forEach(([h, list]) => {
+      const col = el("div"); col.appendChild(el("h4", "", h));
+      const ul = el("ul"); list.forEach((x) => ul.appendChild(el("li", "", x))); col.appendChild(ul); body.appendChild(col);
+    });
+    det.appendChild(body); card.appendChild(det);
+    $("#mods-" + m.p).appendChild(card);
+  });
+  $("#aprob").textContent = passed + "/" + counted.length;
+  $("#aprob-bar").style.width = (passed / counted.length * 100) + "%";
+  renderToday();
+}
+
+function renderToday() {
+  const d = DAYS.find((x) => x.d === todayIso) || (todayIso < DAYS[0].d ? DAYS[0] : null);
+  const row = $("#hoy-row"); row.textContent = "";
+  const note = $("#hoy-note"); note.hidden = true;
+  if (!d) { $("#hoy-h").textContent = "Después del final"; $("#hoy-t").textContent = "El examen final ya pasó."; return; }
+  $("#hoy-h").textContent = d.d === todayIso ? "Hoy · " + d.n + " " + d.f : "Primer día · " + d.n + " " + d.f;
+  $("#hoy-t").textContent = d.what;
+  if (!d.exam) row.appendChild(loadMeter(d.load));
+  row.appendChild(el("span", "mono muted", d.h));
+  d.mods.forEach((id) => {
+    const p = progress[id] || {};
+    if (p.url) { const a = el("a", "btn", "Abrir " + id + " →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a); }
+  });
+  const NOTES = { "2026-11-03": "Mañana a las 17:00: Quiz 4 de la complementaria y evaluación de la Tarea 9.", "2026-11-04": "Hoy a las 17:00: Quiz 4 de la complementaria y evaluación de la Tarea 9.", "2026-11-18": "Hoy: Quiz 5 de la complementaria. Mañana, Parcial 3.", "2026-11-29": "Mañana a las 15:00: examen final." };
+  if (NOTES[d.d]) { note.hidden = false; note.textContent = NOTES[d.d]; }
+}
+
+async function save(id, patch) {
+  if (!db || !canWrite) return;
+  progress[id] = Object.assign({}, progress[id] || {}, patch);
+  renderMods();
+  const prev = writeQueue[id] || Promise.resolve();
+  const run = prev.then(() => db.collection("progreso").doc(id).set(Object.assign({}, progress[id]))).catch((e) => {
+    if (e && e.code === "invalid_argument") { canWrite = false; $("#dbnote").textContent = "Esta vista es de solo lectura: no se pudo guardar el cambio."; renderMods(); }
+    else { $("#dbnote").textContent = "No se pudo guardar el cambio. Vuelve a intentarlo en un momento."; }
+  });
+  writeQueue[id] = run;
+  return run;
+}
+
+renderMods();
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) { $("#dbnote").textContent = "Abre esta página en claude.ai con tu cuenta para guardar y ver tu progreso."; return; }
+  let user = null;
+  try { user = await window.claude.use("user"); } catch (e) { user = null; }
+  let cw = null;
+  try { cw = user ? await user.can("data.write") : null; } catch (e) { cw = null; }
+  canWrite = cw !== false;
+  $("#dbnote").textContent = canWrite ? "Marca cada parte cuando la termines. Claude actualiza la nota del quiz cuando lo apruebas." : "Estás viendo el progreso en modo lectura.";
+  db.collection("progreso").onSnapshot((snap) => {
+    const next = {};
+    snap.docs.forEach((d) => { if (d.exists) next[d.id] = Object.assign({}, d.data()); });
+    progress = next;
+    renderMods();
+  }, () => { $("#dbnote").textContent = "Se perdió la conexión con tu progreso. Recarga la página."; });
+})();
+</script>

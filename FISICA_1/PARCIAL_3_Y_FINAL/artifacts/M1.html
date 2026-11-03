@@ -1,0 +1,1225 @@
+<title>M1 Momento y choques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; el lab es una mesa de choques animada con barras de momento y energía. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>60 min</span></a>
+    <a href="#lab">2 Lab <span>15 min</span></a>
+    <a href="#taller">3 Taller <span>60 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 3 · Módulo 1 de 8</p>
+    <h1>Momento lineal, impulso y choques</h1>
+    <div class="meta">
+      <span class="chip-hot">Quiz 4: miércoles 4</span>
+      <span>Martes 3 y miércoles 4 de noviembre · ~2,5 h</span>
+      <span>Libro: 8.1 a 8.4 · Diapositivas 17 del profe · Tarea 8</span>
+    </div>
+    <p class="prose">Hasta ahora tenías dos herramientas: las fuerzas (Newton) y la energía. Este módulo te da la tercera: el <b>momento lineal</b>. Es la que sirve cuando dos cuerpos chocan, se pegan o se empujan, porque durante un choque las fuerzas son enormes y duran muy poco, y no las conoces. Lo que sí sabes es que, si nadie de afuera empuja, <b>el momento total no cambia</b>.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas al M2.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Desde cero: qué es el momento, el impulso, cuándo se conserva, los tres tipos de choque, los problemas por etapas y los choques en dos dimensiones. Siete ejemplos resueltos, solo con letras.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">p</td><td>«pe»</td><td>Momento lineal (también se llama cantidad de movimiento): masa por velocidad. Es un <b>vector</b>: apunta hacia donde se mueve el objeto.</td><td>kg·m/s</td></tr>
+          <tr><td class="mono">M, M₁, M₂</td><td>«eme», «eme sub uno»…</td><td>Masa de cada cuerpo. Va en mayúscula para no confundirla con la <b>m</b> de metros. En el parcial sale como m minúscula.</td><td>kg</td></tr>
+          <tr><td class="mono">v</td><td>«ve»</td><td>Velocidad. En una dimensión lleva signo: + si va hacia la derecha (o hacia arriba), − si va hacia el otro lado.</td><td>m/s</td></tr>
+          <tr><td class="mono">v<sub>1i</sub>, v<sub>1f</sub></td><td>«ve uno inicial», «ve uno final»</td><td>Velocidad del cuerpo 1 justo <b>antes</b> (i) y justo <b>después</b> (f) del choque. Igual para el cuerpo 2.</td><td>m/s</td></tr>
+          <tr><td class="mono">v₀</td><td>«ve sub cero»</td><td>Velocidad con la que llega el que choca.</td><td>m/s</td></tr>
+          <tr><td class="mono">F<sub>neta</sub></td><td>«efe neta»</td><td>Suma de todas las fuerzas <b>externas</b> sobre el sistema (las que vienen de afuera).</td><td>N</td></tr>
+          <tr><td class="mono">Δp</td><td>«delta pe»</td><td>Cambio del momento: p<sub>final</sub> − p<sub>inicial</sub>.</td><td>kg·m/s</td></tr>
+          <tr><td class="mono">Δt</td><td>«delta te»</td><td>Cuánto dura el empujón o el choque.</td><td>s</td></tr>
+          <tr><td class="mono">J</td><td>«jota»</td><td>Impulso: lo que una fuerza le cambia al momento, J = Δp. <b>No es el joule</b>: el impulso se mide en N·s, que es lo mismo que kg·m/s.</td><td>N·s</td></tr>
+          <tr><td class="mono">K</td><td>«ka»</td><td>Energía cinética, ½·M·v² (M6–M7).</td><td>J (joules)</td></tr>
+          <tr><td class="mono">î, ĵ</td><td>«i gorro», «jota gorro»</td><td>Direcciones x (horizontal) y y (vertical). Se usan para escribir vectores.</td><td>—</td></tr>
+          <tr><td class="mono">p<sub>x</sub>, p<sub>y</sub></td><td>«pe sub equis», «pe sub ye»</td><td>Las dos partes (componentes) del momento en un choque en 2D.</td><td>kg·m/s</td></tr>
+          <tr><td class="mono">sistema</td><td>—</td><td>El grupo de cuerpos que estudias juntos, por ejemplo los dos que chocan. Lo de afuera del sistema es «externo».</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo va paso a paso. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Todo se resuelve con letras, como en los parciales. Si una letra se cancela, aparece <span class="cx">tachada</span>.</p>
+    </div>
+
+    <!-- 1 -->
+    <div class="block">
+      <h3>1. ¿Qué es el momento lineal?</h3>
+      <div class="figs">
+        <figure><div data-fig="ej1"></div><figcaption>Dos carros se acercan. Para el momento, la dirección importa: el de la izquierda va hacia +x y el de la derecha hacia −x.</figcaption></figure>
+        <div class="prose">
+          <p>Piensa en qué cuesta más frenar: un balón que viene rápido o un camión que viene despacio. Depende de las dos cosas, de la masa y de la velocidad. Esa combinación es el <b>momento lineal</b>:</p>
+          <div class="eq"><span><b>p = M · v</b></span><span>Es un vector: tiene la dirección de la velocidad.</span></div>
+          <p>En una dimensión basta con un signo: escoges un sentido positivo (casi siempre hacia la derecha) y lo que va al revés lleva −. El momento de un <b>sistema</b> es la suma de los momentos de cada cuerpo, <b>con signo</b>.</p>
+        </div>
+      </div>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1</span>
+            <h4 id="wx1-h">El momento total de dos carros que se acercan</h4>
+            <p>Un carro de masa M va hacia la derecha con rapidez v. Otro de masa 2M va hacia la izquierda con la misma rapidez v.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale el momento total y hacia dónde apunta?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej1"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escoge el sentido positivo.</p><p class="why">Hacia la derecha es +. Entonces la velocidad del carro M es +v y la del carro 2M es −v, porque va al revés.</p><div class="mx">v<sub>M</sub> = +v<span class="ar">y</span>v<sub>2M</sub> = −v</div></li>
+          <li><p class="what">Calcula el momento de cada carro.</p><p class="why">p = masa · velocidad, con el signo de la velocidad.</p><div class="mx">p<sub>M</sub> = M·(+v) = M·v<span class="ar">y</span>p<sub>2M</sub> = 2M·(−v) = −2·M·v</div></li>
+          <li><p class="what">Súmalos.</p><p class="why">El momento del sistema es la suma con signo.</p><div class="mx">p<sub>total</sub> = M·v + (−2·M·v) = −M·v</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> p<sub>total</sub> = −M·v: vale M·v y apunta hacia la izquierda.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Los dos van igual de rápido, pero el de la izquierda tiene el doble de masa, así que «gana» el que va hacia la izquierda. Si sumaras sin signos te daría 3·M·v, y estaría mal.</p>
+      </article>
+    </div>
+
+    <!-- 2 -->
+    <div class="block">
+      <h3>2. Impulso: lo que una fuerza le cambia al momento</h3>
+      <p class="prose">El profe escribe la segunda ley de Newton en términos del momento. La fuerza neta es lo rápido que cambia el momento:</p>
+      <div class="eq"><span><b>F<sub>neta</sub> = Δp / Δt</b></span><span>Si la masa no cambia, Δp = M·Δv y esto es lo mismo que F = M·a.</span></div>
+      <p class="prose">Si multiplicas por el tiempo que dura el empujón, sale el <b>impulso</b>: el cambio de momento que produce una fuerza.</p>
+      <div class="eq"><span><b>J = F<sub>prom</sub> · Δt = Δp = p<sub>f</sub> − p<sub>i</sub></b></span><span>F<sub>prom</sub> es la fuerza promedio durante el golpe. En un choque, la fuerza es muy grande pero dura muy poco.</span></div>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · del profe, clase 16</span>
+            <h4 id="wx2-h">La pelota que rebota</h4>
+            <p>Se suelta una pelota de masa M desde una altura H. Rebota en el piso y sube hasta una altura H/2.</p>
+            <p><b>Pregunta:</b> ¿qué impulso le hizo el piso a la pelota?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej2"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escoge el sentido positivo.</p><p class="why">Hacia arriba es + (en el profe, el vector ĵ). Al bajar, la velocidad es negativa; al subir, positiva.</p></li>
+          <li><p class="what">Rapidez justo antes de tocar el piso.</p><p class="why">Energía, como en M6–M7: cae una altura H desde el reposo. Toda la energía potencial M·g·H se vuelve cinética.</p><div class="mx">M·g·H = ½·M·v<sub>i</sub>²<span class="ar">→</span>v<sub>i</sub> = √<span class="rad">2·g·H</span> (hacia abajo)</div></li>
+          <li><p class="what">Rapidez justo después del rebote.</p><p class="why">Sube hasta H/2 y ahí se detiene: toda la cinética de salida se vuelve M·g·H/2.</p><div class="mx">½·M·v<sub>f</sub>² = M·g·<span class="frac"><span>H</span><span>2</span></span><span class="ar">→</span>v<sub>f</sub> = √<span class="rad">g·H</span> (hacia arriba)</div></li>
+          <li><p class="what">Escribe los dos momentos con su signo.</p><div class="mx">p<sub>i</sub> = −M·√<span class="rad">2·g·H</span><span class="ar">y</span>p<sub>f</sub> = +M·√<span class="rad">g·H</span></div></li>
+          <li><p class="what">Resta: impulso = final − inicial.</p><p class="why">Restar un negativo es sumar. Por eso los dos términos terminan sumándose.</p><div class="mx">J = p<sub>f</sub> − p<sub>i</sub> = M·√<span class="rad">g·H</span> − (−M·√<span class="rad">2·g·H</span>) = M·√<span class="rad">g·H</span> + M·√<span class="rad">2·g·H</span></div></li>
+          <li><p class="what">Saca factor común.</p><p class="why">√(2·g·H) = √2 · √(g·H).</p><div class="mx">J = M·√<span class="rad">g·H</span>·(1 + √2), hacia arriba</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> J = M·√(g·H)·(1 + √2) ĵ, hacia arriba.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El piso no solo frena la pelota: además la lanza de vuelta. Por eso el impulso es más grande que el momento con el que llegó. La trampa típica es restar los tamaños sin signo y obtener M·√(g·H)·(√2 − 1).</p>
+      </article>
+    </div>
+
+    <!-- 3 -->
+    <div class="block">
+      <h3>3. Cuándo se conserva el momento</h3>
+      <p class="prose">Cuando dos cuerpos chocan, cada uno empuja al otro. Por la tercera ley de Newton esas dos fuerzas son iguales y opuestas, así que dentro del sistema se cancelan: lo que gana uno lo pierde el otro. Solo las fuerzas <b>externas</b> pueden cambiar el momento total.</p>
+      <div class="eq"><span><b>Si F<sub>neta externa</sub> = 0 en una dirección → p<sub>total, antes</sub> = p<sub>total, después</sub> en esa dirección</b></span><span>Durante un choque el peso y la fricción casi no alcanzan a actuar, porque el choque dura muy poco. Por eso el momento se conserva justo antes y justo después del choque.</span></div>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3</span>
+            <h4 id="wx3-h">Dos patinadores que se empujan</h4>
+            <p>Dos patinadores están quietos sobre hielo sin fricción: uno de masa 2M y otro de masa M. Se empujan y el de masa M sale hacia la derecha con rapidez v.</p>
+            <p><b>Pregunta:</b> ¿con qué velocidad sale el de masa 2M?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej3"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Revisa si el momento se conserva.</p><p class="why">En la horizontal no hay fuerzas externas (hielo sin fricción). Los empujones entre ellos son internos. Entonces p<sub>x</sub> se conserva.</p></li>
+          <li><p class="what">Momento antes.</p><p class="why">Los dos están quietos.</p><div class="mx">p<sub>antes</sub> = 2M·0 + M·0 = 0</div></li>
+          <li><p class="what">Momento después.</p><p class="why">Llama v<sub>2M</sub> a la velocidad del patinador pesado, con signo (todavía no sabes hacia dónde va).</p><div class="mx">p<sub>después</sub> = 2M·v<sub>2M</sub> + M·v</div></li>
+          <li><p class="what">Iguala y despeja.</p><p class="why">Pasas M·v al otro lado y divides entre 2M; la M se cancela.</p><div class="mx">0 = 2M·v<sub>2M</sub> + M·v<span class="ar">→</span>v<sub>2M</sub> = −<span class="frac"><span><span class="cx">M</span>·v</span><span>2<span class="cx">M</span></span></span> = −<span class="frac"><span>v</span><span>2</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v<sub>2M</sub> = −v/2: sale hacia la izquierda con la mitad de la rapidez.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El momento total era cero y sigue siendo cero: M·v hacia la derecha y 2M·(v/2) hacia la izquierda. El más pesado sale más lento. Es lo mismo que pasa en una explosión (lo verás en M2).</p>
+      </article>
+    </div>
+
+    <!-- 4 -->
+    <div class="block">
+      <h3>4. Los tres tipos de choque</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Tipo</th><th>¿Se conserva p?</th><th>¿Se conserva K?</th><th>Cómo lo reconoces</th></tr></thead>
+        <tbody>
+          <tr><td><b>Elástico</b></td><td>Sí</td><td><b>Sí</b></td><td>El enunciado dice «elástico». Rebotan sin perder energía (bolas de billar ideales).</td></tr>
+          <tr><td><b>Inelástico</b></td><td>Sí</td><td>No</td><td>Rebotan, pero parte de la energía se vuelve calor, sonido o deformación.</td></tr>
+          <tr><td><b>Perfectamente inelástico</b></td><td>Sí</td><td>No, y pierde lo máximo</td><td>«Salen pegados», «se incrusta», «quedan unidos». Después del choque tienen la misma velocidad.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose"><b>Regla de oro:</b> el momento se conserva en <b>los tres</b>. La energía cinética solo en el elástico. Si no dice «elástico», no uses la energía para el choque.</p>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · del profe, clase 16</span>
+            <h4 id="wx4-h">M contra 2M: salen pegados</h4>
+            <p>Un bloque de masa M se mueve con rapidez v₀ sobre una superficie horizontal sin fricción y choca con un bloque quieto de masa 2M. Después del choque salen pegados.</p>
+            <p><b>Pregunta:</b> ¿con qué velocidad salen y qué fracción de la energía cinética queda?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej4"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Revisa si el momento se conserva.</p><p class="why">No hay fricción, así que en x no actúa ninguna fuerza externa. El peso y la normal son verticales y no cambian p<sub>x</sub>.</p></li>
+          <li><p class="what">Momento antes y después.</p><p class="why">Antes solo se mueve M. Después se mueven juntos: una masa de 3M con la misma velocidad v<sub>f</sub>.</p><div class="mx">p<sub>antes</sub> = M·v₀ + 2M·0 = M·v₀<span class="ar">y</span>p<sub>después</sub> = (M + 2M)·v<sub>f</sub> = 3M·v<sub>f</sub></div></li>
+          <li><p class="what">Iguala y despeja v<sub>f</sub>.</p><div class="mx"><span class="cx">M</span>·v₀ = 3<span class="cx">M</span>·v<sub>f</sub><span class="ar">→</span>v<sub>f</sub> = <span class="frac"><span>v₀</span><span>3</span></span></div></li>
+          <li><p class="what">Llena la tabla de energía cinética.</p><p class="why">Las alturas no cambian, así que solo cuenta K.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Antes</th><th>Después</th></tr></thead>
+              <tbody>
+                <tr><td>Masa que se mueve</td><td>M con v₀</td><td>3M con v₀/3</td></tr>
+                <tr class="tot"><td>K = ½·M·v²</td><td>½·M·v₀²</td><td>½·3M·(v₀/3)² = ½·3M·<span class="frac"><span>v₀²</span><span>9</span></span> = <span class="frac"><span>1</span><span>6</span></span>·M·v₀²</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p class="what">Divide K<sub>después</sub> entre K<sub>antes</sub>.</p><p class="why">½ es lo mismo que 3/6, así que la división da 1/3.</p><div class="mx"><span class="frac"><span>K<sub>f</sub></span><span>K<sub>i</sub></span></span> = <span class="frac"><span>(1/6)·<span class="cx">M·v₀²</span></span><span>(1/2)·<span class="cx">M·v₀²</span></span></span> = <span class="frac"><span>2</span><span>6</span></span> = <span class="frac"><span>1</span><span>3</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v<sub>f</sub> = v₀/3 y K<sub>f</sub>/K<sub>i</sub> = 1/3: se pierden 2/3 de la energía cinética.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El momento se conservó, pero la energía no: 2/3 se volvieron calor y sonido. Por eso, en un choque donde salen pegados, <b>nunca</b> se usa la conservación de la energía.</p>
+      </article>
+    </div>
+
+    <!-- 5 -->
+    <div class="block">
+      <h3>5. El choque elástico en una dimensión</h3>
+      <p class="prose">En un choque elástico hay dos ecuaciones: la del momento y la de la energía cinética. Con dos ecuaciones puedes encontrar las dos velocidades de salida. El caso que más sale es el de un cuerpo que golpea a otro que está quieto.</p>
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5</span>
+            <h4 id="wx5-h">Un bloque golpea elásticamente a otro que está quieto</h4>
+            <p>Un bloque de masa M₁ se mueve con velocidad v₀ y choca de frente, en un choque elástico, con un bloque de masa M₂ que está quieto. No hay fricción.</p>
+            <p><b>Pregunta:</b> ¿con qué velocidades salen los dos?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej5"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escribe la conservación del momento.</p><p class="why">Sin fricción, p<sub>x</sub> se conserva. Llama v<sub>1f</sub> y v<sub>2f</sub> a las velocidades de salida, con signo.</p><div class="mx">M₁·v₀ = M₁·v<sub>1f</sub> + M₂·v<sub>2f</sub><span class="ar">(A)</span></div></li>
+          <li><p class="what">Escribe la conservación de la energía cinética.</p><p class="why">Es elástico. Multiplicas todo por 2 para quitar los ½.</p><div class="mx">M₁·v₀² = M₁·v<sub>1f</sub>² + M₂·v<sub>2f</sub>²<span class="ar">(B)</span></div></li>
+          <li><p class="what">Agrupa lo del bloque 1 a la izquierda en las dos ecuaciones.</p><p class="why">En (B) aparece una diferencia de cuadrados: a² − b² = (a − b)·(a + b).</p><div class="mx">(A): M₁·(v₀ − v<sub>1f</sub>) = M₂·v<sub>2f</sub><br>(B): M₁·(v₀ − v<sub>1f</sub>)·(v₀ + v<sub>1f</sub>) = M₂·v<sub>2f</sub>²</div></li>
+          <li><p class="what">Divide (B) entre (A).</p><p class="why">Se cancela M₁·(v₀ − v<sub>1f</sub>) a la izquierda y M₂·v<sub>2f</sub> a la derecha. Queda una ecuación sin masas, muy fácil.</p><div class="mx">v₀ + v<sub>1f</sub> = v<sub>2f</sub><span class="ar">(C)</span></div></li>
+          <li><p class="what">Reemplaza (C) en (A) y despeja v<sub>1f</sub>.</p><p class="why">Abres el paréntesis, juntas los términos con v<sub>1f</sub> a un lado y lo demás al otro.</p><div class="mx">M₁·v₀ = M₁·v<sub>1f</sub> + M₂·(v₀ + v<sub>1f</sub>)<br>M₁·v₀ − M₂·v₀ = (M₁ + M₂)·v<sub>1f</sub><br>v<sub>1f</sub> = <span class="frac"><span>M₁ − M₂</span><span>M₁ + M₂</span></span>·v₀</div></li>
+          <li><p class="what">Con (C), encuentra v<sub>2f</sub>.</p><p class="why">v₀ = (M₁ + M₂)/(M₁ + M₂)·v₀, y así se suman las fracciones.</p><div class="mx">v<sub>2f</sub> = v₀ + <span class="frac"><span>M₁ − M₂</span><span>M₁ + M₂</span></span>·v₀ = <span class="frac"><span>2·M₁</span><span>M₁ + M₂</span></span>·v₀</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v<sub>1f</sub> = (M₁ − M₂)/(M₁ + M₂)·v₀ y v<sub>2f</sub> = 2·M₁/(M₁ + M₂)·v₀.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Tres casos para reconocer: si <b>M₁ = M₂</b>, v<sub>1f</sub> = 0 y v<sub>2f</sub> = v₀: intercambian velocidades (como en el billar). Si <b>M₂ es muchísimo más grande</b> (una pared), v<sub>1f</sub> ≈ −v₀: rebota con la misma rapidez. Si <b>M₁ es muchísimo más grande</b>, sigue casi igual y M₂ sale con casi 2·v₀. La ecuación (C) también sirve sola: en un choque elástico, la velocidad con la que se acercan es la misma con la que se alejan.</p>
+      </article>
+    </div>
+
+    <!-- 6 -->
+    <div class="block">
+      <h3>6. Problemas por etapas: energía → choque → energía</h3>
+      <p class="prose">Es el tipo de problema que más pone el profe. Un bloque baja por una rampa (energía), choca (momento) y después sube o se frena (energía otra vez). Cada etapa tiene su herramienta y <b>no se mezclan</b>.</p>
+      <ol class="steps">
+        <li><span><b>Antes del choque:</b> energía (con fricción si hay) para hallar la velocidad justo antes de chocar.</span></li>
+        <li><span><b>En el choque:</b> solo momento. Si dice elástico, también energía cinética.</span></li>
+        <li><span><b>Después del choque:</b> energía otra vez, con la masa nueva si salieron pegados.</span></li>
+      </ol>
+      <article class="wx" aria-labelledby="wx6-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 6 · del profe, clase 16</span>
+            <h4 id="wx6-h">Riel con tramo rugoso y choque</h4>
+            <p>Un riel solo tiene fricción en un tramo horizontal de largo D, con coeficiente µₖ. Se suelta un bloque de masa M desde una altura H. Pasa por el tramo rugoso y después choca, en un choque perfectamente inelástico, con un bloque quieto de masa 2M. Los dos suben juntos por el riel, que ahí no tiene fricción.</p>
+            <p><b>Pregunta:</b> ¿hasta qué altura H<sub>f</sub> suben? El profe lo hizo con D = H/2 y µₖ = 1/2.</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej6"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Etapa 1, energía: tabla desde arriba hasta justo antes del choque.</p><p class="why">Referencia: el piso. En el tramo rugoso N = M·g, así que la fricción hace W = −µₖ·M·g·D.</p>
+            <div class="tw"><table class="etab">
+              <thead><tr><th></th><th>Inicio (altura H)</th><th>Justo antes del choque</th></tr></thead>
+              <tbody>
+                <tr><td>K</td><td>0</td><td>½·M·v²</td></tr>
+                <tr><td>U<sub>g</sub></td><td>M·g·H</td><td>0</td></tr>
+                <tr class="tot"><td>E</td><td>M·g·H</td><td>½·M·v²</td></tr>
+              </tbody>
+            </table></div>
+            <div class="mx">M·g·H − µₖ·M·g·D = ½·M·v²<span class="ar">→</span>v² = 2·g·(H − µₖ·D)</div></li>
+          <li><p class="what">Etapa 2, el choque: solo momento.</p><p class="why">Se pegan: es perfectamente inelástico, así que la energía no sirve aquí. Antes se mueve M con v; después 3M con V.</p><div class="mx"><span class="cx">M</span>·v = 3<span class="cx">M</span>·V<span class="ar">→</span>V = <span class="frac"><span>v</span><span>3</span></span><span class="ar">→</span>V² = <span class="frac"><span>v²</span><span>9</span></span> = <span class="frac"><span>2·g·(H − µₖ·D)</span><span>9</span></span></div></li>
+          <li><p class="what">Etapa 3, energía otra vez: los dos bloques suben.</p><p class="why">Ya no hay fricción. La masa ahora es 3M, pero se cancela.</p><div class="mx">½·<span class="cx">3M</span>·V² = <span class="cx">3M</span>·g·H<sub>f</sub><span class="ar">→</span>H<sub>f</sub> = <span class="frac"><span>V²</span><span>2·g</span></span> = <span class="frac"><span>H − µₖ·D</span><span>9</span></span></div></li>
+          <li><p class="what">Reemplaza los valores del profe.</p><p class="why">D = H/2 y µₖ = 1/2, así que µₖ·D = H/4.</p><div class="mx">H<sub>f</sub> = <span class="frac"><span>H − H/4</span><span>9</span></span> = <span class="frac"><span>3H/4</span><span>9</span></span> = <span class="frac"><span>H</span><span>12</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> H<sub>f</sub> = (H − µₖ·D)/9; con los valores del profe, H<sub>f</sub> = H/12.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Suben muchísimo menos de lo que bajó el primero: parte de la energía se la comió la fricción y otra parte el choque. El error típico es usar la energía <b>a través</b> del choque, como si no pasara nada: daría H<sub>f</sub> = (H − µₖ·D)/3, que está mal.</p>
+      </article>
+    </div>
+
+    <!-- 7 -->
+    <div class="block">
+      <h3>7. Choques en dos dimensiones</h3>
+      <p class="prose">Si los cuerpos no se mueven sobre una misma línea, el momento se conserva <b>en cada dirección por separado</b>: una ecuación para x y otra para y. Cada velocidad se descompone como en M1 del Parcial 2: la parte en x lleva cos y la parte en y lleva sen (con el ángulo medido desde el eje x).</p>
+      <div class="eq"><span><b>p<sub>x, antes</sub> = p<sub>x, después</sub><span class="ar">y</span>p<sub>y, antes</sub> = p<sub>y, después</sub></b></span></div>
+      <article class="wx" aria-labelledby="wx7-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 7</span>
+            <h4 id="wx7-h">Dos carros que chocan en un cruce y quedan pegados</h4>
+            <p>Un carro de masa M va hacia el este con rapidez v₁. Otro de masa 2M va hacia el norte con rapidez v₂. Chocan en el cruce y quedan pegados.</p>
+            <p><b>Pregunta:</b> ¿con qué velocidad salen y en qué dirección?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej7"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escoge los ejes.</p><p class="why">x hacia el este y y hacia el norte. El carro M solo tiene velocidad en x y el carro 2M solo en y.</p></li>
+          <li><p class="what">Conservación en x.</p><p class="why">Antes, en x, solo se mueve M. Después, los dos juntos (3M) con una parte V<sub>x</sub>.</p><div class="mx">M·v₁ = 3M·V<sub>x</sub><span class="ar">→</span>V<sub>x</sub> = <span class="frac"><span>v₁</span><span>3</span></span></div></li>
+          <li><p class="what">Conservación en y.</p><p class="why">Antes, en y, solo se mueve 2M.</p><div class="mx">2M·v₂ = 3M·V<sub>y</sub><span class="ar">→</span>V<sub>y</sub> = <span class="frac"><span>2·v₂</span><span>3</span></span></div></li>
+          <li><p class="what">Rapidez final: Pitágoras.</p><p class="why">V<sub>x</sub> y V<sub>y</sub> son los catetos; la rapidez es la hipotenusa.</p><div class="mx">V = √<span class="rad">V<sub>x</sub>² + V<sub>y</sub>²</span> = √<span class="rad"><span class="frac"><span>v₁²</span><span>9</span></span> + <span class="frac"><span>4·v₂²</span><span>9</span></span></span> = <span class="frac"><span>1</span><span>3</span></span>·√<span class="rad">v₁² + 4·v₂²</span></div></li>
+          <li><p class="what">Dirección: el ángulo φ con el este.</p><p class="why">tan φ = opuesto ÷ adyacente = V<sub>y</sub> ÷ V<sub>x</sub>.</p><div class="mx">tan φ = <span class="frac"><span>V<sub>y</sub></span><span>V<sub>x</sub></span></span> = <span class="frac"><span>2·v₂/3</span><span>v₁/3</span></span> = <span class="frac"><span>2·v₂</span><span>v₁</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> V = (1/3)·√(v₁² + 4·v₂²), con tan φ = 2·v₂/v₁ medido desde el este hacia el norte.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si v₂ = 0, queda V = v₁/3 hacia el este: es el ejemplo 4. El error típico es sumar los momentos como si fueran números (M·v₁ + 2M·v₂); son perpendiculares y se suman como vectores.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>Receta para cualquier problema de choques</h3>
+      <ol class="steps">
+        <li><span><b>Parte el problema en etapas</b>: antes del choque, el choque y después del choque.</span></li>
+        <li><span><b>En el choque, escribe p<sub>antes</sub> = p<sub>después</sub></b> en cada dirección, con signos. Un dibujo de «antes» y «después» ayuda mucho.</span></li>
+        <li><span><b>Mira el tipo de choque:</b> si es elástico, agrega K<sub>antes</sub> = K<sub>después</sub> (o la ecuación C). Si se pegan, usa una sola velocidad para los dos.</span></li>
+        <li><span><b>Fuera del choque usa energía</b> (con fricción si hay), como en M6–M7.</span></li>
+      </ol>
+    </div>
+
+    <div class="callout trap"><h3>Trampas que pone el profe</h3>
+      <p>Usar la conservación de la energía en un choque que no es elástico (salen pegados, se incrusta).</p>
+      <p>Olvidar los signos: el momento es un vector y en un rebote cambia de signo.</p>
+      <p>En 2D, sumar momentos perpendiculares como números en vez de separarlos en x y en y.</p>
+      <p>En los problemas por etapas, usar la masa equivocada: después de pegarse, la masa es la suma.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: la mesa de choques</h2><p>Dos bloques sobre un riel sin fricción. Cambia las masas, las velocidades y qué tan elástico es el choque. Mira qué pasa con el momento y con la energía.</p></div>
+    <div class="lab">
+      <div class="lab-stage">
+        <div id="c-svg" class="lab-fig"></div>
+        <div id="c-bars" class="lab-fig"></div>
+      </div>
+      <div class="lab-side">
+        <div class="ctl"><label for="c-m1" id="c-m1-lab">M₁ = 1 M</label><input type="range" id="c-m1" min="1" max="4" step="1" value="1"></div>
+        <div class="ctl"><label for="c-m2" id="c-m2-lab">M₂ = 2 M</label><input type="range" id="c-m2" min="1" max="4" step="1" value="2"></div>
+        <div class="ctl"><label for="c-v1" id="c-v1-lab">v₁ = +3 (hacia la derecha)</label><input type="range" id="c-v1" min="-3" max="3" step="1" value="3"></div>
+        <div class="ctl"><label for="c-v2" id="c-v2-lab">v₂ = 0</label><input type="range" id="c-v2" min="-3" max="3" step="1" value="0"></div>
+        <div class="ctl"><label for="c-e" id="c-e-lab">Choque: perfectamente inelástico (se pegan)</label><input type="range" id="c-e" min="0" max="1" step="0.25" value="0"></div>
+        <div class="qrow"><button type="button" class="btn" id="c-go">Chocar</button><button type="button" class="btn ghost" id="c-reset">Reiniciar</button></div>
+        <div class="qrow presets"><button type="button" class="btn ghost sm" data-pre="prof">Ejemplo del profe</button><button type="button" class="btn ghost sm" data-pre="billar">Billar</button><button type="button" class="btn ghost sm" data-pre="pared">Contra un bloque pesado</button></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Momento antes → después</span><b id="c-p">3 → 3</b></div>
+          <div class="ro"><span>Energía cinética antes → después</span><b id="c-k">4,5 → 1,5</b></div>
+          <div class="ro"><span>Energía que se pierde</span><b id="c-loss">67 %</b></div>
+          <div class="status" id="c-status">Listo para chocar</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Con «Ejemplo del profe» (M contra 2M, se pegan), ¿qué fracción de la energía cinética se pierde?</summary>
+          <div class="rev-body"><p><b>2/3, o sea, el 67 %.</b> Queda 1/3, como en el ejemplo resuelto 4. El momento no cambia.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Pon masas iguales, choque elástico y el segundo quieto. ¿Qué hace cada bloque?</summary>
+          <div class="rev-body"><p><b>Intercambian velocidades:</b> el primero queda quieto y el segundo sale con la velocidad del primero (ejemplo resuelto 5 con M₁ = M₂).</p></div></details>
+        <details class="rev"><summary>Reto 3 · Mueve el control del choque de «se pegan» a «elástico». ¿Cambia el momento después del choque? ¿Y la energía?</summary>
+          <div class="rev-body"><p><b>El momento nunca cambia</b>: en los tres tipos de choque se conserva. Lo que cambia es la energía que se pierde: máxima cuando se pegan y cero cuando es elástico.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero los ejemplos que el profe resolvió en clase y después la Tarea 8 de la complementaria, que es lo más parecido al Quiz 4.</p></div>
+    <p class="prose">En cada problema: parte en etapas, escribe el momento con signos y decide si el choque es elástico. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas al M2 con 4/5 o más. Usa g para la gravedad.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M2 · Centro de masa y explosiones.</p>
+    <p>Fuentes: diapositivas 17 del profe Ávila (clase 16), Tarea 8 y ejercicios de la semana 12 de la complementaria E2, Young &amp; Freedman 8.1–8.4.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Figuras de P3·M1 ---------- */
+const DEG = Math.PI / 180;
+const sb = (base, s, rest = "") => `${base}<tspan dy="3" font-size="9">${s}</tspan><tspan dy="-3">${rest}</tspan>`;
+function floorLine(y, x1 = 10, x2 = 310) { let g = `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" class="sv-line"/>`; for (let x = x1 + 8; x < x2; x += 12) g += `<line x1="${x}" y1="${y}" x2="${x - 6}" y2="${y + 6}" class="sv-hatch"/>`; return g; }
+function block(cx, yb, w, h, lab, cls = "sv-block") { return `<rect x="${f1(cx - w / 2)}" y="${f1(yb - h)}" width="${f1(w)}" height="${f1(h)}" class="${cls}"/>` + (lab ? T(cx, yb - h / 2 + 4, lab, "sv-lab", "middle") : ""); }
+function vArrow(cx, y, dir, len, lab, cls = "a-v") { const x2 = cx + dir * len; return arrowSvg(cx, y, x2, y, cls) + (lab ? T((cx + x2) / 2, y - 7, lab, "sv-t t-v", "middle") : ""); }
+/* Una fila de bloques sobre un piso: items = [{x, w, h, lab, v, dir, len, ghost}] */
+function row(yb, items, tag) {
+  let g = floorLine(yb, 10, 310);
+  if (tag) g += T(14, yb - 52, tag, "sv-tag");
+  items.forEach((b) => {
+    const w = b.w || 40, h = b.h || 30;
+    g += block(b.x, yb, w, h, b.lab, b.ghost ? "sv-ghost" : "sv-block");
+    if (b.v) g += vArrow(b.x + (b.dir > 0 ? w / 2 + 4 : -w / 2 - 4), yb - h / 2, b.dir, b.len || 38, b.v);
+    if (b.note) g += T(b.x, yb - h - 8, b.note, "sv-tl", "middle");
+  });
+  return g;
+}
+function carts(rows, aria) {
+  const H = rows.length * 92 + 8;
+  let g = ""; rows.forEach((r, i) => { g += row(78 + i * 92, r.items, r.tag); });
+  return `<svg viewBox="0 0 320 ${H}" role="img" aria-label="${aria}">${g}</svg>`;
+}
+function pelotaSvg(o = {}) {
+  const fy = 182, yA = 36, yB = o.hB === "H/4" ? 145 : 109, xA = 96, xB = 224;
+  let g = floorLine(fy, 20, 300);
+  g += `<path d="M ${xA} ${yA + 10} Q ${xA + 10} ${fy - 30} ${(xA + xB) / 2} ${fy - 9} Q ${xB - 10} ${fy - 30} ${xB} ${yB + 10}" class="sv-dash"/>`;
+  g += `<circle cx="${xA}" cy="${yA}" r="10" class="sv-ball"/><circle cx="${xB}" cy="${yB}" r="10" class="sv-ball"/><circle cx="${(xA + xB) / 2}" cy="${fy - 9}" r="9" class="sv-ghost"/>`;
+  g += `<line x1="58" y1="${yA}" x2="58" y2="${fy}" class="sv-dim"/>` + T(52, (yA + fy) / 2 + 4, "H", "sv-t", "end");
+  g += `<line x1="262" y1="${yB}" x2="262" y2="${fy}" class="sv-dim"/>` + T(268, (yB + fy) / 2 + 4, o.hB || "H/2", "sv-t");
+  g += arrowSvg(xA + 22, yA - 6, xA + 22, yA + 30, "a-v") + T(xA + 28, yA + 22, "cae", "sv-tl");
+  g += arrowSvg(xB - 22, yB + 30, xB - 22, yB - 6, "a-v") + T(xB - 28, yB - 2, "sube", "sv-tl", "end");
+  g += T(xA, yA - 16, "M", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Pelota que se suelta desde una altura H, rebota en el piso y sube hasta una altura menor">${g}</svg>`;
+}
+function rielSvg(o = {}) {
+  const fy = 176;
+  let g = `<line x1="104" y1="${fy}" x2="258" y2="${fy}" class="sv-line"/>`;
+  g += `<path d="M 26 36 Q 40 ${fy} 110 ${fy}" class="sv-track"/>` + `<path d="M 252 ${fy} Q 300 ${fy} 314 70" class="sv-track"/>`;
+  g += `<rect x="21" y="20" width="18" height="14" class="sv-block"/>` + T(30, 14, "M", "sv-t", "middle");
+  g += `<line x1="12" y1="36" x2="12" y2="${fy}" class="sv-dim"/>` + T(8, 110, "H", "sv-t", "end");
+  g += `<line x1="118" y1="${fy}" x2="190" y2="${fy}" class="sv-rough"/>` + T(154, fy + 17, o.dLab || "D, µₖ", "sv-t", "middle");
+  g += block(222, fy - 2, 34, 26, o.m2 || "2M");
+  g += `<line x1="270" y1="100" x2="316" y2="100" class="sv-dash"/>` + `<line x1="276" y1="100" x2="276" y2="${fy}" class="sv-dim"/>` + T(272, 140, sb("H", "f", " = ?"), "sv-t", "end");
+  g += T(70, 128, "sin fricción", "sv-tl") + T(312, fy + 17, "sin fricción", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Riel: un bloque baja desde la altura H, pasa por un tramo rugoso y choca con un bloque quieto; después los dos suben por el otro lado">${g}</svg>`;
+}
+function tazonSvg(o = {}) {
+  const cx = 160, cy = 34, R = 118;
+  let g = `<path d="M ${cx - R} ${cy} A ${R} ${R} 0 0 0 ${cx + R} ${cy}" class="sv-track"/>`;
+  g += `<line x1="${cx}" y1="${cy}" x2="${f1(cx + R * Math.cos(40 * DEG))}" y2="${f1(cy + R * Math.sin(40 * DEG))}" class="sv-dash"/>` + T(cx + 50, cy + 32, "R", "sv-tl");
+  g += `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  g += `<rect x="${cx - R + 4}" y="${cy - 2}" width="20" height="16" class="sv-block"/>` + T(cx - R + 14, cy - 8, o.l1 || "M", "sv-t", "middle");
+  g += `<rect x="${cx - 12}" y="${cy + R - 21}" width="24" height="18" class="sv-block"/>` + T(cx, cy + R - 27, o.l2 || "M", "sv-t", "middle");
+  g += T(cx + R - 4, cy - 8, "liso", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 162" role="img" aria-label="Tazón hemisférico liso de radio R: un bloque en el borde y otro quieto en el fondo">${g}</svg>`;
+}
+function flechaSvg() {
+  const fy = 150, xb = 170, th = Math.atan2(78, 130);
+  let g = `<line x1="10" y1="${fy}" x2="${xb}" y2="${fy}" class="sv-line"/>`;
+  g += `<polygon points="${xb},${fy} ${xb + 130},${fy - 78} ${xb + 130},${fy}" class="sv-ground"/>`;
+  g += `<line x1="${xb}" y1="${fy}" x2="${xb + 140}" y2="${fy}" class="sv-dash"/>`;
+  g += `<path d="M ${xb + 30} ${fy} A 30 30 0 0 0 ${f1(xb + 30 * Math.cos(th))} ${f1(fy - 30 * Math.sin(th))}" class="sv-arc"/>` + T(xb + 38, fy - 6, "α", "sv-ang");
+  g += block(66, fy, 40, 30, "3M");
+  g += arrowSvg(14, fy - 15, 40, fy - 15, "a-f") + T(16, fy - 22, "M", "sv-t");
+  g += `<line x1="86" y1="${fy + 14}" x2="${xb}" y2="${fy + 14}" class="sv-dim"/><line x1="86" y1="${fy + 9}" x2="86" y2="${fy + 19}" class="sv-dim"/><line x1="${xb}" y1="${fy + 9}" x2="${xb}" y2="${fy + 19}" class="sv-dim"/>` + T((86 + xb) / 2, fy + 30, "H", "sv-t", "middle");
+  g += T(128, fy - 6, "µₖ = 1/3", "sv-tl", "middle");
+  const s = 0.62, px = xb + s * 130, py = fy - s * 78, nx = -Math.sin(th), ny = -Math.cos(th);
+  g += `<g transform="rotate(${f1(-th / DEG)} ${f1(px + nx * 12)} ${f1(py + ny * 12)})"><rect x="${f1(px + nx * 12 - 14)}" y="${f1(py + ny * 12 - 12)}" width="28" height="24" class="sv-ghost"/></g>`;
+  g += `<line x1="${f1(px + 16)}" y1="${f1(py)}" x2="312" y2="${f1(py)}" class="sv-dash"/><line x1="306" y1="${f1(py)}" x2="306" y2="${fy}" class="sv-dim"/>` + T(302, (py + fy) / 2 + 4, "H/2", "sv-t", "end");
+  g += T(xb + 68, fy - 10, "µₖ = 1/3", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 186" role="img" aria-label="Una flecha de masa M se incrusta en un bloque 3M que recorre una distancia H con fricción y sube por un plano de ángulo alfa hasta una altura H sobre 2">${g}</svg>`;
+}
+function tenisSvg() {
+  const fy = 190, cx = 150, cy = 96, R = 40;
+  let g = floorLine(fy, 60, 260);
+  g += `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-ball"/><path d="M ${cx - R} ${cy} Q ${cx} ${cy - 18} ${cx + R} ${cy}" class="sv-thin"/><line x1="${cx}" y1="${cy - R}" x2="${cx}" y2="${cy + R}" class="sv-thin"/>`;
+  g += `<circle cx="${cx}" cy="${cy - R - 9}" r="9" class="sv-ball"/>`;
+  g += T(cx + 14, cy - R - 12, "M₁ (tenis)", "sv-tl") + T(cx + R + 6, cy + 4, "M₂ (baloncesto)", "sv-tl");
+  g += `<line x1="96" y1="${cy + R}" x2="96" y2="${fy}" class="sv-dim"/><line x1="90" y1="${cy + R}" x2="${cx}" y2="${cy + R}" class="sv-dash"/>` + T(90, (cy + R + fy) / 2 + 4, "h", "sv-t", "end");
+  g += arrowSvg(304, 36, 304, 88, "a-peso") + T(298, 64, "caen", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 200" role="img" aria-label="Pelota de tenis encima de un balón de baloncesto, los dos caen desde una altura h">${g}</svg>`;
+}
+function axis2D(cx, cy, len) { return `<line x1="${cx - len}" y1="${cy}" x2="${cx + len}" y2="${cy}" class="sv-dash"/>`; }
+function choque2DSvg() {
+  let g = T(80, 18, "antes", "sv-tag", "middle") + T(240, 18, "después", "sv-tag", "middle");
+  g += `<line x1="160" y1="24" x2="160" y2="186" class="sv-thin"/>`;
+  g += axis2D(80, 104, 72);
+  g += `<circle cx="34" cy="104" r="11" class="sv-ball"/>` + T(34, 108, "M₁", "sv-lab", "middle") + arrowSvg(48, 104, 74, 104, "a-v") + T(60, 94, "v₀", "sv-t t-v", "middle");
+  g += `<circle cx="126" cy="104" r="11" class="sv-ball"/>` + T(126, 108, "M₂", "sv-lab", "middle") + arrowSvg(112, 104, 88, 104, "a-v") + T(100, 94, "v₂ᵢ", "sv-t t-v", "middle");
+  const ox = 230, oy = 104; g += axis2D(ox, oy, 64);
+  g += arrowSvg(ox, oy, ox, oy + 62, "a-v") + T(ox - 6, oy + 60, "v₀/2", "sv-t t-v", "end") + T(ox + 6, oy + 50, "M₁", "sv-tl");
+  g += arrowSvg(ox, oy, ox + 46, oy - 46, "a-v") + T(ox + 50, oy - 46, "v₂f", "sv-t t-v");
+  g += `<path d="M ${ox + 26} ${oy} A 26 26 0 0 0 ${f1(ox + 26 * Math.cos(45 * DEG))} ${f1(oy - 26 * Math.sin(45 * DEG))}" class="sv-arc"/>` + T(ox + 34, oy - 6, "45°", "sv-ang-s");
+  g += T(ox + 18, oy - 30, "M₂", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 192" role="img" aria-label="Antes: M1 va hacia la derecha con v0 y M2 hacia la izquierda. Después: M1 sale hacia abajo con v0 sobre 2 y M2 a 45 grados hacia arriba">${g}</svg>`;
+}
+function asteroidesSvg() {
+  const ox = 170, oy = 98;
+  let g = axis2D(ox, oy, 150);
+  g += `<ellipse cx="44" cy="${oy}" rx="16" ry="12" class="sv-ball"/>` + T(44, oy + 4, "A", "sv-lab", "middle") + arrowSvg(62, oy, 116, oy, "a-v") + T(92, oy - 16, "v₀ = 40 m/s", "sv-t t-v", "middle");
+  g += `<ellipse cx="${ox}" cy="${oy}" rx="13" ry="10" class="sv-ghost"/>`;
+  g += arrowSvg(ox, oy, f1(ox + 84 * Math.cos(30 * DEG)), f1(oy - 84 * Math.sin(30 * DEG)), "a-v") + T(ox + 90 * Math.cos(30 * DEG) + 4, oy - 90 * Math.sin(30 * DEG), "A: " + sb("v", "A"), "sv-t t-v");
+  g += arrowSvg(ox, oy, f1(ox + 74 * Math.cos(45 * DEG)), f1(oy + 74 * Math.sin(45 * DEG)), "a-v") + T(ox + 80 * Math.cos(45 * DEG) + 4, oy + 80 * Math.sin(45 * DEG) + 6, "B: " + sb("v", "B"), "sv-t t-v");
+  g += `<path d="M ${ox + 40} ${oy} A 40 40 0 0 0 ${f1(ox + 40 * Math.cos(30 * DEG))} ${f1(oy - 40 * Math.sin(30 * DEG))}" class="sv-arc"/>` + T(ox + 48, oy - 8, "30°", "sv-ang-s");
+  g += `<path d="M ${ox + 30} ${oy} A 30 30 0 0 1 ${f1(ox + 30 * Math.cos(45 * DEG))} ${f1(oy + 30 * Math.sin(45 * DEG))}" class="sv-arc"/>` + T(ox + 36, oy + 22, "45°", "sv-ang-s");
+  g += T(ox - 6, oy + 30, "B estaba quieto aquí", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="El asteroide A llega a 40 metros por segundo; después A sale a 30 grados hacia arriba y B a 45 grados hacia abajo">${g}</svg>`;
+}
+function cruceSvg() {
+  let g = T(76, 18, "antes", "sv-tag", "middle") + T(236, 18, "después", "sv-tag", "middle");
+  g += `<line x1="160" y1="24" x2="160" y2="186" class="sv-thin"/>`;
+  const cx = 104, cy = 122;
+  g += `<line x1="14" y1="${cy}" x2="150" y2="${cy}" class="sv-dash"/><line x1="${cx}" y1="34" x2="${cx}" y2="180" class="sv-dash"/>`;
+  g += block(34, cy + 12, 30, 24, "M") + arrowSvg(52, cy, 80, cy, "a-v") + T(66, cy - 18, "v₁", "sv-t t-v", "middle");
+  g += `<rect x="${cx - 16}" y="148" width="32" height="26" class="sv-block"/>` + T(cx, 165, "2M", "sv-lab", "middle") + arrowSvg(cx, 146, cx, 118, "a-v") + T(cx + 8, 136, "v₂", "sv-t t-v");
+  g += T(150, cy - 6, "este", "sv-tl", "end") + T(cx + 6, 42, "norte", "sv-tl");
+  const ox = 210, oy = 150, a = Math.atan2(2, 1.3);
+  g += `<line x1="${ox}" y1="${oy}" x2="312" y2="${oy}" class="sv-dash"/>`;
+  g += block(ox, oy + 13, 36, 26, "3M") + arrowSvg(ox + 10, oy - 16, f1(ox + 10 + 70 * Math.cos(a)), f1(oy - 16 - 70 * Math.sin(a)), "a-v") + T(ox + 14 + 76 * Math.cos(a), oy - 16 - 76 * Math.sin(a), "V = ?", "sv-t t-v");
+  g += `<path d="M ${ox + 42} ${oy - 16} A 32 32 0 0 0 ${f1(ox + 10 + 32 * Math.cos(a))} ${f1(oy - 16 - 32 * Math.sin(a))}" class="sv-arc"/>` + T(ox + 48, oy - 30, "φ", "sv-ang");
+  return `<svg viewBox="0 0 320 192" role="img" aria-label="Antes: un carro M va al este con v1 y un carro 2M va al norte con v2. Después salen pegados con una velocidad V a un ángulo phi del este">${g}</svg>`;
+}
+function paredSvg(o = {}) {
+  let g = `<line x1="262" y1="30" x2="262" y2="172" class="sv-line"/>`; for (let y = 34; y < 172; y += 10) g += `<line x1="262" y1="${y}" x2="270" y2="${y - 6}" class="sv-hatch"/>`;
+  g += T(14, 30, "antes", "sv-tag") + T(14, 120, "después", "sv-tag");
+  g += `<circle cx="200" cy="66" r="12" class="sv-ball"/>` + T(200, 70, "M", "sv-lab", "middle") + arrowSvg(150, 66, 184, 66, "a-v") + T(164, 56, o.v1 || "v", "sv-t t-v", "middle");
+  g += `<circle cx="200" cy="146" r="12" class="sv-ball"/>` + T(200, 150, "M", "sv-lab", "middle") + arrowSvg(184, 146, 150, 146, "a-v") + T(164, 136, o.v2 || "v", "sv-t t-v", "middle");
+  return `<svg viewBox="0 0 320 182" role="img" aria-label="Pelota que choca de frente contra una pared y rebota">${g}</svg>`;
+}
+function plastSvg() {
+  const fy = 170;
+  let g = floorLine(fy, 60, 260);
+  g += T(14, 30, "antes", "sv-tag") + `<circle cx="110" cy="96" r="12" class="sv-ball"/>` + T(110, 100, "M", "sv-lab", "middle") + arrowSvg(110, 112, 110, 150, "a-v") + T(118, 136, "v", "sv-t t-v");
+  g += T(196, 30, "después", "sv-tag") + `<path d="M 186 ${fy} Q 200 ${fy - 16} 214 ${fy} Z" class="sv-block"/>` + T(200, fy - 22, "quieta, pegada", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 184" role="img" aria-label="Una bola de plastilina llega al piso con rapidez v y se queda pegada">${g}</svg>`;
+}
+function pendBalSvg() {
+  let g = `<line x1="150" y1="20" x2="270" y2="20" class="sv-line"/>`; for (let x = 154; x < 270; x += 10) g += `<line x1="${x}" y1="20" x2="${x + 6}" y2="14" class="sv-hatch"/>`;
+  g += `<line x1="190" y1="20" x2="190" y2="120" class="sv-rope"/><line x1="230" y1="20" x2="230" y2="120" class="sv-rope"/>`;
+  g += `<rect x="180" y="120" width="60" height="36" class="sv-block"/>` + T(210, 143, "3M", "sv-lab", "middle");
+  g += `<line x1="190" y1="20" x2="148" y2="96" class="sv-dash"/><line x1="230" y1="20" x2="188" y2="96" class="sv-dash"/><rect x="138" y="96" width="60" height="36" class="sv-ghost"/>`;
+  g += `<line x1="128" y1="96" x2="128" y2="120" class="sv-dim"/><line x1="122" y1="120" x2="180" y2="120" class="sv-dash"/>` + T(122, 112, "h", "sv-t", "end");
+  g += arrowSvg(40, 138, 96, 138, "a-f") + `<rect x="26" y="134" width="14" height="8" class="sv-block"/>` + T(34, 128, "M, v = ?", "sv-t");
+  return `<svg viewBox="0 0 320 170" role="img" aria-label="Péndulo balístico: una bala de masa M se incrusta en un bloque 3M que cuelga de dos cuerdas y sube una altura h">${g}</svg>`;
+}
+function rampaChoqueSvg() {
+  const fy = 172;
+  let g = `<line x1="104" y1="${fy}" x2="258" y2="${fy}" class="sv-line"/>`;
+  g += `<path d="M 26 36 Q 40 ${fy} 110 ${fy}" class="sv-track"/>` + `<path d="M 252 ${fy} Q 300 ${fy} 314 66" class="sv-track"/>`;
+  g += `<rect x="21" y="20" width="18" height="14" class="sv-block"/>` + T(30, 14, "M", "sv-t", "middle");
+  g += `<line x1="12" y1="36" x2="12" y2="${fy}" class="sv-dim"/>` + T(8, 108, "H", "sv-t", "end");
+  g += block(150, fy - 2, 30, 24, "M") + T(150, fy - 34, "quieto", "sv-tl", "middle");
+  g += `<line x1="270" y1="112" x2="316" y2="112" class="sv-dash"/><line x1="276" y1="112" x2="276" y2="${fy}" class="sv-dim"/>` + T(272, 146, "h = ?", "sv-t", "end");
+  g += T(66, 124, "todo sin fricción", "sv-tl");
+  return `<svg viewBox="0 0 320 186" role="img" aria-label="Un bloque M baja por una rampa sin fricción desde la altura H, choca con otro bloque M quieto, salen pegados y suben por el otro lado">${g}</svg>`;
+}
+function patinSvg(o = {}) {
+  const big = o.big || "2M", small = o.small || "M";
+  return carts([
+    { tag: "antes: quietos", items: [{ x: 138, w: 50, h: 38, lab: big }, { x: 182, w: 36, h: 28, lab: small }] },
+    { tag: "después del empujón", items: [{ x: 96, w: 50, h: 38, lab: big, v: o.vBig || sb("v", "2M", " = ?"), dir: -1, len: 40 }, { x: 228, w: 36, h: 28, lab: small, v: o.vSmall || "v", dir: 1, len: 40 }] }
+  ], "Dos patinadores quietos se empujan y salen en sentidos opuestos");
+}
+const FIG = {
+  ej1: () => carts([{ items: [{ x: 90, w: 34, h: 26, lab: "M", v: "v", dir: 1 }, { x: 228, w: 46, h: 34, lab: "2M", v: "v", dir: -1 }] }], "Un carro M va hacia la derecha con rapidez v y un carro 2M va hacia la izquierda con rapidez v"),
+  ej2: () => pelotaSvg(),
+  ej3: () => patinSvg(),
+  ej4: () => carts([
+    { tag: "antes", items: [{ x: 78, w: 34, h: 26, lab: "M", v: "v₀", dir: 1 }, { x: 214, w: 46, h: 34, lab: "2M", note: "quieto" }] },
+    { tag: "después", items: [{ x: 168, w: 74, h: 34, lab: "M + 2M", v: sb("v", "f", " = ?"), dir: 1, len: 42 }] }
+  ], "Antes: M con v0 hacia un bloque 2M quieto. Después: salen pegados con una velocidad v f"),
+  ej5: () => carts([
+    { tag: "antes", items: [{ x: 78, w: 36, h: 28, lab: "M₁", v: "v₀", dir: 1 }, { x: 214, w: 44, h: 32, lab: "M₂", note: "quieto" }] },
+    { tag: "después", items: [{ x: 92, w: 36, h: 28, lab: "M₁", v: sb("v", "1f", " = ?"), dir: 1, len: 46 }, { x: 214, w: 44, h: 32, lab: "M₂", v: sb("v", "2f", " = ?"), dir: 1, len: 46 }] }
+  ], "Antes: M1 con v0 hacia M2 quieto. Después: los dos salen con velocidades desconocidas"),
+  ej6: () => rielSvg(),
+  ej7: () => cruceSvg()
+};
+
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+
+/* ---------- Lab: mesa de choques ---------- */
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const C = { m1: 1, m2: 2, v1: 3, v2: 0, e: 0, x1: 2.6, x2: 6.6, u1: 3, u2: 0, phase: "idle", t: 0, last: null, f1: null, f2: null };
+const X = (x) => 20 + x * 30;
+const wOf = (m) => 0.7 + 0.22 * m, hOf = (m) => 20 + 6 * m;
+const nfmt = (v) => (Math.abs(v) < 0.005 ? "0" : (Math.round(v * 100) / 100).toString().replace(".", ","));
+const sign = (v) => (v > 0 ? "+" : "") + nfmt(v);
+function eLabel(e) { return e === 0 ? "perfectamente inelástico (se pegan)" : e === 1 ? "elástico (no pierde energía)" : "inelástico (rebotan y pierden energía)"; }
+function finals() {
+  const { m1, m2, v1, v2, e } = C, P = m1 * v1 + m2 * v2, M = m1 + m2;
+  return { f1: (P + m2 * e * (v2 - v1)) / M, f2: (P + m1 * e * (v1 - v2)) / M };
+}
+function drawCarts() {
+  const y = 118, w1 = wOf(C.m1) * 30, w2 = wOf(C.m2) * 30, h1 = hOf(C.m1), h2 = hOf(C.m2);
+  let g = `<line x1="14" y1="${y}" x2="326" y2="${y}" class="sv-line"/>`; for (let x = 22; x < 326; x += 12) g += `<line x1="${x}" y1="${y}" x2="${x - 6}" y2="${y + 6}" class="sv-hatch"/>`;
+  const b1 = X(C.x1), b2 = X(C.x2);
+  g += block(b1, y, w1, h1, "M₁") + block(b2, y, w2, h2, "M₂");
+  const ar = (cx, yy, u, lab) => (Math.abs(u) < 0.01 ? T(cx, yy, "quieto", "sv-tl", "middle") : arrowSvg(cx, yy, cx + u * 14, yy, "a-v") + T(cx + u * 7, yy - 8, lab + " = " + sign(u), "sv-t t-v", "middle"));
+  if ((C.phase === "after" || C.phase === "done") && C.e === 0) g += ar((b1 + b2) / 2, y - Math.max(h1, h2) - 18, C.u1, "v");
+  else g += ar(b1, y - h1 - 18, C.u1, "v₁") + ar(b2, y - h2 - 18, C.u2, "v₂");
+  g += T(14, 22, C.phase === "after" || C.phase === "done" ? "después del choque" : "antes del choque", "sv-tag");
+  $("#c-svg").innerHTML = `<svg viewBox="0 0 340 140" role="img" aria-label="Dos bloques sobre un riel sin fricción">${g}</svg>`;
+  /* barras */
+  const { f1, f2 } = finals();
+  const pI = C.m1 * C.v1 + C.m2 * C.v2, pF = C.m1 * f1 + C.m2 * f2, kI = 0.5 * C.m1 * C.v1 ** 2 + 0.5 * C.m2 * C.v2 ** 2, kF = 0.5 * C.m1 * f1 ** 2 + 0.5 * C.m2 * f2 ** 2;
+  const W = 340, ml = 128, mr = 70, cx = ml + (W - ml - mr) / 2, half = (W - ml - mr) / 2, pMax = Math.max(4, Math.abs(pI), Math.abs(pF)) * 1.15, kMax = Math.max(2, kI) * 1.1;
+  let b = "";
+  const pBar = (yy, lab, v) => { const w = Math.max(-1, Math.min(1, v / pMax)) * half; b += T(ml - 8, yy + 12, lab, "gr-ann", "end") + `<rect x="${ml}" y="${yy}" width="${W - ml - mr}" height="14" rx="3" class="bar-track"/><line x1="${cx}" y1="${yy - 3}" x2="${cx}" y2="${yy + 17}" class="gr-axis"/><rect x="${f1x(Math.min(cx, cx + w))}" y="${yy}" width="${f1x(Math.abs(w))}" height="14" rx="3" class="bar"/>` + T(W - mr + 6, yy + 12, nfmt(v), "gr-ann"); };
+  const kBar = (yy, lab, v) => { const w = Math.min(1, v / kMax) * (W - ml - mr); b += T(ml - 8, yy + 12, lab, "gr-ann", "end") + `<rect x="${ml}" y="${yy}" width="${W - ml - mr}" height="14" rx="3" class="bar-track"/><rect x="${ml}" y="${yy}" width="${f1x(w)}" height="14" rx="3" class="bar-k"/>` + T(W - mr + 6, yy + 12, nfmt(v), "gr-ann"); };
+  pBar(8, "Momento antes", pI); pBar(30, "Momento después", pF); kBar(60, "K antes", kI); kBar(82, "K después", kF);
+  $("#c-bars").innerHTML = `<svg viewBox="0 0 ${W} 104" role="img" aria-label="Barras de momento y energía cinética antes y después del choque">${b}</svg>`;
+  $("#c-p").textContent = nfmt(pI) + " → " + nfmt(pF);
+  $("#c-k").textContent = nfmt(kI) + " → " + nfmt(kF);
+  $("#c-loss").textContent = kI > 0 ? Math.round((1 - kF / kI) * 100) + " %" : "—";
+  $("#c-m1-lab").textContent = "M₁ = " + C.m1 + " M"; $("#c-m2-lab").textContent = "M₂ = " + C.m2 + " M";
+  $("#c-v1-lab").textContent = "v₁ = " + sign(C.v1) + (C.v1 > 0 ? " (hacia la derecha)" : C.v1 < 0 ? " (hacia la izquierda)" : " (quieto)");
+  $("#c-v2-lab").textContent = "v₂ = " + sign(C.v2) + (C.v2 > 0 ? " (hacia la derecha)" : C.v2 < 0 ? " (hacia la izquierda)" : " (quieto)");
+  $("#c-e-lab").textContent = "Choque: " + eLabel(C.e);
+}
+const f1x = (v) => (Math.round(v * 10) / 10).toString();
+function cStep(dt) {
+  const w1 = wOf(C.m1), w2 = wOf(C.m2);
+  if (C.phase === "run" && C.x2 - C.x1 <= (w1 + w2) / 2 && C.u1 - C.u2 > 0) {
+    const f = finals(); C.u1 = f.f1; C.u2 = f.f2; C.phase = "after"; C.t = 0;
+    $("#c-status").textContent = C.e === 0 ? "Chocaron y quedaron pegados" : "Chocaron y rebotaron"; $("#c-status").className = "status ok";
+  }
+  C.x1 += C.u1 * dt; C.x2 += C.u2 * dt; C.t += dt;
+  if (C.phase === "after" && (C.t > 3.5 || C.x1 < -1.5 || C.x2 > 11.5)) C.phase = "done";
+  if (C.phase === "run" && C.t > 6) { C.phase = "done"; }
+}
+function cFrame(now) {
+  if (C.phase !== "run" && C.phase !== "after") { drawCarts(); return; }
+  const dt = Math.min(0.05, (now - (C.last ?? now)) / 1000); C.last = now;
+  for (let i = 0; i < 10; i++) cStep(dt / 10);
+  drawCarts(); requestAnimationFrame(cFrame);
+}
+function cReset() { C.phase = "idle"; C.x1 = 2.6; C.x2 = 6.6; C.u1 = C.v1; C.u2 = C.v2; C.t = 0; C.last = null; $("#c-status").textContent = "Listo para chocar"; $("#c-status").className = "status"; drawCarts(); }
+$("#c-go").addEventListener("click", () => {
+  cReset();
+  if (C.v1 - C.v2 <= 0) { $("#c-status").textContent = "No chocan: el de la izquierda no alcanza al de la derecha. Cambia las velocidades."; $("#c-status").className = "status bad"; return; }
+  C.phase = "run"; $("#c-status").textContent = "Moviéndose…"; $("#c-status").className = "status";
+  if (reduce) { let k = 0; while (C.phase === "run" && k++ < 20000) cStep(1 / 200); C.t = 0; for (let i = 0; i < 200; i++) cStep(1 / 200); C.phase = "done"; drawCarts(); return; }
+  requestAnimationFrame(cFrame);
+});
+$("#c-reset").addEventListener("click", cReset);
+[["c-m1", "m1"], ["c-m2", "m2"], ["c-v1", "v1"], ["c-v2", "v2"], ["c-e", "e"]].forEach(([id, k]) => $("#" + id).addEventListener("input", (ev) => { C[k] = Number(ev.target.value); cReset(); }));
+const PRE = { prof: { m1: 1, m2: 2, v1: 3, v2: 0, e: 0 }, billar: { m1: 1, m2: 1, v1: 3, v2: 0, e: 1 }, pared: { m1: 1, m2: 4, v1: 3, v2: 0, e: 1 } };
+document.querySelectorAll("[data-pre]").forEach((bt) => bt.addEventListener("click", () => {
+  Object.assign(C, PRE[bt.dataset.pre]);
+  $("#c-m1").value = C.m1; $("#c-m2").value = C.m2; $("#c-v1").value = C.v1; $("#c-v2").value = C.v2; $("#c-e").value = C.e;
+  cReset();
+}));
+cReset();
+
+/* ---------- Taller ---------- */
+const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const rt = (x) => `√<span class="rad">${x}</span>`;
+const PROBS = [
+  { n: "T1", t: "M contra 3M: salen pegados", src: "Variante del ejemplo del profe (clase 16)",
+    fig: () => carts([{ tag: "antes", items: [{ x: 78, w: 34, h: 26, lab: "M", v: "v₀", dir: 1 }, { x: 214, w: 52, h: 38, lab: "3M", note: "quieto" }] }, { tag: "después", items: [{ x: 168, w: 82, h: 38, lab: "M + 3M", v: "V = ?", dir: 1, len: 40 }] }], "Un bloque M con v0 choca con un bloque 3M quieto y salen pegados"),
+    txt: "Un bloque de masa M se mueve con rapidez v₀ sobre un piso sin fricción y choca con un bloque quieto de masa 3M. Salen pegados. ¿Con qué velocidad salen? ¿Qué fracción de la energía cinética se pierde?",
+    hints: ["Es el ejemplo resuelto 4 con 3M en vez de 2M. Después del choque la masa que se mueve es 4M.", "K<sub>f</sub>/K<sub>i</sub> = [½·4M·V²] / [½·M·v₀²]. Reemplaza V y simplifica."],
+    sol: [{ w: "Momento en x (sin fricción).", m: `M·v₀ = 4M·V<span class="ar">→</span>V = ${fr("v₀", "4")}` }, { w: "Energía cinética antes y después.", m: `K<sub>i</sub> = ½·M·v₀²<span class="ar">y</span>K<sub>f</sub> = ½·4M·${fr("v₀²", "16")} = ${fr("1", "8")}·M·v₀²` }, { w: "Fracción que queda y fracción que se pierde.", m: `${fr("K<sub>f</sub>", "K<sub>i</sub>")} = ${fr("1/8", "1/2")} = ${fr("1", "4")}<span class="ar">→</span>se pierden ${fr("3", "4")}` }],
+    res: "V = v₀/4 y se pierden 3/4 de la energía cinética.",
+    checks: [{ q: "¿Qué fracción de K se pierde?", opts: ["1/4", "1/2", "2/3", "3/4"], a: 3 }] },
+  { n: "T2", t: "Pelota que rebota a H/4: el impulso", src: "Variante del ejemplo del profe (clase 16)",
+    fig: () => pelotaSvg({ hB: "H/4" }),
+    txt: "Se suelta una pelota de masa M desde una altura H. Rebota en el piso y sube solo hasta H/4. ¿Qué impulso le hizo el piso?",
+    hints: ["Rapidez antes: √(2gH) hacia abajo. Rapidez después: la que alcanza para subir H/4.", "J = p<sub>f</sub> − p<sub>i</sub> con hacia arriba positivo. Restar un negativo es sumar."],
+    sol: [{ w: "Rapidez justo antes y justo después.", m: `v<sub>i</sub> = ${rt("2·g·H")} (abajo)<span class="ar">y</span>½·M·v<sub>f</sub>² = M·g·${fr("H", "4")}<span class="ar">→</span>v<sub>f</sub> = ${rt(fr("g·H", "2"))} (arriba)` }, { w: "Impulso, con arriba positivo.", m: `J = M·${rt(fr("g·H", "2"))} − (−M·${rt("2·g·H")}) = M·${rt(fr("g·H", "2"))}·(1 + 2)` }, { w: "Simplifica.", y: `${rt("2·g·H")} = 2·${rt(fr("g·H", "2"))}, por eso los dos términos se suman en 1 + 2.`, m: `J = 3·M·${rt(fr("g·H", "2"))}, hacia arriba` }],
+    res: "J = 3·M·√(g·H/2), hacia arriba.",
+    checks: [{ q: "¿Cuánto vale J?", opts: ["M·√(g·H/2)", "3·M·√(g·H/2)", "M·√(2·g·H)", "2·M·√(2·g·H)"], a: 1 }] },
+  { n: "T3", t: "Riel rugoso + choque con un bloque igual", src: "Variante del ejemplo del profe (clase 16)",
+    fig: () => rielSvg({ dLab: "H, µₖ = 1/4", m2: "M" }),
+    txt: "El riel de la figura solo tiene fricción en el tramo horizontal, de largo H, con µₖ = 1/4. Se suelta un bloque de masa M desde la altura H; después del tramo rugoso choca con un bloque quieto de masa M y salen pegados por el otro lado, que no tiene fricción. ¿Hasta qué altura suben?",
+    hints: ["Etapa 1: M·g·H − µₖ·M·g·H = ½·M·v².", "Etapa 2: M·v = 2M·V. Etapa 3: ½·2M·V² = 2M·g·H<sub>f</sub>."],
+    sol: [{ w: "Etapa 1, energía con fricción.", m: `M·g·H − ${fr("1", "4")}·M·g·H = ½·M·v²<span class="ar">→</span>v² = ${fr("3", "2")}·g·H` }, { w: "Etapa 2, choque (se pegan): solo momento.", m: `M·v = 2M·V<span class="ar">→</span>V = ${fr("v", "2")}<span class="ar">→</span>V² = ${fr("3", "8")}·g·H` }, { w: "Etapa 3, energía sin fricción.", m: `H<sub>f</sub> = ${fr("V²", "2·g")} = ${fr("3·H", "16")}` }],
+    res: "H<sub>f</sub> = 3H/16.",
+    checks: [{ q: "¿Cuánto vale H<sub>f</sub>?", opts: ["3H/4", "3H/8", "3H/16", "H/4"], a: 2 }] },
+  { n: "T4", t: "El tazón: dos masas que se pegan", src: "Tarea 8, ejercicio 3 · evaluación de la semana 12",
+    fig: () => tazonSvg({ l1: "M", l2: "M" }),
+    txt: "Dos masas idénticas se sueltan desde el reposo en un tazón hemisférico liso de radio R: una desde el borde y la otra desde el fondo (figura). Si se pegan cuando chocan, ¿qué altura sobre el fondo alcanzan? Variante de la evaluación de la semana 12: la del fondo tiene el doble de masa (2M).",
+    hints: ["Etapa 1: la del borde baja R. Energía: v = √(2gR).", "Etapa 2: M·v = 2M·V (o M·v = 3M·V en la variante). Etapa 3: h = V²/(2g)."],
+    sol: [{ w: "Etapa 1, energía: la del borde baja R.", m: `M·g·R = ½·M·v²<span class="ar">→</span>v² = 2·g·R` }, { w: "Etapa 2, choque (se pegan).", m: `M·v = 2M·V<span class="ar">→</span>V = ${fr("v", "2")}<span class="ar">→</span>V² = ${fr("g·R", "2")}` }, { w: "Etapa 3, suben juntas.", m: `h = ${fr("V²", "2·g")} = ${fr("R", "4")}` }, { w: "Variante con 2M en el fondo.", m: `M·v = 3M·V<span class="ar">→</span>V² = ${fr("2·g·R", "9")}<span class="ar">→</span>h = ${fr("R", "9")}` }],
+    res: "h = R/4 con masas iguales; h = R/9 si la del fondo es 2M.",
+    checks: [{ q: "Masas iguales: ¿cuánto vale h?", opts: ["R/2", "R/3", "R/4", "R/9"], a: 2 }, { q: "Variante (2M en el fondo): ¿cuánto vale h?", opts: ["R/3", "R/4", "R/6", "R/9"], a: 3 }] },
+  { n: "T5", t: "La flecha que se incrusta y el plano con fricción", src: "Tarea 8, ejercicio 2",
+    fig: () => flechaSvg(),
+    txt: "Un bloque de masa 3M está quieto sobre una superficie horizontal, a una distancia H de la base de un plano inclinado de ángulo α. La superficie y el plano tienen µₖ = 1/3. Una flecha de masa M se incrusta en el bloque y los dos se mueven juntos: recorren la distancia H y suben por el plano hasta una altura máxima H/2. Halla la rapidez inicial de la flecha en términos de H, g y α.",
+    hints: ["Ve al revés: primero energía con fricción desde justo después del choque hasta la altura H/2, para hallar V. Después el choque: M·v = 4M·V.", "En el plano: N = 4M·g·cos α y la distancia es d = (H/2)/sen α. En el piso: N = 4M·g y la distancia es H."],
+    sol: [{ w: "Tabla de energía desde justo después del choque hasta arriba.", y: "Masa 4M. Referencia: el piso.", m: `½·4M·V² − µₖ·4M·g·H − µₖ·4M·g·cos α·${fr("H/2", "sen α")} = 4M·g·${fr("H", "2")}` }, { w: "Cancela 4M y pon µₖ = 1/3.", y: "cos α / sen α = cot α.", m: `½·V² = ${fr("g·H", "2")} + ${fr("g·H", "3")} + ${fr("g·H", "6")}·cot α<span class="ar">→</span>V² = ${fr("g·H", "3")}·(5 + cot α)` }, { w: "El choque (se incrusta): solo momento.", m: `M·v = 4M·V<span class="ar">→</span>v = 4·V = 4·${rt(fr("g·H·(5 + cot α)", "3"))}` }],
+    res: "v = 4·√(g·H·(5 + cot α)/3).",
+    checks: [{ q: "¿Cuánto vale v?", opts: ["√(g·H·(5 + cot α)/3)", "4·√(g·H·(5 + cot α)/3)", "4·√(g·H·(1 + cot α))", "4·√(2·g·H)"], a: 1 }] },
+  { n: "T6", t: "La pelota de tenis sobre el balón", src: "Tarea 8, ejercicio 4",
+    fig: () => tenisSvg(),
+    txt: "Una pelota de tenis de masa M₁ = 57,0 g se sostiene justo encima de un balón de baloncesto de masa M₂ = 590 g. Se sueltan juntos desde el reposo y caen una altura h = 1,20 m. El balón rebota elásticamente en el suelo (su velocidad se invierte) mientras la pelota todavía baja, y luego chocan elásticamente entre sí. (a) ¿Con qué rapidez llega el balón al suelo? (b) ¿Hasta qué altura sube la pelota de tenis? Resuélvelo con letras y al final reemplaza los números.",
+    hints: ["Justo antes del choque entre ellos: el balón sube con +v y la pelota baja con −v, con v = √(2gh).", "Choque elástico: la rapidez con que se acercan es la misma con que se alejan: v<sub>1f</sub> − v<sub>2f</sub> = 2v. Junta eso con el momento."],
+    sol: [{ w: "(a) Caída libre por energía.", m: `v = ${rt("2·g·h")} = ${rt("2 · 9,8 · 1,20")} ≈ 4,85 m/s` }, { w: "(b) Momento en el choque entre las dos (arriba positivo).", m: `M₁·(−v) + M₂·(+v) = M₁·v<sub>1f</sub> + M₂·v<sub>2f</sub>` }, { w: "Elástico: se alejan con la misma rapidez con la que se acercaban.", y: "Se acercaban con v − (−v) = 2v.", m: `v<sub>1f</sub> − v<sub>2f</sub> = 2v<span class="ar">→</span>v<sub>2f</sub> = v<sub>1f</sub> − 2v` }, { w: "Reemplaza y despeja v<sub>1f</sub>.", m: `(M₂ − M₁)·v + 2·M₂·v = (M₁ + M₂)·v<sub>1f</sub><span class="ar">→</span>v<sub>1f</sub> = ${fr("3·M₂ − M₁", "M₁ + M₂")}·v` }, { w: "Altura con energía y números.", m: `h' = ${fr("v<sub>1f</sub>²", "2·g")} = h·(${fr("3·M₂ − M₁", "M₁ + M₂")})² = 1,20 · (${fr("1713", "647")})² ≈ 8,41 m` }],
+    res: "(a) v ≈ 4,85 m/s. (b) h' = h·((3M₂ − M₁)/(M₁ + M₂))² ≈ 8,41 m.",
+    checks: [{ q: "(b) ¿Hasta qué altura sube la pelota de tenis?", opts: ["1,20 m", "4,85 m", "8,41 m", "10,8 m"], a: 2 }] },
+  { n: "T7", t: "Choque elástico en 2D: ¿cuánto vale M₂?", src: "Ejemplo del profe (clase 16)",
+    fig: () => choque2DSvg(),
+    txt: "Sobre una mesa sin fricción, una partícula de masa M₁ con rapidez v₀ choca con otra de masa M₂ que viene en sentido contrario con una rapidez v₂ᵢ desconocida. Después, M₁ sale a −90° (hacia abajo) con rapidez v₀/2 y M₂ sale a 45°. ¿Cuánto debe valer M₂ para que el choque sea elástico?",
+    hints: ["Dos ecuaciones de momento (x y y) y una de energía. Con la de y sacas M₂·v₂f; como cos 45° = sen 45°, la de x te da M₂·v₂ᵢ.", "Ecuación de energía: ½M₁v₀² + ½M₂v₂ᵢ² = ½M₁(v₀/2)² + ½M₂v₂f². Reemplaza v₂ᵢ y v₂f y despeja M₂."],
+    sol: [{ w: "Momento en y.", m: `0 = −M₁·${fr("v₀", "2")} + M₂·v<sub>2f</sub>·sen 45°<span class="ar">→</span>M₂·v<sub>2f</sub>·sen 45° = ${fr("M₁·v₀", "2")}` }, { w: "Momento en x (cos 45° = sen 45°).", m: `M₁·v₀ − M₂·v<sub>2i</sub> = M₂·v<sub>2f</sub>·cos 45° = ${fr("M₁·v₀", "2")}<span class="ar">→</span>M₂·v<sub>2i</sub> = ${fr("M₁·v₀", "2")}` }, { w: "Energía (elástico), multiplicada por 2.", m: `M₁·v₀² + M₂·v<sub>2i</sub>² = M₁·${fr("v₀²", "4")} + M₂·v<sub>2f</sub>²` }, { w: "Reemplaza v<sub>2i</sub> = M₁v₀/(2M₂) y v<sub>2f</sub> = M₁v₀/(√2·M₂); divide entre M₁·v₀².", m: `1 + ${fr("M₁", "4·M₂")} = ${fr("1", "4")} + ${fr("M₁", "2·M₂")}<span class="ar">→</span>${fr("3", "4")} = ${fr("M₁", "4·M₂")}<span class="ar">→</span>M₂ = ${fr("M₁", "3")}` }],
+    res: "M₂ = M₁/3.",
+    checks: [{ q: "¿Cuánto vale M₂?", opts: ["M₁/3", "M₁/2", "M₁", "3·M₁"], a: 0 }] },
+  { n: "T8", t: "Los asteroides que chocan en 2D", src: "Tarea 8, ejercicio 5",
+    fig: () => asteroidesSvg(),
+    txt: "Dos asteroides de igual masa chocan. El A viajaba a v₀ = 40,0 m/s y después se desvía 30,0° de su dirección original; el B, que estaba quieto, sale a 45,0° del otro lado. (a) Calcula la rapidez de cada uno después del choque. (b) ¿Qué fracción de la energía cinética original se disipa? Con letras primero y números al final.",
+    hints: ["Momento en y: 0 = M·v<sub>A</sub>·sen 30° − M·v<sub>B</sub>·sen 45° → v<sub>A</sub> = √2·v<sub>B</sub>.", "Momento en x: v₀ = v<sub>A</sub>·cos 30° + v<sub>B</sub>·cos 45°. Reemplaza v<sub>A</sub>."],
+    sol: [{ w: "Momento en y (las masas se cancelan).", m: `v<sub>A</sub>·${fr("1", "2")} = v<sub>B</sub>·${fr("√2", "2")}<span class="ar">→</span>v<sub>A</sub> = √2·v<sub>B</sub>` }, { w: "Momento en x.", m: `v₀ = √2·v<sub>B</sub>·${fr("√3", "2")} + v<sub>B</sub>·${fr("√2", "2")} = v<sub>B</sub>·${fr("√2", "2")}·(√3 + 1)<span class="ar">→</span>v<sub>B</sub> = ${fr("√2·v₀", "1 + √3")} ≈ 20,7 m/s` }, { w: "Rapidez de A.", m: `v<sub>A</sub> = √2·v<sub>B</sub> = ${fr("2·v₀", "1 + √3")} ≈ 29,3 m/s` }, { w: "(b) Fracción disipada.", m: `1 − ${fr("v<sub>A</sub>² + v<sub>B</sub>²", "v₀²")} = 1 − ${fr("6", "(1 + √3)²")} = 3√3 − 5 ≈ 0,196` }],
+    res: "v<sub>A</sub> ≈ 29,3 m/s, v<sub>B</sub> ≈ 20,7 m/s; se disipa cerca del 19,6 % de la energía.",
+    checks: [{ q: "(a) ¿Cuánto vale v<sub>A</sub>?", opts: ["20,7 m/s", "29,3 m/s", "34,6 m/s", "40,0 m/s"], a: 1 }, { q: "(b) ¿Qué fracción se disipa?", opts: ["≈ 0", "≈ 0,20", "≈ 0,50", "≈ 0,80"], a: 1 }] }
+];
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); const cq = el("p"); cq.innerHTML = "Chequeo rápido · " + ck.q; c.appendChild(cq);
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb2 = el("div", "rev-body"); sb2.innerHTML = stepsHtml(p.sol) + `<div class="wx-res"><b>Resultado:</b> ${p.res}</div>`; ds.appendChild(sb2); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M1", NEXT = "Aprobado. Pasas a M2 · Centro de masa y explosiones.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => FIG.ej4(), q: "En el choque de la figura los bloques salen pegados. ¿Qué se conserva?",
+      o: ["Solo la energía cinética", "Solo el momento lineal", "El momento y la energía cinética", "Ninguno de los dos"], a: 1,
+      e: "Cuando salen pegados el choque es perfectamente inelástico: el momento se conserva (no hay fuerza externa en x), pero se pierde energía cinética." },
+    { k: "Conceptual", fig: () => carts([{ items: [{ x: 90, w: 34, h: 26, lab: "M", v: "2v", dir: 1 }, { x: 228, w: 46, h: 34, lab: "2M", v: "v", dir: -1 }] }], "Un carro M va a la derecha con 2v y un carro 2M va a la izquierda con v"),
+      q: "Un carro de masa M va hacia la derecha con rapidez 2v y otro de masa 2M va hacia la izquierda con rapidez v. Con la derecha positiva, ¿cuánto vale el momento total?",
+      o: ["4·M·v", "2·M·v", "0", "−2·M·v"], a: 2,
+      e: "p = M·(2v) + 2M·(−v) = 2Mv − 2Mv = 0. Los signos importan: sumar los tamaños daría 4Mv, y está mal." },
+    { k: "Conceptual", fig: () => paredSvg(), q: "Una pelota de masa M choca de frente contra una pared con rapidez v y rebota con la misma rapidez. ¿Qué impulso le hace la pared?",
+      o: ["0, porque la rapidez no cambió", "M·v, alejándose de la pared", "2·M·v, alejándose de la pared", "2·M·v, hacia la pared"], a: 2,
+      e: "Con «alejándose de la pared» positivo: p_i = −M·v y p_f = +M·v. J = p_f − p_i = 2·M·v, alejándose de la pared. La rapidez es la misma, pero la velocidad cambió de sentido." },
+    { k: "Tipo parcial", fig: () => tazonSvg({ l1: "M", l2: "3M" }), q: "En el tazón liso de radio R, un bloque de masa M se suelta desde el borde y choca con un bloque de masa 3M que está quieto en el fondo. Salen pegados. ¿Hasta qué altura sobre el fondo suben?",
+      o: ["R/4", "R/9", "R/16", "R/3"], a: 2,
+      e: "Energía: v² = 2gR. Choque: M·v = 4M·V, así que V = v/4 y V² = 2gR/16. Altura: h = V²/(2g) = R/16." },
+    { k: "Tipo parcial", fig: () => pendBalSvg(), q: "Una bala de masa M se incrusta en un bloque de masa 3M que cuelga de dos cuerdas. El conjunto sube una altura h. ¿Con qué rapidez venía la bala?",
+      o: ["√(2·g·h)", "2·√(2·g·h)", "4·√(2·g·h)", "16·g·h"], a: 2,
+      e: "Después del choque, energía: ½·4M·V² = 4M·g·h, así que V = √(2gh). En el choque (se incrusta) solo momento: M·v = 4M·V, así que v = 4·√(2gh)." }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => FIG.ej5(), q: "¿En qué tipo de choque se pierde la mayor cantidad posible de energía cinética?",
+      o: ["Elástico", "Inelástico, cuando los cuerpos rebotan", "Perfectamente inelástico, cuando salen pegados", "En todos se pierde lo mismo"], a: 2,
+      e: "Cuando salen pegados se pierde lo máximo que permite la conservación del momento. En el elástico no se pierde nada." },
+    { k: "Conceptual", fig: () => patinSvg({ big: "3M", vBig: "v", vSmall: "?" }), q: "Dos patinadores quietos sobre hielo sin fricción, de masas 3M y M, se empujan. Si el de 3M sale hacia la izquierda con rapidez v, ¿qué hace el de M?",
+      o: ["Sale hacia la derecha con v/3", "Sale hacia la derecha con v", "Sale hacia la derecha con 3v", "Se queda quieto"], a: 2,
+      e: "Antes, p = 0. Después: 3M·(−v) + M·u = 0, así que u = 3v hacia la derecha." },
+    { k: "Conceptual", fig: () => plastSvg(), q: "Una bola de plastilina de masa M llega al piso con rapidez v y se queda pegada. ¿Qué impulso le hace el piso?",
+      o: ["M·v, hacia arriba", "2·M·v, hacia arriba", "M·v, hacia abajo", "0"], a: 0,
+      e: "Con arriba positivo: p_i = −M·v y p_f = 0. J = 0 − (−M·v) = M·v hacia arriba. Es la mitad del impulso que si rebotara con la misma rapidez." },
+    { k: "Tipo parcial", fig: () => carts([{ tag: "antes", items: [{ x: 78, w: 36, h: 28, lab: "M", v: "v₀", dir: 1 }, { x: 214, w: 36, h: 28, lab: "M", note: "quieto" }] }], "Un bloque M con v0 va hacia otro bloque M quieto"),
+      q: "Un bloque de masa M con velocidad v₀ choca elásticamente y de frente con otro bloque de masa M que está quieto. ¿Qué pasa después?",
+      o: ["Salen pegados con v₀/2", "El primero rebota con −v₀ y el segundo se queda quieto", "El primero se queda quieto y el segundo sale con v₀", "Los dos salen con v₀/2 en sentidos opuestos"], a: 2,
+      e: "Con M₁ = M₂ en las fórmulas del ejemplo 5: v₁f = 0 y v₂f = v₀. Intercambian velocidades, como en el billar." },
+    { k: "Tipo parcial", fig: () => rampaChoqueSvg(), q: "Un bloque de masa M se suelta desde una altura H en una rampa sin fricción. Abajo choca con otro bloque de masa M que está quieto; salen pegados y suben por la rampa del otro lado. ¿Hasta qué altura h suben?",
+      o: ["H", "H/2", "H/4", "H/8"], a: 2,
+      e: "Energía: v² = 2gH. Choque: M·v = 2M·V, así que V = v/2 y V² = gH/2. Energía después: h = V²/(2g) = H/4." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
