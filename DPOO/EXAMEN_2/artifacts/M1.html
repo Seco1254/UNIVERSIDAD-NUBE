@@ -1,0 +1,2134 @@
+<title>M1 De UML a Java</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#vocab">Vocabulario</a>
+  <a href="#teoria"><span>1</span>Teoría</a>
+  <a href="#lab"><span>2</span>Lab</a>
+  <a href="#taller"><span>3</span>Taller</a>
+  <a href="#quiz"><span>4</span>Quiz</a>
+</div></nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">DPOO · Examen 2 · Módulo 1 de 9</p>
+    <h1>De UML a Java</h1>
+    <div class="meta"><span class="stereo">«refuerzo»</span><span>Martes 3 de noviembre · 1–1,5 h</span><span>La base de la práctica de 70 pts</span></div>
+    <p class="lede">La práctica del examen empieza siempre igual: te dan un diagrama de clases y lo conviertes en código. Este módulo es ese traductor. Cada cosa del diagrama se vuelve una cosa concreta en Java, así que si sabes leer el diagrama, la mitad del código se escribe solo.</p>
+    <ul class="goals">
+      <li>Leer todo el diagrama: visibilidad, tipos, cursivas, subrayados e «interface».</li>
+      <li>Traducir cada flecha a su código: un atributo, una lista, <code>extends</code> con <code>super</code> o <code>implements</code>.</li>
+      <li>Implementar un diagrama completo contra reloj, en un orden que siempre compila.</li>
+    </ul>
+    <div class="shortcut"><p><b>¿Ya lo dominas?</b> Haz el quiz primero. Con 4/5 te saltas el módulo.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
+  </header>
+
+  <!-- ============ VOCABULARIO ============ -->
+  <section id="vocab" aria-labelledby="v-h">
+    <div class="sec-head">
+      <h2 id="v-h">Vocabulario de este módulo</h2>
+      <p class="note">Todo lo que aparece en el módulo, en el orden en que lo vas a usar. Si en el examen un atributo viene sin símbolo de visibilidad, escríbelo <code>private</code>; si es un método, <code>public</code>.</p>
+    </div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:17%"><col style="width:23%"><col style="width:28%"><col style="width:32%"></colgroup>
+      <thead><tr><th>Término</th><th>En el diagrama</th><th>En Java</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td>Clase</td><td>Una caja de tres pisos: nombre, atributos y métodos</td><td><code>public class Socio { }</code></td><td>El molde de un tipo de objeto: qué datos guarda y qué sabe hacer. Cada clase va en su propio archivo <code>.java</code>.</td></tr>
+        <tr><td>Atributo</td><td><code>- nombre: String</code>, en el piso 2</td><td><code>private String nombre;</code></td><td>Un dato que guarda cada objeto.</td></tr>
+        <tr><td>Método</td><td><code>+ getNombre(): String</code>, en el piso 3</td><td><code>public String getNombre() { }</code></td><td>Algo que el objeto sabe hacer. Lo que va después de los dos puntos es el tipo que retorna.</td></tr>
+        <tr><td>Visibilidad</td><td><code>+</code> <code>-</code> <code>#</code></td><td><code>public</code> <code>private</code> <code>protected</code></td><td>Quién lo puede usar: cualquiera; solo la clase; la clase y sus hijas (en Java, también las del mismo paquete).</td></tr>
+        <tr><td>Constructor</td><td>El método que se llama como la clase y no retorna nada</td><td><code>public Socio(String documento, String nombre)</code></td><td>El método que crea el objeto y les da valor a sus atributos.</td></tr>
+        <tr><td><code>this</code></td><td>No aparece</td><td><code>this.nombre = nombre;</code></td><td>«El objeto actual». Distingue el atributo (<code>this.nombre</code>) del parámetro (<code>nombre</code>).</td></tr>
+        <tr><td>Estático</td><td>Subrayado</td><td><code>static</code></td><td>Es de la clase, no de cada objeto. Con <code>final</code> y en mayúsculas es una constante.</td></tr>
+        <tr><td>Asociación</td><td>Línea continua con punta abierta</td><td>Un atributo del tipo de la otra clase</td><td>«Conoce a». El atributo va en la clase de donde sale la línea.</td></tr>
+        <tr><td>Multiplicidad</td><td><code>1</code>, <code>0..1</code>, <code>0..*</code> o <code>1..*</code>, junto a la punta</td><td><code>1</code> → un atributo; <code>0..*</code> → <code>ArrayList</code></td><td>Cuántos objetos de la otra clase conoce.</td></tr>
+        <tr><td>Agregación y composición</td><td>Rombo hueco o rombo lleno, del lado del «todo»</td><td>Como la asociación; en la composición el todo crea sus partes con <code>new</code></td><td>«Tiene». En la composición, la parte no existe sin el todo.</td></tr>
+        <tr><td>Herencia</td><td>Línea continua con triángulo hueco que apunta al padre</td><td><code>extends</code></td><td>«Es un». La hija recibe los atributos y los métodos del padre.</td></tr>
+        <tr><td><code>super(...)</code></td><td>No aparece: lo exige la herencia</td><td><code>super(documento, nombre);</code></td><td>Llama al constructor del padre. Va en la primera línea del constructor de la hija.</td></tr>
+        <tr><td><code>@Override</code></td><td>El método aparece otra vez en la caja de la hija</td><td><code>@Override</code> encima del método</td><td>Marca que el método reemplaza uno del padre o cumple uno de la interfaz. El compilador revisa que la firma sea igual.</td></tr>
+        <tr><td>Clase abstracta</td><td>Nombre en cursiva</td><td><code>public abstract class Socio</code></td><td>Un molde incompleto: no se puede hacer <code>new Socio(...)</code>, solo de sus hijas.</td></tr>
+        <tr><td>Método abstracto</td><td>Método en cursiva</td><td><code>public abstract double calcularCuota();</code></td><td>Un método sin cuerpo. Cada hija concreta lo tiene que escribir.</td></tr>
+        <tr><td>Interfaz</td><td><code>«interface»</code> arriba del nombre</td><td><code>public interface Cobrable { }</code></td><td>Un contrato: la lista de métodos que una clase promete tener.</td></tr>
+        <tr><td>Realización</td><td>Línea punteada con triángulo hueco</td><td><code>implements</code></td><td>«Cumple el contrato»: la clase escribe todos los métodos de la interfaz.</td></tr>
+        <tr><td>Dependencia</td><td>Línea punteada con punta abierta</td><td>Un parámetro o una variable local, nunca un atributo</td><td>«Usa a»: solo la necesita dentro de un método.</td></tr>
+        <tr><td>Polimorfismo</td><td>No aparece: sale de la herencia</td><td><code>total += s.calcularCuota();</code></td><td>Una variable del tipo del padre guarda cualquier hija, y cada objeto responde con la versión de su propia clase.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Cinco ideas, cada una con un ejemplo resuelto paso a paso. Al final, la receta para la práctica y tus plantillas de memoria.</p></div>
+
+    <div class="block">
+      <h3>El mini-caso del módulo</h3>
+      <p class="prose-p">Un club con dos tipos de socio que pagan una cuota mensual, y un club que los registra. No es el Club Deportivo Séneca del proyecto: es un caso chico para practicar, y lo vas a construir por partes en las ideas 1 a 4.</p>
+      <figure class="fig" style="margin:0"><div data-fig="mini"></div><figcaption>Diagrama completo. En el lab (sección 2) puedes tocar cada parte y ver su código.</figcaption></figure>
+    </div>
+
+    <!-- Idea 1 -->
+    <article class="idea" id="idea1">
+      <h3><span class="ix">Idea 1</span>Una clase es una caja de tres pisos</h3>
+      <div class="prose">
+        <p>Cada caja del diagrama es una clase, y cada clase va en su propio archivo con el mismo nombre (<code>Socio.java</code>). La caja tiene tres pisos:</p>
+        <ul>
+          <li><b>Piso 1, el nombre.</b> En cursiva, la clase es abstracta. Con «interface» arriba, es una interfaz.</li>
+          <li><b>Piso 2, los atributos:</b> <code>visibilidad nombre: Tipo</code>. Si está subrayado, es <code>static</code>.</li>
+          <li><b>Piso 3, los métodos:</b> <code>visibilidad nombre(parámetros): TipoQueRetorna</code>. El que se llama igual que la clase es el constructor.</li>
+        </ul>
+        <p><b>La regla del volteo:</b> en el diagrama, el tipo va después de los dos puntos; en Java, va antes del nombre.</p>
+      </div>
+      <div class="flip">
+        <div><span class="eyebrow">Diagrama</span><code>- nombre: String</code><code>+ getNombre(): String</code><code>+ Socio(documento: String, nombre: String)</code></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div><span class="eyebrow">Java</span><code>private String nombre;</code><code>public String getNombre()</code><code>public Socio(String documento, String nombre)</code></div>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 1 · De la caja Socio al código</p>
+        <p>Por ahora Socio es una clase normal; en la idea 4 la volvemos abstracta. En cada paso, las líneas en verde son las que agregas.</p>
+        <div class="fig" data-fig="socio1"></div>
+        <ol class="wsteps">
+          <li>
+            <p><b>Qué escribes:</b> la clase, con el nombre de la caja, en el archivo <code>Socio.java</code>.</p>
+            <p><b>Por qué:</b> Java exige que la clase pública se llame igual que su archivo.</p>
+            <pre class="code" data-code="e1-1"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> el atributo subrayado, como constante de clase.</p>
+            <p><b>Por qué:</b> subrayado es <code>static</code>: hay una sola cuota base para todo el club, no una por socio. Va en mayúsculas y con un valor fijo, así que también es <code>final</code>.</p>
+            <pre class="code" data-code="e1-2"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> los atributos con <code>-</code> como <code>private</code>, volteando el tipo.</p>
+            <p><b>Por qué:</b> <code>-</code> es privado: solo Socio los puede tocar. <code>documento: String</code> se vuelve <code>String documento</code>.</p>
+            <pre class="code" data-code="e1-3"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> el constructor. Se llama como la clase y no lleva tipo de retorno, ni siquiera <code>void</code>.</p>
+            <p><b>Por qué <code>this.</code>:</b> el parámetro y el atributo se llaman igual. <code>this.documento</code> es el atributo del objeto y <code>documento</code> es solo el parámetro. Si escribes <code>documento = documento;</code>, el atributo se queda en <code>null</code>.</p>
+            <pre class="code" data-code="e1-4"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> los getters. <code>+ getNombre(): String</code> se vuelve <code>public String getNombre()</code>.</p>
+            <p><b>Por qué:</b> el tipo que retorna pasa adelante (regla del volteo), y el cuerpo solo retorna el atributo.</p>
+            <pre class="code" data-code="e1-5"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> el método con lógica, <code>calcularCuota()</code>.</p>
+            <p><b>Por qué:</b> el diagrama solo da la firma. Lo que hace sale del enunciado: «un socio paga la cuota base».</p>
+            <pre class="code" data-code="e1-6"></pre>
+          </li>
+        </ol>
+        <p class="wk-end">Así queda completa:</p>
+        <pre class="code" data-code="e1-full"></pre>
+      </div>
+    </article>
+
+    <!-- Idea 2 -->
+    <article class="idea" id="idea2">
+      <h3><span class="ix">Idea 2</span>Cada flecha dice qué escribir</h3>
+      <p class="prose-p">Las flechas hacen perder más puntos que las cajas, porque su código no está escrito en ninguna caja: lo tienes que deducir. Tres reglas sirven para todas las flechas que generan un atributo:</p>
+      <div class="rules3">
+        <div><b>Dónde</b><span>El atributo va en la clase de donde sale la línea.</span></div>
+        <div><b>Cómo se llama</b><span>Como el rol que está junto a la punta, por ejemplo <code>-socios</code>.</span></div>
+        <div><b>Cuántos</b><span>La multiplicidad junto a la punta: <code>1</code> o <code>0..1</code> es un atributo simple; <code>0..*</code>, <code>1..*</code> o <code>*</code> es una lista.</span></div>
+      </div>
+      <h4>Diccionario de flechas</h4>
+      <div class="dict" id="dict"></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 2 · La flecha de Club a Socio</p>
+        <div class="fig" data-fig="clubSocio"></div>
+        <ol class="wsteps">
+          <li>
+            <p><b>Qué escribes:</b> primero la caja, como en la idea 1: la clase, su atributo, su constructor y su getter.</p>
+            <p><b>Por qué:</b> la flecha agrega cosas encima de lo que ya dice la caja.</p>
+            <pre class="code" data-code="e2-1"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> lee la flecha en voz alta. Sale de Club, llega a Socio y junto a la punta dice <code>-socios</code> y <code>0..*</code>: «un club conoce de cero a muchos socios, en un atributo privado llamado socios». Eso es <code>private ArrayList&lt;Socio&gt; socios;</code>, con su <code>import</code>.</p>
+            <p><b>Por qué:</b> <code>0..*</code> es «varios», así que hace falta una colección. Entre <code>&lt; &gt;</code> va el tipo de lo que guarda.</p>
+            <pre class="code" data-code="e2-2"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> la lista se crea en el constructor.</p>
+            <p><b>Por qué:</b> declarar no es crear. Hasta que haces <code>new</code>, <code>socios</code> vale <code>null</code>, y el primer <code>add</code> lanza NullPointerException. El compilador no avisa, por eso es la trampa más peligrosa del módulo.</p>
+            <pre class="code" data-code="e2-3"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> <code>agregarSocio</code>.</p>
+            <p><b>Por qué:</b> la lista ya sabe agregar; solo le pasas el socio.</p>
+            <pre class="code" data-code="e2-4"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> <code>buscarSocio</code> recorre la lista y compara el documento con <code>equals</code>. Si no lo encuentra, retorna <code>null</code>.</p>
+            <p><b>Por qué <code>equals</code>:</b> <code>==</code> compara si son el mismo objeto en memoria, no si el texto es igual, así que la búsqueda puede fallar aunque el documento coincida. En M2 vas a cambiar ese <code>null</code> por una excepción.</p>
+            <pre class="code" data-code="e2-5"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> <code>calcularRecaudo</code> suma la cuota de cada socio.</p>
+            <p><b>Por qué:</b> el <code>for</code> no pregunta qué tipo de socio es cada uno: cada objeto calcula su propia cuota. Eso es polimorfismo, y lo ves en la idea 4.</p>
+            <pre class="code" data-code="e2-6"></pre>
+          </li>
+        </ol>
+        <p class="wk-end">Así queda completa:</p>
+        <pre class="code" data-code="e2-full"></pre>
+      </div>
+    </article>
+
+    <!-- Idea 3 -->
+    <article class="idea" id="idea3">
+      <h3><span class="ix">Idea 3</span>Herencia: la hija llama al constructor del padre</h3>
+      <div class="prose">
+        <p>La línea continua con triángulo hueco se lee «es un»: un SocioEstudiante es un Socio. En Java es <code>extends</code>, y la hija recibe todo lo del padre, así que no repites sus atributos ni sus getters. Solo escribes lo que aparece en la caja de la hija.</p>
+        <p><b>El detalle que recalcó el profe:</b> el constructor de la hija tiene que llamar al del padre con <code>super(...)</code>, en la primera línea. La razón es que <code>documento</code> y <code>nombre</code> son privados de Socio: la hija no los puede tocar, y solo el constructor de Socio sabe darles valor. Si no escribes <code>super(...)</code>, Java pone <code>super()</code> sin argumentos por su cuenta, y como Socio no tiene un constructor sin parámetros, no compila.</p>
+      </div>
+      <div class="callout">
+        <p><b>Lo que dice el compilador si se te olvida</b></p>
+        <p>En Eclipse y en VS Code: <code>Implicit super constructor Socio() is undefined. Must explicitly invoke another constructor</code></p>
+        <p>Con <code>javac</code> en la consola: <code>constructor Socio in class Socio cannot be applied to given types</code></p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 3 · SocioEstudiante</p>
+        <div class="fig" data-fig="herencia"></div>
+        <ol class="wsteps">
+          <li>
+            <p><b>Qué escribes:</b> la clase con <code>extends Socio</code>.</p>
+            <p><b>Por qué:</b> la flecha con triángulo hueco va de SocioEstudiante a Socio: «un socio estudiante es un socio».</p>
+            <pre class="code" data-code="e3-1"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> solo el atributo nuevo, <code>carnet</code>.</p>
+            <p><b>Por qué:</b> <code>documento</code> y <code>nombre</code> ya vienen del padre. Si los repites, quedan dos copias, y los getters del padre leen la suya, que nunca recibe valor.</p>
+            <pre class="code" data-code="e3-2"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> el constructor recibe los tres datos. Primero <code>super(documento, nombre)</code>, que le pasa al padre los suyos en el orden de su constructor; después <code>this.carnet = carnet</code>.</p>
+            <p><b>Por qué:</b> <code>super(...)</code> va en la primera línea porque Java construye primero la parte del padre y después la de la hija.</p>
+            <pre class="code" data-code="e3-3"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> el getter del atributo nuevo.</p>
+            <p><b>Por qué:</b> <code>getDocumento()</code> y <code>getNombre()</code> ya los hereda.</p>
+            <pre class="code" data-code="e3-4"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> <code>calcularCuota()</code> aparece otra vez en la caja de la hija, así que lo reescribes con <code>@Override</code>. Un estudiante paga la mitad.</p>
+            <p><b>Por qué:</b> <code>@Override</code> le pide al compilador que verifique que la firma es igual a la del padre; si te equivocas en una letra, te avisa.</p>
+            <pre class="code" data-code="e3-5"></pre>
+          </li>
+        </ol>
+        <p class="wk-end">El error típico, corregido (lo tachado se borra; lo verde entra):</p>
+        <pre class="code" data-code="e3-err"></pre>
+        <p class="prose-p">Lo tachado es lo que mucha gente escribe: repite los atributos del padre y los asigna a mano. No compila, porque falta <code>super</code>. Y aunque compilara, <code>getNombre()</code> retornaría <code>null</code>, porque leería el <code>nombre</code> de Socio, que nadie llenó.</p>
+      </div>
+    </article>
+
+    <!-- Idea 4 -->
+    <article class="idea" id="idea4">
+      <h3><span class="ix">Idea 4</span>Clases abstractas e interfaces: contratos que cumplen las hijas</h3>
+      <div class="prose">
+        <ul>
+          <li><b>Clase abstracta</b> (nombre en cursiva): un molde incompleto. No se puede hacer <code>new Socio(...)</code>; sirve para juntar lo que comparten las hijas.</li>
+          <li><b>Método abstracto</b> (en cursiva): solo la firma. Termina en <code>;</code> y no lleva llaves. Cada hija concreta lo tiene que escribir.</li>
+          <li><b>Interfaz</b> («interface»): un contrato con solo firmas. Una clase lo cumple con <code>implements</code> y escribe todos sus métodos. Una clase hereda de una sola clase, pero puede implementar varias interfaces.</li>
+          <li>Si una clase abstracta implementa una interfaz y no escribe uno de sus métodos, la obligación pasa a sus hijas concretas.</li>
+          <li><b>Polimorfismo:</b> una variable o una lista del tipo del padre guarda cualquier hija, y cada objeto responde con la versión de su propia clase.</li>
+        </ul>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 4 · Socio se vuelve abstracta y cumple Cobrable</p>
+        <div class="fig" data-fig="abstracta"></div>
+        <ol class="wsteps">
+          <li>
+            <p><b>Qué escribes:</b> la interfaz Cobrable.</p>
+            <p><b>Por qué:</b> «interface» arriba del nombre es <code>interface</code>. Sus métodos no llevan cuerpo y son públicos aunque no lo escribas.</p>
+            <pre class="code" data-code="e4-1"></pre>
+          </li>
+          <li>
+            <p><b>Qué cambias en Socio:</b> el nombre en cursiva la vuelve <code>abstract</code>; la línea punteada con triángulo hacia Cobrable es <code>implements Cobrable</code>; y <code>calcularCuota</code> en cursiva pierde su cuerpo.</p>
+            <p><b>Por qué:</b> la cuota ahora depende del tipo de socio, así que Socio ya no sabe calcularla. Solo promete que sus hijas sí.</p>
+            <pre class="code" data-code="e4-2"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> SocioRegular, la hija que paga la cuota completa.</p>
+            <p><b>Por qué:</b> como Socio ya no se puede instanciar, los socios normales necesitan su propia clase concreta.</p>
+            <pre class="code" data-code="e4-3"></pre>
+          </li>
+          <li>
+            <p><b>Qué escribes:</b> un <code>main</code> para ver el polimorfismo en acción.</p>
+            <p><b>Por qué:</b> la lista es de tipo Socio, pero cada objeto sabe de qué clase es: el regular paga 90000 y el estudiante 45000.</p>
+            <pre class="code" data-code="e4-4"></pre>
+          </li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 5 -->
+    <article class="idea" id="idea5">
+      <h3><span class="ix">Idea 5 · Receta</span>La práctica de 80 minutos</h3>
+      <p class="prose-p">Lo que separa una práctica a medias de una completa casi nunca es saber más Java: es el orden y el reloj. Este es el reparto del tiempo.</p>
+      <div class="timeline" aria-hidden="true">
+        <i style="flex:5; background:var(--hi)">5</i>
+        <i style="flex:15; background:var(--accent-soft)">15</i>
+        <i style="flex:40; background:var(--green-soft)">40 min</i>
+        <i style="flex:10; background:var(--orange-soft)">10</i>
+        <i style="flex:5; background:var(--red-soft)">5</i>
+        <i style="flex:5; background:var(--surface)">5</i>
+      </div>
+      <ul class="tl-key">
+        <li><i class="sw" style="background:var(--hi)"></i><span class="mono">0–5</span> Leer todo el diagrama</li>
+        <li><i class="sw" style="background:var(--accent-soft)"></i><span class="mono">5–20</span> Esqueleto que compila</li>
+        <li><i class="sw" style="background:var(--green-soft)"></i><span class="mono">20–60</span> Métodos con lógica</li>
+        <li><i class="sw" style="background:var(--orange-soft)"></i><span class="mono">60–70</span> Probar con un main</li>
+        <li><i class="sw" style="background:var(--red-soft)"></i><span class="mono">70–75</span> Exportar el ZIP</li>
+        <li><i class="sw" style="background:var(--surface)"></i><span class="mono">75–80</span> Revisar y volver a exportar</li>
+      </ul>
+      <ol class="recipe">
+        <li><b>Lee todo el diagrama antes de escribir.</b> Marca las interfaces y las abstractas, y en cada flecha anota lo que va a generar: atributo, lista, <code>extends</code> o <code>implements</code>.</li>
+        <li><b>Escribe de las hojas hacia arriba:</b> interfaces → clases de las que no sale ninguna flecha → padres → hijas → la clase que coordina (la que tiene las listas). Así cada clase que escribes ya tiene sus piezas y compila.</li>
+        <li><b>Primero el esqueleto de todas las clases:</b> atributos, constructores (con <code>super</code>) y getters. Genéralos con el IDE. Antes de seguir, cero errores rojos.</li>
+        <li><b>Después los métodos con lógica,</b> empezando por los que el enunciado pide con «funcionalidad mínima»: agregar, buscar, calcular. Si uno se te traba, déjale un cuerpo que compile (<code>return 0;</code> o <code>return null;</code>) y sigue.</li>
+        <li><b>Compila cada 10 o 15 minutos.</b> Un error pequeño ahora se arregla en un minuto; diez juntos a las 12:10, no.</li>
+        <li><b>Prueba con un main corto:</b> crea dos o tres objetos y llama a los métodos que calculan algo.</li>
+        <li><b>Exporta el ZIP a los 70 minutos,</b> aunque falte algo, y vuelve a exportarlo al final. A las 12:20 se entrega lo que haya.</li>
+      </ol>
+      <h4>Atajos del IDE que ahorran minutos</h4>
+      <div class="tw"><table>
+        <thead><tr><th>Para</th><th>Eclipse</th><th>IntelliJ</th><th>VS Code</th></tr></thead>
+        <tbody>
+          <tr><td>Generar el constructor</td><td>Alt+Shift+S → O</td><td>Alt+Insert → Constructor</td><td>Clic derecho → Source Action → Generate Constructors</td></tr>
+          <tr><td>Generar los getters</td><td>Alt+Shift+S → R</td><td>Alt+Insert → Getter</td><td>Source Action → Generate Getters and Setters</td></tr>
+          <tr><td>Escribir los métodos pendientes</td><td>Alt+Shift+S → V</td><td>Ctrl+I (de la interfaz) o Ctrl+O (del padre)</td><td>Ctrl+. → Add unimplemented methods</td></tr>
+          <tr><td>Arreglar los import</td><td>Ctrl+Shift+O</td><td>Alt+Enter sobre el error</td><td>Shift+Alt+O</td></tr>
+          <tr><td>Exportar el ZIP</td><td>File → Export → General → Archive File</td><td>Comprimir la carpeta del proyecto</td><td>Comprimir la carpeta del proyecto</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note muted">Los atajos son de Windows y Linux; en Mac cambian. Confirma qué IDE hay en la sala Turing: es el mismo del Parcial 1.</p>
+    </article>
+
+    <div class="tpl-box">
+      <p class="eyebrow">Plantillas de memoria · M1</p>
+      <p class="prose-p">Escríbelas en un papel, sin mirar, hasta que te salgan sin pensar. El lunes las repasas junto con las de los demás módulos.</p>
+      <div class="tpl-grid">
+        <div><h4>Clase hija</h4><pre class="code sm" data-code="tpl-1"></pre></div>
+        <div><h4>Lista de una asociación 0..*</h4><pre class="code sm" data-code="tpl-2"></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de código</h2><p>Del diagrama al código y de vuelta. Después, un reto y cinco experimentos para tu IDE.</p></div>
+    <div class="lab">
+      <div class="lab-bar">
+        <div class="seg" role="group" aria-label="Modo del lab">
+          <button type="button" id="mode-exp" aria-pressed="true">Explorar</button>
+          <button type="button" id="mode-reto" aria-pressed="false">Reto</button>
+        </div>
+        <p class="lab-status" id="lab-status">Toca cualquier parte del diagrama o una línea del código.</p>
+      </div>
+      <div class="lab-ask" id="lab-ask" hidden></div>
+      <div class="fig lab-fig" id="lab-fig"></div>
+      <div class="lab-exp" id="lab-exp" aria-live="polite"></div>
+      <pre class="code lab-code" id="lab-code" aria-label="Código Java del mini-caso"></pre>
+    </div>
+    <div class="block">
+      <h3>Experimentos en tu IDE</h3>
+      <p class="prose-p">Crea un proyecto, copia los seis archivos del mini-caso y córrelo: debe imprimir <code>Luis</code> y <code>135000.0</code>. Después rompe el código a propósito, una cosa a la vez, y lee qué dice el compilador. Son los errores que más salen en la práctica, y es mejor conocerlos hoy que a las 12:10 del examen.</p>
+      <div class="files" id="files"></div>
+      <div class="reveals" id="exps"></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Cuatro ejercicios en tu IDE, del más corto al tipo parcial, cada uno con su tiempo meta.</p></div>
+    <p class="prose-p">Pon el cronómetro y no mires la solución hasta terminar. Al final, usa el chequeo rápido y revisa tu código contra la rúbrica. Para una corrección completa, pega tu código en el chat o mándame el ZIP, y lo reviso como lo haría el profe.</p>
+    <div id="problems" class="block"></div>
+    <article class="prob pending">
+      <div class="prob-head"><h3>T5 · Los UML del profe</h3><span class="src">Pendiente</span></div>
+      <p class="prose-p">Tu Parcial 1 (tienda de coleccionables), rehecho en 50 minutos, y los UML de 2025-20 y 2026-10 que publicó el profe. Súbeme la carpeta 06 en el chat y los agrego aquí con su rúbrica.</p>
+    </article>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>3 de selección múltiple con un caso, como en el Parcial 1, y 2 de código corto. Pasas a M2 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title sub"><span class="sec-num">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Antes, relee las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M2 · Manejo de errores, el miércoles 4 (carga media). Ahí el <code>return null</code> de <code>buscarSocio</code> se vuelve una excepción.</p>
+    <p>El mini-caso y los ejercicios son nuevos y su código está probado en Java 21. Cuando subas la carpeta 06, el taller suma los UML del profe.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- Utilidades ---------- */
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const f1 = (n) => Math.round(n * 10) / 10;
+/* Texto con `código` y **negrita** → nodos, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { parent.appendChild(el("code", "", part)); return; }
+    part.split("**").forEach((p2, j) => { if (p2) parent.appendChild(j % 2 ? el("b", "", p2) : document.createTextNode(p2)); });
+  });
+  return parent;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Resaltado de Java ---------- */
+const RX = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@[A-Za-z]+)|\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|super|static|final|void|if|else|for|while|throw|throws|try|catch|finally|null|true|false|import|package|boolean|int|double|char|long)\b|\b([A-Z][A-Za-z0-9_]*)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(line) {
+  let out = "", last = 0;
+  line.replace(RX, (m, com, str, ann, kw, ty, num, idx) => {
+    out += esc(line.slice(last, idx));
+    const cls = com ? "c-com" : str ? "c-str" : ann ? "c-ann" : kw ? "c-kw" : ty ? "c-ty" : "c-num";
+    out += '<span class="' + cls + '">' + esc(m) + "</span>";
+    last = idx + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+/* diff: cada línea empieza con "+ " (nueva), "- " (se borra) o "  " (igual). */
+function codeHTML(src, diff) {
+  const lines = src.replace(/^\n/, "").replace(/\n\s*$/, "").split("\n");
+  return lines.map((raw) => {
+    let mk = "  ", line = raw;
+    if (diff) {
+      if (raw === "+" || raw === "-") { mk = raw + " "; line = ""; }
+      else if (raw.length < 2) { mk = "  "; line = raw.trim(); }
+      else { mk = raw.slice(0, 2); line = raw.slice(2); }
+    }
+    const add = diff && mk === "+ ", del = diff && mk === "- ";
+    const gut = diff ? '<span class="gut" aria-hidden="true">' + (add ? "+" : del ? "−" : " ") + "</span>" : "";
+    const sr = add ? '<span class="sr">Línea nueva: </span>' : del ? '<span class="sr">Línea que se borra: </span>' : "";
+    const body = hl(line) || " ";
+    return '<span class="cl' + (add ? " add" : "") + (del ? " del" : "") + '">' + gut + sr + (del ? "<s>" + body + "</s>" : body) + "</span>";
+  }).join("");
+}
+
+/* ---------- Diagramas UML en SVG ---------- */
+const LH = 16;
+const memW = (t) => t.length * 6.3 + 16;
+const nameW = (t) => t.length * 7.4 + 24;
+function wrapK(k, inner, inter, label) {
+  if (inter && k) return '<g class="hit" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return "<g" + (k ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>";
+}
+function memSvg(m, x, yy, w, inter) {
+  const cls = "u-m" + (m.s ? " st" : "") + (m.a ? " abs" : "");
+  const inner = '<rect class="hl" x="' + (x + 1) + '" y="' + yy + '" width="' + (w - 2) + '" height="' + LH + '"/><text class="' + cls + '" x="' + (x + 8) + '" y="' + (yy + 11.8) + '">' + esc(m.t) + "</text>";
+  return wrapK(m.k || "", inner, inter, m.t);
+}
+function umlBox(c, inter, G) {
+  const name = c.name || c.id, attrs = c.attrs || [], ops = c.ops || [];
+  const w = c.w || Math.ceil(Math.max(c.minW || 110, nameW(name), c.stereo ? (c.stereo.length + 2) * 6 + 16 : 0, ...attrs.map((m) => memW(m.t)), ...ops.map((m) => memW(m.t))));
+  const x = typeof c.x === "function" ? Math.round(c.x(G, w)) : c.x, y = c.y;
+  const headH = c.stereo ? 36 : 24, aH = attrs.length ? attrs.length * LH + 8 : 8, oH = ops.length ? ops.length * LH + 8 : 8, h = headH + aH + oH;
+  let s = '<rect class="u-bg" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2"/>';
+  let hd = '<rect class="hl" x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (w - 2) + '" height="' + (headH - 1) + '"/>';
+  if (c.stereo) hd += '<text class="u-st" x="' + (x + w / 2) + '" y="' + (y + 14) + '" text-anchor="middle">«' + esc(c.stereo) + "»</text>";
+  hd += '<text class="u-nm' + (c.abs ? " abs" : "") + '" x="' + (x + w / 2) + '" y="' + (y + (c.stereo ? 29 : 16.5)) + '" text-anchor="middle">' + esc(name) + "</text>";
+  s += wrapK(c.k || "", hd, inter, "Clase " + name);
+  s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH) + '" x2="' + (x + w) + '" y2="' + (y + headH) + '"/>';
+  attrs.forEach((m, i) => { s += memSvg(m, x, y + headH + 4 + i * LH, w, inter); });
+  s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH + aH) + '" x2="' + (x + w) + '" y2="' + (y + headH + aH) + '"/>';
+  ops.forEach((m, i) => { s += memSvg(m, x, y + headH + aH + 4 + i * LH, w, inter); });
+  return { svg: "<g>" + s + "</g>", x, y, w, h };
+}
+const REL_NAME = { assoc: "Asociación", inherit: "Herencia", realize: "Realización", dep: "Dependencia", aggr: "Agregación", comp: "Composición" };
+function relSvg(r, inter) {
+  const P = r.pts.map((p) => p.slice()), n = P.length;
+  const [ax, ay] = P[n - 2], [bx, by] = P[n - 1];
+  const L = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L, uy = (by - ay) / L;
+  const tri = r.type === "inherit" || r.type === "realize";
+  const dash = r.type === "realize" || r.type === "dep" ? ' stroke-dasharray="5 4"' : "";
+  const pts = P.map((p) => p.slice());
+  if (tri) pts[n - 1] = [bx - ux * 12, by - uy * 12];
+  let dia = "";
+  if (r.type === "aggr" || r.type === "comp") {
+    const [sx, sy] = P[0], [tx, ty] = P[1], L2 = Math.hypot(tx - sx, ty - sy) || 1, vx = (tx - sx) / L2, vy = (ty - sy) / L2, nx = -vy, ny = vx;
+    const d = [[sx, sy], [sx + vx * 9 + nx * 5.5, sy + vy * 9 + ny * 5.5], [sx + vx * 18, sy + vy * 18], [sx + vx * 9 - nx * 5.5, sy + vy * 9 - ny * 5.5]];
+    dia = '<path class="u-dia' + (r.type === "comp" ? " full" : "") + '" d="M' + d.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") + ' Z"/>';
+    pts[0] = [sx + vx * 18, sy + vy * 18];
+  }
+  const dstr = "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L");
+  let head = "";
+  if (tri) {
+    const nx = -uy, ny = ux;
+    head = '<path class="u-tri" d="M' + f1(bx) + " " + f1(by) + " L" + f1(bx - ux * 12 + nx * 7) + " " + f1(by - uy * 12 + ny * 7) + " L" + f1(bx - ux * 12 - nx * 7) + " " + f1(by - uy * 12 - ny * 7) + ' Z"/>';
+  } else {
+    const c = Math.cos(0.45), s = Math.sin(0.45), len = 11;
+    head = '<path class="u-arr" d="M' + f1(bx - len * (ux * c - uy * s)) + " " + f1(by - len * (uy * c + ux * s)) + " L" + f1(bx) + " " + f1(by) + " L" + f1(bx - len * (ux * c + uy * s)) + " " + f1(by - len * (uy * c - ux * s)) + '"/>';
+  }
+  let lb = "";
+  (r.labels || []).forEach((t) => { lb += '<text class="u-lb" x="' + f1(t.x) + '" y="' + f1(t.y) + '" text-anchor="' + (t.a || "start") + '">' + esc(t.t) + "</text>"; });
+  const label = REL_NAME[r.type] + (r.labels && r.labels.length ? " " + r.labels.map((t) => t.t).join(" ") : "");
+  const inner = '<path class="u-hit" d="' + dstr + '"/><path class="u-rl"' + dash + ' d="' + dstr + '"/>' + dia + head + lb;
+  if (inter && r.k) return '<g class="rel hit" data-k="' + r.k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return '<g class="rel">' + inner + "</g>";
+}
+function umlSvg(spec, inter) {
+  const G = {}; let boxes = "";
+  spec.cls.forEach((c) => { const b = umlBox(c, inter, G); G[c.id] = b; boxes += b.svg; });
+  const A = (id, side, t = 0.5) => { const g = G[id]; if (side === "t") return [g.x + g.w * t, g.y]; if (side === "b") return [g.x + g.w * t, g.y + g.h]; if (side === "l") return [g.x, g.y + g.h * t]; return [g.x + g.w, g.y + g.h * t]; };
+  let rs = ""; (spec.rels ? spec.rels(A, G) : []).forEach((r) => { rs += relSvg(r, inter); });
+  let W = 0, H = 0; Object.values(G).forEach((g) => { W = Math.max(W, g.x + g.w); H = Math.max(H, g.y + g.h); });
+  W = Math.ceil(W + 10); H = Math.ceil(H + 10);
+  return '<svg class="uml" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="--w:' + W + 'px" role="' + (inter ? "group" : "img") + '" aria-label="' + esc(spec.aria || "Diagrama de clases") + '">' + boxes + rs + "</svg>";
+}
+const centerOn = (id) => (G, w) => G[id].x + G[id].w / 2 - w / 2;
+/* Dos cajas en fila con una relación: para el diccionario de flechas. */
+function pairSpec(a, b, type, o) {
+  o = o || {};
+  const gap = type === "inherit" || type === "realize" ? 62 : 96;
+  const wa = Math.ceil(Math.max(96, nameW(a))), wb = Math.ceil(Math.max(96, nameW(b)));
+  return {
+    aria: o.aria,
+    cls: [{ id: "A", name: a, x: 10, y: 14, w: wa }, { id: "B", name: b, x: 10 + wa + gap, y: 14, w: wb, stereo: o.stereo }],
+    rels: (A, G) => {
+      const y = 34, r = { type, pts: [[G.A.x + G.A.w, y], [G.B.x, y]] };
+      if (o.rol) r.labels = [{ x: G.B.x - 14, y: y - 6, t: o.rol, a: "end" }, { x: G.B.x - 14, y: y + 15, t: o.mult, a: "end" }];
+      return [r];
+    }
+  };
+}
+
+const M_SOCIO_CTOR = "+ Socio(documento: String, nombre: String)";
+const FIG = {
+  mini: {
+    aria: "Diagrama de clases del mini-caso: la interfaz Cobrable, la clase abstracta Socio con sus hijas SocioRegular y SocioEstudiante, y Club, que conoce de cero a muchos socios",
+    cls: [
+      { id: "Socio", x: 35, y: 120, abs: true, k: "c-socio",
+        attrs: [{ t: "+ CUOTA_BASE: double = 90000", s: 1, k: "a-cuota-base" }, { t: "- documento: String", k: "a-documento" }, { t: "- nombre: String", k: "a-nombre" }],
+        ops: [{ t: M_SOCIO_CTOR, k: "m-socio-ctor" }, { t: "+ getDocumento(): String", k: "m-get-doc" }, { t: "+ getNombre(): String", k: "m-get-nombre" }, { t: "+ calcularCuota(): double", a: 1, k: "m-socio-cuota" }] },
+      { id: "Cobrable", x: centerOn("Socio"), y: 10, stereo: "interface", k: "c-cobrable", ops: [{ t: "+ calcularCuota(): double", k: "m-cob-cuota" }] },
+      { id: "Club", x: 560, y: 120, k: "c-club",
+        attrs: [{ t: "- nombre: String", k: "a-club-nombre" }],
+        ops: [{ t: "+ Club(nombre: String)", k: "m-club-ctor" }, { t: "+ getNombre(): String", k: "m-get-club" }, { t: "+ agregarSocio(socio: Socio): void", k: "m-agregar" }, { t: "+ buscarSocio(documento: String): Socio", k: "m-buscar" }, { t: "+ calcularRecaudo(): double", k: "m-recaudo" }] },
+      { id: "SocioRegular", x: 10, y: 330, k: "c-regular",
+        ops: [{ t: "+ SocioRegular(documento: String, nombre: String)", k: "m-reg-ctor" }, { t: "+ calcularCuota(): double", k: "m-reg-cuota" }] },
+      { id: "SocioEstudiante", x: 359, y: 330, k: "c-estudiante",
+        attrs: [{ t: "- carnet: String", k: "a-carnet" }],
+        ops: [{ t: "+ SocioEstudiante(documento: String, nombre: String, carnet: String)", k: "m-est-ctor" }, { t: "+ getCarnet(): String", k: "m-get-carnet" }, { t: "+ calcularCuota(): double", k: "m-est-cuota" }] }
+    ],
+    rels: (A, G) => {
+      const sb = A("Socio", "b"), rg = A("SocioRegular", "t"), es = A("SocioEstudiante", "t"), busY = 304, yA = G.Socio.y + 44, sr = G.Socio.x + G.Socio.w;
+      return [
+        { type: "realize", k: "r-realiza", pts: [A("Socio", "t"), [sb[0], G.Cobrable.y + G.Cobrable.h]] },
+        { type: "inherit", k: "r-hereda-reg", pts: [rg, [rg[0], busY], [sb[0], busY], sb] },
+        { type: "inherit", k: "r-hereda-est", pts: [es, [es[0], busY], [sb[0], busY], sb] },
+        { type: "assoc", k: "r-socios", pts: [[G.Club.x, yA], [sr, yA]], labels: [{ x: sr + 8, y: yA - 6, t: "-socios" }, { x: sr + 8, y: yA + 15, t: "0..*" }] }
+      ];
+    }
+  },
+  socio1: {
+    aria: "Caja de la clase Socio, todavía concreta",
+    cls: [{ id: "Socio", x: 10, y: 10,
+      attrs: [{ t: "+ CUOTA_BASE: double = 90000", s: 1 }, { t: "- documento: String" }, { t: "- nombre: String" }],
+      ops: [{ t: M_SOCIO_CTOR }, { t: "+ getDocumento(): String" }, { t: "+ getNombre(): String" }, { t: "+ calcularCuota(): double" }] }]
+  },
+  clubSocio: {
+    aria: "Club conoce de cero a muchos Socio en el rol socios",
+    cls: [
+      { id: "Club", x: 10, y: 10, attrs: [{ t: "- nombre: String" }], ops: [{ t: "+ Club(nombre: String)" }, { t: "+ getNombre(): String" }, { t: "+ agregarSocio(socio: Socio): void" }, { t: "+ buscarSocio(documento: String): Socio" }, { t: "+ calcularRecaudo(): double" }] },
+      { id: "Socio", x: 390, y: 10, attrs: [{ t: "- documento: String" }], ops: [{ t: "+ getDocumento(): String" }, { t: "+ calcularCuota(): double" }] }
+    ],
+    rels: (A, G) => [{ type: "assoc", pts: [[G.Club.x + G.Club.w, 54], [G.Socio.x, 54]], labels: [{ x: G.Socio.x - 14, y: 48, t: "-socios", a: "end" }, { x: G.Socio.x - 14, y: 69, t: "0..*", a: "end" }] }]
+  },
+  herencia: {
+    aria: "SocioEstudiante hereda de Socio",
+    cls: [
+      { id: "Socio", x: 10, y: 10, attrs: [{ t: "+ CUOTA_BASE: double = 90000", s: 1 }, { t: "- documento: String" }, { t: "- nombre: String" }], ops: [{ t: M_SOCIO_CTOR }, { t: "+ calcularCuota(): double" }] },
+      { id: "SocioEstudiante", x: 10, y: 186, attrs: [{ t: "- carnet: String" }], ops: [{ t: "+ SocioEstudiante(documento: String, nombre: String, carnet: String)" }, { t: "+ getCarnet(): String" }, { t: "+ calcularCuota(): double" }] }
+    ],
+    rels: (A, G) => { const x = G.Socio.x + G.Socio.w / 2; return [{ type: "inherit", pts: [[x, G.SocioEstudiante.y], [x, G.Socio.y + G.Socio.h]] }]; }
+  },
+  abstracta: {
+    aria: "Socio, abstracta, implementa la interfaz Cobrable, y SocioRegular hereda de Socio",
+    cls: [
+      { id: "Socio", x: 35, y: 120, abs: true, attrs: [{ t: "+ CUOTA_BASE: double = 90000", s: 1 }, { t: "- documento: String" }, { t: "- nombre: String" }], ops: [{ t: M_SOCIO_CTOR }, { t: "+ calcularCuota(): double", a: 1 }] },
+      { id: "Cobrable", x: centerOn("Socio"), y: 10, stereo: "interface", ops: [{ t: "+ calcularCuota(): double" }] },
+      { id: "SocioRegular", x: 10, y: 300, ops: [{ t: "+ SocioRegular(documento: String, nombre: String)" }, { t: "+ calcularCuota(): double" }] }
+    ],
+    rels: (A, G) => { const x = G.Socio.x + G.Socio.w / 2; return [
+      { type: "realize", pts: [[x, G.Socio.y], [x, G.Cobrable.y + G.Cobrable.h]] },
+      { type: "inherit", pts: [[x, G.SocioRegular.y], [x, G.Socio.y + G.Socio.h]] }
+    ]; }
+  },
+  "d-asoc1": pairSpec("Club", "Sede", "assoc", { rol: "-sede", mult: "1", aria: "Club conoce una Sede" }),
+  "d-asocN": pairSpec("Club", "Socio", "assoc", { rol: "-socios", mult: "0..*", aria: "Club conoce de cero a muchos Socio" }),
+  "d-aggr": pairSpec("Equipo", "Socio", "aggr", { rol: "-jugadores", mult: "0..*", aria: "Equipo agrega Socio con rombo hueco" }),
+  "d-comp": pairSpec("Pedido", "Linea", "comp", { rol: "-lineas", mult: "1..*", aria: "Pedido se compone de Linea con rombo lleno" }),
+  "d-inh": pairSpec("SocioEstudiante", "Socio", "inherit", { aria: "SocioEstudiante hereda de Socio" }),
+  "d-real": pairSpec("Socio", "Cobrable", "realize", { stereo: "interface", aria: "Socio implementa la interfaz Cobrable" }),
+  "d-dep": pairSpec("Club", "Impresora", "dep", { aria: "Club depende de Impresora" }),
+  t1: {
+    aria: "Carta hereda de Coleccionable",
+    cls: [
+      { id: "Coleccionable", x: 10, y: 10, attrs: [{ t: "- codigo: String" }, { t: "- nombre: String" }, { t: "- precio: double" }], ops: [{ t: "+ Coleccionable(codigo: String, nombre: String, precio: double)" }, { t: "+ getCodigo(): String" }, { t: "+ getNombre(): String" }, { t: "+ getPrecio(): double" }] },
+      { id: "Carta", x: 10, y: 214, attrs: [{ t: "- rareza: String" }], ops: [{ t: "+ Carta(codigo: String, nombre: String, precio: double, rareza: String)" }, { t: "+ getRareza(): String" }] }
+    ],
+    rels: (A, G) => { const x = G.Coleccionable.x + G.Coleccionable.w / 2; return [{ type: "inherit", pts: [[x, G.Carta.y], [x, G.Coleccionable.y + G.Coleccionable.h]] }]; }
+  },
+  t2: {
+    aria: "Tienda conoce de cero a muchos Coleccionable en el rol inventario",
+    cls: [
+      { id: "Tienda", x: 10, y: 10, attrs: [{ t: "- nombre: String" }], ops: [{ t: "+ Tienda(nombre: String)" }, { t: "+ getNombre(): String" }, { t: "+ agregarColeccionable(c: Coleccionable): void" }, { t: "+ buscarPorCodigo(codigo: String): Coleccionable" }, { t: "+ calcularValorInventario(): double" }, { t: "+ contarMasCarosQue(precio: double): int" }] },
+      { id: "Coleccionable", x: 450, y: 10, attrs: [{ t: "- codigo: String" }, { t: "- nombre: String" }, { t: "- precio: double" }], ops: [{ t: "+ getCodigo(): String" }, { t: "+ getPrecio(): double" }] }
+    ],
+    rels: (A, G) => [{ type: "assoc", pts: [[G.Tienda.x + G.Tienda.w, 54], [G.Coleccionable.x, 54]], labels: [{ x: G.Coleccionable.x - 14, y: 48, t: "-inventario", a: "end" }, { x: G.Coleccionable.x - 14, y: 69, t: "0..*", a: "end" }] }]
+  },
+  t3: {
+    aria: "ItemMenu, abstracta, implementa Imprimible; Hamburguesa y Combo heredan de ItemMenu",
+    cls: [
+      { id: "ItemMenu", x: 230, y: 120, abs: true, attrs: [{ t: "- nombre: String" }, { t: "- precioBase: double" }], ops: [{ t: "+ ItemMenu(nombre: String, precioBase: double)" }, { t: "+ getNombre(): String" }, { t: "+ getPrecioBase(): double" }, { t: "+ calcularPrecio(): double", a: 1 }, { t: "+ generarTexto(): String" }] },
+      { id: "Imprimible", x: centerOn("ItemMenu"), y: 10, stereo: "interface", ops: [{ t: "+ generarTexto(): String" }] },
+      { id: "Hamburguesa", x: 10, y: 350, attrs: [{ t: "+ PRECIO_ADICION: double = 3000", s: 1 }, { t: "- adiciones: int" }], ops: [{ t: "+ Hamburguesa(nombre: String, precioBase: double, adiciones: int)" }, { t: "+ calcularPrecio(): double" }] },
+      { id: "Combo", x: 460, y: 350, attrs: [{ t: "- descuento: double" }], ops: [{ t: "+ Combo(nombre: String, precioBase: double, descuento: double)" }, { t: "+ calcularPrecio(): double" }] }
+    ],
+    rels: (A, G) => { const ib = A("ItemMenu", "b"), h = A("Hamburguesa", "t"), c = A("Combo", "t"), bus = 322; return [
+      { type: "realize", pts: [A("ItemMenu", "t"), [ib[0], G.Imprimible.y + G.Imprimible.h]] },
+      { type: "inherit", pts: [h, [h[0], bus], [ib[0], bus], ib] },
+      { type: "inherit", pts: [c, [c[0], bus], [ib[0], bus], ib] }
+    ]; }
+  },
+  t4: {
+    aria: "Cine conoce de cero a muchas Funcion; cada Funcion conoce una Pelicula, abstracta, con hijas Pelicula2D y Pelicula3D",
+    cls: [
+      { id: "Cine", x: 10, y: 10, attrs: [{ t: "- nombre: String" }], ops: [{ t: "+ Cine(nombre: String)" }, { t: "+ getNombre(): String" }, { t: "+ agregarFuncion(funcion: Funcion): void" }, { t: "+ buscarFuncion(hora: String): Funcion" }, { t: "+ calcularIngresosTotales(): double" }, { t: "+ darFuncionesDe(titulo: String): ArrayList<Funcion>" }] },
+      { id: "Funcion", x: 460, y: 10, attrs: [{ t: "- hora: String" }, { t: "- sillasDisponibles: int" }, { t: "- boletasVendidas: int" }], ops: [{ t: "+ Funcion(hora: String, sillas: int, pelicula: Pelicula)" }, { t: "+ getHora(): String" }, { t: "+ getPelicula(): Pelicula" }, { t: "+ getSillasDisponibles(): int" }, { t: "+ venderBoletas(cantidad: int): boolean" }, { t: "+ calcularIngresos(): double" }] },
+      { id: "Pelicula", x: centerOn("Funcion"), y: 254, abs: true, attrs: [{ t: "- titulo: String" }, { t: "- duracion: int" }], ops: [{ t: "+ Pelicula(titulo: String, duracion: int)" }, { t: "+ getTitulo(): String" }, { t: "+ getDuracion(): int" }, { t: "+ calcularPrecioBoleta(): double", a: 1 }] },
+      { id: "Pelicula2D", x: 10, y: 450, attrs: [{ t: "+ PRECIO_2D: double = 12000", s: 1 }], ops: [{ t: "+ Pelicula2D(titulo: String, duracion: int)" }, { t: "+ calcularPrecioBoleta(): double" }] },
+      { id: "Pelicula3D", x: 330, y: 450, attrs: [{ t: "+ PRECIO_3D: double = 18000", s: 1 }, { t: "+ RECARGO_GAFAS: double = 2000", s: 1 }, { t: "- incluyeGafas: boolean" }], ops: [{ t: "+ Pelicula3D(titulo: String, duracion: int, incluyeGafas: boolean)" }, { t: "+ isIncluyeGafas(): boolean" }, { t: "+ calcularPrecioBoleta(): double" }] }
+    ],
+    rels: (A, G) => {
+      const fb = A("Funcion", "b"), pb = A("Pelicula", "b"), p2 = A("Pelicula2D", "t"), p3 = A("Pelicula3D", "t"), bus = 424, yA = 54;
+      return [
+        { type: "assoc", pts: [[G.Cine.x + G.Cine.w, yA], [G.Funcion.x, yA]], labels: [{ x: G.Funcion.x - 14, y: yA - 6, t: "-funciones", a: "end" }, { x: G.Funcion.x - 14, y: yA + 15, t: "0..*", a: "end" }] },
+        { type: "assoc", pts: [fb, [fb[0], G.Pelicula.y]], labels: [{ x: fb[0] + 8, y: G.Pelicula.y - 22, t: "-pelicula" }, { x: fb[0] + 8, y: G.Pelicula.y - 7, t: "1" }] },
+        { type: "inherit", pts: [p2, [p2[0], bus], [pb[0], bus], pb] },
+        { type: "inherit", pts: [p3, [p3[0], bus], [pb[0], bus], pb] }
+      ];
+    }
+  },
+  qa1: {
+    aria: "Tienda con una línea continua de punta abierta hacia Coleccionable, rol inventario, multiplicidad cero a muchos",
+    cls: [
+      { id: "Tienda", x: 10, y: 10, attrs: [{ t: "- nombre: String" }], ops: [] },
+      { id: "Coleccionable", x: 250, y: 10, attrs: [{ t: "- codigo: String" }, { t: "- precio: double" }], ops: [] }
+    ],
+    rels: (A, G) => [{ type: "assoc", pts: [[G.Tienda.x + G.Tienda.w, 34], [G.Coleccionable.x, 34]], labels: [{ x: G.Coleccionable.x - 14, y: 28, t: "-inventario", a: "end" }, { x: G.Coleccionable.x - 14, y: 49, t: "0..*", a: "end" }] }]
+  },
+  qa3: {
+    aria: "Socio, abstracta, implementa Cobrable sin escribir calcularCuota; SocioRegular hereda de Socio",
+    cls: [
+      { id: "Socio", x: 10, y: 110, abs: true, attrs: [{ t: "- documento: String" }, { t: "- nombre: String" }], ops: [{ t: M_SOCIO_CTOR }] },
+      { id: "Cobrable", x: centerOn("Socio"), y: 10, stereo: "interface", ops: [{ t: "+ calcularCuota(): double" }] },
+      { id: "SocioRegular", x: centerOn("Socio"), y: 264, ops: [{ t: "+ calcularCuota(): double" }] }
+    ],
+    rels: (A, G) => { const x = G.Socio.x + G.Socio.w / 2; return [
+      { type: "realize", pts: [[x, G.Socio.y], [x, G.Cobrable.y + G.Cobrable.h]] },
+      { type: "inherit", pts: [[x, G.SocioRegular.y], [x, G.Socio.y + G.Socio.h]] }
+    ]; }
+  },
+  qb1: {
+    aria: "Club con una línea punteada de punta abierta hacia Impresora",
+    cls: [
+      { id: "Club", x: 10, y: 10, attrs: [{ t: "- nombre: String" }], ops: [{ t: "+ imprimirSocios(impresora: Impresora): void" }] },
+      { id: "Impresora", x: centerOn("Club"), y: 150, ops: [{ t: "+ imprimir(texto: String): void" }] }
+    ],
+    rels: (A, G) => { const x = G.Club.x + G.Club.w / 2; return [{ type: "dep", pts: [[x, G.Club.y + G.Club.h], [x, G.Impresora.y]] }]; }
+  },
+  qb3: {
+    aria: "Pedido con rombo lleno hacia LineaPedido, rol lineas, multiplicidad uno a muchos",
+    cls: [
+      { id: "Pedido", x: 10, y: 10, attrs: [{ t: "- numero: int" }], ops: [{ t: "+ agregarLinea(producto: String, cantidad: int): void" }] },
+      { id: "LineaPedido", x: centerOn("Pedido"), y: 150, attrs: [{ t: "- producto: String" }, { t: "- cantidad: int" }], ops: [] }
+    ],
+    rels: (A, G) => { const x = G.Pedido.x + G.Pedido.w / 2; return [{ type: "comp", pts: [[x, G.Pedido.y + G.Pedido.h], [x, G.LineaPedido.y]], labels: [{ x: x + 8, y: G.LineaPedido.y - 20, t: "-lineas" }, { x: x + 8, y: G.LineaPedido.y - 6, t: "1..*" }] }]; }
+  }
+};
+
+/* ---------- Código de la teoría ---------- */
+const CODE = {
+  "e1-1": { d: 1, s: `
++ public class Socio {
++ }` },
+  "e1-2": { d: 1, s: `
+  public class Socio {
++     public static final double CUOTA_BASE = 90000;
+  }` },
+  "e1-3": { d: 1, s: `
+  public class Socio {
+      public static final double CUOTA_BASE = 90000;
++
++     private String documento;
++     private String nombre;
+  }` },
+  "e1-4": { d: 1, s: `
+      private String nombre;
++
++     public Socio(String documento, String nombre) {
++         this.documento = documento;
++         this.nombre = nombre;
++     }
+  }` },
+  "e1-5": { d: 1, s: `
++     public String getDocumento() {
++         return documento;
++     }
++
++     public String getNombre() {
++         return nombre;
++     }` },
+  "e1-6": { d: 1, s: `
++     public double calcularCuota() {
++         return CUOTA_BASE;
++     }
+  }` },
+  "e1-full": { s: `
+public class Socio {
+    public static final double CUOTA_BASE = 90000;
+
+    private String documento;
+    private String nombre;
+
+    public Socio(String documento, String nombre) {
+        this.documento = documento;
+        this.nombre = nombre;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double calcularCuota() {
+        return CUOTA_BASE;
+    }
+}` },
+  "e2-1": { d: 1, s: `
++ public class Club {
++     private String nombre;
++
++     public Club(String nombre) {
++         this.nombre = nombre;
++     }
++
++     public String getNombre() {
++         return nombre;
++     }
++ }` },
+  "e2-2": { d: 1, s: `
++ import java.util.ArrayList;
++
+  public class Club {
+      private String nombre;
++     private ArrayList<Socio> socios;` },
+  "e2-3": { d: 1, s: `
+      public Club(String nombre) {
+          this.nombre = nombre;
++         this.socios = new ArrayList<>();
+      }` },
+  "e2-4": { d: 1, s: `
++     public void agregarSocio(Socio socio) {
++         socios.add(socio);
++     }` },
+  "e2-5": { d: 1, s: `
++     public Socio buscarSocio(String documento) {
++         for (Socio s : socios) {
++             if (s.getDocumento().equals(documento)) {
++                 return s;
++             }
++         }
++         return null;
++     }` },
+  "e2-6": { d: 1, s: `
++     public double calcularRecaudo() {
++         double total = 0;
++         for (Socio s : socios) {
++             total += s.calcularCuota();
++         }
++         return total;
++     }` },
+  "e2-full": { s: `
+import java.util.ArrayList;
+
+public class Club {
+    private String nombre;
+    private ArrayList<Socio> socios;
+
+    public Club(String nombre) {
+        this.nombre = nombre;
+        this.socios = new ArrayList<>();
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void agregarSocio(Socio socio) {
+        socios.add(socio);
+    }
+
+    public Socio buscarSocio(String documento) {
+        for (Socio s : socios) {
+            if (s.getDocumento().equals(documento)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public double calcularRecaudo() {
+        double total = 0;
+        for (Socio s : socios) {
+            total += s.calcularCuota();
+        }
+        return total;
+    }
+}` },
+  "e3-1": { d: 1, s: `
++ public class SocioEstudiante extends Socio {
++ }` },
+  "e3-2": { d: 1, s: `
+  public class SocioEstudiante extends Socio {
++     private String carnet;
+  }` },
+  "e3-3": { d: 1, s: `
+      private String carnet;
++
++     public SocioEstudiante(String documento, String nombre, String carnet) {
++         super(documento, nombre);
++         this.carnet = carnet;
++     }` },
+  "e3-4": { d: 1, s: `
++     public String getCarnet() {
++         return carnet;
++     }` },
+  "e3-5": { d: 1, s: `
++     @Override
++     public double calcularCuota() {
++         return CUOTA_BASE / 2;
++     }
+  }` },
+  "e3-err": { d: 1, s: `
+  public class SocioEstudiante extends Socio {
+-     private String documento;
+-     private String nombre;
+      private String carnet;
+
+      public SocioEstudiante(String documento, String nombre, String carnet) {
+-         this.documento = documento;
+-         this.nombre = nombre;
++         super(documento, nombre);
+          this.carnet = carnet;
+      }
+  }` },
+  "e4-1": { d: 1, s: `
++ public interface Cobrable {
++     double calcularCuota();
++ }` },
+  "e4-2": { d: 1, s: `
+- public class Socio {
++ public abstract class Socio implements Cobrable {
+      public static final double CUOTA_BASE = 90000;
+      // ... atributos, constructor y getters, sin cambios ...
+
+-     public double calcularCuota() {
+-         return CUOTA_BASE;
+-     }
++     public abstract double calcularCuota();
+  }` },
+  "e4-3": { d: 1, s: `
++ public class SocioRegular extends Socio {
++     public SocioRegular(String documento, String nombre) {
++         super(documento, nombre);
++     }
++
++     @Override
++     public double calcularCuota() {
++         return CUOTA_BASE;
++     }
++ }` },
+  "e4-4": { d: 1, s: `
++ Club club = new Club("Club Los Andes");
++ club.agregarSocio(new SocioRegular("101", "Ana"));
++ club.agregarSocio(new SocioEstudiante("102", "Luis", "E-77"));
++ System.out.println(club.calcularRecaudo()); // 135000.0` },
+  "tpl-1": { s: `
+public class Hija extends Padre {
+    private Tipo nuevo;
+
+    public Hija(TipoA a, TipoB b, Tipo nuevo) {
+        super(a, b);
+        this.nuevo = nuevo;
+    }
+
+    @Override
+    public double metodoDelPadre() {
+        return ...;
+    }
+}` },
+  "tpl-2": { s: `
+private ArrayList<Parte> partes;     // atributo
+
+this.partes = new ArrayList<>();     // en el constructor
+
+public void agregarParte(Parte p) {
+    partes.add(p);
+}
+
+public Parte buscarParte(String codigo) {
+    for (Parte p : partes) {
+        if (p.getCodigo().equals(codigo)) {
+            return p;
+        }
+    }
+    return null;
+}` }
+};
+
+const DICT = [
+  { n: "Asociación · 1", fig: "d-asoc1", lee: "«Un club conoce una sede». Línea continua con punta abierta.", c: `private Sede sede;`, nota: "Un atributo simple del tipo de la otra clase. Suele llegar por el constructor." },
+  { n: "Asociación · 0..*", fig: "d-asocN", lee: "«Un club conoce de cero a muchos socios».", c: `private ArrayList<Socio> socios;
+// en el constructor:
+this.socios = new ArrayList<>();`, nota: "Una lista, creada en el constructor. Con `1..*` se escribe igual." },
+  { n: "Agregación · rombo hueco", fig: "d-aggr", lee: "«Un equipo tiene jugadores», que existen por su cuenta.", c: `public void agregarJugador(Socio jugador) {
+    jugadores.add(jugador);
+}`, nota: "En código es como la asociación: la parte llega de afuera y puede estar en varios equipos." },
+  { n: "Composición · rombo lleno", fig: "d-comp", lee: "«Un pedido está hecho de líneas», que no existen sin él.", c: `public void agregarLinea(String producto, int cantidad) {
+    lineas.add(new Linea(producto, cantidad));
+}`, nota: "El todo crea sus partes por dentro, con `new`, y no las comparte." },
+  { n: "Herencia · línea continua, triángulo hueco", fig: "d-inh", lee: "«Un socio estudiante es un socio».", c: `public class SocioEstudiante extends Socio {
+    public SocioEstudiante(String documento, String nombre, String carnet) {
+        super(documento, nombre);`, nota: "`extends`, y `super(...)` en la primera línea del constructor." },
+  { n: "Realización · línea punteada, triángulo hueco", fig: "d-real", lee: "«Socio cumple el contrato Cobrable».", c: `public abstract class Socio implements Cobrable {`, nota: "`implements`, y escribir los métodos de la interfaz. Si la clase es abstracta, se los puede dejar a sus hijas." },
+  { n: "Dependencia · línea punteada, punta abierta", fig: "d-dep", lee: "«Club usa una impresora», solo por un momento.", c: `public void imprimirSocios(Impresora impresora) {
+    // la usa aquí y no la guarda
+}`, nota: "Solo aparece como parámetro o variable local, nunca como atributo." }
+];
+
+/* ---------- Lab: código del mini-caso con las claves que lo unen al diagrama ---------- */
+const LAB = `
+#Cobrable.java
+c-cobrable¦public interface Cobrable {
+m-cob-cuota¦    double calcularCuota();
+¦}
+#Socio.java
+c-socio r-realiza¦public abstract class Socio implements Cobrable {
+a-cuota-base¦    public static final double CUOTA_BASE = 90000;
+¦
+a-documento¦    private String documento;
+a-nombre¦    private String nombre;
+¦
+m-socio-ctor¦    public Socio(String documento, String nombre) {
+m-socio-ctor¦        this.documento = documento;
+m-socio-ctor¦        this.nombre = nombre;
+m-socio-ctor¦    }
+¦
+m-get-doc¦    public String getDocumento() {
+m-get-doc¦        return documento;
+m-get-doc¦    }
+¦
+m-get-nombre¦    public String getNombre() {
+m-get-nombre¦        return nombre;
+m-get-nombre¦    }
+¦
+m-socio-cuota¦    public abstract double calcularCuota();
+¦}
+#SocioRegular.java
+c-regular r-hereda-reg¦public class SocioRegular extends Socio {
+m-reg-ctor¦    public SocioRegular(String documento, String nombre) {
+m-reg-ctor r-hereda-reg¦        super(documento, nombre);
+m-reg-ctor¦    }
+¦
+m-reg-cuota¦    @Override
+m-reg-cuota¦    public double calcularCuota() {
+m-reg-cuota¦        return CUOTA_BASE;
+m-reg-cuota¦    }
+¦}
+#SocioEstudiante.java
+c-estudiante r-hereda-est¦public class SocioEstudiante extends Socio {
+a-carnet¦    private String carnet;
+¦
+m-est-ctor¦    public SocioEstudiante(String documento, String nombre, String carnet) {
+m-est-ctor r-hereda-est¦        super(documento, nombre);
+m-est-ctor¦        this.carnet = carnet;
+m-est-ctor¦    }
+¦
+m-get-carnet¦    public String getCarnet() {
+m-get-carnet¦        return carnet;
+m-get-carnet¦    }
+¦
+m-est-cuota¦    @Override
+m-est-cuota¦    public double calcularCuota() {
+m-est-cuota¦        return CUOTA_BASE / 2;
+m-est-cuota¦    }
+¦}
+#Club.java
+r-socios¦import java.util.ArrayList;
+¦
+c-club¦public class Club {
+a-club-nombre¦    private String nombre;
+r-socios¦    private ArrayList<Socio> socios;
+¦
+m-club-ctor¦    public Club(String nombre) {
+m-club-ctor¦        this.nombre = nombre;
+m-club-ctor r-socios¦        this.socios = new ArrayList<>();
+m-club-ctor¦    }
+¦
+m-get-club¦    public String getNombre() {
+m-get-club¦        return nombre;
+m-get-club¦    }
+¦
+m-agregar¦    public void agregarSocio(Socio socio) {
+m-agregar¦        socios.add(socio);
+m-agregar¦    }
+¦
+m-buscar¦    public Socio buscarSocio(String documento) {
+m-buscar¦        for (Socio s : socios) {
+m-buscar¦            if (s.getDocumento().equals(documento)) {
+m-buscar¦                return s;
+m-buscar¦            }
+m-buscar¦        }
+m-buscar¦        return null;
+m-buscar¦    }
+¦
+m-recaudo¦    public double calcularRecaudo() {
+m-recaudo¦        double total = 0;
+m-recaudo¦        for (Socio s : socios) {
+m-recaudo¦            total += s.calcularCuota();
+m-recaudo¦        }
+m-recaudo¦        return total;
+m-recaudo¦    }
+¦}
+#Main.java
+¦public class Main {
+¦    public static void main(String[] args) {
+¦        Club club = new Club("Club Los Andes");
+¦        club.agregarSocio(new SocioRegular("101", "Ana"));
+¦        club.agregarSocio(new SocioEstudiante("102", "Luis", "E-77"));
+¦        System.out.println(club.buscarSocio("102").getNombre()); // Luis
+¦        System.out.println(club.calcularRecaudo());              // 135000.0
+¦    }
+¦}`;
+
+const EXPL = {
+  "c-cobrable": "«interface» arriba del nombre → `public interface Cobrable`. Una interfaz es un contrato: solo trae firmas, sin cuerpo.",
+  "m-cob-cuota": "En una interfaz el método termina en `;` y no lleva llaves. Es público y abstracto aunque no lo escribas.",
+  "c-socio": "El nombre en cursiva → `abstract`. Socio es un molde incompleto: no se puede hacer `new Socio(...)`, solo de sus hijas.",
+  "r-realiza": "Línea punteada con triángulo hueco hacia Cobrable → `implements Cobrable`. Socio promete tener `calcularCuota()`; como es abstracta, la promesa la cumplen sus hijas.",
+  "a-cuota-base": "Subrayado → `static`: hay una sola cuota base para todo el club. En mayúsculas y con valor fijo → constante: `public static final`.",
+  "a-documento": "`- documento: String` → `private String documento;`. El `-` es privado y el tipo pasa adelante (regla del volteo).",
+  "a-nombre": "`- nombre: String` → `private String nombre;`. Es privado: las hijas lo heredan, pero no lo pueden tocar directamente.",
+  "m-socio-ctor": "El método que se llama como la clase es el constructor: no tiene tipo de retorno. `this.documento` es el atributo y `documento`, el parámetro.",
+  "m-get-doc": "`+ getDocumento(): String` → `public String getDocumento()`. El tipo que retorna va antes del nombre.",
+  "m-get-nombre": "Getter: retorna el atributo. Las hijas lo heredan, así que no lo vuelven a escribir.",
+  "m-socio-cuota": "Método en cursiva → `abstract`: solo la firma, terminada en `;`. Cada hija concreta lo tiene que escribir.",
+  "c-regular": "SocioRegular es una clase concreta (sin cursiva): sí se puede hacer `new SocioRegular(...)`.",
+  "r-hereda-reg": "Línea continua con triángulo hueco hacia Socio → `extends Socio`. Por esa flecha el constructor de la hija empieza con `super(...)`.",
+  "m-reg-ctor": "El constructor de la hija empieza con `super(documento, nombre)`: le pasa al padre los datos que solo él puede guardar.",
+  "m-reg-cuota": "`calcularCuota()` aparece otra vez en la hija → se reescribe con `@Override`. El regular paga la cuota base.",
+  "c-estudiante": "Otra hija concreta de Socio. En su caja solo está lo nuevo: carnet, su getter, su constructor y su versión de la cuota.",
+  "r-hereda-est": "Herencia → `extends Socio` y `super(documento, nombre)` en la primera línea del constructor.",
+  "a-carnet": "El único atributo nuevo. documento y nombre no se repiten: vienen del padre.",
+  "m-est-ctor": "Recibe los tres datos: dos se los pasa al padre con `super(...)` y el tercero lo guarda él.",
+  "m-get-carnet": "Getter del atributo nuevo. Los otros dos getters los hereda.",
+  "m-est-cuota": "`@Override` con su propia regla: el estudiante paga la mitad, `CUOTA_BASE / 2`.",
+  "c-club": "Club es una clase normal. Lo interesante no está en su caja sino en la flecha que sale de ella.",
+  "a-club-nombre": "`- nombre: String` → `private String nombre;`. No choca con el nombre de Socio: cada clase tiene sus propios atributos.",
+  "r-socios": "Asociación de Club a Socio con `0..*` → una lista en Club que se llama como el rol: `private ArrayList<Socio> socios;`. Se crea en el constructor, y por eso hace falta el `import`.",
+  "m-club-ctor": "Además de guardar el nombre, crea la lista vacía. Sin esa línea, el primer `add` lanza NullPointerException.",
+  "m-get-club": "Getter del nombre del club.",
+  "m-agregar": "`+ agregarSocio(socio: Socio): void` → `public void agregarSocio(Socio socio)`. La lista ya sabe agregar.",
+  "m-buscar": "Recorre la lista y compara con `equals`, nunca con `==`. Si no lo encuentra, retorna `null` (en M2 lo cambias por una excepción).",
+  "m-recaudo": "Suma `s.calcularCuota()` sin preguntar el tipo de socio: cada objeto usa la versión de su clase. Eso es polimorfismo."
+};
+const KLABEL = {
+  "c-cobrable": "Cobrable", "m-cob-cuota": "+ calcularCuota(): double (Cobrable)", "c-socio": "Socio", "r-realiza": "Realización Socio → Cobrable",
+  "a-cuota-base": "+ CUOTA_BASE: double = 90000", "a-documento": "- documento: String", "a-nombre": "- nombre: String", "m-socio-ctor": M_SOCIO_CTOR,
+  "m-get-doc": "+ getDocumento(): String", "m-get-nombre": "+ getNombre(): String", "m-socio-cuota": "+ calcularCuota(): double (Socio, en cursiva)",
+  "c-regular": "SocioRegular", "r-hereda-reg": "Herencia SocioRegular → Socio", "m-reg-ctor": "+ SocioRegular(documento: String, nombre: String)", "m-reg-cuota": "+ calcularCuota(): double (SocioRegular)",
+  "c-estudiante": "SocioEstudiante", "r-hereda-est": "Herencia SocioEstudiante → Socio", "a-carnet": "- carnet: String", "m-est-ctor": "+ SocioEstudiante(documento, nombre, carnet)",
+  "m-get-carnet": "+ getCarnet(): String", "m-est-cuota": "+ calcularCuota(): double (SocioEstudiante)", "c-club": "Club", "a-club-nombre": "- nombre: String (Club)",
+  "r-socios": "Asociación Club → Socio, -socios 0..*", "m-club-ctor": "+ Club(nombre: String)", "m-get-club": "+ getNombre(): String (Club)",
+  "m-agregar": "+ agregarSocio(socio: Socio): void", "m-buscar": "+ buscarSocio(documento: String): Socio", "m-recaudo": "+ calcularRecaudo(): double"
+};
+const RETO = [
+  { c: "private ArrayList<Socio> socios;", file: "Club.java", find: "private ArrayList", ok: ["r-socios"], why: "Es la asociación de Club a Socio: `0..*` pide una lista." },
+  { c: "extends Socio", file: "SocioEstudiante.java", find: "extends Socio", ok: ["r-hereda-est"], why: "Sale de la línea continua con triángulo hueco que va de SocioEstudiante a Socio." },
+  { c: "implements Cobrable", file: "Socio.java", find: "implements Cobrable", ok: ["r-realiza"], why: "Sale de la línea punteada con triángulo hueco que va de Socio a Cobrable." },
+  { c: "public static final double CUOTA_BASE = 90000;", file: "Socio.java", find: "CUOTA_BASE = 90000", ok: ["a-cuota-base"], why: "Es el atributo subrayado de Socio: subrayado es `static`." },
+  { c: "public abstract double calcularCuota();", file: "Socio.java", find: "public abstract double", ok: ["m-socio-cuota"], why: "Es el método en cursiva de la caja Socio. El de Cobrable se escribe `double calcularCuota();`, sin `abstract`." },
+  { c: "super(documento, nombre);  (en SocioRegular)", file: "SocioRegular.java", find: "super(documento", ok: ["m-reg-ctor", "r-hereda-reg"], why: "Va en el constructor de la hija, y es obligatorio por la flecha de herencia." },
+  { c: "private String carnet;", file: "SocioEstudiante.java", find: "private String carnet", ok: ["a-carnet"], why: "El atributo propio de la caja SocioEstudiante." },
+  { c: "public abstract class Socio", file: "Socio.java", find: "public abstract class", ok: ["c-socio"], why: "El nombre de la caja en cursiva: clase abstracta." },
+  { c: "this.socios = new ArrayList<>();", file: "Club.java", find: "this.socios = new", ok: ["r-socios", "m-club-ctor"], why: "La lista de la asociación se crea en el constructor de Club." },
+  { c: "public Socio buscarSocio(String documento)", file: "Club.java", find: "public Socio buscarSocio", ok: ["m-buscar"], why: "Es `+ buscarSocio(documento: String): Socio` con la regla del volteo." }
+];
+const EXPS = [
+  { t: "Borra `super(documento, nombre);` de SocioEstudiante.", r: "No compila. Eclipse dice `Implicit super constructor Socio() is undefined. Must explicitly invoke another constructor`; javac, `constructor Socio in class Socio cannot be applied to given types`. Sin `super(...)`, Java intenta llamar a `Socio()` sin argumentos, y ese constructor no existe." },
+  { t: "Comenta `this.socios = new ArrayList<>();` en Club y corre Main.", r: "Compila sin quejarse, pero al correr sale `NullPointerException: Cannot invoke \"java.util.ArrayList.add(Object)\" because \"this.socios\" is null`. La lista nunca se creó. Es la trampa más peligrosa porque el compilador no avisa." },
+  { t: "En Main escribe `Socio s = new Socio(\"103\", \"Eva\");`.", r: "No compila: `Cannot instantiate the type Socio` (javac: `Socio is abstract; cannot be instantiated`). Una clase abstracta no se instancia. Sí puedes escribir `Socio s = new SocioRegular(\"103\", \"Eva\");`." },
+  { t: "Borra el método `calcularCuota()` de SocioRegular.", r: "No compila: `The type SocioRegular must implement the inherited abstract method Socio.calcularCuota()` (javac: `SocioRegular is not abstract and does not override abstract method calcularCuota() in Socio`). Una clase concreta tiene que escribir todos los métodos abstractos que hereda." },
+  { t: "En buscarSocio cambia `equals` por `==`, y en Main busca con `club.buscarSocio(new String(\"102\"))`.", r: "Compila, pero buscarSocio retorna `null` y la línea siguiente lanza `NullPointerException: Cannot invoke \"Socio.getNombre()\"…`. `==` compara si son el mismo objeto en memoria, no si tienen el mismo texto. Con `equals` funciona." }
+];
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Calentamiento: una clase y su hija", min: 10, src: "Problema nuevo · dominio de la tienda", fig: "t1",
+    txt: ["Implementa las dos clases del diagrama. Todavía no hay lógica: solo atributos, constructores y getters."],
+    checks: [{ q: "¿Cuál es la primera línea del constructor de Carta?", o: ["`this.codigo = codigo;`", "`super(codigo, nombre, precio);`", "`super();`", "`Coleccionable(codigo, nombre, precio);`"], a: 1 }],
+    hints: ["La flecha con triángulo hueco va de Carta a Coleccionable: `Carta extends Coleccionable`.", "Carta solo declara lo que está en su caja: rareza. Los otros tres datos los recibe y se los pasa al padre."],
+    sol: [
+      { p: "**Coleccionable** es la idea 1 otra vez: atributos privados, constructor con `this.` y getters.", c: `
+public class Coleccionable {
+    private String codigo;
+    private String nombre;
+    private double precio;
+
+    public Coleccionable(String codigo, String nombre, double precio) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+}` },
+      { p: "**Carta** declara solo rareza. Su constructor recibe los cuatro datos, le pasa tres al padre con `super(...)`, en el orden de su constructor, y guarda el cuarto.", c: `
+public class Carta extends Coleccionable {
+    private String rareza;
+
+    public Carta(String codigo, String nombre, double precio, String rareza) {
+        super(codigo, nombre, precio);
+        this.rareza = rareza;
+    }
+
+    public String getRareza() {
+        return rareza;
+    }
+}` }],
+    rub: ["Compila sin errores.", "`Carta extends Coleccionable`.", "El constructor de Carta empieza con `super(codigo, nombre, precio)`, en ese orden.", "Carta no repite codigo, nombre ni precio.", "Cada getter retorna el tipo del diagrama: getPrecio retorna `double`."] },
+  { n: "T2", t: "Una tienda con inventario", min: 15, src: "Problema nuevo · dominio de la tienda", fig: "t2",
+    txt: ["Usa la clase Coleccionable del T1 e implementa Tienda. `buscarPorCodigo` retorna el coleccionable con ese código, o `null` si no existe; `calcularValorInventario` suma los precios; `contarMasCarosQue` cuenta los que cuestan más que el precio que recibe."],
+    checks: [
+      { q: "¿Dónde se crea la lista inventario?", o: ["En el constructor de Tienda", "En agregarColeccionable, cada vez que llega uno", "En ningún lado: basta con declararla", "En la clase Coleccionable"], a: 0 },
+      { q: "En buscarPorCodigo, ¿cómo comparas los códigos?", o: ["`c.getCodigo() == codigo`", "`c.getCodigo().equals(codigo)`", "`c.codigo = codigo`", "`codigo.contains(c)`"], a: 1 }],
+    hints: ["La flecha sale de Tienda: el atributo va en Tienda y se llama como el rol, inventario. Con `0..*` es una lista.", "Para contar, empieza un contador en 0 y súmale 1 cada vez que `c.getPrecio() > precio`."],
+    sol: [{ p: "La flecha se vuelve la lista `inventario`, que se crea en el constructor. Los tres métodos la recorren con for-each.", c: `
+import java.util.ArrayList;
+
+public class Tienda {
+    private String nombre;
+    private ArrayList<Coleccionable> inventario;
+
+    public Tienda(String nombre) {
+        this.nombre = nombre;
+        this.inventario = new ArrayList<>();
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void agregarColeccionable(Coleccionable c) {
+        inventario.add(c);
+    }
+
+    public Coleccionable buscarPorCodigo(String codigo) {
+        for (Coleccionable c : inventario) {
+            if (c.getCodigo().equals(codigo)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public double calcularValorInventario() {
+        double total = 0;
+        for (Coleccionable c : inventario) {
+            total += c.getPrecio();
+        }
+        return total;
+    }
+
+    public int contarMasCarosQue(double precio) {
+        int contador = 0;
+        for (Coleccionable c : inventario) {
+            if (c.getPrecio() > precio) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+}` }],
+    rub: ["`private ArrayList<Coleccionable> inventario;` con su `import`.", "La lista se crea en el constructor.", "buscarPorCodigo compara con `equals` y retorna `null` si no lo encuentra.", "calcularValorInventario acumula en un `double` que empieza en 0.", "contarMasCarosQue usa `>` estricto, como dice el enunciado."] },
+  { n: "T3", t: "Interfaz, clase abstracta y polimorfismo", min: 20, src: "Problema nuevo · dominio de las hamburguesas", fig: "t3",
+    txt: ["Implementa las cuatro piezas. Una hamburguesa cuesta su precio base más `PRECIO_ADICION` por cada adición. Un combo cuesta su precio base menos el descuento, que viene como fracción (0.1 es el 10 %). `generarTexto` retorna el nombre y el precio, por ejemplo «Doble queso: 21000.0»."],
+    checks: [
+      { q: "calcularPrecio está en cursiva en ItemMenu. ¿Qué escribes en ItemMenu?", o: ["`public abstract double calcularPrecio();`", "`public double calcularPrecio() { }`", "`public double calcularPrecio() { return 0; }`", "Nada: solo se escribe en las hijas"], a: 0 },
+      { q: "Un combo con precio base 20000 y descuento 0.1, ¿qué retorna calcularPrecio?", o: ["2000.0", "18000.0", "19999.9", "22000.0"], a: 1 }],
+    hints: ["generarTexto va una sola vez, en ItemMenu, y llama a calcularPrecio(): cada objeto usa la versión de su clase. Por eso ItemMenu tiene que declarar calcularPrecio, aunque sin cuerpo.", "Los atributos del padre son privados: usa su getter. Combo: `getPrecioBase() * (1 - descuento)`. Hamburguesa: `getPrecioBase() + adiciones * PRECIO_ADICION`."],
+    sol: [
+      { p: "**Imprimible:** «interface» → `interface`, con su método sin cuerpo.", c: `
+public interface Imprimible {
+    String generarTexto();
+}` },
+      { p: "**ItemMenu:** cursiva → `abstract`; la línea punteada → `implements Imprimible`. Declara calcularPrecio sin cuerpo para poder usarlo en generarTexto.", c: `
+public abstract class ItemMenu implements Imprimible {
+    private String nombre;
+    private double precioBase;
+
+    public ItemMenu(String nombre, double precioBase) {
+        this.nombre = nombre;
+        this.precioBase = precioBase;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getPrecioBase() {
+        return precioBase;
+    }
+
+    public abstract double calcularPrecio();
+
+    @Override
+    public String generarTexto() {
+        return nombre + ": " + calcularPrecio();
+    }
+}` },
+      { p: "**Hamburguesa:** el atributo subrayado es la constante, y el constructor empieza con `super`.", c: `
+public class Hamburguesa extends ItemMenu {
+    public static final double PRECIO_ADICION = 3000;
+
+    private int adiciones;
+
+    public Hamburguesa(String nombre, double precioBase, int adiciones) {
+        super(nombre, precioBase);
+        this.adiciones = adiciones;
+    }
+
+    @Override
+    public double calcularPrecio() {
+        return getPrecioBase() + adiciones * PRECIO_ADICION;
+    }
+}` },
+      { p: "**Combo:** igual, con su propia regla de precio.", c: `
+public class Combo extends ItemMenu {
+    private double descuento;
+
+    public Combo(String nombre, double precioBase, double descuento) {
+        super(nombre, precioBase);
+        this.descuento = descuento;
+    }
+
+    @Override
+    public double calcularPrecio() {
+        return getPrecioBase() * (1 - descuento);
+    }
+}` }],
+    rub: ["Imprimible es `interface` y su método no tiene cuerpo.", "ItemMenu es `abstract`, tiene `implements Imprimible` y declara `public abstract double calcularPrecio();`.", "Las hijas tienen `extends ItemMenu`, empiezan su constructor con `super(nombre, precioBase)` y usan `@Override`.", "PRECIO_ADICION es `public static final`.", "generarTexto está una sola vez, en ItemMenu, y llama a calcularPrecio()."] },
+  { n: "T4", t: "Mini-práctica tipo parcial: un cine", min: 40, src: "Problema nuevo · dominio del Taller 4", fig: "t4",
+    txt: ["«Implementa en Java una aplicación basada en el siguiente diagrama UML.» Los get son los obvios. Funcionalidad mínima esperada:"],
+    list: ["Pelicula2D cuesta `PRECIO_2D`. Pelicula3D cuesta `PRECIO_3D`, más `RECARGO_GAFAS` si incluye gafas.",
+      "`venderBoletas(cantidad)`: si hay sillas suficientes, las descuenta, suma a boletasVendidas y retorna `true`; si no, no vende nada y retorna `false`.",
+      "`calcularIngresos`: las boletas vendidas por el precio de la boleta de su película.",
+      "Cine: agregar, buscar por hora (`null` si no existe), ingresos totales (la suma de las funciones) y `darFuncionesDe(titulo)`, que retorna una lista nueva con las funciones de esa película.",
+      "Al final, exporta el proyecto en ZIP, como en el examen."],
+    checks: [
+      { q: "¿Qué atributos tiene Funcion en Java?", o: ["hora, sillasDisponibles y boletasVendidas", "hora, sillasDisponibles, boletasVendidas y pelicula", "Los anteriores y además una lista de películas", "Solo los que tienen getter"], a: 1 },
+      { q: "¿Qué hace primero darFuncionesDe?", o: ["Crea una lista nueva, vacía", "Retorna la lista funciones completa", "Borra de funciones las que no coinciden", "Retorna null si hay más de una"], a: 0 }],
+    hints: ["Orden sugerido: Pelicula → Pelicula2D → Pelicula3D → Funcion → Cine. Cada una compila con lo anterior.", "Funcion conoce una película (`1`): `private Pelicula pelicula;`, que llega por el constructor. Cine conoce muchas funciones (`0..*`): una lista.", "En calcularIngresos, `pelicula.calcularPrecioBoleta()` funciona para 2D y 3D sin preguntar el tipo."],
+    sol: [
+      { p: "**Pelicula** es abstracta: su método en cursiva no tiene cuerpo.", c: `
+public abstract class Pelicula {
+    private String titulo;
+    private int duracion;
+
+    public Pelicula(String titulo, int duracion) {
+        this.titulo = titulo;
+        this.duracion = duracion;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public int getDuracion() {
+        return duracion;
+    }
+
+    public abstract double calcularPrecioBoleta();
+}` },
+      { p: "**Pelicula2D:** constante, `super` y su precio.", c: `
+public class Pelicula2D extends Pelicula {
+    public static final double PRECIO_2D = 12000;
+
+    public Pelicula2D(String titulo, int duracion) {
+        super(titulo, duracion);
+    }
+
+    @Override
+    public double calcularPrecioBoleta() {
+        return PRECIO_2D;
+    }
+}` },
+      { p: "**Pelicula3D:** dos constantes, un atributo propio y el recargo cuando hay gafas.", c: `
+public class Pelicula3D extends Pelicula {
+    public static final double PRECIO_3D = 18000;
+    public static final double RECARGO_GAFAS = 2000;
+
+    private boolean incluyeGafas;
+
+    public Pelicula3D(String titulo, int duracion, boolean incluyeGafas) {
+        super(titulo, duracion);
+        this.incluyeGafas = incluyeGafas;
+    }
+
+    public boolean isIncluyeGafas() {
+        return incluyeGafas;
+    }
+
+    @Override
+    public double calcularPrecioBoleta() {
+        if (incluyeGafas) {
+            return PRECIO_3D + RECARGO_GAFAS;
+        }
+        return PRECIO_3D;
+    }
+}` },
+      { p: "**Funcion:** la flecha con `1` se vuelve el atributo `pelicula`. venderBoletas revisa primero si alcanza y solo después modifica.", c: `
+public class Funcion {
+    private String hora;
+    private int sillasDisponibles;
+    private int boletasVendidas;
+    private Pelicula pelicula;
+
+    public Funcion(String hora, int sillas, Pelicula pelicula) {
+        this.hora = hora;
+        this.sillasDisponibles = sillas;
+        this.boletasVendidas = 0;
+        this.pelicula = pelicula;
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public Pelicula getPelicula() {
+        return pelicula;
+    }
+
+    public int getSillasDisponibles() {
+        return sillasDisponibles;
+    }
+
+    public boolean venderBoletas(int cantidad) {
+        if (cantidad > sillasDisponibles) {
+            return false;
+        }
+        sillasDisponibles -= cantidad;
+        boletasVendidas += cantidad;
+        return true;
+    }
+
+    public double calcularIngresos() {
+        return boletasVendidas * pelicula.calcularPrecioBoleta();
+    }
+}` },
+      { p: "**Cine:** la flecha con `0..*` se vuelve la lista `funciones`. darFuncionesDe arma una lista nueva y no toca la original.", c: `
+import java.util.ArrayList;
+
+public class Cine {
+    private String nombre;
+    private ArrayList<Funcion> funciones;
+
+    public Cine(String nombre) {
+        this.nombre = nombre;
+        this.funciones = new ArrayList<>();
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void agregarFuncion(Funcion funcion) {
+        funciones.add(funcion);
+    }
+
+    public Funcion buscarFuncion(String hora) {
+        for (Funcion f : funciones) {
+            if (f.getHora().equals(hora)) {
+                return f;
+            }
+        }
+        return null;
+    }
+
+    public double calcularIngresosTotales() {
+        double total = 0;
+        for (Funcion f : funciones) {
+            total += f.calcularIngresos();
+        }
+        return total;
+    }
+
+    public ArrayList<Funcion> darFuncionesDe(String titulo) {
+        ArrayList<Funcion> resultado = new ArrayList<>();
+        for (Funcion f : funciones) {
+            if (f.getPelicula().getTitulo().equals(titulo)) {
+                resultado.add(f);
+            }
+        }
+        return resultado;
+    }
+}` }],
+    rub: ["Estructura según el diagrama: clases, atributos con su tipo, la lista funciones y el atributo pelicula. **20 pts**", "Herencia y abstracción: `abstract`, `extends`, `super`, `@Override` y constantes `static final`. **15 pts**", "Funcionalidad mínima: venderBoletas, calcularIngresos, buscarFuncion, calcularIngresosTotales y darFuncionesDe. **30 pts**", "Compila y está en el ZIP a tiempo. **5 pts**"],
+    rubNote: "Es mi propuesta de reparto sobre 70, armada con lo que dice el LEEME. La ajusto cuando vea la calificación real de tu Parcial 1." }
+];
+
+/* ---------- Quiz ---------- */
+const QUIZ = {
+  A: [
+    { t: "mc", k: "Selección múltiple con caso", fig: "qa1", q: "La línea sale de Tienda y llega a Coleccionable con «-inventario 0..*». ¿Qué código genera?",
+      o: ["En Coleccionable: `private Tienda inventario;`", "En Tienda: `private ArrayList<Coleccionable> inventario;`", "En Tienda: `private Coleccionable inventario;`", "En Tienda: `public class Tienda extends Coleccionable`"], a: 1,
+      oe: ["El atributo va en la clase de donde sale la línea (Tienda), no en la de la punta.",
+        "Sale de Tienda, el rol es inventario y `0..*` significa varios: una lista de Coleccionable en Tienda.",
+        "Así se escribe una multiplicidad `1`. Con `0..*` hace falta una colección.",
+        "`extends` sale de la flecha con triángulo hueco. Esta es una asociación: «conoce a», no «es un»."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class Socio {
+    private String documento;
+    private String nombre;
+
+    public Socio(String documento, String nombre) {
+        this.documento = documento;
+        this.nombre = nombre;
+    }
+}
+
+public class SocioVip extends Socio {
+    private int puntos;
+
+    public SocioVip(String documento, String nombre, int puntos) {
+        this.puntos = puntos;
+    }
+}`, q: "¿Qué pasa al compilar SocioVip?",
+      o: ["Compila, y documento y nombre quedan en `null`.", "No compila: Java pone `super()` sin argumentos y Socio no tiene ese constructor.", "Compila, pero al ejecutar lanza NullPointerException.", "No compila porque puntos debería ser `protected`."], a: 1,
+      oe: ["No compila, así que nunca llega a quedar nada en `null`. Eso pasaría solo si Socio tuviera también un constructor vacío.",
+        "Si la primera línea no es `super(...)`, Java inserta `super()` solo. Socio únicamente tiene el constructor de 2 parámetros, así que no compila. Se arregla con `super(documento, nombre)`.",
+        "El problema aparece antes, al compilar. NullPointerException es un error de ejecución.",
+        "La visibilidad de puntos no importa: es un atributo propio de SocioVip."] },
+    { t: "mc", k: "Selección múltiple con caso", fig: "qa3", q: "Socio es abstracta, implementa Cobrable y no escribe calcularCuota. ¿Cuál afirmación es correcta?",
+      o: ["Socio no compila porque no escribe calcularCuota.", "SocioRegular tiene que escribir calcularCuota: la obligación pasa a la primera hija concreta.", "Se puede hacer `new Socio(...)` siempre que SocioRegular escriba calcularCuota.", "Cobrable tiene que ser una clase abstracta para que Socio la pueda implementar."], a: 1,
+      oe: ["Una clase abstracta puede dejar sin escribir métodos de la interfaz: como no se instancia, no hay problema.",
+        "Una clase concreta tiene que tener todos los métodos de su interfaz, propios o heredados. Como Socio no lo escribió, le toca a SocioRegular.",
+        "Nunca se puede hacer `new` de una clase abstracta, escriba lo que escriba la hija.",
+        "Es al revés: con `implements` se cumplen interfaces. De una clase, abstracta o no, se hereda con `extends`."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa SocioEstudiante a partir del diagrama: hereda de Socio y agrega el atributo carnet.",
+      tpl: `public class SocioEstudiante ___ Socio {
+    private String carnet;
+
+    public SocioEstudiante(String documento, String nombre, String carnet) {
+        ___;
+        this.carnet = carnet;
+    }
+}`,
+      blanks: [{ o: ["implements", "extends", "inherits", "super"], a: 1 }, { o: ["super()", "this(documento, nombre)", "super(documento, nombre)", "Socio(documento, nombre)"], a: 2 }],
+      e: "La línea continua con triángulo hueco es herencia: `extends`. La primera línea del constructor le pasa al padre sus datos, en el orden de su constructor: `super(documento, nombre)`. `super()` no existe porque Socio no tiene constructor vacío, y `this(...)` llamaría a otro constructor de la misma clase." },
+    { t: "write", k: "Código corto · escribir", q: "Club tiene el atributo `private ArrayList<Socio> socios;`. Escribe la línea que va en su constructor para que `agregarSocio` no lance NullPointerException.",
+      rx: /^(this\.)?socios=newArrayList<(Socio)?>\(\);?$/, model: "this.socios = new ArrayList<>();",
+      e: "Declarar la lista no la crea: hasta que haces `new`, socios vale `null` y el primer `add` lanza NullPointerException. También vale sin `this.` o con `new ArrayList<Socio>()`." }
+  ],
+  B: [
+    { t: "mc", k: "Selección múltiple con caso", fig: "qb1", q: "¿Qué significa la línea punteada con punta abierta entre Club e Impresora?",
+      o: ["Club tiene un atributo `private Impresora impresora;`.", "Club usa una Impresora solo dentro de un método: aparece como parámetro, no como atributo.", "Club hereda de Impresora.", "Club implementa la interfaz Impresora."], a: 1,
+      oe: ["Eso sería una asociación, que es una línea continua. La punteada es más débil: Club no guarda la impresora.",
+        "Es una dependencia. Club la recibe en imprimirSocios, la usa ahí y no la guarda.",
+        "La herencia es una línea continua con triángulo hueco.",
+        "La realización es punteada, pero con triángulo hueco, y Impresora no tiene «interface»."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+// CUOTA_BASE = 90000. El regular paga CUOTA_BASE; el estudiante, CUOTA_BASE / 2.
+ArrayList<Socio> socios = new ArrayList<>();
+socios.add(new SocioRegular("101", "Ana"));
+socios.add(new SocioEstudiante("102", "Luis", "E-77"));
+
+double total = 0;
+for (Socio s : socios) {
+    total += s.calcularCuota();
+}`, q: "¿Cuánto vale total al final?",
+      o: ["180000.0", "135000.0", "90000.0", "No compila: Socio es abstracta"], a: 1,
+      oe: ["Eso pasaría si los dos pagaran la cuota base. Cada objeto usa su propia versión de calcularCuota.",
+        "90000 + 45000. La lista es de tipo Socio, pero cada objeto sabe de qué clase es: eso es polimorfismo.",
+        "Ese es solo el regular; el for suma los dos.",
+        "Una lista de tipo Socio sí se puede tener. Lo que no se puede es hacer `new Socio(...)`, y aquí solo se crean hijas."] },
+    { t: "mc", k: "Selección múltiple con caso", fig: "qb3", q: "Pedido y LineaPedido están unidos por un rombo lleno del lado de Pedido. ¿Qué implementación lo respeta?",
+      o: ["agregarLinea crea la línea por dentro: `lineas.add(new LineaPedido(producto, cantidad));`", "Pedido recibe una LineaPedido ya creada, que también está en otro pedido.", "`public class LineaPedido extends Pedido`", "Pedido no lleva atributo: el rombo no se programa."], a: 0,
+      oe: ["En la composición el todo crea y controla sus partes. Por eso el método recibe los datos y no la línea ya hecha.",
+        "Eso es agregación (rombo hueco): la parte existe por fuera y se puede compartir.",
+        "El rombo no es herencia: una línea de pedido no «es un» pedido.",
+        "El rombo sí se programa: con `1..*`, Pedido tiene una lista de LineaPedido."] },
+    { t: "fill", k: "Código corto · completar", q: "Pelicula3D hereda de Pelicula y además cumple la interfaz Imprimible, cuyo único método es `generarTexto()`. Complétala.",
+      tpl: `public class Pelicula3D extends Pelicula ___ Imprimible {
+    // ... atributos y constructor ...
+
+    ___
+    public String generarTexto() {
+        return getTitulo() + " (3D)";
+    }
+}`,
+      blanks: [{ o: ["extends", "implements", ",", "uses"], a: 1 }, { o: ["abstract", "super();", "@Override", "static"], a: 2 }],
+      e: "Una clase hereda de una sola clase con `extends` y cumple interfaces con `implements`, en ese orden. `@Override` encima del método le pide al compilador que verifique que de verdad cumple el de la interfaz." },
+    { t: "write", k: "Código corto · escribir", q: "El diagrama dice `+ buscarSocio(documento: String): Socio`. Escribe la firma del método en Java: la primera línea, sin la llave.",
+      rx: /^publicSociobuscarSocio\(String[A-Za-z_$][\w$]*\)\{?$/, model: "public Socio buscarSocio(String documento)",
+      e: "La regla del volteo: en el diagrama el tipo va después de los dos puntos; en Java va antes. El `+` es `public`, y el tipo que retorna va antes del nombre del método." }
+  ]
+};
+
+/* ---------- Render: figuras y código ---------- */
+document.querySelectorAll("[data-fig]").forEach((d) => { d.innerHTML = umlSvg(FIG[d.dataset.fig], false); });
+document.querySelectorAll("pre[data-code]").forEach((p) => { const c = CODE[p.dataset.code]; p.innerHTML = codeHTML(c.s, !!c.d); });
+(function renderDict() {
+  const box = $("#dict");
+  DICT.forEach((d) => {
+    const c = el("div", "dcard");
+    c.appendChild(el("h4", "", d.n));
+    const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[d.fig], false); c.appendChild(fg);
+    c.appendChild(rich(el("p", "lee"), d.lee));
+    const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(d.c, false); c.appendChild(pre);
+    c.appendChild(rich(el("p", "nota"), d.nota));
+    box.appendChild(c);
+  });
+})();
+
+/* ---------- Lab ---------- */
+const LAB_LINES = [], FILES = [];
+(function parseLab() {
+  let cur = null;
+  LAB.replace(/^\n/, "").split("\n").forEach((raw) => {
+    if (raw.startsWith("#")) { cur = { name: raw.slice(1), lines: [] }; FILES.push(cur); LAB_LINES.push({ file: cur.name }); return; }
+    const i = raw.indexOf("¦"), keys = i > 0 ? raw.slice(0, i).trim() : "", code = i >= 0 ? raw.slice(i + 1) : raw;
+    cur.lines.push(code); LAB_LINES.push({ keys, code, inFile: cur.name });
+  });
+})();
+const labFig = $("#lab-fig"), labCode = $("#lab-code"), labExp = $("#lab-exp"), labAsk = $("#lab-ask"), labStatus = $("#lab-status");
+labFig.innerHTML = umlSvg(FIG.mini, true);
+labCode.innerHTML = LAB_LINES.map((l, i) => l.file ? '<span class="cl file">// ' + esc(l.file) + "</span>" : '<span class="cl' + (l.keys ? " k" : "") + '" data-i="' + i + '"' + (l.keys ? ' data-k="' + l.keys + '"' : "") + ">" + (hl(l.code) || " ") + "</span>").join("");
+let mode = "exp", reto = null;
+function clearCls(cls) { document.querySelectorAll("#lab ." + cls).forEach((e) => e.classList.remove(cls)); }
+function addCls(keys, cls) { keys.forEach((k) => document.querySelectorAll('#lab [data-k~="' + k + '"]').forEach((e) => e.classList.add(cls))); }
+function scrollCodeTo(node) { if (node) labCode.scrollTop = Math.max(0, node.offsetTop - 48); }
+function scrollFigTo(key) {
+  const g = labFig.querySelector('[data-k="' + key + '"]'), svg = labFig.querySelector("svg");
+  if (!g || !svg || labFig.scrollWidth <= labFig.clientWidth) return;
+  try { const b = g.getBBox(), sc = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width; labFig.scrollLeft = Math.max(0, b.x * sc - 24); } catch (e) { /* sin bbox */ }
+}
+function showExp(keys) {
+  labExp.className = "lab-exp"; labExp.textContent = "";
+  keys.forEach((k) => { labExp.appendChild(el("p", "lx-t", KLABEL[k] || k)); labExp.appendChild(rich(el("p"), EXPL[k] || "")); });
+}
+function introExp() {
+  labExp.className = "lab-exp"; labExp.textContent = "";
+  labExp.appendChild(rich(el("p", "muted"), "Empieza por la flecha entre Club y Socio, o por `CUOTA_BASE`, que está subrayado. La explicación aparece aquí y el código se resalta abajo."));
+}
+function selectKeys(keys, fromCode) {
+  clearCls("on"); addCls(keys, "on"); showExp(keys);
+  if (fromCode) scrollFigTo(keys[0]); else scrollCodeTo(labCode.querySelector(".cl.on"));
+}
+labFig.addEventListener("click", (ev) => {
+  const g = ev.target.closest(".hit"); if (!g) return;
+  if (mode === "exp") selectKeys([g.dataset.k], false); else answerReto(g.dataset.k);
+});
+labFig.addEventListener("keydown", (ev) => {
+  if (ev.key !== "Enter" && ev.key !== " ") return;
+  const g = ev.target.closest(".hit"); if (!g) return;
+  ev.preventDefault(); g.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+});
+labCode.addEventListener("click", (ev) => {
+  if (mode !== "exp") return;
+  const line = ev.target.closest(".cl.k"); if (!line) return;
+  selectKeys(line.dataset.k.split(" "), true);
+});
+function setMode(m) {
+  mode = m;
+  $("#mode-exp").setAttribute("aria-pressed", String(m === "exp"));
+  $("#mode-reto").setAttribute("aria-pressed", String(m === "reto"));
+  ["on", "good", "bad", "ask"].forEach(clearCls);
+  if (m === "reto") startReto();
+  else { labAsk.hidden = true; labStatus.textContent = "Toca cualquier parte del diagrama o una línea del código."; introExp(); }
+}
+$("#mode-exp").addEventListener("click", () => setMode("exp"));
+$("#mode-reto").addEventListener("click", () => setMode("reto"));
+function startReto() { reto = { order: shuffle(RETO.slice()), i: 0, score: 0, done: false }; showRound(); }
+function showRound() {
+  const r = reto.order[reto.i]; reto.done = false;
+  ["on", "good", "bad", "ask"].forEach(clearCls);
+  labAsk.hidden = false; labAsk.textContent = "";
+  labAsk.appendChild(el("p", "eyebrow", "Reto · " + (reto.i + 1) + " de " + reto.order.length));
+  labAsk.appendChild(rich(el("p"), "¿Qué parte del diagrama genera `" + r.c + "`? Tócala."));
+  labStatus.textContent = "Aciertos: " + reto.score;
+  labExp.className = "lab-exp"; labExp.textContent = ""; labExp.appendChild(el("p", "muted", "La línea está marcada en amarillo en el código."));
+  const idx = LAB_LINES.findIndex((l) => l.inFile === r.file && l.code.includes(r.find));
+  const node = idx >= 0 ? labCode.querySelector('[data-i="' + idx + '"]') : null;
+  if (node) { node.classList.add("ask"); scrollCodeTo(node); }
+}
+function answerReto(key) {
+  if (!reto || reto.done) return;
+  const r = reto.order[reto.i], ok = r.ok.includes(key);
+  reto.done = true; if (ok) reto.score++;
+  clearCls("good"); clearCls("bad");
+  if (ok) addCls([key], "good"); else { addCls([key], "bad"); addCls([r.ok[0]], "good"); }
+  labStatus.textContent = "Aciertos: " + reto.score;
+  labExp.className = "lab-exp " + (ok ? "ok" : "no"); labExp.textContent = "";
+  labExp.appendChild(rich(el("p"), (ok ? "**Correcto.** " : "**No es esa.** La correcta quedó en verde. ") + r.why));
+  const last = reto.i === reto.order.length - 1;
+  const b = el("button", "btn small", last ? "Ver resultado" : "Siguiente"); b.type = "button";
+  b.addEventListener("click", () => { if (last) finishReto(); else { reto.i++; showRound(); } });
+  labExp.appendChild(b); b.focus({ preventScroll: true });
+}
+function finishReto() {
+  ["on", "good", "bad", "ask"].forEach(clearCls);
+  labAsk.hidden = false; labAsk.textContent = "";
+  labAsk.appendChild(el("p", "eyebrow", "Reto terminado"));
+  labAsk.appendChild(el("p", "", "Acertaste " + reto.score + " de " + reto.order.length + "." + (reto.score >= 8 ? " Ya lees el diagrama como el código." : " Repasa en Explorar las que fallaste y vuelve a intentarlo.")));
+  labExp.className = "lab-exp"; labExp.textContent = "";
+  const b = el("button", "btn small", "Otra vez"); b.type = "button"; b.addEventListener("click", startReto); labExp.appendChild(b);
+}
+introExp();
+
+/* Archivos para copiar y experimentos */
+(function renderFiles() {
+  const box = $("#files");
+  FILES.forEach((f) => {
+    const d = el("details", "rev");
+    d.appendChild(el("summary", "", f.name));
+    const body = el("div", "rev-body");
+    const src = f.lines.join("\n").replace(/\n+$/, "");
+    const row = el("div", "copyrow"); const b = el("button", "btn small ghost", "Copiar " + f.name); b.type = "button"; const msg = el("span", "copymsg"); msg.setAttribute("aria-live", "polite");
+    const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(src, false);
+    b.addEventListener("click", () => {
+      const fallback = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = "Quedó seleccionado: cópialo con Ctrl+C."; };
+      try { navigator.clipboard.writeText(src).then(() => { msg.textContent = "Copiado."; }, fallback); } catch (e) { fallback(); }
+    });
+    row.appendChild(b); row.appendChild(msg); body.appendChild(row); body.appendChild(pre);
+    d.appendChild(body); box.appendChild(d);
+  });
+  const ex = $("#exps");
+  EXPS.forEach((x, i) => {
+    const d = el("details", "rev");
+    const s = el("summary"); s.appendChild(el("span", "", "Experimento " + (i + 1) + " · ")); rich(s, x.t); d.appendChild(s);
+    const body = el("div", "rev-body"); body.appendChild(rich(el("p"), "**Qué pasa y por qué:** " + x.r)); d.appendChild(body);
+    ex.appendChild(d);
+  });
+})();
+
+/* ---------- Taller ---------- */
+function fmtT(s) { return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function timerEl(min, id) {
+  const w = el("div", "timer"), t = el("span", "mono tval", fmtT(min * 60)), b = el("button", "btn small", "Iniciar");
+  b.type = "button"; b.id = id; t.setAttribute("role", "timer");
+  let left = min * 60, iv = null;
+  b.addEventListener("click", () => {
+    if (w.classList.contains("over")) { w.classList.remove("over"); left = min * 60; t.textContent = fmtT(left); b.textContent = "Iniciar"; return; }
+    if (iv) { clearInterval(iv); iv = null; w.classList.remove("run"); b.textContent = "Seguir"; return; }
+    w.classList.add("run"); b.textContent = "Pausar";
+    iv = setInterval(() => {
+      left--; t.textContent = fmtT(Math.max(left, 0));
+      if (left <= 0) { clearInterval(iv); iv = null; w.classList.remove("run"); w.classList.add("over"); t.textContent = "Tiempo"; b.textContent = "Reiniciar"; }
+    }, 1000);
+  });
+  w.appendChild(el("span", "eyebrow", "Meta " + min + " min")); w.appendChild(t); w.appendChild(b);
+  return w;
+}
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(timerEl(p.min, "timer-" + p.n));
+    const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[p.fig], false); a.appendChild(fg);
+    const tx = el("div", "prob-txt"); p.txt.forEach((t) => tx.appendChild(rich(el("p"), t)));
+    if (p.list) { const ul = el("ul"); p.list.forEach((t) => ul.appendChild(rich(el("li"), t))); tx.appendChild(ul); }
+    a.appendChild(tx);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"), fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.o.forEach((o, oi) => {
+        const b = rich(el("button", "opt"), o); b.type = "button"; b.id = "ck-" + p.n + "-" + ci + "-" + oi;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Compara tu código con la solución."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(rich(el("p"), ht)); d.appendChild(b); rv.appendChild(d); });
+    const dr = el("details", "rev"); dr.appendChild(el("summary", "", "Rúbrica tipo profe"));
+    const rb = el("div", "rev-body"); const ul = el("ul", "rub"); p.rub.forEach((r) => ul.appendChild(rich(el("li"), r))); rb.appendChild(ul);
+    if (p.rubNote) rb.appendChild(el("p", "muted", p.rubNote));
+    dr.appendChild(rb); rv.appendChild(dr);
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body");
+    p.sol.forEach((s) => { sb.appendChild(rich(el("p"), s.p)); const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(s.c, false); sb.appendChild(pre); });
+    ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); rich(lt, it.q); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[it.fig], false); fs.appendChild(fg); }
+    if (it.code) { const pre = el("pre", "code"); pre.innerHTML = codeHTML(it.code, false); fs.appendChild(pre); }
+    if (it.t === "mc") {
+      const ops = el("div", "qopts");
+      it.o.forEach((o, oi) => {
+        const lab = el("label", "qopt"), r = el("input"); r.type = "radio"; r.name = key + "-q" + i; r.id = key + "-q" + i + "-o" + oi; r.value = String(oi);
+        lab.appendChild(r); lab.appendChild(rich(el("span", "", String.fromCharCode(65 + oi) + ") "), o)); ops.appendChild(lab);
+      });
+      fs.appendChild(ops);
+    } else if (it.t === "fill") {
+      const pre = el("pre", "code qfill"); let b = 0;
+      it.tpl.split("\n").forEach((line) => {
+        const cl = el("span", "cl"); const segs = line.split("___");
+        segs.forEach((sg, j) => {
+          if (j > 0) {
+            const sel = el("select"); sel.id = key + "-q" + i + "-b" + b; sel.setAttribute("aria-label", "Espacio " + (b + 1));
+            const o0 = el("option", "", "—"); o0.value = ""; sel.appendChild(o0);
+            it.blanks[b].o.forEach((o, oi) => { const op = el("option", "", o); op.value = String(oi); sel.appendChild(op); });
+            cl.appendChild(sel); b++;
+          }
+          if (sg) { const sp = el("span"); sp.innerHTML = hl(sg); cl.appendChild(sp); }
+        });
+        if (!line) cl.appendChild(document.createTextNode(" "));
+        pre.appendChild(cl);
+      });
+      fs.appendChild(pre);
+    } else {
+      const inp = el("input", "qwrite"); inp.type = "text"; inp.id = key + "-q" + i + "-w"; inp.autocomplete = "off"; inp.spellcheck = false;
+      inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off"); inp.setAttribute("aria-label", "Tu respuesta"); inp.placeholder = "Escribe aquí tu línea de Java";
+      fs.appendChild(inp);
+    }
+    const ex = el("div", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+function readAnswer(key, it, i) {
+  if (it.t === "mc") { const c = document.querySelector('input[name="' + key + "-q" + i + '"]:checked'); return c ? Number(c.value) : null; }
+  if (it.t === "fill") { const v = it.blanks.map((_, b) => $("#" + key + "-q" + i + "-b" + b).value); return v.some((x) => x === "") ? null : v.map(Number); }
+  const v = $("#" + key + "-q" + i + "-w").value.trim(); return v ? v : null;
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase()), items = QUIZ[key];
+  const answers = items.map((it, i) => readAnswer(key, it, i));
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : "Te faltan " + missing + " preguntas por responder."; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0; const saved = [];
+  items.forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i], ex = fs.querySelector(".qexp"), ans = answers[i];
+    let ok = false; ex.textContent = "";
+    if (it.t === "mc") {
+      ok = ans === it.a;
+      fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === ans) lab.classList.add("wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + "Por qué cada opción:"));
+      const ul = el("ul");
+      it.oe.forEach((t, oi) => { const li = el("li"); li.appendChild(el("span", "mk " + (oi === it.a ? "y" : "n"), String.fromCharCode(65 + oi) + (oi === it.a ? " ✓" : " ✗"))); li.appendChild(rich(el("span"), t)); ul.appendChild(li); });
+      ex.appendChild(ul);
+      saved.push(String.fromCharCode(65 + ans));
+    } else if (it.t === "fill") {
+      ok = it.blanks.every((bl, b) => ans[b] === bl.a);
+      it.blanks.forEach((bl, b) => { const s = $("#" + key + "-q" + i + "-b" + b); s.classList.add(ans[b] === bl.a ? "right" : "wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** Así va: " + it.blanks.map((bl) => "`" + bl.o[bl.a] + "`").join(" y ") + ". ") + it.e));
+      saved.push(it.blanks.map((bl, b) => bl.o[ans[b]]).join(" | "));
+    } else {
+      ok = it.rx.test(ans.replace(/\s+/g, ""));
+      $("#" + key + "-q" + i + "-w").classList.add(ok ? "right" : "wrong");
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** ") + "Respuesta modelo: `" + it.model + "`. " + it.e));
+      saved.push(ans.slice(0, 200));
+    }
+    if (ok) score++;
+    ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    fs.querySelectorAll("input, select").forEach((x) => (x.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? "Aprobado. Pasas a M2 · Manejo de errores." : "Todavía no. Lee por qué fallaste cada una, repasa esa idea de la teoría y haz el Quiz B."));
+  const note = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(note);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: "M1", quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: saved, fecha: new Date().toISOString() });
+      note.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { note.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

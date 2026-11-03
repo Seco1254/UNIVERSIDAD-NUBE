@@ -96,6 +96,8 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 ```
 
 ### M1 — De UML a Java
+> **Artifact:** [M1 · De UML a Java](https://claude.ai/artifact/T8pydDxRpDQE4CxTnz7hiB). Usa un mini-caso propio (un club con socios); el código de la teoría y del taller está probado en Java 21. Tu Parcial 1 y los UML del profe entran como T5 cuando subas la carpeta 06.
+
 *Refuerzo (Examen 1) · Base de la práctica de 70 pts · Mar 3 · 1–1,5 h*
 *Material: repaso_base/UML (carpeta 02) · 2. UML (carpeta 03) · UML de parciales anteriores (carpeta 06)*
 
