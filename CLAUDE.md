@@ -53,6 +53,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Cálculo 2 | M4 · Raíz, cociente, alternantes y ¿qué criterio uso? (incluye la estrategia de M5) | https://claude.ai/artifact/Hwk6wh6if4YTKyEPgNBC2V | `CALCULO_2/PARCIAL_3/artifacts/M4.html` |
 | Cálculo 2 | M6 · Series de potencias: radio e intervalo de convergencia | https://claude.ai/artifact/2B2r4zNC2NfohFrv2GW7Z1 | `CALCULO_2/PARCIAL_3/artifacts/M6.html` |
 | Cálculo 2 | M7 · Series de Taylor con la geométrica | https://claude.ai/artifact/1CqgP2hEhtPdqfHwKDdUJ8 | `CALCULO_2/PARCIAL_3/artifacts/M7.html` |
+| Cálculo 2 | Plan Examen final (tracker de progreso en `progreso/`, docs `M1`…`M10`; los simulacros M9 y M10 van sobre 50) | https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU | `CALCULO_2/FINAL/artifacts/plan.html` |
 
 ## Convenciones
 
