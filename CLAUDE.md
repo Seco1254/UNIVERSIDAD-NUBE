@@ -38,6 +38,8 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | M9 · Mini-simulacro de 40 min (intentos en `intentos/`, nota sobre 70) | https://claude.ai/artifact/UXeERsnHz1KwRKXLtDuVpi | `FISICA_1/PARCIAL_2/artifacts/M9.html` |
 | Física 1 | **Plan Parcial 3 y Final** (dos fases; tracker en `progreso/`, docs `M1`…`M8`, `X1` y `F1`…`F5`) | https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/plan.html` |
 | Física 1 | P3 · M1 · Momento lineal, impulso y choques | https://claude.ai/artifact/3kx6GGb7J88waFWh6Aufew | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M1.html` |
+| Física 1 | P3 · M2 · Centro de masa y explosiones | https://claude.ai/artifact/66MsHun6zFbtocWYR4MoXA | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M2.html` |
+| Física 1 | P3 · X1 · Exprés de inercia y torque (Tarea 9) | https://claude.ai/artifact/GLJp5tPNiUUEgmZUZhrJcP | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/X1.html` |
 
 ## Convenciones
 

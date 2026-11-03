@@ -1,0 +1,903 @@
+<title>Exprés inercia y torque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; módulo X1 del Parcial 3. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+
+/* Exprés: inercia y torque */
+.sv-mass{fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6}
+.sv-axis{fill:var(--surface); stroke:var(--red); stroke-width:2}
+.sv-rod{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-disk{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.8}
+.sv-ring{stroke:var(--ink); stroke-width:6; fill:none}
+.sv-ring2{stroke:var(--ink); stroke-width:3.5; fill:none}
+.sv-plate{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+</style>
+
+<nav class="nav" aria-label="Secciones del exprés">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>25 min</span></a>
+    <a href="#taller">2 Taller <span>15 min</span></a>
+    <a href="#quiz">3 Quiz <span>5 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 3 · Exprés para la Tarea 9</p>
+    <h1>Momento de inercia y torque</h1>
+    <div class="meta">
+      <span class="chip-hot">Evaluación de la Tarea 9: miércoles 4</span>
+      <span>~45 min</span>
+      <span>Libro: 9.5, 9.6 y 10.1 · Diapositivas 19 del profe</span>
+    </div>
+    <p class="prose">Es una versión corta para que llegues listo a la evaluación de mañana, que pregunta por el momento de inercia de dos anillos y por el torque sobre una placa. Aquí está lo justo para resolver esos ejercicios. La versión completa, con lab, viene en <b>M4</b> (inercia) y <b>M5</b> (torque).</p>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es el momento de inercia, la tabla de los cuerpos que más salen, el teorema de ejes paralelos y el torque con su signo. Cinco ejemplos resueltos, solo con letras.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este exprés</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">eje</td><td>—</td><td>La línea alrededor de la cual gira el cuerpo. En las figuras, ⊙ es un eje perpendicular a la página.</td><td>—</td></tr>
+          <tr><td class="mono">I</td><td>«i mayúscula»</td><td>Momento de inercia: qué tanto se resiste un cuerpo a empezar a girar (o a dejar de girar) alrededor de un eje.</td><td>kg·m²</td></tr>
+          <tr><td class="mono">r</td><td>«erre»</td><td>Distancia de cada masa al eje, medida en perpendicular al eje.</td><td>m</td></tr>
+          <tr><td class="mono">M, R, L</td><td>—</td><td>Masa, radio y largo de un cuerpo. La masa va con M mayúscula.</td><td>kg, m, m</td></tr>
+          <tr><td class="mono">I<sub>CM</sub></td><td>«i ce eme»</td><td>Momento de inercia respecto a un eje que pasa por el centro de masa (M2).</td><td>kg·m²</td></tr>
+          <tr><td class="mono">D</td><td>«de»</td><td>Distancia entre el eje que pasa por el CM y un eje nuevo paralelo a él.</td><td>m</td></tr>
+          <tr><td class="mono">τ</td><td>«tau» (letra griega)</td><td>Torque: qué tanto una fuerza hace girar un cuerpo alrededor de un eje.</td><td>N·m</td></tr>
+          <tr><td class="mono">φ</td><td>«fi»</td><td>Ángulo entre la línea que va del eje al punto donde se aplica la fuerza (r) y la fuerza (F).</td><td>grados</td></tr>
+          <tr><td class="mono">brazo</td><td>«brazo de palanca»</td><td>Distancia del eje a la línea de la fuerza: r·sen φ.</td><td>m</td></tr>
+          <tr><td class="mono">k̂</td><td>«ka gorro»</td><td>Dirección perpendicular a la página, saliendo hacia ti. Un torque antihorario apunta en +k̂.</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Todo con letras. Si algo se cancela, aparece <span class="cx">tachado</span>.</p>
+    </div>
+
+    <div class="block">
+      <h3>1. El momento de inercia</h3>
+      <p class="prose">La masa dice qué tan difícil es acelerar algo en línea recta. El <b>momento de inercia</b> dice qué tan difícil es hacerlo girar. No depende solo de cuánta masa hay, sino de <b>qué tan lejos del eje</b> está: la masa lejos del eje cuenta mucho más, porque la distancia va al cuadrado.</p>
+      <div class="eq"><span><b>I = Σ M<sub>i</sub> · r<sub>i</sub>²</b></span><span>r<sub>i</sub> es la distancia de cada masa al eje. Una masa que está justo sobre el eje no aporta nada.</span></div>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · del profe, clase 20</span>
+            <h4 id="wx1-h">Tres masas unidas por alambres</h4>
+            <p>Tres masas, M, 2M y 3M, están unidas por alambres rígidos sin masa de largo a: 2M está encima de M y 3M a su derecha. El eje es perpendicular a la página.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale I si el eje pasa por M? ¿Y si pasa por 2M?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej1"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Eje en M: distancia de cada masa al eje.</p><p class="why">M está sobre el eje (r = 0). 2M y 3M están a un alambre de distancia.</p><div class="mx">r<sub>M</sub> = 0, r<sub>2M</sub> = a, r<sub>3M</sub> = a</div></li>
+          <li><p class="what">Suma M·r² de cada una.</p><div class="mx">I<sub>A</sub> = M·0² + 2M·a² + 3M·a² = 5M·a²</div></li>
+          <li><p class="what">Eje en 2M: distancias nuevas.</p><p class="why">M está a a. 3M está en la diagonal del cuadrado de lado a: por Pitágoras, √(a² + a²) = √2·a.</p><div class="mx">r<sub>M</sub> = a, r<sub>2M</sub> = 0, r<sub>3M</sub> = √2·a</div></li>
+          <li><p class="what">Suma otra vez.</p><p class="why">(√2·a)² = 2a².</p><div class="mx">I<sub>B</sub> = M·a² + 2M·0² + 3M·(√2·a)² = M·a² + 6M·a² = 7M·a²</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> I<sub>A</sub> = 5M·a² e I<sub>B</sub> = 7M·a².</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es el mismo cuerpo, pero con otro eje da otro I. El momento de inercia depende de dónde está el eje; por eso siempre se dice «respecto a qué eje».</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>2. La tabla de momentos de inercia</h3>
+      <p class="prose">Para cuerpos continuos, la suma se vuelve una integral (el profe la hizo en clase). En el parcial basta con saber la tabla. Todos tienen la forma (número)·M·R²: el número dice qué tan lejos del eje está la masa en promedio.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Cuerpo (eje por el centro)</th><th>I</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td>Anillo o cilindro hueco de radio R</td><td class="mono">M·R²</td><td>Toda la masa está a la distancia R.</td></tr>
+          <tr><td>Disco o cilindro sólido</td><td class="mono">½·M·R²</td><td>Hay masa cerca del centro, que aporta poco.</td></tr>
+          <tr><td>Esfera hueca</td><td class="mono">(2/3)·M·R²</td><td></td></tr>
+          <tr><td>Esfera sólida</td><td class="mono">(2/5)·M·R²</td><td></td></tr>
+          <tr><td>Barra de largo L, eje por el centro</td><td class="mono">(1/12)·M·L²</td><td></td></tr>
+          <tr><td>Barra de largo L, eje por un extremo</td><td class="mono">(1/3)·M·L²</td><td>Sale de la de arriba con ejes paralelos (ejemplo 2).</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>3. Teorema de ejes paralelos</h3>
+      <p class="prose">Si conoces I respecto a un eje que pasa por el centro de masa, puedes hallarlo respecto a <b>cualquier eje paralelo</b> a ese: le sumas la masa por la distancia entre los dos ejes al cuadrado.</p>
+      <div class="eq"><span><b>I = I<sub>CM</sub> + M · D²</b></span><span>Ojo: el punto de partida tiene que ser el eje <b>por el CM</b>, y D es la distancia entre los dos ejes.</span></div>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · del profe, clase 20</span>
+            <h4 id="wx2-h">Una barra que gira por un extremo</h4>
+            <p>Una barra uniforme de masa M y largo L gira alrededor de un eje perpendicular que pasa por uno de sus extremos.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale I?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej2"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca I<sub>CM</sub> en la tabla.</p><p class="why">El CM de la barra está en su mitad.</p><div class="mx">I<sub>CM</sub> = <span class="frac"><span>1</span><span>12</span></span>·M·L²</div></li>
+          <li><p class="what">Distancia entre los dos ejes.</p><p class="why">Del centro de la barra al extremo hay media barra.</p><div class="mx">D = <span class="frac"><span>L</span><span>2</span></span></div></li>
+          <li><p class="what">Aplica el teorema.</p><p class="why">1/12 + 1/4 = 1/12 + 3/12 = 4/12 = 1/3.</p><div class="mx">I = <span class="frac"><span>1</span><span>12</span></span>·M·L² + M·(<span class="frac"><span>L</span><span>2</span></span>)² = <span class="frac"><span>1</span><span>12</span></span>·M·L² + <span class="frac"><span>1</span><span>4</span></span>·M·L² = <span class="frac"><span>1</span><span>3</span></span>·M·L²</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> I = (1/3)·M·L², el valor de la tabla.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Por el extremo cuesta 4 veces más hacerla girar que por el centro, porque ahora hay masa hasta una distancia L del eje y no solo L/2.</p>
+      </article>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3</span>
+            <h4 id="wx3-h">Un disco que gira por el borde</h4>
+            <p>Un disco uniforme de masa M y radio R gira alrededor de un eje perpendicular al disco que pasa por un punto de su borde.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale I?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej3"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">I<sub>CM</sub> de la tabla.</p><div class="mx">I<sub>CM</sub> = ½·M·R²</div></li>
+          <li><p class="what">Distancia del centro al eje nuevo.</p><p class="why">El eje está en el borde: a un radio del centro.</p><div class="mx">D = R</div></li>
+          <li><p class="what">Ejes paralelos.</p><div class="mx">I = ½·M·R² + M·R² = <span class="frac"><span>3</span><span>2</span></span>·M·R²</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> I = (3/2)·M·R².</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es más que ½·M·R² (eje en el centro), porque ahora casi toda la masa está más lejos del eje. Para un anillo pasa lo mismo: M·R² + M·R² = 2·M·R². Eso es lo que necesitas en el ejercicio 3 de la tarea.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>4. El torque</h3>
+      <p class="prose">Para abrir una puerta empujas lejos de las bisagras y en perpendicular a la puerta. Si empujas cerca de las bisagras, o empujas hacia las bisagras, no gira. El <b>torque</b> mide eso: cuánto hace girar una fuerza.</p>
+      <div class="eq"><span><b>τ = r · F · sen φ</b></span><span>r: distancia del eje al punto donde se aplica la fuerza. φ: ángulo entre r y F. r·sen φ es el brazo de palanca.</span></div>
+      <p class="prose"><b>El signo:</b> se toma positivo si la fuerza hace girar en sentido <b>antihorario</b> (contrario a las manecillas del reloj) y negativo si es <b>horario</b>. Como vector, un torque antihorario apunta en +k̂ (saliendo de la página).</p>
+      <div class="eq"><span><b>τ = x · F<sub>y</sub> − y · F<sub>x</sub></b></span><span>La forma más segura con varias fuerzas: pones el origen en el eje, x y y son las coordenadas del punto donde actúa la fuerza y F<sub>x</sub>, F<sub>y</sub> sus componentes. El signo sale solo.</span></div>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4</span>
+            <h4 id="wx4-h">Una fuerza inclinada en la punta de una barra</h4>
+            <p>Una barra de largo L gira alrededor de un eje en su extremo izquierdo. En la punta derecha se aplica una fuerza F que forma un ángulo φ con la barra, hacia arriba.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale el torque y cuándo es máximo?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej4"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Identifica r y φ.</p><p class="why">r va del eje a la punta: r = L. El ángulo entre la barra (r) y F es φ.</p></li>
+          <li><p class="what">Aplica la fórmula.</p><div class="mx">τ = L·F·sen φ</div></li>
+          <li><p class="what">Mira el signo.</p><p class="why">La fuerza apunta hacia arriba en la punta derecha: hace girar en sentido antihorario.</p><div class="mx">τ = +L·F·sen φ (antihorario, +k̂)</div></li>
+          <li><p class="what">Casos extremos.</p><p class="why">sen 90° = 1 y sen 0° = 0.</p><div class="mx">φ = 90°: τ = L·F (máximo)<span class="ar">y</span>φ = 0°: τ = 0 (empuja a lo largo de la barra)</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> τ = L·F·sen φ, antihorario. Máximo cuando la fuerza es perpendicular a la barra.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es la puerta: empujar en perpendicular es lo que más la abre, y empujar hacia las bisagras no la mueve.</p>
+      </article>
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5</span>
+            <h4 id="wx5-h">Torque neto sobre un cuadrado</h4>
+            <p>Un cuadrado de lado 2s gira alrededor de un eje O en su centro. En la esquina de arriba a la derecha actúa una fuerza F₁ hacia abajo, y en la esquina de arriba a la izquierda una fuerza F₂ hacia abajo.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale el torque neto respecto a O?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej5"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Origen en O y coordenadas de cada esquina.</p><p class="why">Desde el centro, cada esquina está a s en x y a s en y.</p><div class="mx">F₁ actúa en (s, s)<span class="ar">y</span>F₂ actúa en (−s, s)</div></li>
+          <li><p class="what">Componentes de cada fuerza.</p><p class="why">Las dos apuntan hacia abajo: solo tienen componente y, negativa.</p><div class="mx">F₁ = (0, −F₁)<span class="ar">y</span>F₂ = (0, −F₂)</div></li>
+          <li><p class="what">Torque de cada una con τ = x·F<sub>y</sub> − y·F<sub>x</sub>.</p><div class="mx">τ₁ = s·(−F₁) − s·0 = −s·F₁ (horario)<br>τ₂ = (−s)·(−F₂) − s·0 = +s·F₂ (antihorario)</div></li>
+          <li><p class="what">Suma.</p><div class="mx">τ<sub>neto</sub> = s·(F₂ − F₁)</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> τ<sub>neto</sub> = s·(F₂ − F₁): antihorario si F₂ es más grande y horario si F₁ es más grande.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> La fuerza de la derecha empuja la placa a girar como el reloj y la de la izquierda al revés; gana la más grande. En el ejercicio 4 de la tarea hay una tercera fuerza inclinada: con la misma fórmula, x·F<sub>y</sub> − y·F<sub>x</sub>, sale sola.</p>
+      </article>
+    </div>
+
+    <div class="callout trap"><h3>Trampas típicas</h3>
+      <p>En ejes paralelos, partir de un eje que no pasa por el CM.</p>
+      <p>Usar la distancia al centro del cuerpo en vez de la distancia al eje.</p>
+      <p>Olvidar el signo del torque: con varias fuerzas, unas giran en un sentido y otras en el otro.</p>
+      <p>En τ = r·F·sen φ, usar el ángulo con la horizontal en vez del ángulo entre r y F.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="w-h">Taller</h2><p>Los ejercicios 3 y 4 de la Tarea 9 y dos variantes de los ejemplos del profe.</p></div>
+    <p class="prose">Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 3. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="q-h">Quiz exprés</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Si sacas 4/5 o más, vas listo para la Tarea 9.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M3 · Cinemática rotacional. La inercia y el torque se ven completos, con lab, en M4 y M5.</p>
+    <p>Fuentes: diapositivas 19 del profe Ávila (clase 20), Tarea 9 de la complementaria E2, Young &amp; Freedman 9.5, 9.6 y 10.1.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Figuras del exprés ---------- */
+const DEG = Math.PI / 180;
+const sb = (base, s, rest = "") => `${base}<tspan dy="3" font-size="9">${s}</tspan><tspan dy="-3">${rest}</tspan>`;
+function axisMark(x, y, lab = "eje") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="8" class="sv-axis"/><circle cx="${f1(x)}" cy="${f1(y)}" r="2.2" class="sv-axle"/>` + (lab ? T(x - 11, y + 20, lab, "sv-tl", "end") : ""); }
+function mass(x, y, lab, r = 8, dx = 12, dy = -8, anchor = "start") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" class="sv-mass"/>` + T(x + dx, y + dy, lab, "sv-t", anchor); }
+function tresMasasSvg(o = {}) {
+  const mx = 110, my = 150, a = 100, P = { M: [mx, my], "2M": [mx, my - a], "3M": [mx + a, my] };
+  let g = `<line x1="${mx}" y1="${my}" x2="${mx}" y2="${my - a}" class="sv-rope"/><line x1="${mx}" y1="${my}" x2="${mx + a}" y2="${my}" class="sv-rope"/>`;
+  g += T(mx - 10, my - a / 2 + 4, "a", "sv-tl", "end") + T(mx + a / 2, my + 18, "a", "sv-tl", "middle");
+  if (o.axis === "2M") g += `<line x1="${mx}" y1="${my - a}" x2="${mx + a}" y2="${my}" class="sv-dash"/>` + T(mx + a / 2 + 12, my - a / 2 - 4, "√2·a", "sv-tl");
+  if (o.axis === "3M") g += `<line x1="${mx}" y1="${my - a}" x2="${mx + a}" y2="${my}" class="sv-dash"/>` + T(mx + a / 2 + 12, my - a / 2 - 4, "√2·a", "sv-tl");
+  g += mass(mx, my, "M", 8, -12, 18, "end") + mass(mx, my - a, "2M", 9, -14, -6, "end") + mass(mx + a, my, "3M", 10, 14, -10);
+  if (o.axis) { const [x, y] = P[o.axis]; g += axisMark(x, y, ""); g += T(x + 16, y + 22, "eje", "sv-tl"); }
+  return `<svg viewBox="0 0 320 182" role="img" aria-label="Tres masas M, 2M y 3M unidas por alambres de largo a: 2M encima de M y 3M a la derecha de M">${g}</svg>`;
+}
+function barraSvg(o = {}) {
+  const x0 = 40, x1 = 280, y = 90, L = x1 - x0;
+  let g = `<rect x="${x0}" y="${y - 8}" width="${L}" height="16" rx="4" class="sv-rod"/>`;
+  const ax = x0 + L * (o.at ?? 0);
+  g += axisMark(ax, y, "");
+  g += `<line x1="${x0}" y1="${y + 30}" x2="${x1}" y2="${y + 30}" class="sv-dim"/><line x1="${x0}" y1="${y + 25}" x2="${x0}" y2="${y + 35}" class="sv-dim"/><line x1="${x1}" y1="${y + 25}" x2="${x1}" y2="${y + 35}" class="sv-dim"/>` + T((x0 + x1) / 2, y + 46, o.Llab || "L", "sv-t", "middle");
+  if (o.cm !== false) g += `<line x1="${(x0 + x1) / 2}" y1="${y - 16}" x2="${(x0 + x1) / 2}" y2="${y + 16}" class="sv-dash"/>` + T((x0 + x1) / 2, y - 22, "CM", "sv-tl", "middle");
+  if (o.D) g += `<line x1="${ax}" y1="${y - 34}" x2="${(x0 + x1) / 2}" y2="${y - 34}" class="sv-dim"/>` + T((ax + (x0 + x1) / 2) / 2, y - 40, o.D, "sv-t", "middle");
+  g += T(ax, y + 22, "eje", "sv-tl", "middle");
+  if (o.massEnd) g += mass(x1, y, o.massEnd, 11, 0, -18, "middle");
+  if (o.label) g += T(x0, y - 18, o.label, "sv-tl");
+  return `<svg viewBox="0 0 320 150" role="img" aria-label="Barra uniforme de largo L con un eje perpendicular">${g}</svg>`;
+}
+function discoBordeSvg(o = {}) {
+  const cx = 170, cy = 92, R = 66;
+  let g = o.ring ? `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-ring"/>` : `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>` + T(cx + 6, cy - 6, "CM", "sv-tl");
+  g += `<line x1="${cx}" y1="${cy}" x2="${cx - R}" y2="${cy}" class="sv-dash"/>` + T(cx - R / 2, cy - 6, "R", "sv-t", "middle");
+  g += axisMark(cx - R, cy, "") + T(cx - R - 12, cy + 4, "eje", "sv-tl", "end");
+  g += T(cx + R + 4, cy - R + 8, o.ring ? "anillo" : "disco", "sv-tl");
+  return `<svg viewBox="0 0 320 184" role="img" aria-label="Un ${o.ring ? "anillo" : "disco"} de radio R con un eje perpendicular en su borde">${g}</svg>`;
+}
+function anillosSvg() {
+  const R = 64, cy = 96, c1 = 96, c2 = c1 + 2 * R;
+  let g = `<circle cx="${c1}" cy="${cy}" r="${R}" class="sv-ring2"/><circle cx="${c2}" cy="${cy}" r="${R}" class="sv-ring2"/>`;
+  g += `<circle cx="${c1}" cy="${cy}" r="2.5" class="sv-axle"/><circle cx="${c2}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  g += `<line x1="${c1}" y1="${cy}" x2="${f1(c1 + R * Math.cos(-50 * DEG))}" y2="${f1(cy + R * Math.sin(-50 * DEG))}" class="sv-dash"/>` + T(c1 + 22, cy - 26, "R", "sv-t");
+  g += `<line x1="${c2}" y1="${cy}" x2="${f1(c2 + R * Math.cos(-50 * DEG))}" y2="${f1(cy + R * Math.sin(-50 * DEG))}" class="sv-dash"/>` + T(c2 + 22, cy - 26, "R", "sv-t");
+  g += axisMark(c1 - R, cy, "") + T(c1 - R + 4, cy + 28, "eje", "sv-tl", "middle");
+  g += T(c1, cy + R + 16, "M", "sv-t", "middle") + T(c2, cy + R + 16, "M", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 186" role="img" aria-label="Dos anillos iguales de masa M y radio R unidos por un punto de sus bordes; el eje pasa por el borde izquierdo del primer anillo">${g}</svg>`;
+}
+function placaSvg(o = {}) {
+  const cx = 160, cy = 114, h = 64;
+  let g = `<rect x="${cx - h}" y="${cy - h}" width="${2 * h}" height="${2 * h}" class="sv-plate"/>` + `<circle cx="${cx}" cy="${cy}" r="3" class="sv-axle"/>` + T(cx + 6, cy + 16, "O", "sv-t");
+  if (o.generic) {
+    g += arrowSvg(cx + h, cy - h - 40, cx + h, cy - h - 2, "a-f") + T(cx + h + 6, cy - h - 24, o.f1 || sb("F", "1"), "sv-t t-f");
+    if (o.f2) g += arrowSvg(cx - h, cy - h - 40, cx - h, cy - h - 2, "a-f") + T(cx - h - 6, cy - h - 24, o.f2, "sv-t t-f", "end");
+    if (o.f3) g += arrowSvg(cx + h, cy + h + 40, cx + h, cy + h + 2, "a-f") + T(cx + h + 6, cy + h + 26, o.f3, "sv-t t-f");
+    g += T(cx, cy - h - 6, o.side || "2s", "sv-tl", "middle") + T(cx - h - 6, cy + 4, o.side || "2s", "sv-tl", "end");
+  } else {
+    g += arrowSvg(cx - h, cy - h - 44, cx - h, cy - h - 2, "a-f") + T(cx - h - 6, cy - h - 26, sb("F", "2"), "sv-t t-f", "end");
+    g += arrowSvg(cx + h, cy - h - 44, cx + h, cy - h - 2, "a-f") + T(cx + h + 6, cy - h - 26, sb("F", "1"), "sv-t t-f");
+    g += arrowSvg(cx + h - 34, cy + h + 34, cx + h - 2, cy + h + 2, "a-f") + T(cx + h - 28, cy + h + 30, sb("F", "3"), "sv-t t-f", "end");
+    g += `<line x1="${cx + h}" y1="${cy + h}" x2="${cx + h - 44}" y2="${cy + h}" class="sv-dash"/>` + `<path d="M ${cx + h - 22} ${cy + h} A 22 22 0 0 0 ${f1(cx + h - 22 * Math.cos(45 * DEG))} ${f1(cy + h + 22 * Math.sin(45 * DEG))}" class="sv-arc"/>` + T(cx + h - 42, cy + h + 16, "45°", "sv-ang-s", "end");
+    g += T(cx, cy - h - 6, "0,180 m", "sv-tl", "middle") + T(cx - h - 6, cy + 4, "0,180 m", "sv-tl", "end");
+  }
+  return `<svg viewBox="0 0 320 236" role="img" aria-label="Placa cuadrada con su centro O y fuerzas en las esquinas">${g}</svg>`;
+}
+function barraFuerzaSvg(o = {}) {
+  const x0 = 40, x1 = 250, y = 112, phi = (o.phi ?? 40) * DEG;
+  let g = `<rect x="${x0}" y="${y - 7}" width="${x1 - x0}" height="14" rx="4" class="sv-rod"/>` + axisMark(x0, y, "") + T(x0, y + 26, "eje", "sv-tl", "middle");
+  if (o.parallel) g += arrowSvg(x1 + 4, y, x1 + 56, y, "a-f") + T(x1 + 30, y - 10, "F", "sv-t t-f", "middle");
+  else {
+    const ex = x1 + 70 * Math.cos(phi), ey = y - 70 * Math.sin(phi);
+    g += arrowSvg(x1, y, ex, ey, "a-f") + T(ex + 4, ey - 4, "F", "sv-t t-f");
+    g += `<line x1="${x1}" y1="${y}" x2="${x1 + 60}" y2="${y}" class="sv-dash"/>` + `<path d="M ${x1 + 30} ${y} A 30 30 0 0 0 ${f1(x1 + 30 * Math.cos(phi))} ${f1(y - 30 * Math.sin(phi))}" class="sv-arc"/>` + T(x1 + 40, y - 8, o.phiLab || "φ", "sv-ang");
+  }
+  g += `<line x1="${x0}" y1="${y + 40}" x2="${x1}" y2="${y + 40}" class="sv-dim"/>` + T((x0 + x1) / 2, y + 56, "L", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 180" role="img" aria-label="Barra con un eje en su extremo izquierdo y una fuerza F en la punta derecha">${g}</svg>`;
+}
+function dosMasasEjeSvg() {
+  const x0 = 50, x1 = 270, y = 84;
+  let g = `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" class="sv-rope"/>` + mass(x0, y, "M", 11, 0, -18, "middle") + mass(x1, y, "M", 11, 0, -18, "middle") + axisMark((x0 + x1) / 2, y, "") + T((x0 + x1) / 2, y + 26, "eje", "sv-tl", "middle");
+  g += `<line x1="${x0}" y1="${y + 40}" x2="${x1}" y2="${y + 40}" class="sv-dim"/>` + T((x0 + x1) / 2, y + 56, "L (barra sin masa)", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 150" role="img" aria-label="Dos masas M en los extremos de una barra sin masa de largo L, con el eje en el centro">${g}</svg>`;
+}
+function anilloDiscoSvg() {
+  let g = `<circle cx="90" cy="90" r="56" class="sv-ring"/>` + axisMark(90, 90, "") + T(90, 168, "anillo", "sv-tl", "middle");
+  g += `<circle cx="232" cy="90" r="56" class="sv-disk"/>` + axisMark(232, 90, "") + T(232, 168, "disco", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 180" role="img" aria-label="Un anillo y un disco de igual masa y radio, cada uno con un eje perpendicular por su centro">${g}</svg>`;
+}
+function dosFuerzasBarraSvg() {
+  const x0 = 50, x1 = 270, y = 100, cx = (x0 + x1) / 2;
+  let g = `<rect x="${x0}" y="${y - 7}" width="${x1 - x0}" height="14" rx="4" class="sv-rod"/>` + axisMark(cx, y, "") + T(cx, y + 26, "eje", "sv-tl", "middle");
+  g += arrowSvg(x1, y - 10, x1, y - 58, "a-f") + T(x1 + 6, y - 40, "F", "sv-t t-f") + arrowSvg(x0, y + 10, x0, y + 58, "a-f") + T(x0 - 6, y + 46, "F", "sv-t t-f", "end");
+  g += `<line x1="${x0}" y1="${y + 74}" x2="${x1}" y2="${y + 74}" class="sv-dim"/>` + T(cx, y + 90, "2s", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 200" role="img" aria-label="Barra de largo 2s con eje en el centro; en el extremo derecho una fuerza F hacia arriba y en el izquierdo una F hacia abajo">${g}</svg>`;
+}
+const FIG = {
+  ej1: () => tresMasasSvg({ axis: "M" }),
+  ej2: () => barraSvg({ at: 0, D: "L/2" }),
+  ej3: () => discoBordeSvg(),
+  ej4: () => barraFuerzaSvg(),
+  ej5: () => placaSvg({ generic: true, f1: sb("F", "1"), f2: sb("F", "2") })
+};
+
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+
+/* ---------- Taller ---------- */
+const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const PROBS = [
+  { n: "T1", t: "Las tres masas con el eje en 3M", src: "Variante del ejemplo del profe (clase 20)",
+    fig: () => tresMasasSvg({ axis: "3M" }),
+    txt: "Con el mismo sistema del ejemplo resuelto 1 (M en la esquina, 2M encima y 3M a la derecha, alambres de largo a), halla el momento de inercia respecto a un eje perpendicular a la página que pasa por 3M.",
+    hints: ["3M está sobre el eje: no aporta. M está a una distancia a.", "2M está en la diagonal: √2·a."],
+    sol: [{ w: "Distancias al eje en 3M.", m: "r<sub>M</sub> = a, r<sub>2M</sub> = √2·a, r<sub>3M</sub> = 0" }, { w: "Suma M·r².", m: "I = M·a² + 2M·(√2·a)² + 0 = M·a² + 4M·a² = 5M·a²" }],
+    res: "I = 5M·a².",
+    checks: [{ q: "¿Cuánto vale I?", opts: ["3M·a²", "5M·a²", "7M·a²", "9M·a²"], a: 1 }] },
+  { n: "T2", t: "Dos anillos unidos por el borde", src: "Tarea 9, ejercicio 3",
+    fig: () => anillosSvg(),
+    txt: "Dos anillos delgados idénticos, de masa M y radio R, están unidos rígidamente por un punto de sus bordes. El sistema gira alrededor de un eje perpendicular al plano de los anillos que pasa por el borde de uno de ellos (figura). Halla el momento de inercia total respecto a ese eje.",
+    hints: ["Cada anillo respecto a su centro: M·R². Usa ejes paralelos para cada uno por separado y suma.", "El centro del anillo de la izquierda está a R del eje; el del otro, a 3R."],
+    sol: [{ w: "Anillo de la izquierda.", y: "Su centro está a R del eje.", m: "I₁ = M·R² + M·R² = 2M·R²" }, { w: "Anillo de la derecha.", y: "Del eje al punto donde se tocan hay 2R, y de ahí a su centro, R más: D = 3R.", m: "I₂ = M·R² + M·(3R)² = M·R² + 9M·R² = 10M·R²" }, { w: "Suma.", m: "I = I₁ + I₂ = 12M·R²" }],
+    res: "I = 12M·R².",
+    checks: [{ q: "¿Cuánto vale I total?", opts: ["2M·R²", "6M·R²", "10M·R²", "12M·R²"], a: 3 }] },
+  { n: "T3", t: "Torque neto sobre una placa", src: "Tarea 9, ejercicio 4",
+    fig: () => placaSvg(),
+    txt: "Halla el torque neto (vector) respecto al punto O sobre una placa cuadrada de lado 0,180 m, por las tres fuerzas de la figura: F₁ = 18 N hacia abajo en la esquina de arriba a la derecha, F₂ = 24 N hacia abajo en la esquina de arriba a la izquierda y F₃ = 14 N en la esquina de abajo a la derecha, a 45° hacia arriba y a la derecha. Resuélvelo con letras (s = mitad del lado) y al final reemplaza.",
+    hints: ["Origen en O. Las esquinas están en (±s, ±s) con s = 0,090 m.", "F₃ = (F₃·cos 45°, F₃·sen 45°) y actúa en (s, −s). Usa τ = x·F<sub>y</sub> − y·F<sub>x</sub> para cada una."],
+    sol: [{ w: "F₁ en (s, s), hacia abajo.", m: "τ₁ = s·(−F₁) − s·0 = −s·F₁" }, { w: "F₂ en (−s, s), hacia abajo.", m: "τ₂ = (−s)·(−F₂) − s·0 = +s·F₂" }, { w: "F₃ en (s, −s), con componentes iguales.", y: "cos 45° = sen 45° = √2/2.", m: `τ₃ = s·F₃·${fr("√2", "2")} − (−s)·F₃·${fr("√2", "2")} = √2·s·F₃` }, { w: "Torque neto y números.", m: "τ = s·(F₂ − F₁ + √2·F₃) = 0,090·(24 − 18 + 19,8) ≈ 2,32 N·m" }],
+    res: "τ ≈ +2,32 N·m: antihorario, en +k̂ (saliendo de la página).",
+    checks: [{ q: "¿Cuánto vale el torque neto?", opts: ["−2,32 N·m", "0,54 N·m", "2,32 N·m", "5,04 N·m"], a: 2 }] },
+  { n: "T4", t: "Una barra con el eje a L/4 de un extremo", src: "Variante con ejes paralelos",
+    fig: () => barraSvg({ at: 0.25, D: "L/4" }),
+    txt: "Una barra uniforme de masa M y largo L gira alrededor de un eje perpendicular que pasa a L/4 de uno de sus extremos. ¿Cuánto vale I?",
+    hints: ["Parte de I<sub>CM</sub> = M·L²/12.", "Del centro de la barra al eje hay L/2 − L/4 = L/4."],
+    sol: [{ w: "Distancia del CM al eje.", m: `D = ${fr("L", "2")} − ${fr("L", "4")} = ${fr("L", "4")}` }, { w: "Ejes paralelos.", y: "1/12 + 1/16 = 4/48 + 3/48 = 7/48.", m: `I = ${fr("1", "12")}·M·L² + M·${fr("L²", "16")} = ${fr("7", "48")}·M·L²` }],
+    res: "I = (7/48)·M·L².",
+    checks: [{ q: "¿Cuánto vale I?", opts: ["M·L²/12", "7M·L²/48", "M·L²/3", "M·L²/16"], a: 1 }] }
+];
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck) => {
+      const c = el("div", "check"); const cq = el("p"); cq.innerHTML = "Chequeo rápido · " + ck.q; c.appendChild(cq);
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button";
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb2 = el("div", "rev-body"); sb2.innerHTML = stepsHtml(p.sol) + `<div class="wx-res"><b>Resultado:</b> ${p.res}</div>`; ds.appendChild(sb2); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "X1", NEXT = "Aprobado. Vas listo para la Tarea 9. Después sigue M3 · Cinemática rotacional.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => anilloDiscoSvg(), q: "Un anillo y un disco tienen la misma masa M y el mismo radio R. Respecto a un eje perpendicular por su centro, ¿cuál tiene mayor momento de inercia?",
+      o: ["El disco", "El anillo", "Son iguales", "Depende de qué tan rápido giren"], a: 1,
+      e: "Anillo: M·R², porque toda la masa está en el borde. Disco: ½·M·R², porque parte de la masa está cerca del centro." },
+    { k: "Conceptual", fig: () => discoBordeSvg(), q: "Un disco de masa M y radio R gira alrededor de un eje perpendicular que pasa por su borde. ¿Cuánto vale I?",
+      o: ["½·M·R²", "M·R²", "(3/2)·M·R²", "2·M·R²"], a: 2,
+      e: "Ejes paralelos: I = I_CM + M·D² = ½·M·R² + M·R² = (3/2)·M·R²." },
+    { k: "Conceptual", fig: () => barraFuerzaSvg({ parallel: true }), q: "En la punta de una barra que gira alrededor de su otro extremo se aplica una fuerza F a lo largo de la barra, alejándose del eje. ¿Cuánto vale el torque?",
+      o: ["L·F", "L·F/2", "0", "Depende de la masa de la barra"], a: 2,
+      e: "El ángulo entre r y F es 0° y sen 0° = 0. Una fuerza a lo largo de la barra no la hace girar." },
+    { k: "Tipo parcial", fig: () => dosMasasEjeSvg(), q: "Dos masas M están en los extremos de una barra sin masa de largo L. ¿Cuánto vale I respecto a un eje perpendicular por el centro de la barra?",
+      o: ["M·L²/4", "M·L²/2", "M·L²", "2·M·L²"], a: 1,
+      e: "Cada masa está a L/2 del eje: I = 2·M·(L/2)² = 2·M·L²/4 = M·L²/2." },
+    { k: "Tipo parcial", fig: () => placaSvg({ generic: true, f1: "F", f3: "2F", side: "2s" }), q: "Un cuadrado de lado 2s gira alrededor de su centro O. Actúan F hacia abajo en la esquina de arriba a la derecha y 2F hacia arriba en la esquina de abajo a la derecha. ¿Cuánto vale el torque neto respecto a O?",
+      o: ["s·F, antihorario", "3·s·F, antihorario", "s·F, horario", "0"], a: 0,
+      e: "Con τ = x·F_y − y·F_x: F en (s, s) da s·(−F) = −s·F; 2F en (s, −s) da s·(2F) = +2s·F. Neto: +s·F, antihorario." }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => tresMasasSvg({ axis: "M" }), q: "¿De qué depende el momento de inercia de un cuerpo?",
+      o: ["Solo de su masa", "De su masa y de cómo está repartida respecto al eje", "Solo de qué tan rápido gira", "Solo de su forma, no de la masa"], a: 1,
+      e: "I = Σ M·r²: importa cuánta masa hay y a qué distancia del eje está. Con otro eje, otro I." },
+    { k: "Conceptual", fig: () => discoBordeSvg({ ring: true }), q: "Un anillo delgado de masa M y radio R gira alrededor de un eje perpendicular que pasa por su borde. ¿Cuánto vale I?",
+      o: ["M·R²", "(3/2)·M·R²", "2·M·R²", "3·M·R²"], a: 2,
+      e: "I = I_CM + M·D² = M·R² + M·R² = 2·M·R²." },
+    { k: "Conceptual", fig: () => barraFuerzaSvg({ phi: 30, phiLab: "30°" }), q: "Una barra de largo L gira alrededor de su extremo izquierdo. En la punta derecha actúa una fuerza F que forma 30° con la barra. ¿Cuánto vale el torque?",
+      o: ["L·F", "L·F/2", "L·F·√3/2", "0"], a: 1,
+      e: "τ = L·F·sen 30° = L·F/2." },
+    { k: "Tipo parcial", fig: () => barraSvg({ at: 0, massEnd: "M" }), q: "Una barra uniforme de masa M y largo L tiene una masa puntual M pegada en su extremo libre. Gira alrededor de un eje perpendicular en el otro extremo. ¿Cuánto vale I?",
+      o: ["M·L²/3", "M·L²", "(4/3)·M·L²", "2·M·L²"], a: 2,
+      e: "Barra por el extremo: M·L²/3. Masa puntual a L: M·L². Suma: (4/3)·M·L²." },
+    { k: "Tipo parcial", fig: () => dosFuerzasBarraSvg(), q: "Una barra de largo 2s gira alrededor de su centro. En el extremo derecho actúa F hacia arriba y en el izquierdo F hacia abajo. ¿Cuánto vale el torque neto?",
+      o: ["0", "s·F", "2·s·F, antihorario", "2·s·F, horario"], a: 2,
+      e: "Derecha: s·F (antihorario). Izquierda: (−s)·(−F) = s·F (antihorario). Neto: 2·s·F, antihorario. Las dos hacen girar hacia el mismo lado." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

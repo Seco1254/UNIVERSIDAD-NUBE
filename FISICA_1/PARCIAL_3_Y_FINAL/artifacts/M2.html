@@ -1,0 +1,1015 @@
+<title>M2 Centro de masa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; módulo M2 del Parcial 3. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+
+/* P3·M2: centro de masa */
+.sv-mass{fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6}
+.sv-cm{fill:var(--surface); stroke:var(--red); stroke-width:2}
+.sv-cmx{stroke:var(--red); stroke-width:1.6}
+.a-ax{stroke:var(--muted); fill:var(--muted)}
+.sv-plate{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-boat{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-water{stroke:var(--accent); stroke-width:1.2; fill:none; opacity:.7}
+.sv-turtle{fill:var(--green-soft); stroke:var(--green); stroke-width:1.6}
+.sv-burst{fill:var(--orange-soft); stroke:var(--orange); stroke-width:1.4}
+.sv-path1{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:3 3; fill:none}
+.sv-path2{stroke:var(--orange); stroke-width:1.6; stroke-dasharray:3 3; fill:none}
+.sv-ring{stroke:var(--ink); stroke-width:6; fill:none}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>30 min</span></a>
+    <a href="#lab">2 Lab <span>10 min</span></a>
+    <a href="#taller">3 Taller <span>25 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 3 · Módulo 2 de 8</p>
+    <h1>Centro de masa y explosiones</h1>
+    <div class="meta">
+      <span class="chip-hot">Tarea 9 y Quiz 4: miércoles 4</span>
+      <span>Miércoles 4 de noviembre · ~1,2 h</span>
+      <span>Libro: 8.5 · Diapositivas 18 del profe · Tarea 9</span>
+    </div>
+    <p class="prose">Un sistema de muchos cuerpos (una barca con una persona, una granada que explota) tiene un punto especial: el <b>centro de masa</b>. Ese punto se mueve como si toda la masa estuviera ahí y solo las fuerzas de afuera lo empujaran. Por eso, si nadie de afuera empuja, el centro de masa sigue su camino como si nada, aunque por dentro todo se mueva o explote.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas al exprés de inercia y torque.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es el centro de masa, cómo se calcula con masas puntuales y con láminas, por qué no se mueve si no hay fuerza externa y qué pasa en una explosión. Cuatro ejemplos resueltos, solo con letras.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">CM</td><td>«centro de masa»</td><td>El punto que se mueve como si toda la masa del sistema estuviera concentrada ahí.</td><td>—</td></tr>
+          <tr><td class="mono">X<sub>CM</sub>, Y<sub>CM</sub></td><td>«equis ce eme», «ye ce eme»</td><td>Las coordenadas del centro de masa.</td><td>m</td></tr>
+          <tr><td class="mono">x<sub>i</sub>, y<sub>i</sub></td><td>«equis sub i»</td><td>Posición del cuerpo número i (1, 2, 3…), medida desde el origen que tú escojas.</td><td>m</td></tr>
+          <tr><td class="mono">M<sub>i</sub></td><td>«eme sub i»</td><td>Masa del cuerpo número i. Va en mayúscula para no confundirla con la <b>m</b> de metros.</td><td>kg</td></tr>
+          <tr><td class="mono">M<sub>total</sub></td><td>«eme total»</td><td>La suma de todas las masas: M₁ + M₂ + …</td><td>kg</td></tr>
+          <tr><td class="mono">Σ</td><td>«sigma»</td><td>«Suma de»: Σ M<sub>i</sub>·x<sub>i</sub> = M₁·x₁ + M₂·x₂ + …</td><td>—</td></tr>
+          <tr><td class="mono">A<sub>i</sub></td><td>«a sub i»</td><td>Área de cada pedazo de una lámina. Si la lámina es uniforme, la masa de cada pedazo es proporcional a su área.</td><td>m²</td></tr>
+          <tr><td class="mono">v<sub>CM</sub></td><td>«ve ce eme»</td><td>Velocidad del centro de masa. Cumple M<sub>total</sub>·v<sub>CM</sub> = p<sub>total</sub>.</td><td>m/s</td></tr>
+          <tr><td class="mono">R</td><td>«erre»</td><td>Alcance: distancia horizontal a la que cae un proyectil.</td><td>m</td></tr>
+          <tr><td class="mono">L</td><td>«ele»</td><td>Largo de una barca o canoa.</td><td>m</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo va paso a paso. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Todo se resuelve con letras. Si una letra se cancela, aparece <span class="cx">tachada</span>.</p>
+    </div>
+
+    <!-- 1 -->
+    <div class="block">
+      <h3>1. El centro de masa de varias masas puntuales</h3>
+      <p class="prose">El centro de masa es un <b>promedio ponderado</b> de las posiciones: cada posición pesa según su masa. Si las masas son iguales, es el punto medio; si una es más pesada, el CM se acerca a ella. Cada coordenada se calcula por separado:</p>
+      <div class="eq"><span><b>X<sub>CM</sub> = Σ M<sub>i</sub>·x<sub>i</sub> / M<sub>total</sub><span class="ar">y</span>Y<sub>CM</sub> = Σ M<sub>i</sub>·y<sub>i</sub> / M<sub>total</sub></b></span><span>Mide todas las posiciones desde el <b>mismo origen</b>. Conviene ponerlo sobre una de las masas.</span></div>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · del profe, clase 17</span>
+            <h4 id="wx1-h">Tres masas en un rectángulo</h4>
+            <p>Tres masas están como en la figura: M en (0, a), 2M en (b, a) y 3M en (b, 0).</p>
+            <p><b>Pregunta:</b> ¿dónde está el centro de masa?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej1"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Suma las masas.</p><div class="mx">M<sub>total</sub> = M + 2M + 3M = 6M</div></li>
+          <li><p class="what">Calcula Σ M<sub>i</sub>·x<sub>i</sub>.</p><p class="why">Cada masa por su coordenada x. La M está en x = 0, así que no aporta.</p><div class="mx">M·0 + 2M·b + 3M·b = 5M·b</div></li>
+          <li><p class="what">Divide entre la masa total.</p><div class="mx">X<sub>CM</sub> = <span class="frac"><span>5<span class="cx">M</span>·b</span><span>6<span class="cx">M</span></span></span> = <span class="frac"><span>5b</span><span>6</span></span></div></li>
+          <li><p class="what">Lo mismo en y.</p><p class="why">Ahora la 3M está en y = 0 y no aporta.</p><div class="mx">Y<sub>CM</sub> = <span class="frac"><span>M·a + 2M·a + 3M·0</span><span>6M</span></span> = <span class="frac"><span>3<span class="cx">M</span>·a</span><span>6<span class="cx">M</span></span></span> = <span class="frac"><span>a</span><span>2</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> R<sub>CM</sub> = (5b/6, a/2).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> En x, 5 de las 6 partes de la masa están en x = b, así que el CM queda muy cerca de b. En y, la mitad de la masa (M + 2M = 3M) está arriba y la otra mitad (3M) abajo: queda justo en la mitad.</p>
+      </article>
+    </div>
+
+    <!-- 2 -->
+    <div class="block">
+      <h3>2. Láminas uniformes: divide en pedazos</h3>
+      <p class="prose">En un cuerpo uniforme y simétrico (un rectángulo, un disco, un anillo) el CM está en el centro geométrico, aunque ahí no haya masa (en un anillo, el CM queda en el hueco). Para una lámina con forma rara, la <b>divides en rectángulos</b>: cada rectángulo se reemplaza por una masa puntual en su centro, con masa proporcional a su área. Después usas la fórmula del punto 1 con las áreas en vez de las masas.</p>
+      <div class="eq"><span><b>X<sub>CM</sub> = Σ A<sub>i</sub>·x<sub>i</sub> / Σ A<sub>i</sub></b></span><span>Funciona porque, si la lámina es uniforme, M<sub>i</sub> = (M/A<sub>total</sub>)·A<sub>i</sub> y ese factor se cancela arriba y abajo.</span></div>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2</span>
+            <h4 id="wx2-h">Un cuadrado al que le falta una esquina</h4>
+            <p>Una lámina uniforme es un cuadrado de lado 2a al que le quitaron el cuadrado de lado a de la esquina de arriba a la derecha.</p>
+            <p><b>Pregunta:</b> ¿dónde está su centro de masa? Origen en la esquina de abajo a la izquierda.</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej2"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Divide la lámina en pedazos fáciles.</p><p class="why">Quedan tres cuadrados de lado a, todos con la misma área a². Cada uno se reemplaza por su centro.</p><div class="mx">centros: (a/2, a/2), (3a/2, a/2) y (a/2, 3a/2)</div></li>
+          <li><p class="what">Áreas iguales: el CM es el promedio simple.</p><p class="why">Como las tres áreas son iguales, la fórmula queda (x₁ + x₂ + x₃)/3.</p><div class="mx">X<sub>CM</sub> = <span class="frac"><span>a/2 + 3a/2 + a/2</span><span>3</span></span> = <span class="frac"><span>5a/2</span><span>3</span></span> = <span class="frac"><span>5a</span><span>6</span></span></div></li>
+          <li><p class="what">Lo mismo en y.</p><div class="mx">Y<sub>CM</sub> = <span class="frac"><span>a/2 + a/2 + 3a/2</span><span>3</span></span> = <span class="frac"><span>5a</span><span>6</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> R<sub>CM</sub> = (5a/6, 5a/6).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El cuadrado entero tendría el CM en (a, a). Al quitarle la esquina de arriba a la derecha, el CM se corre hacia abajo y hacia la izquierda: 5a/6 es un poco menos que a. Y queda sobre la diagonal, porque la figura es simétrica respecto a ella.</p>
+      </article>
+    </div>
+
+    <!-- 3 -->
+    <div class="block">
+      <h3>3. Si no hay fuerza externa, el CM no se mueve</h3>
+      <p class="prose">El profe lo muestra así: el momento total del sistema es la masa total por la velocidad del CM.</p>
+      <div class="eq"><span><b>p<sub>total</sub> = M<sub>total</sub> · v<sub>CM</sub></b></span><span>Si no hay fuerza externa, p<sub>total</sub> no cambia (M1), así que v<sub>CM</sub> tampoco. Si el sistema empezó quieto, <b>el CM se queda quieto</b>: X<sub>CM, antes</sub> = X<sub>CM, después</sub>.</span></div>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · parecido al del profe</span>
+            <h4 id="wx3-h">Una persona camina en una barca</h4>
+            <p>Una persona de masa M está parada en un extremo de una barca de masa 4M y largo L, quieta sobre agua sin fricción. La persona camina hasta el otro extremo.</p>
+            <p><b>Pregunta:</b> ¿cuánto se mueve la barca y hacia dónde?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej3"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Revisa si el CM se queda quieto.</p><p class="why">Sin fricción con el agua, no hay fuerza externa horizontal. Todo empezó quieto. Entonces X<sub>CM</sub> no cambia.</p></li>
+          <li><p class="what">Pon el origen y escribe el CM al principio.</p><p class="why">Origen en el extremo izquierdo de la barca, donde empieza la persona. El CM de la barca está en su centro, L/2.</p><div class="mx">X<sub>CM, antes</sub> = <span class="frac"><span>M·0 + 4M·(L/2)</span><span>5M</span></span></div></li>
+          <li><p class="what">Escribe el CM al final.</p><p class="why">La barca se movió una distancia x (todavía no sabes cuánto ni hacia dónde: x puede salir negativa). Ahora la persona está en el extremo derecho, en x + L, y el centro de la barca en x + L/2.</p><div class="mx">X<sub>CM, después</sub> = <span class="frac"><span>M·(x + L) + 4M·(x + L/2)</span><span>5M</span></span></div></li>
+          <li><p class="what">Iguala y despeja x.</p><p class="why">Los denominadores son iguales, así que basta igualar los numeradores. Cancelas M.</p><div class="mx">4·<span class="frac"><span>L</span><span>2</span></span> = (x + L) + 4·(x + <span class="frac"><span>L</span><span>2</span></span>)<span class="ar">→</span>2L = 5x + 3L<span class="ar">→</span>x = −<span class="frac"><span>L</span><span>5</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> la barca se mueve L/5 hacia el lado contrario al que camina la persona.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Respecto al agua, la persona avanza L − L/5 = 4L/5 y la barca retrocede L/5. Persona por su avance: M·(4L/5); barca por su retroceso: 4M·(L/5). Son iguales: el CM no se movió. En general la barca se mueve L·M<sub>persona</sub>/(M<sub>persona</sub> + M<sub>barca</sub>).</p>
+      </article>
+    </div>
+
+    <!-- 4 -->
+    <div class="block">
+      <h3>4. Explosiones: el CM sigue la parábola</h3>
+      <p class="prose">Cuando algo explota, las fuerzas de la explosión son <b>internas</b>: cada pedazo empuja al otro y se cancelan. La única fuerza externa sigue siendo el peso, igual que antes de explotar. Por eso <b>el CM de los pedazos sigue la misma parábola</b> que habría seguido el objeto entero, hasta que algún pedazo toca el piso.</p>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · del profe, clase 17</span>
+            <h4 id="wx4-h">Una esfera que se parte en lo más alto</h4>
+            <p>Se lanza una esfera que, sin romperse, caería a una distancia R del punto de lanzamiento. En lo más alto de su trayectoria se parte en dos pedazos iguales y uno de ellos cae verticalmente.</p>
+            <p><b>Pregunta:</b> ¿a qué distancia del punto de lanzamiento cae el otro pedazo?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej4"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">¿Dónde cae el CM?</p><p class="why">La explosión es interna: el CM sigue la parábola original y cae en R.</p><div class="mx">X<sub>CM</sub> = R</div></li>
+          <li><p class="what">¿Dónde cae el pedazo que baja verticalmente?</p><p class="why">Lo más alto de una parábola está justo en la mitad del alcance, R/2. Si cae verticalmente, cae ahí.</p><div class="mx">x₁ = <span class="frac"><span>R</span><span>2</span></span></div></li>
+          <li><p class="what">Escribe el CM con los dos pedazos.</p><p class="why">Cada pedazo tiene masa M/2. Los dos tocan el piso al mismo tiempo: después de la explosión ninguno tiene velocidad vertical y los dos caen la misma altura.</p><div class="mx">R = <span class="frac"><span>(M/2)·(R/2) + (M/2)·x₂</span><span>M</span></span> = <span class="frac"><span>R</span><span>4</span></span> + <span class="frac"><span>x₂</span><span>2</span></span></div></li>
+          <li><p class="what">Despeja x₂.</p><p class="why">Pasas R/4 al otro lado y multiplicas por 2.</p><div class="mx"><span class="frac"><span>x₂</span><span>2</span></span> = R − <span class="frac"><span>R</span><span>4</span></span> = <span class="frac"><span>3R</span><span>4</span></span><span class="ar">→</span>x₂ = <span class="frac"><span>3R</span><span>2</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> el otro pedazo cae a 3R/2 del punto de lanzamiento.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Los dos pedazos quedan a la misma distancia del punto R, uno a cada lado (R/2 y 3R/2), como debe ser si tienen la misma masa. Si uno fuera más pesado, el CM quedaría más cerca de él.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>Receta</h3>
+      <ol class="steps">
+        <li><span><b>Escoge el origen</b> y escribe la posición de cada masa (o del centro de cada pedazo de lámina).</span></li>
+        <li><span><b>Calcula X<sub>CM</sub> y Y<sub>CM</sub> por separado</b> con la fórmula del promedio ponderado.</span></li>
+        <li><span><b>Si no hay fuerza externa horizontal</b> (barca, patinadores, hielo), iguala X<sub>CM</sub> al principio y al final.</span></li>
+        <li><span><b>En una explosión</b>, el CM sigue la trayectoria original: X<sub>CM</sub> = v·t y Y<sub>CM</sub> = la de caída libre.</span></li>
+      </ol>
+    </div>
+
+    <div class="callout trap"><h3>Trampas que pone el profe</h3>
+      <p>Medir las posiciones desde orígenes distintos: todas tienen que salir del mismo punto.</p>
+      <p>Olvidar que la barca también se mueve: la persona no avanza L respecto al agua.</p>
+      <p>En una lámina, usar el centro de la figura entera en vez del centro de cada pedazo.</p>
+      <p>En una explosión, usar la parábola del CM después de que un pedazo ya tocó el piso.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: la explosión en el aire</h2><p>Un proyectil explota en lo más alto en dos pedazos. Cambia cómo se reparte la masa y qué tan fuerte sale el primer pedazo. Mira el punto del CM: sigue la parábola original pase lo que pase.</p></div>
+    <div class="lab">
+      <div class="lab-stage"><div id="e-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="e-f" id="e-f-lab">Pedazo 1: 1/2 de la masa</label><input type="range" id="e-f" min="0.25" max="0.75" step="0.25" value="0.5"></div>
+        <div class="ctl"><label for="e-u" id="e-u-lab">Velocidad horizontal del pedazo 1 después: 0 (cae vertical)</label><input type="range" id="e-u" min="-0.5" max="1.5" step="0.5" value="0"></div>
+        <div class="qrow"><button type="button" class="btn" id="e-go">Lanzar</button><button type="button" class="btn ghost" id="e-reset">Reiniciar</button></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Cae el pedazo 1 en</span><b id="e-x1">0,50 R</b></div>
+          <div class="ro"><span>Cae el pedazo 2 en</span><b id="e-x2">1,50 R</b></div>
+          <div class="ro"><span>Cae el CM en</span><b id="e-xc">1,00 R</b></div>
+          <div class="status" id="e-status">Listo para lanzar</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Con pedazos iguales y el pedazo 1 cayendo vertical, ¿dónde cae el pedazo 2?</summary>
+          <div class="rev-body"><p><b>En 3R/2</b>, como en el ejemplo resuelto 4.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Pon el pedazo 1 con 1/4 de la masa y cayendo vertical. ¿Dónde cae el pedazo 2?</summary>
+          <div class="rev-body"><p><b>En 7R/6</b>: R = (1/4)(R/2) + (3/4)·x₂, así que x₂ = (7R/8)·(4/3) = 7R/6. El pedazo pesado queda más cerca del CM.</p></div></details>
+        <details class="rev"><summary>Reto 3 · Cambia la velocidad del pedazo 1 como quieras. ¿Cambia el punto donde cae el CM?</summary>
+          <div class="rev-body"><p><b>No.</b> El CM siempre cae en R, porque la explosión solo tiene fuerzas internas.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Los ejercicios 1 y 2 de la Tarea 9, la canoa de la semana 12, el niño en la barca del profe y dos variantes.</p></div>
+    <p class="prose">En cada problema: escoge el origen, escribe cada posición y usa el promedio ponderado. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: el exprés de momento de inercia y torque (Tarea 9, ejercicios 3 y 4) y después M3 · Cinemática rotacional.</p>
+    <p>Fuentes: diapositivas 18 del profe Ávila (clase 17), Tarea 9 y ejercicios de la semana 12 de la complementaria E2, Young &amp; Freedman 8.5.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Figuras de P3·M2 ---------- */
+const DEG = Math.PI / 180;
+const sb = (base, s, rest = "") => `${base}<tspan dy="3" font-size="9">${s}</tspan><tspan dy="-3">${rest}</tspan>`;
+function floorLine(y, x1 = 10, x2 = 310) { let g = `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" class="sv-line"/>`; for (let x = x1 + 8; x < x2; x += 12) g += `<line x1="${x}" y1="${y}" x2="${x - 6}" y2="${y + 6}" class="sv-hatch"/>`; return g; }
+function dot(x, y, lab, dx = 8, dy = -8, anchor = "start") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="7" class="sv-mass"/>` + T(x + dx, y + dy, lab, "sv-t", anchor); }
+function cmMark(x, y, lab = "CM") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="6" class="sv-cm"/><line x1="${f1(x - 6)}" y1="${f1(y)}" x2="${f1(x + 6)}" y2="${f1(y)}" class="sv-cmx"/><line x1="${f1(x)}" y1="${f1(y - 6)}" x2="${f1(x)}" y2="${f1(y + 6)}" class="sv-cmx"/>` + (lab ? T(x + 9, y + 14, lab, "sv-tl") : ""); }
+function axes(ox, oy, w, h) { return arrowSvg(ox, oy, ox + w, oy, "a-ax") + T(ox + w + 4, oy + 4, "x", "sv-t") + arrowSvg(ox, oy, ox, oy - h, "a-ax") + T(ox - 4, oy - h - 4, "y", "sv-t", "end"); }
+function dimH(x1, x2, y, lab) { return `<line x1="${f1(x1)}" y1="${y}" x2="${f1(x2)}" y2="${y}" class="sv-dim"/><line x1="${f1(x1)}" y1="${y - 5}" x2="${f1(x1)}" y2="${y + 5}" class="sv-dim"/><line x1="${f1(x2)}" y1="${y - 5}" x2="${f1(x2)}" y2="${y + 5}" class="sv-dim"/>` + T((x1 + x2) / 2, y + 15, lab, "sv-t", "middle"); }
+function dimV(x, y1, y2, lab, side = "start") { return `<line x1="${x}" y1="${f1(y1)}" x2="${x}" y2="${f1(y2)}" class="sv-dim"/><line x1="${x - 5}" y1="${f1(y1)}" x2="${x + 5}" y2="${f1(y1)}" class="sv-dim"/><line x1="${x - 5}" y1="${f1(y2)}" x2="${x + 5}" y2="${f1(y2)}" class="sv-dim"/>` + T(side === "end" ? x - 7 : x + 7, (y1 + y2) / 2 + 4, lab, "sv-t", side); }
+function tresMasasSvg() {
+  const ox = 60, oy = 160, b = 180, a = 110;
+  let g = axes(ox, oy, b + 40, a + 30);
+  g += `<line x1="${ox}" y1="${oy - a}" x2="${ox + b}" y2="${oy - a}" class="sv-dash"/><line x1="${ox + b}" y1="${oy - a}" x2="${ox + b}" y2="${oy}" class="sv-dash"/>`;
+  g += dot(ox, oy - a, "M", -10, -10, "end") + dot(ox + b, oy - a, "2M", 10, -10) + dot(ox + b, oy, "3M", 10, -8);
+  g += T(ox - 10, oy - a + 4, "a", "sv-tl", "end") + T(ox + b, oy + 18, "b", "sv-tl", "middle");
+  g += cmMark(ox + 5 * b / 6, oy - a / 2);
+  return `<svg viewBox="0 0 320 190" role="img" aria-label="Tres masas: M en (0, a), 2M en (b, a) y 3M en (b, 0), con el centro de masa marcado">${g}</svg>`;
+}
+function lamina3Svg() {
+  const ox = 70, oy = 168, u = 66;
+  let g = axes(ox, oy, 2 * u + 40, 2 * u + 24);
+  g += `<path d="M ${ox} ${oy} L ${ox + 2 * u} ${oy} L ${ox + 2 * u} ${oy - u} L ${ox + u} ${oy - u} L ${ox + u} ${oy - 2 * u} L ${ox} ${oy - 2 * u} Z" class="sv-plate"/>`;
+  g += `<rect x="${ox + u}" y="${oy - 2 * u}" width="${u}" height="${u}" class="sv-ghost"/>` + T(ox + 1.5 * u, oy - 1.5 * u + 4, "falta", "sv-tl", "middle");
+  g += `<line x1="${ox + u}" y1="${oy}" x2="${ox + u}" y2="${oy - u}" class="sv-thin"/><line x1="${ox}" y1="${oy - u}" x2="${ox + u}" y2="${oy - u}" class="sv-thin"/>`;
+  g += dimH(ox, ox + 2 * u, oy + 12, "2a") + dimV(ox - 14, oy - 2 * u, oy, "2a", "end") + T(ox + 1.5 * u + 30, oy - u / 2 + 4, "a", "sv-tl");
+  [[0.5, 0.5], [1.5, 0.5], [0.5, 1.5]].forEach(([cx, cy]) => { g += `<circle cx="${ox + cx * u}" cy="${oy - cy * u}" r="2.5" class="sv-axle"/>`; });
+  return `<svg viewBox="0 0 320 200" role="img" aria-label="Lámina cuadrada de lado 2a a la que le falta el cuadrado de lado a de la esquina superior derecha">${g}</svg>`;
+}
+function barcaRow(yw, bx, L, personAt, labs = {}) {
+  const h = 22;
+  let g = `<path d="M ${bx} ${yw - h} L ${bx + L} ${yw - h} L ${bx + L - 16} ${yw} L ${bx + 16} ${yw} Z" class="sv-boat"/>` + T(bx + L / 2, yw - 6, labs.boat || "4M", "sv-lab", "middle");
+  const px = bx + personAt;
+  g += `<circle cx="${px}" cy="${yw - h - 34}" r="6" class="sv-ball"/><line x1="${px}" y1="${yw - h - 28}" x2="${px}" y2="${yw - h - 12}" class="sv-rope"/><line x1="${px}" y1="${yw - h - 12}" x2="${px - 6}" y2="${yw - h}" class="sv-rope"/><line x1="${px}" y1="${yw - h - 12}" x2="${px + 6}" y2="${yw - h}" class="sv-rope"/><line x1="${px - 8}" y1="${yw - h - 22}" x2="${px + 8}" y2="${yw - h - 22}" class="sv-rope"/>`;
+  g += T(px + 10, yw - h - 30, labs.person || "M", "sv-t");
+  return g;
+}
+function water(y) { let g = ""; for (let x = 12; x < 312; x += 16) g += `<path d="M ${x} ${y} q 4 -3 8 0 t 8 0" class="sv-water"/>`; return g; }
+function barcaSvg(o = {}) {
+  const L = o.Lpx || 180;
+  let g = T(14, 20, "antes", "sv-tag") + water(84) + barcaRow(80, 40, L, 22, o);
+  g += T(14, 112, "después", "sv-tag") + water(176) + barcaRow(172, 40 - (o.shift ?? 36), L, L - 22, o);
+  g += `<line x1="40" y1="96" x2="40" y2="186" class="sv-dash"/>`;
+  if (o.walk) g += arrowSvg(84, 30, 150, 30, "a-v") + T(117, 22, "camina", "sv-tl", "middle");
+  g += dimH(40, 40 + L, 98, "L");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Una persona camina de un extremo al otro de una barca sobre agua sin fricción; la barca se corre hacia el otro lado">${g}</svg>`;
+}
+function explosionSvg(o = {}) {
+  const ox = 30, fy = 160, Rp = 180, H = 92;
+  const X = (x) => ox + x * Rp, Y = (y) => fy - y * H * 4;
+  let d = ""; for (let i = 0; i <= 40; i++) { const x = i / 40; d += (i ? " L " : "M ") + f1(X(x)) + " " + f1(Y(x * (1 - x))); }
+  let g = floorLine(fy, 10, 310) + `<path d="${d}" class="sv-dash"/>`;
+  g += `<circle cx="${X(0)}" cy="${fy}" r="3" class="sv-axle"/>` + T(X(0), fy + 16, "lanzamiento", "sv-tl", "start");
+  g += `<polygon points="${X(0.5) - 9},${Y(0.25) - 2} ${X(0.5) - 3},${Y(0.25) - 10} ${X(0.5) + 3},${Y(0.25) - 2} ${X(0.5) + 9},${Y(0.25) - 11} ${X(0.5) + 6},${Y(0.25) + 3} ${X(0.5) - 6},${Y(0.25) + 4}" class="sv-burst"/>`;
+  g += `<line x1="${X(0.5)}" y1="${Y(0.25) + 10}" x2="${X(0.5)}" y2="${fy - 8}" class="sv-path1"/>` + `<circle cx="${X(0.5)}" cy="${fy - 7}" r="6" class="sv-mass"/>` + T(X(0.5) + 8, fy - 22, o.p1 || "M/2", "sv-t");
+  const x2 = o.x2 || 1.5;
+  let d2 = ""; for (let i = 0; i <= 30; i++) { const t = i / 30; d2 += (i ? " L " : "M ") + f1(X(0.5 + (x2 - 0.5) * t)) + " " + f1(Y(0.25 * (1 - t * t))); }
+  g += `<path d="${d2}" class="sv-path2"/>` + `<circle cx="${f1(X(x2))}" cy="${fy - 7}" r="6" class="sv-mass"/>` + T(X(x2) - 8, fy - 22, o.p2 || "M/2", "sv-t", "end");
+  g += `<line x1="${X(1)}" y1="${fy - 4}" x2="${X(1)}" y2="${fy + 4}" class="sv-line"/>` + T(X(1), fy + 16, "R", "sv-t", "middle") + T(X(0.5), fy + 16, "R/2", "sv-tl", "middle") + T(X(x2), fy + 16, o.x2lab || "x = ?", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 180" role="img" aria-label="Un proyectil explota en lo más alto; un pedazo cae verticalmente en R sobre 2 y el otro cae más lejos">${g}</svg>`;
+}
+function cuatroMasasSvg() {
+  const ox = 90, oy = 160, a = 120;
+  let g = axes(ox, oy, a + 50, a + 26) + `<rect x="${ox}" y="${oy - a}" width="${a}" height="${a}" class="sv-dash"/>`;
+  g += dot(ox, oy, "M", -10, 18, "end") + dot(ox + a, oy, "2M", 10, 18) + dot(ox + a, oy - a, "3M", 10, -8) + dot(ox, oy - a, "4M", -10, -8, "end");
+  g += T(ox + a / 2, oy + 18, "a", "sv-tl", "middle") + T(ox - 12, oy - a / 2 + 4, "a", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 190" role="img" aria-label="Cuatro masas M, 2M, 3M y 4M en las esquinas de un cuadrado de lado a">${g}</svg>`;
+}
+function laminaLSvg() {
+  const ox = 90, oy = 172, s = 1.25, bw = 120 * s, cw = 50 * s, ah = 120 * s, ch = 45 * s;
+  let g = `<path d="M ${ox} ${oy} L ${ox + bw} ${oy} L ${ox + bw} ${oy - ch} L ${ox + bw - cw} ${oy - ch} L ${ox + bw - cw} ${oy - ah} L ${ox} ${oy - ah} Z" class="sv-plate"/>`;
+  g += dimV(ox - 16, oy - ah, oy, "a", "end") + dimH(ox, ox + bw, oy + 12, "b") + dimV(ox + bw + 16, oy - ch, oy, "c") + dimH(ox + bw - cw, ox + bw, oy - ch - 28, "d");
+  return `<svg viewBox="0 0 320 206" role="img" aria-label="Lámina en forma de L: alto a a la izquierda, ancho total b, y a la derecha una parte más baja de ancho d y alto c">${g}</svg>`;
+}
+function canoaSvg(o = {}) {
+  const L = 230, bx = 44, yw = 120, h = 26;
+  let g = water(yw + 4);
+  g += `<path d="M ${bx} ${yw - h} L ${bx + L} ${yw - h} L ${bx + L - 20} ${yw} L ${bx + 20} ${yw} Z" class="sv-boat"/>` + T(bx + L / 2, yw - 8, o.boat || "canoa: 60,0 kg", "sv-tl", "middle");
+  const p1 = bx + L / 5, p2 = bx + 4 * L / 5;
+  g += `<circle cx="${p1}" cy="${yw - h - 34}" r="6" class="sv-ball"/><line x1="${p1}" y1="${yw - h - 28}" x2="${p1}" y2="${yw - h - 12}" class="sv-rope"/><line x1="${p1}" y1="${yw - h - 12}" x2="${p1 - 6}" y2="${yw - h}" class="sv-rope"/><line x1="${p1}" y1="${yw - h - 12}" x2="${p1 + 6}" y2="${yw - h}" class="sv-rope"/>` + T(p1 - 10, yw - h - 34, o.person || "45,0 kg", "sv-tl", "end");
+  g += `<circle cx="${p2}" cy="${yw - h - 34}" r="6" class="sv-ghost"/>` + arrowSvg(p1 + 14, yw - h - 40, p2 - 14, yw - h - 40, "a-v") + T((p1 + p2) / 2, yw - h - 48, "camina", "sv-tl", "middle");
+  if (o.dims !== false) g += dimH(bx, bx + L, yw + 22, o.Llab || "5,00 m") + dimH(bx, p1, yw + 48, "1,00 m") + dimH(p2, bx + L, yw + 48, "1,00 m");
+  return `<svg viewBox="0 0 320 ${o.dims === false ? 140 : 190}" role="img" aria-label="Una persona camina a lo largo de una canoa, de un punto a 1 metro de un extremo hasta un punto a 1 metro del otro">${g}</svg>`;
+}
+function tortugaSvg() {
+  const yw = 120, bx = 104, L = 180, h = 26;
+  let g = water(yw + 4);
+  g += `<ellipse cx="42" cy="${yw - 8}" rx="18" ry="9" class="sv-turtle"/><circle cx="62" cy="${yw - 10}" r="4" class="sv-turtle"/>` + T(42, yw - 22, "tortuga", "sv-tl", "middle");
+  g += `<path d="M ${bx} ${yw - h} L ${bx + L} ${yw - h} L ${bx + L - 18} ${yw} L ${bx + 18} ${yw} Z" class="sv-boat"/>` + T(bx + L / 2, yw - 8, "barca: 100 kg", "sv-tl", "middle");
+  const px = bx + L - 18;
+  g += `<circle cx="${px}" cy="${yw - h - 34}" r="6" class="sv-ball"/><line x1="${px}" y1="${yw - h - 28}" x2="${px}" y2="${yw - h - 12}" class="sv-rope"/><line x1="${px}" y1="${yw - h - 12}" x2="${px - 6}" y2="${yw - h}" class="sv-rope"/><line x1="${px}" y1="${yw - h - 12}" x2="${px + 6}" y2="${yw - h}" class="sv-rope"/>` + T(px - 12, yw - h - 30, "niño: 25 kg", "sv-tl", "end");
+  g += dimH(60, bx, yw + 22, "1 m") + dimH(bx, bx + L, yw + 22, "3 m");
+  return `<svg viewBox="0 0 320 160" role="img" aria-label="Una tortuga a 1 metro del extremo de una barca de 3 metros; el niño está en el extremo opuesto">${g}</svg>`;
+}
+function granadaSvg(o = {}) {
+  let g = T(80, 16, "en la explosión", "sv-tag", "middle") + T(240, 16, "un tiempo t después", "sv-tag", "middle");
+  g += `<line x1="160" y1="22" x2="160" y2="186" class="sv-thin"/>`;
+  const ax = (cx) => `<line x1="${cx - 66}" y1="96" x2="${cx + 66}" y2="96" class="sv-dash"/><line x1="${cx}" y1="30" x2="${cx}" y2="180" class="sv-dash"/>` + T(cx + 66, 108, "x", "sv-tl", "end") + T(cx + 6, 38, "y", "sv-tl");
+  g += ax(80) + ax(240);
+  g += `<path d="M 66 90 q 6 -16 22 -8 q 12 8 2 16 q -12 8 -24 -8 z" class="sv-mass"/>` + T(60, 84, o.m || "m", "sv-t", "end") + arrowSvg(96, 96, 140, 96, "a-v") + T(118, 88, "v", "sv-t t-v", "middle");
+  g += arrowSvg(36, 120, 36, 150, "a-peso") + T(42, 140, "g", "sv-t t-peso");
+  g += `<path d="M 270 46 q 10 -6 16 4 q -2 12 -14 8 z" class="sv-mass"/>` + T(292, 46, o.m1 || "m/3", "sv-tl") + T(262, 66, sb("(x", "1", ", y") + `<tspan dy="3" font-size="9">1</tspan><tspan dy="-3">)</tspan>`, "sv-t", "end");
+  g += `<path d="M 262 150 q 12 -10 20 2 q -4 14 -18 10 z" class="sv-mass"/>` + T(290, 168, o.m2 || "2m/3", "sv-tl") + T(256, 144, sb("(x", "2", ", y") + `<tspan dy="3" font-size="9">2</tspan><tspan dy="-3">) = ?</tspan>`, "sv-t", "end");
+  return `<svg viewBox="0 0 320 190" role="img" aria-label="Una granada que va con velocidad v en lo más alto explota en dos fragmentos; un tiempo después uno está en x1, y1 y se pregunta dónde está el otro">${g}</svg>`;
+}
+function dosMasasSvg(o = {}) {
+  const y = 90, x1 = 60, x2 = 260;
+  let g = `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" class="sv-rope"/>` + `<circle cx="${x1}" cy="${y}" r="${o.r1 || 11}" class="sv-mass"/>` + `<circle cx="${x2}" cy="${y}" r="${o.r2 || 16}" class="sv-mass"/>`;
+  g += T(x1, y - 20, o.l1 || "M", "sv-t", "middle") + T(x2, y - 24, o.l2 || "3M", "sv-t", "middle") + dimH(x1, x2, y + 30, "d");
+  return `<svg viewBox="0 0 320 140" role="img" aria-label="Dos masas en los extremos de una barra liviana de largo d">${g}</svg>`;
+}
+function anilloSvg() {
+  let g = `<circle cx="160" cy="88" r="62" class="sv-ring"/>` + `<circle cx="160" cy="88" r="3" class="sv-axle"/>` + T(168, 84, "centro", "sv-tl") + T(232, 40, "anillo uniforme", "sv-tl");
+  return `<svg viewBox="0 0 320 176" role="img" aria-label="Un anillo uniforme con su centro marcado">${g}</svg>`;
+}
+function laminaQuizSvg() {
+  const ox = 70, oy = 160, u = 56;
+  let g = axes(ox, oy, 3 * u + 30, 2 * u + 24);
+  g += `<path d="M ${ox} ${oy} L ${ox + 3 * u} ${oy} L ${ox + 3 * u} ${oy - u} L ${ox + u} ${oy - u} L ${ox + u} ${oy - 2 * u} L ${ox} ${oy - 2 * u} Z" class="sv-plate"/>`;
+  g += dimH(ox, ox + 3 * u, oy + 12, "3a") + dimV(ox - 14, oy - 2 * u, oy, "2a", "end") + dimV(ox + 3 * u + 14, oy - u, oy, "a") + dimH(ox, ox + u, oy - 2 * u - 12, "a");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Lámina en forma de L: un rectángulo de 3a por a abajo y un cuadrado de lado a encima del extremo izquierdo">${g}</svg>`;
+}
+const FIG = {
+  ej1: () => tresMasasSvg(),
+  ej2: () => lamina3Svg(),
+  ej3: () => barcaSvg({ walk: true }),
+  ej4: () => explosionSvg()
+};
+
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+
+/* ---------- Lab: explosión en el aire ---------- */
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const E = { f: 0.5, u: 0, t: 0, run: false, last: null };
+const nf = (v) => (Math.round(v * 100) / 100).toFixed(2).replace(".", ",");
+function landing() { const x1 = 0.5 * (1 + E.u), u2 = (1 - E.f * E.u) / (1 - E.f), x2 = 0.5 * (1 + u2); return { x1, x2, u2, xc: E.f * x1 + (1 - E.f) * x2 }; }
+function fracLab(f) { return f === 0.25 ? "1/4" : f === 0.5 ? "1/2" : "3/4"; }
+function drawE() {
+  const L = landing(), lo = Math.min(0, L.x1, L.x2) - 0.08, hi = Math.max(1, L.x1, L.x2) + 0.08;
+  const W = 340, Hh = 190, fy = 160, sx = (W - 30) / (hi - lo), X = (x) => 15 + (x - lo) * sx, Y = (y) => fy - y * Math.min(sx, 420);
+  let g = `<line x1="8" y1="${fy}" x2="${W - 8}" y2="${fy}" class="sv-line"/>`;
+  let d = ""; for (let i = 0; i <= 50; i++) { const x = i / 50; d += (i ? " L " : "M ") + f1(X(x)) + " " + f1(Y(x * (1 - x))); }
+  g += `<path d="${d}" class="sv-dash"/>`;
+  g += `<line x1="${f1(X(1))}" y1="${fy - 4}" x2="${f1(X(1))}" y2="${fy + 4}" class="sv-line"/>` + T(X(1), fy + 15, "R", "sv-t", "middle") + T(X(0), fy + 15, "0", "sv-tl", "middle");
+  const t = E.t;
+  if (t <= 0.5) {
+    const x = t, y = t * (1 - t);
+    g += `<circle cx="${f1(X(x))}" cy="${f1(Y(y))}" r="7" class="sv-mass"/>`;
+    g += cmMark(X(x), Y(y), "");
+  } else {
+    const tau = (t - 0.5) / 0.5, y = 0.25 * (1 - tau * tau);
+    const p1x = 0.5 + (L.x1 - 0.5) * tau, p2x = 0.5 + (L.x2 - 0.5) * tau;
+    g += `<circle cx="${f1(X(p1x))}" cy="${f1(Y(y))}" r="${f1(4 + 6 * E.f)}" class="sv-mass"/>` + T(X(p1x), Y(y) - 12, "1", "sv-tl", "middle");
+    g += `<circle cx="${f1(X(p2x))}" cy="${f1(Y(y))}" r="${f1(4 + 6 * (1 - E.f))}" class="sv-mass"/>` + T(X(p2x), Y(y) - 12, "2", "sv-tl", "middle");
+    g += cmMark(X(E.f * p1x + (1 - E.f) * p2x), Y(y), "CM");
+  }
+  $("#e-svg").innerHTML = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Proyectil que explota en lo más alto; el centro de masa sigue la parábola original">${g}</svg>`;
+  $("#e-f-lab").textContent = "Pedazo 1: " + fracLab(E.f) + " de la masa";
+  $("#e-u-lab").textContent = "Velocidad horizontal del pedazo 1 después: " + (E.u === 0 ? "0 (cae vertical)" : (E.u > 0 ? "+" : "") + String(E.u).replace(".", ",") + " × la de la cima");
+  $("#e-x1").textContent = nf(L.x1) + " R"; $("#e-x2").textContent = nf(L.x2) + " R"; $("#e-xc").textContent = nf(L.xc) + " R";
+}
+function eFrame(now) {
+  if (!E.run) return;
+  const dt = Math.min(0.05, (now - (E.last ?? now)) / 1000); E.last = now;
+  E.t += dt * 0.4;
+  if (E.t >= 1) { E.t = 1; E.run = false; $("#e-status").textContent = "Los dos pedazos cayeron al mismo tiempo. El CM cayó en R."; $("#e-status").className = "status ok"; }
+  drawE(); if (E.run) requestAnimationFrame(eFrame);
+}
+function eReset() { E.run = false; E.t = 0; E.last = null; $("#e-status").textContent = "Listo para lanzar"; $("#e-status").className = "status"; drawE(); }
+$("#e-go").addEventListener("click", () => {
+  eReset();
+  if (reduce) { E.t = 1; drawE(); $("#e-status").textContent = "Los dos pedazos cayeron al mismo tiempo. El CM cayó en R."; $("#e-status").className = "status ok"; return; }
+  E.run = true; $("#e-status").textContent = "En el aire…"; requestAnimationFrame(eFrame);
+});
+$("#e-reset").addEventListener("click", eReset);
+$("#e-f").addEventListener("input", (ev) => { E.f = Number(ev.target.value); eReset(); });
+$("#e-u").addEventListener("input", (ev) => { E.u = Number(ev.target.value); eReset(); });
+eReset();
+
+/* ---------- Taller ---------- */
+const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const PROBS = [
+  { n: "T1", t: "Cuatro masas en un cuadrado", src: "Variante del ejemplo del profe (clase 17)",
+    fig: () => cuatroMasasSvg(),
+    txt: "Cuatro masas están en las esquinas de un cuadrado de lado a: M en (0, 0), 2M en (a, 0), 3M en (a, a) y 4M en (0, a). ¿Dónde está el centro de masa?",
+    hints: ["M<sub>total</sub> = 10M. En x solo aportan las que están en x = a.", "En y solo aportan las que están en y = a."],
+    sol: [{ w: "Masa total.", m: "M<sub>total</sub> = M + 2M + 3M + 4M = 10M" }, { w: "Coordenada x.", m: `X<sub>CM</sub> = ${fr("2M·a + 3M·a", "10M")} = ${fr("a", "2")}` }, { w: "Coordenada y.", m: `Y<sub>CM</sub> = ${fr("3M·a + 4M·a", "10M")} = ${fr("7a", "10")}` }],
+    res: "R<sub>CM</sub> = (a/2, 7a/10).",
+    checks: [{ q: "¿Cuánto vale Y<sub>CM</sub>?", opts: ["a/2", "3a/5", "7a/10", "a"], a: 2 }] },
+  { n: "T2", t: "La lámina en forma de L", src: "Tarea 9, ejercicio 2",
+    fig: () => laminaLSvg(),
+    txt: "Una lámina plana uniforme, de masa total M, tiene la forma de la figura: alto a a la izquierda, ancho total b y, a la derecha, una parte más baja de ancho d y alto c. Determina la posición de su centro de masa con un sistema de referencia conveniente.",
+    hints: ["Origen en la esquina de abajo a la izquierda. Divide en dos rectángulos: uno de (b − d) por a a la izquierda y otro de d por c a la derecha.", "Centros: ((b − d)/2, a/2) y (b − d/2, c/2). Áreas: a·(b − d) y c·d."],
+    sol: [{ w: "Divide en dos rectángulos.", y: "Origen en la esquina de abajo a la izquierda.", m: `A₁ = a·(b − d), centro (${fr("b − d", "2")}, ${fr("a", "2")})<span class="ar">y</span>A₂ = c·d, centro (b − ${fr("d", "2")}, ${fr("c", "2")})` }, { w: "Coordenada x: promedio ponderado por las áreas.", m: `X<sub>CM</sub> = ${fr("a·(b − d)·(b − d)/2 + c·d·(b − d/2)", "a·(b − d) + c·d")}` }, { w: "Coordenada y.", m: `Y<sub>CM</sub> = ${fr("a·(b − d)·a/2 + c·d·c/2", "a·(b − d) + c·d")} = ${fr("a²·(b − d) + c²·d", "2·[a·(b − d) + c·d]")}` }],
+    res: "X<sub>CM</sub> = [a(b − d)²/2 + c·d·(b − d/2)] / [a(b − d) + c·d] y Y<sub>CM</sub> = [a²(b − d) + c²·d] / (2[a(b − d) + c·d]).",
+    checks: [{ q: "¿Cuál es Y<sub>CM</sub>?", opts: ["(a + c)/2", "[a²(b − d) + c²·d] / (2[a(b − d) + c·d])", "a/2", "[a(b − d) + c·d] / (a + c)"], a: 1 }] },
+  { n: "T3", t: "La mujer que camina en la canoa", src: "Ejercicios en clase de la semana 12",
+    fig: () => canoaSvg(),
+    txt: "Una mujer de 45,0 kg está de pie en una canoa de 60,0 kg y 5,00 m de largo. Camina desde un punto a 1,00 m de un extremo hasta un punto a 1,00 m del otro. Si no hay resistencia del agua, ¿cuánto se mueve la canoa? Resuélvelo con letras y al final reemplaza.",
+    hints: ["Respecto a la canoa, la mujer camina 5,00 − 1,00 − 1,00 = 3,00 m. Llámalo D.", "Como en el ejemplo resuelto 3: la canoa se mueve D·M<sub>mujer</sub>/(M<sub>mujer</sub> + M<sub>canoa</sub>) hacia el lado contrario."],
+    sol: [{ w: "El CM no se mueve.", y: "No hay fuerza externa horizontal y todo empezó quieto." }, { w: "Distancia que camina respecto a la canoa.", m: "D = 5,00 − 1,00 − 1,00 = 3,00 m" }, { w: "Iguala el CM antes y después (como en el ejemplo 3).", y: "Si la canoa se mueve x, la mujer se mueve D + x respecto al agua; los dos desplazamientos pesados por la masa se cancelan.", m: `M<sub>mujer</sub>·(D + x) + M<sub>canoa</sub>·x = 0<span class="ar">→</span>x = −${fr("M<sub>mujer</sub>·D", "M<sub>mujer</sub> + M<sub>canoa</sub>")}` }, { w: "Números.", m: `|x| = ${fr("45,0 · 3,00", "105")} ≈ 1,29 m` }],
+    res: "La canoa se mueve 1,29 m hacia el lado contrario al que camina la mujer.",
+    checks: [{ q: "¿Cuánto se mueve la canoa?", opts: ["0,75 m", "1,29 m", "1,71 m", "3,00 m"], a: 1 }] },
+  { n: "T4", t: "¿Alcanza el niño a la tortuga?", src: "Ejemplo del profe (clase 17)",
+    fig: () => tortugaSvg(),
+    txt: "Un niño de 25 kg está en el extremo de una barca de 100 kg y 3 m de largo, quieta sobre un lago congelado (sin fricción). Una tortuga está a 1 m del otro extremo de la barca. El niño camina hasta ese otro extremo para alcanzarla. ¿A qué distancia de la tortuga queda el niño?",
+    hints: ["Origen en la tortuga. Al principio: niño en 4 m y centro de la barca en 2,5 m.", "Al final: niño en x y centro de la barca en x + 1,5 m. Iguala el CM."],
+    sol: [{ w: "CM al principio (origen en la tortuga).", m: `X<sub>CM</sub> = ${fr("25·4 + 100·2,5", "125")}` }, { w: "CM al final.", y: "El niño llegó al extremo cercano a la tortuga: está en x y el centro de la barca en x + 1,5.", m: `X<sub>CM</sub> = ${fr("25·x + 100·(x + 1,5)", "125")}` }, { w: "Iguala y despeja.", m: "100 + 250 = 125·x + 150<span class=\"ar\">→</span>x = 1,6 m" }],
+    res: "Queda a 1,6 m de la tortuga: la barca retrocedió 0,6 m y no la alcanza.",
+    checks: [{ q: "¿A qué distancia de la tortuga queda?", opts: ["0 m", "1,0 m", "1,6 m", "2,4 m"], a: 2 }] },
+  { n: "T5", t: "La granada que explota en lo más alto", src: "Tarea 9, ejercicio 1",
+    fig: () => granadaSvg(),
+    txt: "Se lanza una granada de masa m. En el punto más alto de su trayectoria, que se toma como origen (0, 0), va con velocidad v horizontal y explota en dos fragmentos. Un tiempo t después, el fragmento de masa m/3 está en (x₁, y₁). ¿Dónde está el otro fragmento? Desprecia la resistencia del aire.",
+    hints: ["El CM sigue la parábola: desde la cima, X<sub>CM</sub> = v·t y Y<sub>CM</sub> = −½·g·t².", "(m/3)·x₁ + (2m/3)·x₂ = m·X<sub>CM</sub>. Lo mismo en y."],
+    sol: [{ w: "Dónde está el CM en el tiempo t.", y: "En la cima la velocidad es horizontal (v) y la vertical es cero. El CM sigue como si no hubiera explotado.", m: `X<sub>CM</sub> = v·t<span class="ar">y</span>Y<sub>CM</sub> = −½·g·t²` }, { w: "CM de los dos fragmentos en x.", m: `${fr("1", "3")}·x₁ + ${fr("2", "3")}·x₂ = v·t<span class="ar">→</span>x₂ = ${fr("3·v·t − x₁", "2")}` }, { w: "En y.", m: `${fr("1", "3")}·y₁ + ${fr("2", "3")}·y₂ = −½·g·t²<span class="ar">→</span>y₂ = −${fr("3", "4")}·g·t² − ${fr("y₁", "2")}` }],
+    res: "(x₂, y₂) = ((3vt − x₁)/2, −(3/4)g·t² − y₁/2), mientras ningún fragmento haya tocado el piso.",
+    checks: [{ q: "¿Cuánto vale x₂?", opts: ["v·t − x₁", "(3·v·t − x₁)/2", "3·v·t − 2·x₁", "(v·t − x₁)/2"], a: 1 }] },
+  { n: "T6", t: "La esfera que se parte en pedazos desiguales", src: "Variante del ejemplo del profe (clase 17)",
+    fig: () => explosionSvg({ p1: "M/3", p2: "2M/3", x2: 1.25 }),
+    txt: "Una esfera que caería a una distancia R se parte en lo más alto en dos pedazos: uno de masa M/3 que cae verticalmente y otro de masa 2M/3. ¿A qué distancia del punto de lanzamiento cae el pedazo grande?",
+    hints: ["El CM cae en R y el pedazo chico cae en R/2.", "R = [(M/3)·(R/2) + (2M/3)·x] / M."],
+    sol: [{ w: "Escribe el CM al caer.", m: `R = ${fr("1", "3")}·${fr("R", "2")} + ${fr("2", "3")}·x` }, { w: "Despeja x.", m: `${fr("2", "3")}·x = R − ${fr("R", "6")} = ${fr("5R", "6")}<span class="ar">→</span>x = ${fr("5R", "4")}` }],
+    res: "x = 5R/4.",
+    checks: [{ q: "¿Dónde cae el pedazo grande?", opts: ["R", "5R/4", "3R/2", "2R"], a: 1 }] }
+];
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); const cq = el("p"); cq.innerHTML = "Chequeo rápido · " + ck.q; c.appendChild(cq);
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button";
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb2 = el("div", "rev-body"); sb2.innerHTML = stepsHtml(p.sol) + `<div class="wx-res"><b>Resultado:</b> ${p.res}</div>`; ds.appendChild(sb2); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M2", NEXT = "Aprobado. Sigue con el exprés de inercia y torque.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => dosMasasSvg(), q: "Dos masas, M y 3M, están en los extremos de una barra liviana de largo d. ¿A qué distancia de M está el centro de masa?",
+      o: ["d/4", "d/2", "3d/4", "d"], a: 2,
+      e: "Con el origen en M: X = (M·0 + 3M·d)/(4M) = 3d/4. El CM queda más cerca de la masa grande." },
+    { k: "Conceptual", fig: () => barcaSvg({ walk: true }), q: "Una persona camina sobre una barca que flota en agua sin fricción. Todo empezó quieto. Mientras camina, ¿qué hace el centro de masa del sistema persona + barca?",
+      o: ["Avanza hacia donde camina la persona", "Retrocede", "Se queda quieto", "Depende de la masa de la barca"], a: 2,
+      e: "No hay fuerza externa horizontal y todo empezó quieto: p_total = M_total·v_CM = 0, así que el CM no se mueve. La barca retrocede para compensar." },
+    { k: "Conceptual", fig: () => explosionSvg({ p1: "", p2: "", x2: 1.5, x2lab: "" }), q: "Un proyectil explota en el aire en varios pedazos. Antes de que alguno toque el piso, ¿qué hace el centro de masa de los pedazos?",
+      o: ["Se detiene en el punto de la explosión", "Sigue la misma parábola que el proyectil entero", "Cae verticalmente", "Sale disparado hacia arriba"], a: 1,
+      e: "Las fuerzas de la explosión son internas. La única externa es el peso, como antes, así que el CM sigue la parábola original." },
+    { k: "Tipo parcial", fig: () => laminaQuizSvg(), q: "La lámina uniforme de la figura es un rectángulo de 3a por a con un cuadrado de lado a encima de su extremo izquierdo. Con el origen en la esquina de abajo a la izquierda, ¿dónde está el CM?",
+      o: ["(3a/2, a)", "(5a/4, 3a/4)", "(a, a)", "(5a/4, a/2)"], a: 1,
+      e: "Rectángulo: área 3a², centro (3a/2, a/2). Cuadrado: área a², centro (a/2, 3a/2). X = (3a²·3a/2 + a²·a/2)/(4a²) = 5a/4. Y = (3a²·a/2 + a²·3a/2)/(4a²) = 3a/4." },
+    { k: "Tipo parcial", fig: () => explosionSvg({ p1: "M/4", p2: "3M/4", x2: 7 / 6 }), q: "Una esfera que caería a una distancia R se parte en lo más alto en un pedazo de M/4, que cae verticalmente, y otro de 3M/4. ¿Dónde cae el pedazo grande?",
+      o: ["R", "7R/6", "5R/4", "3R/2"], a: 1,
+      e: "R = (1/4)·(R/2) + (3/4)·x, así que (3/4)·x = R − R/8 = 7R/8 y x = 7R/6." }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => dosMasasSvg({ l1: "2M", l2: "M", r1: 16, r2: 11 }), q: "Dos masas, 2M y M, están en los extremos de una barra liviana de largo d. ¿A qué distancia de 2M está el centro de masa?",
+      o: ["d/3", "d/2", "2d/3", "d/4"], a: 0,
+      e: "Con el origen en 2M: X = (2M·0 + M·d)/(3M) = d/3." },
+    { k: "Conceptual", fig: () => canoaSvg({ dims: false, boat: "canoa", person: "persona" }), q: "Una persona camina hacia la derecha sobre una canoa que flota sin fricción. ¿Qué hace la canoa?",
+      o: ["Se mueve hacia la derecha", "Se mueve hacia la izquierda", "Se queda quieta", "Gira"], a: 1,
+      e: "El CM no se mueve. Si la persona va a la derecha, la canoa tiene que ir a la izquierda para compensar." },
+    { k: "Conceptual", fig: () => anilloSvg(), q: "¿Dónde está el centro de masa de un anillo delgado y uniforme?",
+      o: ["En un punto cualquiera del anillo", "En el centro, aunque ahí no haya masa", "No tiene centro de masa", "En el punto más bajo"], a: 1,
+      e: "Por simetría, el CM está en el centro geométrico. No tiene que haber masa en ese punto." },
+    { k: "Tipo parcial", fig: () => barcaSvg({ walk: true, boat: "2M" }), q: "Una persona de masa M camina de un extremo al otro de una barca de masa 2M y largo L, que flota sin fricción. ¿Cuánto se mueve la barca?",
+      o: ["L/2", "L/3", "2L/3", "L"], a: 1,
+      e: "La barca se mueve L·M/(M + 2M) = L/3, hacia el lado contrario al que camina la persona." },
+    { k: "Tipo parcial", fig: () => granadaSvg({ m1: "m/2", m2: "m/2" }), q: "Una granada que va con velocidad v horizontal explota en lo más alto (el origen) en dos fragmentos iguales. Un tiempo t después, uno está en (x₁, y₁). ¿Dónde está el otro?",
+      o: ["(v·t − x₁, −y₁)", "(2·v·t − x₁, −g·t² − y₁)", "(v·t + x₁, ½·g·t² + y₁)", "(x₁, y₁)"], a: 1,
+      e: "El CM está en (v·t, −½·g·t²). Con masas iguales es el punto medio: x₂ = 2·v·t − x₁ y y₂ = −g·t² − y₁." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
