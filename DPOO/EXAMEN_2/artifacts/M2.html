@@ -1,0 +1,2007 @@
+<title>M2 Manejo de errores</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+/* ---- Propio de M2: consola, pila de llamadas y cajas de excepción ---- */
+:root{--term-bg:#1d1b26; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-new:rgba(255,226,122,.16)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--term-bg:#0b0a10; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-new:rgba(255,226,122,.14)} }
+:root[data-theme="dark"]{--term-bg:#0b0a10; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-new:rgba(255,226,122,.14)}
+.uml .u-bg.t-chk{fill:var(--orange-soft)} .uml .u-bg.t-unc{fill:var(--accent-soft)} .uml .u-bg.t-own{fill:var(--green-soft)}
+.svgfig{display:block; width:100%; max-width:540px; height:auto}
+.svgfig .fr{fill:var(--surface); stroke:var(--ink); stroke-width:1.5}
+.svgfig .fr.hot{stroke:var(--red); stroke-width:2}
+.svgfig .frt{font:500 12.5px var(--f-mono); fill:var(--ink)}
+.svgfig .sub{font:11px var(--f-body); fill:var(--muted)}
+.svgfig .call{fill:none; stroke:var(--ink); stroke-width:1.3}
+.svgfig .exa{fill:none; stroke:var(--red); stroke-width:2}
+.svgfig .hd{fill:var(--ink)} .svgfig .hd.r{fill:var(--red)} .svgfig .hd.g{fill:var(--green)}
+.svgfig .lbl{font:11px var(--f-mono); fill:var(--muted)}
+.svgfig .lbl.r{fill:var(--red); font-weight:600} .svgfig .lbl.g{fill:var(--green); font-weight:600}
+.paths{display:grid; grid-template-columns:minmax(0,1fr); border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.path{display:grid; grid-template-columns:minmax(0,12rem) minmax(0,1fr); gap:4px 14px; padding:10px 14px; border-bottom:1px solid var(--rule); font-size:.93rem}
+.path:last-child{border-bottom:0}
+.path b{font-family:var(--f-display); font-size:1rem}
+.path .flow{font-family:var(--f-mono); font-size:.82rem}
+@media (max-width:560px){ .path{grid-template-columns:minmax(0,1fr)} }
+.cmp{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:10px}
+.cmp > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; grid-template-columns:minmax(0,1fr); gap:6px; align-content:start; min-width:0}
+.console{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.6; background:var(--term-bg); color:var(--term-fg); border-radius:8px; padding:10px 12px; min-height:3rem; white-space:pre-wrap; overflow-wrap:anywhere}
+.console .e{color:var(--term-err)}
+.console .nw{background:var(--term-new)}
+.console .dim{opacity:.55}
+.dos{list-style:none; padding:0; display:grid; gap:8px; max-width:74ch}
+.dos li{display:grid; grid-template-columns:1.6rem minmax(0,1fr); gap:8px}
+.dos .y{color:var(--green); font-weight:700; font-family:var(--f-mono)} .dos .n{color:var(--red); font-weight:700; font-family:var(--f-mono)}
+.run-grid{display:grid; grid-template-columns:minmax(0,1.75fr) minmax(0,1fr); gap:12px}
+@media (max-width:760px){ .run-grid{grid-template-columns:minmax(0,1fr)} }
+.run-code,.run-side{display:grid; grid-template-columns:minmax(0,1fr); gap:6px; align-content:start; min-width:0}
+.run-code .cl.cur{background:var(--hi); color:var(--hi-ink); box-shadow:inset 3px 0 0 var(--ink)}
+.run-code .cl.cur [class^="c-"]{color:inherit}
+.stack{display:grid; grid-template-columns:minmax(0,1fr); gap:6px; min-height:5.5rem; align-content:start}
+.frame{font-family:var(--f-mono); font-size:.8rem; border:1.5px solid var(--ink); border-radius:6px; padding:5px 9px; background:var(--surface); display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:space-between; min-width:0}
+.frame.gone{opacity:.5; border-style:dashed}
+.frame.gone .fn{text-decoration:line-through}
+.exb{font-size:.7rem; font-weight:600; padding:1px 7px; border-radius:99px; background:var(--red); color:var(--surface)}
+.exb.ok{background:var(--green)}
+.stack .empty{font-size:.85rem; color:var(--muted)}
+.run-ctl{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.ask-opts{display:flex; flex-wrap:wrap; gap:6px}
+.run-note .q{font-weight:600}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#vocab">Vocabulario</a>
+  <a href="#teoria"><span>1</span>Teoría</a>
+  <a href="#lab"><span>2</span>Lab</a>
+  <a href="#taller"><span>3</span>Taller</a>
+  <a href="#quiz"><span>4</span>Quiz</a>
+</div></nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">DPOO · Examen 2 · Módulo 2 de 9</p>
+    <h1>Manejo de errores</h1>
+    <div class="meta"><span>Viernes 6 de noviembre · ~2 h</span><span>Clase 24 y las excepciones del Examen 1</span></div>
+    <p class="lede">En M1 tu <code>buscarSocio</code> retornaba <code>null</code> cuando no encontraba a nadie, y el error explotaba después, en otra línea. Aquí aprendes a avisar el error donde ocurre, con un mensaje que dice qué pasó, y a decidir quién lo atiende. Es lo que el profe llama «funcionalidad mínima según lo visto en el curso» en la práctica.</p>
+    <ul class="goals">
+      <li>Seguir una excepción por la pila de llamadas y saber qué corre en cada camino de un <code>try/catch/finally</code>.</li>
+      <li>Distinguir checked de unchecked, y <code>throw</code> de <code>throws</code>.</li>
+      <li>Escribir tus excepciones con mensajes útiles y decidir dónde se lanzan y dónde se atrapan.</li>
+    </ul>
+    <div class="shortcut"><p><b>¿Ya lo dominas?</b> Haz el quiz primero. Con 4/5 te saltas el módulo.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
+    <p class="note muted"><b>Si solo tienes 2 horas:</b> teoría completa, el lab, T1 y T2 del taller y el quiz. T3 y T4 sirven de calentamiento el domingo.</p>
+  </header>
+
+  <!-- ============ VOCABULARIO ============ -->
+  <section id="vocab" aria-labelledby="v-h">
+    <div class="sec-head">
+      <h2 id="v-h">Vocabulario de este módulo</h2>
+      <p class="note">En el orden en que lo vas a usar. Lo de M1 (clase, <code>extends</code>, <code>super</code>) se da por sabido.</p>
+    </div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:18%"><col style="width:36%"><col style="width:46%"></colgroup>
+      <thead><tr><th>Término</th><th>En Java</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td>Excepción</td><td><code>new CupoLlenoException("No hay cupo")</code></td><td>Un objeto que representa un error. Cuando se lanza, el método se interrumpe y el error sube hacia quien lo llamó hasta que alguien lo atrape.</td></tr>
+        <tr><td>Pila de llamadas</td><td><code>main</code> → <code>agregarSocio</code> → <code>validarCupo</code></td><td>Los métodos que están abiertos al mismo tiempo, cada uno esperando al que llamó. Por ahí sube la excepción.</td></tr>
+        <tr><td><code>throw</code></td><td><code>throw new CupoLlenoException(...);</code></td><td>Lanza la excepción. Va en el cuerpo del método, sin <b>s</b>.</td></tr>
+        <tr><td><code>throws</code></td><td><code>void agregarSocio(Socio s) throws CupoLlenoException</code></td><td>Avisa en la firma que el método puede lanzarla. Va en la firma, con <b>s</b>.</td></tr>
+        <tr><td><code>try</code></td><td><code>try { ... }</code></td><td>El bloque donde corre el código que puede fallar.</td></tr>
+        <tr><td><code>catch</code></td><td><code>catch (CupoLlenoException e) { ... }</code></td><td>Atrapa una excepción de ese tipo (o de sus hijas) y decide qué hacer con ella.</td></tr>
+        <tr><td><code>finally</code></td><td><code>finally { ... }</code></td><td>Corre siempre: haya excepción o no, y aunque el <code>try</code> tenga un <code>return</code>.</td></tr>
+        <tr><td>Checked</td><td><code>extends Exception</code></td><td>El compilador te obliga a atraparla o a declararla con <code>throws</code>. Si no, no compila.</td></tr>
+        <tr><td>Unchecked</td><td><code>extends RuntimeException</code></td><td>El compilador no obliga a nada. Ejemplos: NullPointerException, IllegalArgumentException.</td></tr>
+        <tr><td>Excepción propia</td><td><code>class CupoLlenoException extends Exception</code></td><td>Una clase tuya que hereda de Exception (o de RuntimeException), con un constructor que llama a <code>super(mensaje)</code>.</td></tr>
+        <tr><td><code>getMessage()</code></td><td><code>e.getMessage()</code></td><td>Retorna el mensaje que se le pasó al constructor: qué falló y con qué dato.</td></tr>
+        <tr><td>Propagar</td><td><code>throws</code> sin <code>try</code></td><td>No atraparla y dejar que siga subiendo hacia quien llamó.</td></tr>
+        <tr><td>Tragarse una excepción</td><td><code>catch (Exception e) { }</code></td><td>Atraparla y no hacer nada: el error desaparece sin que nadie se entere. Nunca se hace.</td></tr>
+        <tr><td>IllegalArgumentException</td><td><code>throw new IllegalArgumentException("...")</code></td><td>Una excepción unchecked que ya trae Java, para un parámetro inválido.</td></tr>
+        <tr><td>Traza (stack trace)</td><td><code>Exception in thread "main" ...</code></td><td>Lo que imprime Java cuando nadie atrapa una excepción: el tipo, el mensaje y los métodos por donde pasó.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Cinco ideas con su ejemplo resuelto, la receta para la práctica y tus plantillas de memoria. Seguimos con el club de M1, que ahora tiene una capacidad máxima.</p></div>
+
+    <!-- Idea 1 -->
+    <article class="idea" id="idea1">
+      <h3><span class="ix">Idea 1</span>Una excepción interrumpe y sube por la pila de llamadas</h3>
+      <div class="prose">
+        <p>Sin excepciones, un método avisa un error con un valor especial: <code>null</code>, <code>-1</code> o <code>false</code>. El problema es que quien lo llama puede olvidarse de revisarlo, y el error aparece mucho después, en otra línea. Eso te pasó en M1 con <code>buscarSocio</code>.</p>
+        <p>Una excepción no se puede ignorar sin querer. Cuando un método ejecuta <code>throw</code>, se interrumpe en esa línea, y la excepción sube al método que lo llamó. Si ese tampoco la atrapa, también se interrumpe, y la excepción sigue subiendo. Así hasta que un <code>catch</code> la atrapa o, si nadie lo hace, el programa se detiene e imprime la traza.</p>
+      </div>
+      <div class="fig">
+        <svg class="svgfig" viewBox="0 0 520 236" role="img" aria-label="main llama a agregarSocio, que llama a validarCupo. validarCupo lanza la excepción, que sube por agregarSocio hasta el catch de main.">
+          <rect class="fr" x="20" y="14" width="240" height="40" rx="6"/><text class="frt" x="34" y="39">main</text>
+          <rect class="fr" x="60" y="96" width="240" height="40" rx="6"/><text class="frt" x="74" y="121">agregarSocio(luis)</text>
+          <rect class="fr hot" x="100" y="178" width="240" height="40" rx="6"/><text class="frt" x="114" y="203">validarCupo()</text>
+          <text class="lbl r" x="292" y="203">throw</text>
+          <path class="call" d="M40 54 V116 H52"/><path class="hd" d="M60 116 L51 111.5 L51 120.5 Z"/>
+          <text class="lbl" x="46" y="86">llama</text>
+          <path class="call" d="M80 136 V198 H92"/><path class="hd" d="M100 198 L91 193.5 L91 202.5 Z"/>
+          <text class="lbl" x="86" y="168">llama</text>
+          <path class="exa" d="M340 198 C 440 198, 440 34, 272 34"/><path class="hd r" d="M262 34 L273 28.5 L273 39.5 Z"/>
+          <text class="lbl r" x="416" y="112">la excepción</text><text class="lbl r" x="416" y="126">sube</text>
+          <text class="lbl g" x="196" y="39">catch</text>
+        </svg>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 1 · Un club lleno, paso a paso</p>
+        <p>El club tiene capacidad 1 y ya tiene a Ana. Main intenta agregar a Luis.</p>
+        <pre class="code" data-code="e1"></pre>
+        <ol class="wsteps">
+          <li><p><b>Qué pasa:</b> main llama a <code>agregarSocio</code>, y este llama a <code>validarCupo</code>. Hay tres métodos abiertos, uno dentro de otro: esa es la pila de llamadas.</p><p><b>Por qué importa:</b> la excepción va a recorrer ese mismo camino, pero al revés.</p></li>
+          <li><p><b>Qué pasa:</b> en <code>validarCupo</code>, <code>socios.size() &gt;= capacidad</code> es <code>1 &gt;= 1</code>: verdadero. Se ejecuta <code>throw</code>, que crea un objeto CupoLlenoException con su mensaje y lo lanza.</p><p><b>Por qué:</b> desde ese momento <code>validarCupo</code> ya no sigue: termina en la línea del <code>throw</code>.</p></li>
+          <li><p><b>Qué pasa:</b> la excepción llega a <code>agregarSocio</code>. Como ahí no hay <code>try</code>, ese método también se corta en esa línea, y <code>socios.add(socio)</code> nunca corre.</p><p><b>Por qué es bueno:</b> el club no queda con un socio de más. El error detiene la operación antes de dañar el estado.</p></li>
+          <li><p><b>Qué pasa:</b> la excepción llega a main. Si main la llamó dentro de un <code>try</code> con un <code>catch</code> para CupoLlenoException, ese <code>catch</code> corre. Si no, el programa se detiene e imprime la traza.</p><p><b>Por qué:</b> el que atrapa decide qué hacer: en este caso, avisarle al usuario.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 2 -->
+    <article class="idea" id="idea2">
+      <h3><span class="ix">Idea 2</span>try, catch y finally: los tres caminos</h3>
+      <p class="prose-p">Lo que corre depende de si hubo excepción y de si algún <code>catch</code> coincide con su tipo. Hay solo tres caminos:</p>
+      <div class="paths">
+        <div class="path"><b>Sin excepción</b><span class="flow">todo el try → finally → lo que sigue (el catch se salta)</span></div>
+        <div class="path"><b>Excepción atrapada</b><span class="flow">el try hasta la línea que falla → el catch que coincide → finally → lo que sigue</span></div>
+        <div class="path"><b>Excepción sin catch que coincida</b><span class="flow">el try hasta la línea que falla → finally → la excepción sigue subiendo (lo que sigue no corre)</span></div>
+      </div>
+      <ul class="prose">
+        <li>Un <code>catch</code> atrapa su tipo y todas sus hijas: <code>catch (Exception e)</code> atrapa casi todo.</li>
+        <li>Por eso los <code>catch</code> van del más específico al más general. Si pones <code>Exception</code> primero, el siguiente nunca se alcanzaría, y Java no compila.</li>
+        <li>El <code>finally</code> corre siempre, aunque el <code>try</code> tenga un <code>return</code>. Sirve para cerrar o limpiar.</li>
+      </ul>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 2 · El mismo código, dos resultados</p>
+        <pre class="code" data-code="e2"></pre>
+        <ol class="wsteps">
+          <li><p><b>Si hay cupo:</b> corren 1 y la llamada, que no lanza nada; luego 2. El <code>catch</code> se salta, el <code>finally</code> imprime 4 y el programa sigue con 5.</p><p><b>Sale:</b> <code>1 · 2 · 4 · 5</code>.</p></li>
+          <li><p><b>Si el club está lleno:</b> corre 1; la llamada lanza la excepción, así que el 2 se salta. El <code>catch</code> coincide e imprime 3 con el mensaje; después el <code>finally</code> imprime 4 y el programa sigue con 5.</p><p><b>Sale:</b> <code>1 · 3 Error: No hay cupo en Los Andes · 4 · 5</code>.</p></li>
+          <li><p><b>Lo que hay que notar:</b> el 4 sale en los dos casos (el <code>finally</code> siempre corre) y el 5 también, porque la excepción quedó atrapada. Si nadie la atrapara, el 5 no saldría.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 3 -->
+    <article class="idea" id="idea3">
+      <h3><span class="ix">Idea 3</span>Checked o unchecked: atrápala o declárala</h3>
+      <div class="prose">
+        <p>Todas las excepciones son clases, y forman una familia. Lo que decide cómo te trata el compilador es de quién heredan:</p>
+      </div>
+      <figure class="fig" style="margin:0"><div data-fig="jerarquia"></div><figcaption>Naranja: checked (el compilador obliga). Morado: unchecked (no obliga). Verde: una excepción tuya.</figcaption></figure>
+      <div class="prose">
+        <ul>
+          <li><b>Checked</b> (hereda de Exception, pero no de RuntimeException): si un método puede lanzarla, el compilador te exige una de dos cosas: <b>atraparla</b> con <code>try/catch</code> o <b>declararla</b> con <code>throws</code> en la firma. Si no haces ninguna, no compila.</li>
+          <li><b>Unchecked</b> (hereda de RuntimeException): el compilador no exige nada. Si nadie la atrapa, el programa se detiene.</li>
+          <li><b>Cuál usar:</b> para errores del negocio que quien llama debe manejar (club lleno, socio que no existe) es común en el curso una checked propia. Para errores de programación (un parámetro <code>null</code>, una cantidad negativa) se usa una unchecked como IllegalArgumentException. Clean Code (lectura [23]) prefiere unchecked en general. En el examen, sigue lo que diga el enunciado o el diagrama: si la excepción hereda de Exception, es checked.</li>
+        </ul>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 3 · El compilador te obliga, y las dos salidas</p>
+        <ol class="wsteps">
+          <li><p><b>Qué escribes:</b> la excepción. Hereda de Exception, así que es checked.</p><p><b>Por qué <code>super(mensaje)</code>:</b> Exception es la que guarda el mensaje, y es el mismo <code>super</code> de M1: la hija le pasa al padre lo que él sabe guardar.</p><pre class="code" data-code="e3-1"></pre></li>
+          <li><p><b>Qué pasa si lanzas sin declarar:</b> no compila.</p><p><b>Por qué:</b> <code>validarCupo()</code> puede lanzar una checked, y <code>agregarSocio</code> ni la atrapa ni la declara.</p><pre class="code" data-code="e3-2"></pre>
+            <div class="callout"><p><b>Lo que dice el compilador</b></p><p>En Eclipse y VS Code: <code>Unhandled exception type CupoLlenoException</code></p><p>Con javac: <code>unreported exception CupoLlenoException; must be caught or declared to be thrown</code></p></div></li>
+          <li><p><b>Salida A, declararla:</b> agregas <code>throws CupoLlenoException</code> a la firma. Ahora <code>agregarSocio</code> no la atrapa: la deja pasar hacia quien lo llamó.</p><p><b>Por qué aquí:</b> el modelo no sabe qué hacer con el error (¿avisar a quién?); el que llama sí.</p><pre class="code" data-code="e3-3"></pre></li>
+          <li><p><b>Salida B, atraparla:</b> ahora es Main el que llama a un método que declara una checked, así que a Main le toca lo mismo. Main sí sabe qué hacer: le avisa al usuario.</p><p><b>Por qué aquí:</b> Main es la interfaz; es el lugar para mostrar el mensaje.</p><pre class="code" data-code="e3-4"></pre></li>
+          <li><p><b>La diferencia con unchecked:</b> si CupoLlenoException heredara de RuntimeException, nada de esto sería obligatorio. Compilaría sin <code>throws</code> ni <code>try</code>, y si nadie la atrapa, el programa se cae.</p><pre class="code" data-code="e3-5"></pre></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 4 -->
+    <article class="idea" id="idea4">
+      <h3><span class="ix">Idea 4</span>Tu propia excepción, con un mensaje que sirva</h3>
+      <div class="prose">
+        <p>Una excepción propia es una clase corta: hereda de Exception y tiene un constructor que llama a <code>super</code> con el mensaje. El nombre dice qué salió mal (<code>SocioNoEncontradoException</code>), y el mensaje dice con qué dato: «No existe un socio con documento 999» sirve; «Error» no.</p>
+        <p>Un truco limpio es que el constructor reciba el dato y arme él mismo el mensaje. Así quien lanza escribe poco y todos los mensajes salen iguales.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 4 · Del <code>null</code> de M1 a una excepción</p>
+        <ol class="wsteps">
+          <li><p><b>Qué escribes:</b> la excepción, con un constructor que recibe el documento y arma el mensaje.</p><p><b>Por qué:</b> quien la lanza solo pasa el dato, y <code>getMessage()</code> siempre sale completo.</p><pre class="code" data-code="e4-1"></pre></li>
+          <li><p><b>Qué cambias en <code>buscarSocio</code>:</b> el <code>return null</code> del final se vuelve un <code>throw</code>, y la firma declara la excepción.</p><p><b>Por qué:</b> si el <code>for</code> terminó sin retornar, el socio no existe. Eso es un error, no un resultado.</p><pre class="code" data-code="e4-2"></pre></li>
+          <li><p><b>Qué escribes en quien llama:</b> un <code>try</code> con su <code>catch</code>.</p><p><b>Por qué:</b> antes, con <code>null</code>, el error salía después como NullPointerException en otra línea. Ahora sale justo donde pasa, con un mensaje que dice qué y con qué dato.</p><pre class="code" data-code="e4-3"></pre></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 5 -->
+    <article class="idea" id="idea5">
+      <h3><span class="ix">Idea 5</span>El modelo lanza; la interfaz atrapa</h3>
+      <div class="prose">
+        <p>La pregunta de diseño es dónde va cada cosa. La regla: <b>el modelo</b> (Club, Socio: las clases del mundo del problema) valida y lanza, pero no imprime ni le pregunta nada al usuario. <b>La interfaz</b> (la consola, el <code>main</code> o una ventana) atrapa y le muestra el mensaje al usuario. Los métodos que quedan en medio dejan pasar la excepción con <code>throws</code>.</p>
+      </div>
+      <div class="fig">
+        <svg class="svgfig" viewBox="0 0 520 190" role="img" aria-label="La consola llama a agregarSocio del club; el club lanza CupoLlenoException y la consola la atrapa e informa.">
+          <rect class="fr" x="20" y="12" width="300" height="56" rx="6"/><text class="frt" x="34" y="36">Consola · interfaz</text><text class="sub" x="34" y="56">atrapa y le avisa al usuario</text>
+          <rect class="fr" x="20" y="122" width="300" height="56" rx="6"/><text class="frt" x="34" y="146">Club · modelo</text><text class="sub" x="34" y="166">valida y lanza; no imprime</text>
+          <path class="call" d="M90 68 V112"/><path class="hd" d="M90 121 L85.5 112 L94.5 112 Z"/>
+          <text class="lbl" x="98" y="98">llama agregarSocio(socio)</text>
+          <path class="exa" d="M320 150 C 410 150, 410 40, 331 40"/><path class="hd r" d="M321 40 L331 35 L331 45 Z"/>
+          <text class="lbl r" x="398" y="92">lanza</text><text class="lbl r" x="398" y="106">CupoLleno</text><text class="lbl r" x="398" y="120">Exception</text>
+        </svg>
+      </div>
+      <h4>Estrategias que sí y que no</h4>
+      <ul class="dos">
+        <li><span class="y">Sí</span><span>Usa excepciones en vez de valores especiales (<code>null</code>, <code>-1</code>) cuando quien llama no debe poder ignorar el error.</span></li>
+        <li><span class="y">Sí</span><span>Da contexto: el mensaje dice qué falló y con qué dato.</span></li>
+        <li><span class="y">Sí</span><span>Valida al principio del método y lanza antes de modificar nada. Así, si falla, el objeto queda como estaba.</span></li>
+        <li><span class="y">Sí</span><span>Atrapa solo donde puedes hacer algo útil; si no, deja pasar con <code>throws</code>.</span></li>
+        <li><span class="n">No</span><span>Nunca dejes un <code>catch</code> vacío: te tragas el error y nadie se entera.</span></li>
+        <li><span class="n">No</span><span>No uses excepciones para el flujo normal, como salir de un ciclo o revisar si algo existe.</span></li>
+        <li><span class="n">No</span><span>No retornes ni pases <code>null</code> para avisar un error (Clean Code, cap. 7).</span></li>
+      </ul>
+      <p class="note muted">Estas estrategias salen de Clean Code, cap. 7 (lectura [23]). No tengo las diapositivas 13b del curso: si traen otra estrategia, la agrego.</p>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 5 · La receta aplicada a un enunciado</p>
+        <p><i>«El club tiene una capacidad máxima: inscribir a alguien cuando está lleno es un error que la consola debe informar. Buscar un documento que no existe también. Recibir un socio null es un error de programación.»</i></p>
+        <ol class="wsteps">
+          <li><p><b>Qué haces:</b> subrayas las reglas que se pueden romper: club lleno, socio que no existe, socio null.</p><p><b>Por qué:</b> cada regla rota es una excepción.</p></li>
+          <li><p><b>Qué decides:</b> club lleno y socio inexistente son errores del negocio que la consola debe manejar: checked propias (CupoLlenoException, SocioNoEncontradoException). El socio null es un error de programación: IllegalArgumentException, que ya existe y es unchecked.</p><p><b>Por qué:</b> las checked obligan a quien llama a hacerse cargo; un error de programación se arregla en el código, no se maneja.</p></li>
+          <li><p><b>Qué escribes en el modelo:</b> las validaciones al principio del método, y el <code>add</code> al final.</p><p><b>Por qué:</b> si algo falla, la lista no se toca.</p><pre class="code" data-code="e5-1"></pre></li>
+          <li><p><b>Qué escribes en la interfaz:</b> un <code>try</code> con un <code>catch</code> por cada error que el usuario debe ver.</p><p><b>Por qué:</b> el usuario lee el mensaje; el modelo nunca imprime.</p><pre class="code" data-code="e5-2"></pre></li>
+          <li><p><b>Lo que viene en M6:</b> cada excepción se prueba con <code>assertThrows</code>, así: <code>assertThrows(CupoLlenoException.class, () -&gt; club.agregarSocio(luis));</code></p></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="idea" id="receta">
+      <h3><span class="ix">Receta</span>Excepciones en la práctica de 80 minutos</h3>
+      <ol class="recipe">
+        <li><b>Busca en el diagrama o en el enunciado las reglas que se pueden romper:</b> cupos, duplicados, cosas que no existen, cantidades inválidas. Si el diagrama trae clases que heredan de Exception, ya te dijo cuáles son.</li>
+        <li><b>Crea la excepción propia:</b> <code>extends Exception</code> y un constructor con <code>super(mensaje)</code>. Cuesta un minuto con la plantilla.</li>
+        <li><b>Lánzala en el método del modelo, al principio:</b> <code>if (regla rota) throw new ...;</code> con un mensaje que lleve el dato.</li>
+        <li><b>Declárala con <code>throws</code></b> en ese método y en los que la dejan pasar.</li>
+        <li><b>Atrápala en la consola o el <code>main</code></b> e imprime <code>e.getMessage()</code>.</li>
+        <li><b>Pruébala</b> con <code>assertThrows</code> (M6).</li>
+      </ol>
+    </article>
+
+    <div class="tpl-box">
+      <p class="eyebrow">Plantillas de memoria · M2</p>
+      <p class="prose-p">Escríbelas sin mirar hasta que te salgan solas. Se suman a las dos de M1.</p>
+      <div class="tpl-grid">
+        <div><h4>Excepción propia</h4><pre class="code sm" data-code="tpl-1"></pre></div>
+        <div><h4>Lanzar en el modelo, atrapar en la interfaz</h4><pre class="code sm" data-code="tpl-2"></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de código</h2><p>Un programa que corre paso a paso: ves la línea actual, la pila de llamadas y la consola. Antes de algunos pasos te pregunto qué va a pasar.</p></div>
+    <div class="lab" id="runlab">
+      <div class="lab-bar">
+        <div class="seg" role="group" aria-label="Escenario">
+          <button type="button" id="sc-A" aria-pressed="false">Con cupo</button>
+          <button type="button" id="sc-B" aria-pressed="true">Club lleno</button>
+          <button type="button" id="sc-C" aria-pressed="false">Sin catch</button>
+        </div>
+        <p class="lab-status" id="run-status"></p>
+      </div>
+      <div class="run-grid">
+        <div class="run-code">
+          <p class="eyebrow">Main.java</p>
+          <pre class="code" id="run-main" aria-label="Main.java"></pre>
+          <p class="eyebrow">Club.java · fragmento</p>
+          <pre class="code" id="run-club" aria-label="Fragmento de Club.java"></pre>
+        </div>
+        <div class="run-side">
+          <p class="eyebrow">Pila de llamadas</p>
+          <div class="stack" id="run-stack"></div>
+          <p class="eyebrow">Consola</p>
+          <pre class="console" id="run-out" aria-live="polite"></pre>
+        </div>
+      </div>
+      <div class="lab-exp run-note" id="run-note" aria-live="polite"></div>
+      <div class="run-ctl">
+        <button type="button" class="btn ghost small" id="run-prev">← Atrás</button>
+        <button type="button" class="btn small" id="run-next">Paso →</button>
+        <button type="button" class="btn ghost small" id="run-reset">Reiniciar</button>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Experimentos en tu IDE</h3>
+      <p class="prose-p">Crea un proyecto con estos ocho archivos (los cuatro primeros son los de M1) y córrelo: debe imprimir <code>Error: No hay cupo en Los Andes</code>, <code>Ana</code> y <code>Error: No existe un socio con documento 999</code>. Después rompe una cosa a la vez y lee qué pasa.</p>
+      <div class="files" id="files"></div>
+      <div class="reveals" id="exps"></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Cuatro ejercicios con tiempo meta: trazas, dos refactors de lo que hiciste en M1 y una mini-práctica tipo parcial.</p></div>
+    <p class="prose-p">Pon el cronómetro y no mires la solución hasta terminar. Para una corrección completa, pega tu código en el chat o mándame el ZIP.</p>
+    <div id="problems" class="block"></div>
+    <article class="prob pending">
+      <div class="prob-head"><h3>T5 · Tu proyecto y los UML del profe</h3><span class="src">Pendiente</span></div>
+      <p class="prose-p">Si tu Proyecto 2 o tu Parcial 1 tienen validaciones con <code>null</code>, <code>-1</code> o <code>false</code>, mándamelas y las convertimos en excepciones. Con la carpeta 06 agrego los UML del profe.</p>
+    </article>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>3 de selección múltiple con un caso y 2 de código corto. Pasas con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title sub"><span class="sec-num">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Antes, relee las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M4–M5 · Del análisis al diseño, el sábado, junto con M6 · Pruebas con JUnit, donde vas a probar estas mismas excepciones con <code>assertThrows</code>.</p>
+    <p>Todo el código de este módulo, los mensajes del compilador y las salidas del lab están probados en Java 21.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- Utilidades ---------- */
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const f1 = (n) => Math.round(n * 10) / 10;
+/* Texto con `código` y **negrita** → nodos, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { parent.appendChild(el("code", "", part)); return; }
+    part.split("**").forEach((p2, j) => { if (p2) parent.appendChild(j % 2 ? el("b", "", p2) : document.createTextNode(p2)); });
+  });
+  return parent;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Resaltado de Java ---------- */
+const RX = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@[A-Za-z]+)|\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|super|static|final|void|if|else|for|while|throw|throws|try|catch|finally|null|true|false|import|package|boolean|int|double|char|long)\b|\b([A-Z][A-Za-z0-9_]*)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(line) {
+  let out = "", last = 0;
+  line.replace(RX, (m, com, str, ann, kw, ty, num, idx) => {
+    out += esc(line.slice(last, idx));
+    const cls = com ? "c-com" : str ? "c-str" : ann ? "c-ann" : kw ? "c-kw" : ty ? "c-ty" : "c-num";
+    out += '<span class="' + cls + '">' + esc(m) + "</span>";
+    last = idx + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+/* diff: cada línea empieza con "+ " (nueva), "- " (se borra) o "  " (igual). */
+function codeHTML(src, diff) {
+  const lines = src.replace(/^\n/, "").replace(/\n\s*$/, "").split("\n");
+  return lines.map((raw) => {
+    let mk = "  ", line = raw;
+    if (diff) {
+      if (raw === "+" || raw === "-") { mk = raw + " "; line = ""; }
+      else if (raw.length < 2) { mk = "  "; line = raw.trim(); }
+      else { mk = raw.slice(0, 2); line = raw.slice(2); }
+    }
+    const add = diff && mk === "+ ", del = diff && mk === "- ";
+    const gut = diff ? '<span class="gut" aria-hidden="true">' + (add ? "+" : del ? "−" : " ") + "</span>" : "";
+    const sr = add ? '<span class="sr">Línea nueva: </span>' : del ? '<span class="sr">Línea que se borra: </span>' : "";
+    const body = hl(line) || " ";
+    return '<span class="cl' + (add ? " add" : "") + (del ? " del" : "") + '">' + gut + sr + (del ? "<s>" + body + "</s>" : body) + "</span>";
+  }).join("");
+}
+
+/* ---------- Diagramas UML en SVG ---------- */
+const LH = 16;
+const memW = (t) => t.length * 6.3 + 16;
+const nameW = (t) => t.length * 7.4 + 24;
+function wrapK(k, inner, inter, label) {
+  if (inter && k) return '<g class="hit" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return "<g" + (k ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>";
+}
+function memSvg(m, x, yy, w, inter) {
+  const cls = "u-m" + (m.s ? " st" : "") + (m.a ? " abs" : "");
+  const inner = '<rect class="hl" x="' + (x + 1) + '" y="' + yy + '" width="' + (w - 2) + '" height="' + LH + '"/><text class="' + cls + '" x="' + (x + 8) + '" y="' + (yy + 11.8) + '">' + esc(m.t) + "</text>";
+  return wrapK(m.k || "", inner, inter, m.t);
+}
+function umlBox(c, inter, G) {
+  const name = c.name || c.id, attrs = c.attrs || [], ops = c.ops || [];
+  const w = c.w || Math.ceil(Math.max(c.minW || 110, nameW(name), c.stereo ? (c.stereo.length + 2) * 6 + 16 : 0, ...attrs.map((m) => memW(m.t)), ...ops.map((m) => memW(m.t))));
+  const x = typeof c.x === "function" ? Math.round(c.x(G, w)) : c.x, y = c.y;
+  const headH = c.stereo ? 36 : 24, aH = c.simple ? 0 : (attrs.length ? attrs.length * LH + 8 : 8), oH = c.simple ? 0 : (ops.length ? ops.length * LH + 8 : 8), h = headH + aH + oH;
+  let s = '<rect class="u-bg' + (c.tone ? " t-" + c.tone : "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2"/>';
+  let hd = '<rect class="hl" x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (w - 2) + '" height="' + (headH - 1) + '"/>';
+  if (c.stereo) hd += '<text class="u-st" x="' + (x + w / 2) + '" y="' + (y + 14) + '" text-anchor="middle">«' + esc(c.stereo) + "»</text>";
+  hd += '<text class="u-nm' + (c.abs ? " abs" : "") + '" x="' + (x + w / 2) + '" y="' + (y + (c.stereo ? 29 : 16.5)) + '" text-anchor="middle">' + esc(name) + "</text>";
+  s += wrapK(c.k || "", hd, inter, "Clase " + name);
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH) + '" x2="' + (x + w) + '" y2="' + (y + headH) + '"/>';
+  attrs.forEach((m, i) => { s += memSvg(m, x, y + headH + 4 + i * LH, w, inter); });
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH + aH) + '" x2="' + (x + w) + '" y2="' + (y + headH + aH) + '"/>';
+  ops.forEach((m, i) => { s += memSvg(m, x, y + headH + aH + 4 + i * LH, w, inter); });
+  return { svg: "<g>" + s + "</g>", x, y, w, h };
+}
+const REL_NAME = { assoc: "Asociación", inherit: "Herencia", realize: "Realización", dep: "Dependencia", aggr: "Agregación", comp: "Composición" };
+function relSvg(r, inter) {
+  const P = r.pts.map((p) => p.slice()), n = P.length;
+  const [ax, ay] = P[n - 2], [bx, by] = P[n - 1];
+  const L = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L, uy = (by - ay) / L;
+  const tri = r.type === "inherit" || r.type === "realize";
+  const dash = r.type === "realize" || r.type === "dep" ? ' stroke-dasharray="5 4"' : "";
+  const pts = P.map((p) => p.slice());
+  if (tri) pts[n - 1] = [bx - ux * 12, by - uy * 12];
+  let dia = "";
+  if (r.type === "aggr" || r.type === "comp") {
+    const [sx, sy] = P[0], [tx, ty] = P[1], L2 = Math.hypot(tx - sx, ty - sy) || 1, vx = (tx - sx) / L2, vy = (ty - sy) / L2, nx = -vy, ny = vx;
+    const d = [[sx, sy], [sx + vx * 9 + nx * 5.5, sy + vy * 9 + ny * 5.5], [sx + vx * 18, sy + vy * 18], [sx + vx * 9 - nx * 5.5, sy + vy * 9 - ny * 5.5]];
+    dia = '<path class="u-dia' + (r.type === "comp" ? " full" : "") + '" d="M' + d.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") + ' Z"/>';
+    pts[0] = [sx + vx * 18, sy + vy * 18];
+  }
+  const dstr = "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L");
+  let head = "";
+  if (tri) {
+    const nx = -uy, ny = ux;
+    head = '<path class="u-tri" d="M' + f1(bx) + " " + f1(by) + " L" + f1(bx - ux * 12 + nx * 7) + " " + f1(by - uy * 12 + ny * 7) + " L" + f1(bx - ux * 12 - nx * 7) + " " + f1(by - uy * 12 - ny * 7) + ' Z"/>';
+  } else {
+    const c = Math.cos(0.45), s = Math.sin(0.45), len = 11;
+    head = '<path class="u-arr" d="M' + f1(bx - len * (ux * c - uy * s)) + " " + f1(by - len * (uy * c + ux * s)) + " L" + f1(bx) + " " + f1(by) + " L" + f1(bx - len * (ux * c + uy * s)) + " " + f1(by - len * (uy * c - ux * s)) + '"/>';
+  }
+  let lb = "";
+  (r.labels || []).forEach((t) => { lb += '<text class="u-lb" x="' + f1(t.x) + '" y="' + f1(t.y) + '" text-anchor="' + (t.a || "start") + '">' + esc(t.t) + "</text>"; });
+  const label = REL_NAME[r.type] + (r.labels && r.labels.length ? " " + r.labels.map((t) => t.t).join(" ") : "");
+  const inner = '<path class="u-hit" d="' + dstr + '"/><path class="u-rl"' + dash + ' d="' + dstr + '"/>' + dia + head + lb;
+  if (inter && r.k) return '<g class="rel hit" data-k="' + r.k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return '<g class="rel">' + inner + "</g>";
+}
+function umlSvg(spec, inter) {
+  const G = {}; let boxes = "";
+  spec.cls.forEach((c) => { const b = umlBox(c, inter, G); G[c.id] = b; boxes += b.svg; });
+  const A = (id, side, t = 0.5) => { const g = G[id]; if (side === "t") return [g.x + g.w * t, g.y]; if (side === "b") return [g.x + g.w * t, g.y + g.h]; if (side === "l") return [g.x, g.y + g.h * t]; return [g.x + g.w, g.y + g.h * t]; };
+  const RL = spec.rels ? spec.rels(A, G) : []; let rs = ""; RL.forEach((r) => { rs += relSvg(r, inter); });
+  let W = 0, H = 0; Object.values(G).forEach((g) => { W = Math.max(W, g.x + g.w); H = Math.max(H, g.y + g.h); });
+  RL.forEach((r) => r.pts.forEach((p) => { W = Math.max(W, p[0]); H = Math.max(H, p[1]); }));
+  W = Math.ceil(W + 10); H = Math.ceil(H + 10);
+  return '<svg class="uml" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="--w:' + W + 'px" role="' + (inter ? "group" : "img") + '" aria-label="' + esc(spec.aria || "Diagrama de clases") + '">' + boxes + rs + "</svg>";
+}
+const centerOn = (id) => (G, w) => G[id].x + G[id].w / 2 - w / 2;
+/* Dos cajas en fila con una relación: para el diccionario de flechas. */
+function pairSpec(a, b, type, o) {
+  o = o || {};
+  const gap = type === "inherit" || type === "realize" ? 62 : 96;
+  const wa = Math.ceil(Math.max(96, nameW(a))), wb = Math.ceil(Math.max(96, nameW(b)));
+  return {
+    aria: o.aria,
+    cls: [{ id: "A", name: a, x: 10, y: 14, w: wa }, { id: "B", name: b, x: 10 + wa + gap, y: 14, w: wb, stereo: o.stereo }],
+    rels: (A, G) => {
+      const y = 34, r = { type, pts: [[G.A.x + G.A.w, y], [G.B.x, y]] };
+      if (o.rol) r.labels = [{ x: G.B.x - 14, y: y - 6, t: o.rol, a: "end" }, { x: G.B.x - 14, y: y + 15, t: o.mult, a: "end" }];
+      return [r];
+    }
+  };
+}
+
+
+const MOD = "M2";
+const NEXT_MSG = "Aprobado. Pasas a M4–M5 · Del análisis al diseño.";
+
+/* ---------- Figuras ---------- */
+const FIG = {
+  jerarquia: {
+    aria: "Jerarquía de excepciones: Throwable con hijas Exception y Error; Exception con hijas RuntimeException, IOException y CupoLlenoException; RuntimeException con hijas NullPointerException e IllegalArgumentException",
+    cls: [
+      { id: "Throwable", x: 300, y: 10, simple: true },
+      { id: "Exception", x: 180, y: 96, simple: true, stereo: "checked", tone: "chk" },
+      { id: "Error", x: 430, y: 96, simple: true, stereo: "no se atrapa" },
+      { id: "RuntimeException", x: 10, y: 196, simple: true, stereo: "unchecked", tone: "unc" },
+      { id: "IOException", x: 182, y: 196, simple: true, stereo: "checked", tone: "chk" },
+      { id: "CupoLlenoException", x: 320, y: 196, simple: true, stereo: "checked · tuya", tone: "own" },
+      { id: "NullPointerException", x: 10, y: 296, simple: true, stereo: "unchecked", tone: "unc" },
+      { id: "IllegalArgumentException", x: 200, y: 296, simple: true, stereo: "unchecked", tone: "unc" }
+    ],
+    rels: (A, G) => {
+      const tb = A("Throwable", "b"), eb = A("Exception", "b"), rb = A("RuntimeException", "b");
+      const up = (id, bus, to) => { const t = A(id, "t"); return { type: "inherit", pts: [t, [t[0], bus], [to[0], bus], to] }; };
+      return [up("Exception", 74, tb), up("Error", 74, tb), up("RuntimeException", 170, eb), up("IOException", 170, eb), up("CupoLlenoException", 170, eb), up("NullPointerException", 270, rb), up("IllegalArgumentException", 270, rb)];
+    }
+  },
+  t2: {
+    aria: "Tienda conoce de cero a muchos Coleccionable; CodigoRepetidoException y ColeccionableNoEncontradoException heredan de Exception",
+    cls: [
+      { id: "Tienda", x: 10, y: 10, attrs: [{ t: "- nombre: String" }], ops: [{ t: "+ Tienda(nombre: String)" }, { t: "+ agregarColeccionable(c: Coleccionable): void" }, { t: "+ buscarPorCodigo(codigo: String): Coleccionable" }, { t: "+ calcularValorInventario(): double" }] },
+      { id: "Coleccionable", x: 440, y: 10, attrs: [{ t: "- codigo: String" }, { t: "- precio: double" }], ops: [{ t: "+ getCodigo(): String" }] },
+      { id: "CodigoRepetidoException", x: 10, y: 176, simple: true, tone: "own" },
+      { id: "ColeccionableNoEncontradoException", x: 236, y: 176, simple: true, tone: "own" },
+      { id: "Exception", x: 185, y: 250, simple: true }
+    ],
+    rels: (A, G) => {
+      const ex = A("Exception", "t"), c1 = A("CodigoRepetidoException", "b"), c2 = A("ColeccionableNoEncontradoException", "b");
+      return [
+        { type: "assoc", pts: [[G.Tienda.x + G.Tienda.w, 54], [G.Coleccionable.x, 54]], labels: [{ x: G.Coleccionable.x - 14, y: 48, t: "-inventario", a: "end" }, { x: G.Coleccionable.x - 14, y: 69, t: "0..*", a: "end" }] },
+        { type: "inherit", pts: [c1, [c1[0], 230], [ex[0], 230], ex] },
+        { type: "inherit", pts: [c2, [c2[0], 230], [ex[0], 230], ex] }
+      ];
+    }
+  },
+  t3: {
+    aria: "Taquilla usa a Cine; Cine conoce de cero a muchas Funcion; FuncionNoEncontradaException y SillasInsuficientesException heredan de Exception",
+    cls: [
+      { id: "Taquilla", x: 10, y: 10, ops: [{ t: "+ vender(cine: Cine, hora: String, cantidad: int): void" }] },
+      { id: "Cine", x: 10, y: 110, attrs: [{ t: "- nombre: String" }], ops: [{ t: "+ buscarFuncion(hora: String): Funcion" }, { t: "+ venderBoletas(hora: String, cantidad: int): void" }] },
+      { id: "Funcion", x: 460, y: 110, attrs: [{ t: "- sillasDisponibles: int" }, { t: "- boletasVendidas: int" }], ops: [{ t: "+ venderBoletas(cantidad: int): void" }, { t: "+ calcularIngresos(): double" }] },
+      { id: "FuncionNoEncontradaException", x: 10, y: 286, simple: true, tone: "own" },
+      { id: "SillasInsuficientesException", x: 280, y: 286, simple: true, tone: "own" },
+      { id: "Exception", x: 206, y: 364, simple: true }
+    ],
+    rels: (A, G) => {
+      const x = G.Taquilla.x + 120, ex = A("Exception", "t"), e1 = A("FuncionNoEncontradaException", "b"), e2 = A("SillasInsuficientesException", "b"), yA = G.Cine.y + 44;
+      return [
+        { type: "dep", pts: [[x, G.Taquilla.y + G.Taquilla.h], [x, G.Cine.y]] },
+        { type: "assoc", pts: [[G.Cine.x + G.Cine.w, yA], [G.Funcion.x, yA]], labels: [{ x: G.Funcion.x - 14, y: yA - 6, t: "-funciones", a: "end" }, { x: G.Funcion.x - 14, y: yA + 15, t: "0..*", a: "end" }] },
+        { type: "inherit", pts: [e1, [e1[0], 344], [ex[0], 344], ex] },
+        { type: "inherit", pts: [e2, [e2[0], 344], [ex[0], 344], ex] }
+      ];
+    }
+  },
+  t4: {
+    aria: "SistemaReservas conoce muchas Cancha y muchas Reserva; cada Reserva conoce una Cancha; CanchaNoEncontradaException y CanchaOcupadaException heredan de Exception",
+    cls: [
+      { id: "SistemaReservas", x: 10, y: 10, attrs: [{ t: "+ HORA_APERTURA: int = 6", s: 1 }, { t: "+ HORA_CIERRE: int = 22", s: 1 }], ops: [{ t: "+ SistemaReservas()" }, { t: "+ agregarCancha(cancha: Cancha): void" }, { t: "+ buscarCancha(codigo: String): Cancha" }, { t: "+ reservar(codigo: String, documento: String, hora: int): Reserva" }, { t: "+ calcularIngresos(): double" }, { t: "+ contarReservasDe(documento: String): int" }] },
+      { id: "Reserva", x: 10, y: 250, attrs: [{ t: "- documento: String" }, { t: "- hora: int" }], ops: [{ t: "+ Reserva(cancha: Cancha, documento: String, hora: int)" }, { t: "+ getCancha(): Cancha" }, { t: "+ getDocumento(): String" }, { t: "+ getHora(): int" }] },
+      { id: "Cancha", x: 440, y: 250, attrs: [{ t: "- codigo: String" }, { t: "- deporte: String" }, { t: "- tarifa: double" }], ops: [{ t: "+ Cancha(codigo: String, deporte: String, tarifa: double)" }, { t: "+ getCodigo(): String" }, { t: "+ getDeporte(): String" }, { t: "+ getTarifa(): double" }] },
+      { id: "CanchaNoEncontradaException", x: 10, y: 450, simple: true, tone: "own" },
+      { id: "CanchaOcupadaException", x: 270, y: 450, simple: true, tone: "own" },
+      { id: "Exception", x: 520, y: 450, simple: true }
+    ],
+    rels: (A, G) => {
+      const sb = A("SistemaReservas", "b", 0.4), sr = G.SistemaReservas, cx = G.Cancha.x + G.Cancha.w / 2, yR = G.Reserva.y + 70;
+      const ex = A("Exception", "l"), e1 = A("CanchaNoEncontradaException", "b"), e2 = A("CanchaOcupadaException", "b"), bus = G.Exception.y + G.Exception.h + 18;
+      return [
+        { type: "assoc", pts: [sb, [sb[0], G.Reserva.y]], labels: [{ x: sb[0] + 8, y: G.Reserva.y - 22, t: "-reservas" }, { x: sb[0] + 8, y: G.Reserva.y - 7, t: "0..*" }] },
+        { type: "assoc", pts: [[sr.x + sr.w, sr.y + 60], [cx, sr.y + 60], [cx, G.Cancha.y]], labels: [{ x: cx + 8, y: G.Cancha.y - 22, t: "-canchas" }, { x: cx + 8, y: G.Cancha.y - 7, t: "0..*" }] },
+        { type: "assoc", pts: [[G.Reserva.x + G.Reserva.w, yR], [G.Cancha.x, yR]], labels: [{ x: G.Cancha.x - 14, y: yR - 6, t: "-cancha", a: "end" }, { x: G.Cancha.x - 14, y: yR + 15, t: "1", a: "end" }] },
+        { type: "inherit", pts: [e1, [e1[0], bus], [ex[0] - 22, bus], [ex[0] - 22, ex[1]], ex] },
+        { type: "inherit", pts: [e2, [e2[0], bus], [ex[0] - 22, bus], [ex[0] - 22, ex[1]], ex] }
+      ];
+    }
+  },
+  qa3: {
+    aria: "Consola usa a Club, y Club usa a CupoLlenoException, que hereda de Exception",
+    cls: [
+      { id: "Consola", x: 10, y: 10, ops: [{ t: "+ inscribir(): void" }] },
+      { id: "Club", x: 220, y: 10, ops: [{ t: "+ agregarSocio(socio: Socio): void" }] },
+      { id: "CupoLlenoException", x: 220, y: 120, simple: true, tone: "own" }
+    ],
+    rels: (A, G) => {
+      const y = 34, x = G.Club.x + 60;
+      return [
+        { type: "dep", pts: [[G.Consola.x + G.Consola.w, y], [G.Club.x, y]], labels: [{ x: G.Consola.x + G.Consola.w + 8, y: y - 6, t: "usa" }] },
+        { type: "dep", pts: [[x, G.Club.y + G.Club.h], [x, G.CupoLlenoException.y]], labels: [{ x: x + 8, y: G.CupoLlenoException.y - 12, t: "lanza" }] }
+      ];
+    }
+  }
+};
+
+/* ---------- Código de la teoría ---------- */
+const CODE = {
+  "e1": { s: `
+// Main.java
+club.agregarSocio(luis);                 // 1. main llama
+
+// Club.java
+public void agregarSocio(Socio socio) throws CupoLlenoException {
+    validarCupo();                       // 2. agregarSocio llama
+    socios.add(socio);                   //    no corre si validarCupo lanza
+}
+
+private void validarCupo() throws CupoLlenoException {
+    if (socios.size() >= capacidad) {
+        throw new CupoLlenoException("No hay cupo en " + nombre);   // 3. se lanza
+    }
+}` },
+  "e2": { s: `
+try {
+    System.out.println("1");
+    club.agregarSocio(socio);
+    System.out.println("2");
+} catch (CupoLlenoException e) {
+    System.out.println("3 Error: " + e.getMessage());
+} finally {
+    System.out.println("4");
+}
+System.out.println("5");` },
+  "e3-1": { d: 1, s: `
++ public class CupoLlenoException extends Exception {
++     public CupoLlenoException(String mensaje) {
++         super(mensaje);
++     }
++ }` },
+  "e3-2": { s: `
+public void agregarSocio(Socio socio) {      // no declara nada
+    validarCupo();                           // puede lanzar CupoLlenoException: error
+    socios.add(socio);
+}` },
+  "e3-3": { d: 1, s: `
+- public void agregarSocio(Socio socio) {
++ public void agregarSocio(Socio socio) throws CupoLlenoException {
+      validarCupo();
+      socios.add(socio);
+  }` },
+  "e3-4": { d: 1, s: `
+- club.agregarSocio(luis);
++ try {
++     club.agregarSocio(luis);
++ } catch (CupoLlenoException e) {
++     System.out.println("Error: " + e.getMessage());
++ }` },
+  "e3-5": { d: 1, s: `
+- public class CupoLlenoException extends Exception {
++ public class CupoLlenoException extends RuntimeException {
+      public CupoLlenoException(String mensaje) {
+          super(mensaje);
+      }
+  }
+  // Ahora agregarSocio compila sin throws, y Main sin try.` },
+  "e4-1": { d: 1, s: `
++ public class SocioNoEncontradoException extends Exception {
++     public SocioNoEncontradoException(String documento) {
++         super("No existe un socio con documento " + documento);
++     }
++ }` },
+  "e4-2": { d: 1, s: `
+- public Socio buscarSocio(String documento) {
++ public Socio buscarSocio(String documento) throws SocioNoEncontradoException {
+      for (Socio s : socios) {
+          if (s.getDocumento().equals(documento)) {
+              return s;
+          }
+      }
+-     return null;
++     throw new SocioNoEncontradoException(documento);
+  }` },
+  "e4-3": { d: 1, s: `
++ try {
++     Socio s = club.buscarSocio("999");
++     System.out.println(s.getNombre());
++ } catch (SocioNoEncontradoException e) {
++     System.out.println(e.getMessage());   // No existe un socio con documento 999
++ }` },
+  "e5-1": { d: 1, s: `
+  public void agregarSocio(Socio socio) throws CupoLlenoException {
++     if (socio == null) {
++         throw new IllegalArgumentException("El socio no puede ser null");
++     }
++     validarCupo();
+      socios.add(socio);
+  }
+
++ private void validarCupo() throws CupoLlenoException {
++     if (socios.size() >= capacidad) {
++         throw new CupoLlenoException("No hay cupo en " + nombre);
++     }
++ }` },
+  "e5-2": { d: 1, s: `
++ public class Main {
++     public static void main(String[] args) {
++         Club club = new Club("Los Andes", 1);
++         try {
++             club.agregarSocio(new SocioRegular("101", "Ana"));
++             club.agregarSocio(new SocioEstudiante("102", "Luis", "E-77"));
++         } catch (CupoLlenoException e) {
++             System.out.println("Error: " + e.getMessage());
++         }
++         try {
++             System.out.println(club.buscarSocio("101").getNombre());
++             System.out.println(club.buscarSocio("999").getNombre());
++         } catch (SocioNoEncontradoException e) {
++             System.out.println("Error: " + e.getMessage());
++         }
++     }
++ }
+  // Imprime: Error: No hay cupo en Los Andes · Ana · Error: No existe un socio con documento 999` },
+  "tpl-1": { s: `
+public class NombreException extends Exception {
+    public NombreException(String mensaje) {
+        super(mensaje);
+    }
+}` },
+  "tpl-2": { s: `
+// En el modelo: valida primero, lanza con el dato
+public void agregarSocio(Socio socio) throws CupoLlenoException {
+    if (socios.size() >= capacidad) {
+        throw new CupoLlenoException("No hay cupo en " + nombre);
+    }
+    socios.add(socio);
+}
+
+// En la interfaz: atrapa e informa
+try {
+    club.agregarSocio(socio);
+} catch (CupoLlenoException e) {
+    System.out.println("Error: " + e.getMessage());
+}` }
+};
+
+/* ---------- Lab: ejecutor paso a paso ---------- */
+const RUN_CLUB = [
+  "public void agregarSocio(Socio socio) throws CupoLlenoException {",
+  "    validarCupo();",
+  "    socios.add(socio);",
+  "}",
+  "",
+  "private void validarCupo() throws CupoLlenoException {",
+  "    if (socios.size() >= capacidad) {",
+  "        throw new CupoLlenoException(\"No hay cupo en \" + nombre);",
+  "    }",
+  "}"
+];
+function mainAB(cap) {
+  return [
+    "public class Main {",
+    "    public static void main(String[] args) {",
+    "        Club club = new Club(\"Los Andes\", " + cap + ");",
+    "        try {",
+    "            club.agregarSocio(new SocioRegular(\"101\", \"Ana\"));",
+    "            System.out.println(\"Ana inscrita\");",
+    "            club.agregarSocio(new SocioRegular(\"102\", \"Luis\"));",
+    "            System.out.println(\"Luis inscrito\");",
+    "            System.out.println(\"Listo\");",
+    "        } catch (CupoLlenoException e) {",
+    "            System.out.println(\"Error: \" + e.getMessage());",
+    "        } finally {",
+    "            System.out.println(\"Fin del registro\");",
+    "        }",
+    "        System.out.println(\"Sigue el programa\");",
+    "    }",
+    "}"
+  ];
+}
+const MAIN_C = [
+  "public class Main {",
+  "    public static void main(String[] args) throws CupoLlenoException {",
+  "        Club club = new Club(\"Los Andes\", 1);",
+  "        try {",
+  "            club.agregarSocio(new SocioRegular(\"101\", \"Ana\"));",
+  "            System.out.println(\"Ana inscrita\");",
+  "            club.agregarSocio(new SocioRegular(\"102\", \"Luis\"));",
+  "            System.out.println(\"Luis inscrito\");",
+  "            System.out.println(\"Listo\");",
+  "        } finally {",
+  "            System.out.println(\"Fin del registro\");",
+  "        }",
+  "        System.out.println(\"Sigue el programa\");",
+  "    }",
+  "}"
+];
+const M = "main", AA = "agregarSocio(Ana)", AL = "agregarSocio(Luis)", VC = "validarCupo()";
+/* Pasos comunes: inscribir a Ana sin problema (capacidad ≥ 1). */
+const ANA = (cap) => [
+  { m: 3, st: [M], out: 0, n: "main crea el club con capacidad " + cap + ". Por ahora hay un solo método abierto: main." },
+  { m: 5, st: [M], out: 0, n: "Entra al `try` y llama a `agregarSocio` con Ana." },
+  { c: 2, st: [M, AA], out: 0, n: "`agregarSocio` se abre debajo de main, y lo primero que hace es llamar a `validarCupo`." },
+  { c: 7, st: [M, AA, VC], out: 0, n: "¿`socios.size() >= capacidad`? Es `0 >= " + cap + "`: falso. No lanza nada." },
+  { c: 3, st: [M, AA], out: 0, n: "`validarCupo` terminó normal y se cierra. Ana entra a la lista." },
+  { m: 6, st: [M], out: 1, n: "`agregarSocio` terminó: volvemos a main, que imprime «Ana inscrita»." },
+  { m: 7, st: [M], out: 1, n: "Ahora llama a `agregarSocio` con Luis." },
+  { c: 2, st: [M, AL], out: 1, n: "Otra vez, `agregarSocio` llama a `validarCupo`." }
+];
+const SCEN = {
+  A: {
+    main: mainAB(2), out: ["Ana inscrita", "Luis inscrito", "Listo", "Fin del registro", "Sigue el programa"], err: 99,
+    steps: ANA(2).concat([
+      { c: 7, st: [M, AL, VC], out: 1, n: "¿`socios.size() >= capacidad`? Es `1 >= 2`: falso. Hay cupo." },
+      { c: 3, st: [M, AL], out: 1, n: "Luis entra a la lista." },
+      { m: 8, st: [M], out: 2, n: "De vuelta en main: imprime «Luis inscrito»." },
+      { m: 9, st: [M], out: 3, n: "Imprime «Listo». Se terminó el `try` sin ninguna excepción." },
+      { m: 13, st: [M], out: 4, n: "Sin excepción, el `catch` se salta. El `finally` corre igual e imprime «Fin del registro».",
+        ask: { q: "No hubo ninguna excepción. ¿Qué corre después de «Listo»?", o: ["El catch", "El finally", "Nada: salta directo a «Sigue el programa»"], a: 1, e: "Sin excepción el `catch` se salta, pero el `finally` corre siempre." } },
+      { m: 15, st: [M], out: 5, n: "El programa sigue después del `try`: imprime «Sigue el programa»." },
+      { m: 16, st: [], out: 5, n: "main termina. Todo salió bien, y aun así corrió el `finally`.", end: true }
+    ])
+  },
+  B: {
+    main: mainAB(1), out: ["Ana inscrita", "Error: No hay cupo en Los Andes", "Fin del registro", "Sigue el programa"], err: 99,
+    steps: ANA(1).concat([
+      { c: 7, st: [M, AL, VC], out: 1, n: "¿`socios.size() >= capacidad`? Es `1 >= 1`: verdadero. El club está lleno." },
+      { c: 8, st: [M, AL, VC], ex: 2, out: 1, n: "`throw` crea una CupoLlenoException con su mensaje y la lanza. `validarCupo` se interrumpe aquí mismo." },
+      { c: 2, st: [M, AL, VC], gone: [2], ex: 1, out: 1, n: "La excepción sube a `agregarSocio`. Como ahí no hay `try`, ese método también se corta en esta línea: `socios.add(socio)` nunca corre, y Luis no entra.",
+        ask: { q: "La excepción se lanzó en validarCupo. ¿Se ejecuta socios.add(socio) para Luis?", o: ["Sí: agregarSocio sigue con la línea siguiente", "No: agregarSocio también se interrumpe"], a: 1, e: "Una excepción que nadie atrapa corta cada método por el que pasa. `agregarSocio` no tiene `try`, así que se interrumpe en `validarCupo()`." } },
+      { m: 7, st: [M, AL, VC], gone: [1, 2], ex: 0, out: 1, n: "La excepción llega a main, que la llamó dentro del `try`. Lo que faltaba del `try` («Luis inscrito» y «Listo») se salta." },
+      { m: 11, st: [M], caught: true, out: 2, n: "El `catch` de CupoLlenoException coincide con el tipo: la atrapa e imprime su mensaje. La excepción deja de subir.",
+        ask: { q: "¿Qué se imprime ahora?", o: ["Luis inscrito", "Listo", "Error: No hay cupo en Los Andes", "Fin del registro"], a: 2, e: "Después del `throw`, lo siguiente que corre es el `catch` que coincide con el tipo de la excepción." } },
+      { m: 13, st: [M], out: 3, n: "El `finally` corre siempre: también cuando hubo excepción.",
+        ask: { q: "Ya corrió el catch. ¿Corre también el finally?", o: ["Sí", "No: el catch ya manejó el error"], a: 0, e: "El `finally` corre en los tres caminos: sin excepción, con excepción atrapada y con excepción sin atrapar." } },
+      { m: 15, st: [M], out: 4, n: "Como la excepción quedó atrapada, el programa sigue normal: imprime «Sigue el programa»." },
+      { m: 16, st: [], out: 4, n: "main termina. El error se informó, y Luis no quedó inscrito: el club sigue con un solo socio.", end: true }
+    ])
+  },
+  C: {
+    main: MAIN_C, out: ["Ana inscrita", "Fin del registro", "Exception in thread \"main\" CupoLlenoException: No hay cupo en Los Andes", "\tat Club.validarCupo(Club.java)", "\tat Club.agregarSocio(Club.java)", "\tat Main.main(Main.java)"], err: 2,
+    steps: ANA(1).map((s, i) => (i === 0 ? Object.assign({}, s, { n: "main declara `throws CupoLlenoException` y su `try` no tiene `catch`. Crea el club con capacidad 1." }) : s)).concat([
+      { c: 7, st: [M, AL, VC], out: 1, n: "¿`socios.size() >= capacidad`? Es `1 >= 1`: verdadero." },
+      { c: 8, st: [M, AL, VC], ex: 2, out: 1, n: "`throw`: se lanza la CupoLlenoException y `validarCupo` se interrumpe." },
+      { c: 2, st: [M, AL, VC], gone: [2], ex: 1, out: 1, n: "Sube a `agregarSocio`, que tampoco la atrapa: se corta y `socios.add` no corre." },
+      { m: 7, st: [M, AL, VC], gone: [1, 2], ex: 0, out: 1, n: "Llega a main, dentro del `try`. Pero este `try` no tiene `catch`." },
+      { m: 11, st: [M], ex: 0, out: 2, n: "Antes de que la excepción salga de main, corre el `finally`: imprime «Fin del registro».",
+        ask: { q: "El try de main no tiene catch. ¿Corre el finally?", o: ["Sí, antes de que la excepción siga subiendo", "No: sin catch tampoco hay finally"], a: 0, e: "El `finally` corre aunque nadie atrape la excepción; después, la excepción sigue su camino." } },
+      { m: 13, st: [M], gone: [0], ex: 0, out: 6, n: "La excepción sale de main y nadie la atrapó: Java detiene el programa e imprime la traza, del método donde se lanzó hasta main. «Sigue el programa» nunca se imprime.",
+        ask: { q: "Nadie atrapó la excepción. ¿Se imprime «Sigue el programa»?", o: ["Sí", "No"], a: 1, e: "Una excepción sin atrapar termina el programa. Lo que venía después nunca corre." } },
+      { m: 0, st: [], out: 6, n: "Fin: el programa terminó con error. En la traza real, cada línea trae también el número de línea del archivo.", end: true }
+    ])
+  }
+};
+let scen = "B", idx = 0, pending = null;
+const answered = { A: {}, B: {}, C: {} }, scoreP = { A: [0, 0], B: [0, 0], C: [0, 0] };
+function codeLines(pre, lines, cur) {
+  pre.innerHTML = lines.map((l, i) => '<span class="cl' + (i + 1 === cur ? " cur" : "") + '">' + (hl(l) || " ") + "</span>").join("");
+  const node = pre.querySelector(".cur");
+  if (node) { pre.scrollTop = Math.max(0, node.offsetTop - pre.clientHeight / 2); }
+}
+function renderRun() {
+  const S = SCEN[scen], s = S.steps[idx];
+  codeLines($("#run-main"), S.main, s.m || 0);
+  codeLines($("#run-club"), RUN_CLUB, s.c || 0);
+  const st = $("#run-stack"); st.textContent = "";
+  if (!s.st.length) st.appendChild(el("p", "empty", "Ningún método abierto."));
+  s.st.forEach((f, i) => {
+    const fr = el("div", "frame" + ((s.gone || []).includes(i) ? " gone" : "")); fr.style.marginLeft = i * 14 + "px";
+    fr.appendChild(el("span", "fn", f));
+    if (s.ex === i) fr.appendChild(el("span", "exb", "CupoLlenoException ↑"));
+    if (s.caught && i === s.st.length - 1) fr.appendChild(el("span", "exb ok", "atrapada en el catch"));
+    st.appendChild(fr);
+  });
+  const out = $("#run-out"); out.textContent = "";
+  const prevOut = idx > 0 ? S.steps[idx - 1].out : 0;
+  S.out.slice(0, s.out).forEach((line, i) => {
+    const sp = el("span", (i >= S.err ? "e" : "") + (i >= prevOut ? " nw" : ""), line + "\n");
+    out.appendChild(sp);
+  });
+  if (!s.out) out.appendChild(el("span", "dim", "(todavía no se ha impreso nada)"));
+  const note = $("#run-note"); note.className = "lab-exp run-note"; note.textContent = "";
+  note.appendChild(el("p", "lx-t", "Paso " + (idx + 1) + " de " + S.steps.length));
+  note.appendChild(rich(el("p"), s.n));
+  const [ok, tot] = scoreP[scen];
+  $("#run-status").textContent = tot ? "Predicciones: " + ok + " de " + tot : "Toca «Paso» para avanzar.";
+  $("#run-prev").disabled = idx === 0;
+  $("#run-next").disabled = !!s.end;
+  $("#run-next").textContent = s.end ? "Terminó" : "Paso →";
+}
+function askFor(nextIdx) {
+  const S = SCEN[scen], q = S.steps[nextIdx].ask, note = $("#run-note");
+  pending = nextIdx; note.className = "lab-exp run-note"; note.textContent = "";
+  note.appendChild(el("p", "lx-t", "Antes del paso " + (nextIdx + 1) + ": predice"));
+  note.appendChild(el("p", "q", q.q));
+  const opts = el("div", "ask-opts");
+  q.o.forEach((o, oi) => {
+    const b = el("button", "opt", o); b.type = "button";
+    b.addEventListener("click", () => {
+      const ok = oi === q.a; scoreP[scen][1]++; if (ok) scoreP[scen][0]++;
+      answered[scen][nextIdx] = true; pending = null; idx = nextIdx; renderRun();
+      const n2 = $("#run-note"); n2.className = "lab-exp run-note " + (ok ? "ok" : "no");
+      n2.insertBefore(rich(el("p"), (ok ? "**Bien predicho.** " : "**No.** ") + q.e), n2.children[1]);
+    });
+    opts.appendChild(b);
+  });
+  note.appendChild(opts);
+  $("#run-next").disabled = true;
+  opts.querySelector("button").focus({ preventScroll: true });
+}
+$("#run-next").addEventListener("click", () => {
+  const S = SCEN[scen]; if (pending !== null || S.steps[idx].end) return;
+  const n = idx + 1; if (n >= S.steps.length) return;
+  if (S.steps[n].ask && !answered[scen][n]) askFor(n); else { idx = n; renderRun(); }
+});
+$("#run-prev").addEventListener("click", () => { if (idx > 0) { pending = null; idx--; renderRun(); } });
+$("#run-reset").addEventListener("click", () => { pending = null; idx = 0; answered[scen] = {}; scoreP[scen] = [0, 0]; renderRun(); });
+["A", "B", "C"].forEach((k) => $("#sc-" + k).addEventListener("click", () => {
+  scen = k; idx = 0; pending = null;
+  ["A", "B", "C"].forEach((j) => $("#sc-" + j).setAttribute("aria-pressed", String(j === k)));
+  renderRun();
+}));
+renderRun();
+
+/* Archivos para copiar */
+const FILESRC = {
+  "Cobrable.java": `public interface Cobrable {
+    double calcularCuota();
+}`,
+  "Socio.java": `public abstract class Socio implements Cobrable {
+    public static final double CUOTA_BASE = 90000;
+
+    private String documento;
+    private String nombre;
+
+    public Socio(String documento, String nombre) {
+        this.documento = documento;
+        this.nombre = nombre;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public abstract double calcularCuota();
+}`,
+  "SocioRegular.java": `public class SocioRegular extends Socio {
+    public SocioRegular(String documento, String nombre) {
+        super(documento, nombre);
+    }
+
+    @Override
+    public double calcularCuota() {
+        return CUOTA_BASE;
+    }
+}`,
+  "SocioEstudiante.java": `public class SocioEstudiante extends Socio {
+    private String carnet;
+
+    public SocioEstudiante(String documento, String nombre, String carnet) {
+        super(documento, nombre);
+        this.carnet = carnet;
+    }
+
+    public String getCarnet() {
+        return carnet;
+    }
+
+    @Override
+    public double calcularCuota() {
+        return CUOTA_BASE / 2;
+    }
+}`,
+  "CupoLlenoException.java": `public class CupoLlenoException extends Exception {
+    public CupoLlenoException(String mensaje) {
+        super(mensaje);
+    }
+}`,
+  "SocioNoEncontradoException.java": `public class SocioNoEncontradoException extends Exception {
+    public SocioNoEncontradoException(String documento) {
+        super("No existe un socio con documento " + documento);
+    }
+}`,
+  "Club.java": `import java.util.ArrayList;
+
+public class Club {
+    private String nombre;
+    private int capacidad;
+    private ArrayList<Socio> socios;
+
+    public Club(String nombre, int capacidad) {
+        this.nombre = nombre;
+        this.capacidad = capacidad;
+        this.socios = new ArrayList<>();
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void agregarSocio(Socio socio) throws CupoLlenoException {
+        if (socio == null) {
+            throw new IllegalArgumentException("El socio no puede ser null");
+        }
+        validarCupo();
+        socios.add(socio);
+    }
+
+    private void validarCupo() throws CupoLlenoException {
+        if (socios.size() >= capacidad) {
+            throw new CupoLlenoException("No hay cupo en " + nombre);
+        }
+    }
+
+    public Socio buscarSocio(String documento) throws SocioNoEncontradoException {
+        for (Socio s : socios) {
+            if (s.getDocumento().equals(documento)) {
+                return s;
+            }
+        }
+        throw new SocioNoEncontradoException(documento);
+    }
+
+    public double calcularRecaudo() {
+        double total = 0;
+        for (Socio s : socios) {
+            total += s.calcularCuota();
+        }
+        return total;
+    }
+}`,
+  "Main.java": `public class Main {
+    public static void main(String[] args) {
+        Club club = new Club("Los Andes", 1);
+        try {
+            club.agregarSocio(new SocioRegular("101", "Ana"));
+            club.agregarSocio(new SocioEstudiante("102", "Luis", "E-77"));
+        } catch (CupoLlenoException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        try {
+            System.out.println(club.buscarSocio("101").getNombre());
+            System.out.println(club.buscarSocio("999").getNombre());
+        } catch (SocioNoEncontradoException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}`
+};
+const FILES = Object.keys(FILESRC).map((name) => ({ name, lines: FILESRC[name].split("\n") }));
+const EXPS = [
+  { t: "Quita `throws CupoLlenoException` de la firma de agregarSocio.", r: "No compila. Eclipse: `Unhandled exception type CupoLlenoException`; javac: `unreported exception CupoLlenoException; must be caught or declared to be thrown`, en la línea de `validarCupo()`. Una checked se atrapa o se declara." },
+  { t: "En Main, pon `catch (Exception e)` antes de `catch (CupoLlenoException e)`.", r: "No compila. Eclipse: `Unreachable catch block for CupoLlenoException. It is already handled by the catch block for Exception`; javac: `exception CupoLlenoException has already been caught`. El general atrapa todo, así que el específico nunca llegaría. Van del más específico al más general." },
+  { t: "Cambia `extends Exception` por `extends RuntimeException`, borra los `throws` de Club y el primer `try` de Main.", r: "Compila sin quejarse, porque ahora es unchecked. Pero al correr, la excepción no la atrapa nadie: sale `Exception in thread \"main\" CupoLlenoException: No hay cupo en Los Andes` con la traza, y el programa se detiene ahí." },
+  { t: "En Main, deja vacío el primer catch: `catch (CupoLlenoException e) { }`.", r: "Compila y corre sin mostrar ningún error, pero Luis nunca se inscribió y nadie se enteró. Eso es tragarse una excepción: el error desaparece sin aviso." },
+  { t: "En Main, cambia el primer `agregarSocio` por `club.agregarSocio(null)`.", r: "Compila, porque IllegalArgumentException es unchecked y nadie obliga a atraparla. Al correr: `Exception in thread \"main\" java.lang.IllegalArgumentException: El socio no puede ser null`. Es un error de programación: se arregla en el código, no se maneja." }
+];
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Predice la salida: seis trazas", min: 15, src: "Problema nuevo",
+    txt: ["Lee cada fragmento y escoge lo que imprime, sin correrlo. En todas, `validar(0)` lanza `CupoLlenoException(\"lleno\")`, y `validar` con cualquier otro número no lanza nada."],
+    checks: [
+      { label: "Traza 1", q: "¿Qué imprime?", code: `
+try {
+    System.out.println("A");
+} catch (Exception e) {
+    System.out.println("B");
+} finally {
+    System.out.println("C");
+}
+System.out.println("D");`, o: ["A · C · D", "A · B · C · D", "A · D", "A · C"], a: 0 },
+      { label: "Traza 2", q: "¿Qué imprime?", code: `
+try {
+    System.out.println("A");
+    validar(0);
+    System.out.println("B");
+} catch (CupoLlenoException e) {
+    System.out.println("C " + e.getMessage());
+} finally {
+    System.out.println("D");
+}
+System.out.println("E");`, o: ["A · B · C lleno · D · E", "A · C lleno · D · E", "A · C lleno · E", "A · D"], a: 1 },
+      { label: "Traza 3", q: "¿Qué imprime?", code: `
+try {
+    validar(0);
+} catch (CupoLlenoException e) {
+    System.out.println("cupo");
+} catch (Exception e) {
+    System.out.println("general");
+} finally {
+    System.out.println("fin");
+}`, o: ["cupo · general · fin", "general · fin", "cupo · fin", "No compila"], a: 2 },
+      { label: "Traza 4", q: "¿Qué imprime main?", code: `
+static void inscribir() throws CupoLlenoException {
+    try {
+        validar(0);
+        System.out.println("inscrito");
+    } finally {
+        System.out.println("finally de inscribir");
+    }
+}
+
+// en main:
+try {
+    inscribir();
+} catch (CupoLlenoException e) {
+    System.out.println("catch de main");
+}`, o: ["catch de main · finally de inscribir", "finally de inscribir · catch de main", "inscrito · finally de inscribir", "finally de inscribir"], a: 1 },
+      { label: "Traza 5", q: "¿Qué imprime main?", code: `
+static int contar() {
+    try {
+        return 1;
+    } finally {
+        System.out.println("finally");
+    }
+}
+
+// en main:
+System.out.println(contar());`, o: ["1", "1 · finally", "finally · 1", "No compila: hay código después del return"], a: 2 },
+      { label: "Traza 6", q: "¿Qué imprime?", code: `
+String doc = null;
+try {
+    System.out.println(doc.length());
+    System.out.println("después");
+} catch (NullPointerException e) {
+    System.out.println("NPE");
+}
+System.out.println("fin");`, o: ["NPE · después · fin", "NPE · fin", "fin", "No compila: NullPointerException es unchecked"], a: 1 }
+    ],
+    hints: ["Usa los tres caminos de la idea 2: ¿hubo excepción?, ¿algún catch coincide?, y el finally corre siempre.", "En la traza 5, el `finally` corre antes de que `contar()` termine de retornar; el `println` de main corre después."],
+    sol: [{ p: "Las salidas, verificadas en Java 21: **1)** A, C, D. **2)** A, C lleno, D, E (la B se salta). **3)** cupo, fin (solo corre el primer catch que coincide). **4)** finally de inscribir, catch de main (el finally de adentro corre antes de que la excepción suba). **5)** finally, 1. **6)** NPE, fin (las unchecked también se pueden atrapar).", c: "" }],
+    rubTitle: "Cómo te fue", rub: ["6 de 6: dominas los caminos.", "4 o 5: repasa en el lab el escenario que se parezca a la que fallaste.", "Menos de 4: vuelve a la idea 2 y haz los tres escenarios del lab con las predicciones."] },
+  { n: "T2", t: "Del null a la excepción en la tienda", min: 15, src: "Refactor del T2 de M1", fig: "t2",
+    txt: ["Toma la Tienda del T2 de M1 y cambia los errores silenciosos por excepciones: `agregarColeccionable` lanza `CodigoRepetidoException` si ya hay un coleccionable con ese código, y `buscarPorCodigo` lanza `ColeccionableNoEncontradoException` en vez de retornar `null`. Los mensajes dicen el código. Escribe un Main que intente agregar dos coleccionables con el mismo código y buscar uno que no existe, e imprima los mensajes."],
+    checks: [
+      { q: "¿Qué cambia en la firma de buscarPorCodigo?", o: ["Se le agrega `throws ColeccionableNoEncontradoException`", "Pasa a retornar `void`", "Se le agrega `throw ColeccionableNoEncontradoException`", "Nada: el throw va solo en el cuerpo"], a: 0 },
+      { q: "Para revisar si el código ya existe dentro de agregarColeccionable, ¿qué conviene?", o: ["Un for que compare códigos y lance si encuentra uno igual", "Llamar a buscarPorCodigo dentro de un try y agregar en el catch", "Agregar primero y borrar si estaba repetido", "Retornar false si ya existe"], a: 0 }],
+    hints: ["Cada excepción es una clase de cinco líneas: `extends Exception` y un constructor que recibe el código y llama a `super` con el mensaje armado.", "No uses `buscarPorCodigo` con un `try` para saber si existe: eso es usar excepciones para el flujo normal. Un `for` basta."],
+    sol: [
+      { p: "Las dos excepciones: cada constructor recibe el código y arma su mensaje.", c: `
+public class CodigoRepetidoException extends Exception {
+    public CodigoRepetidoException(String codigo) {
+        super("Ya existe un coleccionable con código " + codigo);
+    }
+}
+
+public class ColeccionableNoEncontradoException extends Exception {
+    public ColeccionableNoEncontradoException(String codigo) {
+        super("No existe un coleccionable con código " + codigo);
+    }
+}` },
+      { p: "Los dos métodos de Tienda que cambian. La validación va antes del `add`: si falla, el inventario no se toca.", c: `
+public void agregarColeccionable(Coleccionable c) throws CodigoRepetidoException {
+    for (Coleccionable x : inventario) {
+        if (x.getCodigo().equals(c.getCodigo())) {
+            throw new CodigoRepetidoException(c.getCodigo());
+        }
+    }
+    inventario.add(c);
+}
+
+public Coleccionable buscarPorCodigo(String codigo) throws ColeccionableNoEncontradoException {
+    for (Coleccionable c : inventario) {
+        if (c.getCodigo().equals(codigo)) {
+            return c;
+        }
+    }
+    throw new ColeccionableNoEncontradoException(codigo);
+}` },
+      { p: "El Main atrapa cada error y muestra el mensaje. Imprime: «Error: Ya existe un coleccionable con código C1», «Figura» y «Error: No existe un coleccionable con código C9».", c: `
+public class Main {
+    public static void main(String[] args) {
+        Tienda t = new Tienda("Mundo Retro");
+        try {
+            t.agregarColeccionable(new Coleccionable("C1", "Figura", 50000));
+            t.agregarColeccionable(new Carta("C1", "Dragón", 120000, "legendaria"));
+        } catch (CodigoRepetidoException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        try {
+            System.out.println(t.buscarPorCodigo("C1").getNombre());
+            System.out.println(t.buscarPorCodigo("C9").getNombre());
+        } catch (ColeccionableNoEncontradoException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}` }],
+    rub: ["Las dos excepciones tienen `extends Exception` y un constructor con `super(...)` cuyo mensaje lleva el código.", "Los dos métodos declaran su excepción con `throws`.", "`buscarPorCodigo` ya no retorna `null`: lanza al final.", "`agregarColeccionable` valida antes del `add`, con un `for` y no con un `try`.", "El Main atrapa cada excepción e imprime `getMessage()`; ningún `catch` vacío."] },
+  { n: "T3", t: "Validar y dejar pasar: la taquilla del cine", min: 25, src: "Refactor del T4 de M1", fig: "t3",
+    txt: ["Toma el cine del T4 de M1. `Funcion.venderBoletas(cantidad)` ya no retorna `boolean`: es `void`, lanza `IllegalArgumentException` si la cantidad no es positiva y `SillasInsuficientesException` si no alcanzan las sillas (el mensaje dice cuántas se pidieron y cuántas quedan). `Cine.buscarFuncion` lanza `FuncionNoEncontradaException`. Agrega `Cine.venderBoletas(hora, cantidad)`, que busca la función y le vende, dejando pasar las excepciones. Por último, `Taquilla.vender(...)` atrapa todo e imprime los mensajes."],
+    checks: [
+      { q: "Cine.venderBoletas no atrapa nada. ¿Qué tiene su firma?", o: ["`throws FuncionNoEncontradaException, SillasInsuficientesException`", "Lo anterior y también `IllegalArgumentException`, obligatoriamente", "Nada: las excepciones pasan solas", "Un try/catch vacío"], a: 0 },
+      { q: "¿Por qué venderBoletas valida antes de restar sillas?", o: ["Para que, si lanza, la función quede como estaba", "Porque Java no deja lanzar después de una resta", "Por estilo: el orden no cambia nada", "Para que el finally no corra"], a: 0 }],
+    hints: ["Las checked se declaran en cada método que las deja pasar. IllegalArgumentException es unchecked: se puede declarar, pero no es obligatorio.", "Taquilla es la interfaz: un `try` con un `catch` por tipo. Si dos catch hacen lo mismo, puedes juntarlos así: `catch (FuncionNoEncontradaException | SillasInsuficientesException e)`."],
+    sol: [
+      { p: "Las dos excepciones nuevas. La de sillas recibe los dos números para que el mensaje los diga.", c: `
+public class SillasInsuficientesException extends Exception {
+    public SillasInsuficientesException(int pedidas, int disponibles) {
+        super("Se pidieron " + pedidas + " boletas y solo quedan " + disponibles);
+    }
+}
+
+public class FuncionNoEncontradaException extends Exception {
+    public FuncionNoEncontradaException(String hora) {
+        super("No hay función a las " + hora);
+    }
+}` },
+      { p: "En Funcion: las dos validaciones van primero y la resta al final.", c: `
+public void venderBoletas(int cantidad) throws SillasInsuficientesException {
+    if (cantidad <= 0) {
+        throw new IllegalArgumentException("La cantidad debe ser positiva: " + cantidad);
+    }
+    if (cantidad > sillasDisponibles) {
+        throw new SillasInsuficientesException(cantidad, sillasDisponibles);
+    }
+    sillasDisponibles -= cantidad;
+    boletasVendidas += cantidad;
+}` },
+      { p: "En Cine: buscar lanza en vez de retornar `null`, y el método nuevo deja pasar las dos checked.", c: `
+public Funcion buscarFuncion(String hora) throws FuncionNoEncontradaException {
+    for (Funcion f : funciones) {
+        if (f.getHora().equals(hora)) {
+            return f;
+        }
+    }
+    throw new FuncionNoEncontradaException(hora);
+}
+
+public void venderBoletas(String hora, int cantidad) throws FuncionNoEncontradaException, SillasInsuficientesException {
+    Funcion f = buscarFuncion(hora);
+    f.venderBoletas(cantidad);
+}` },
+      { p: "Taquilla, la interfaz. Con una función de 3 sillas a las 18:00, vender 2, luego 5, luego a las 21:00 y luego 0 imprime: «Venta exitosa: 2 boletas para las 18:00», «Error: Se pidieron 5 boletas y solo quedan 1», «Error: No hay función a las 21:00» y «Dato inválido: La cantidad debe ser positiva: 0».", c: `
+public class Taquilla {
+    public void vender(Cine cine, String hora, int cantidad) {
+        try {
+            cine.venderBoletas(hora, cantidad);
+            System.out.println("Venta exitosa: " + cantidad + " boletas para las " + hora);
+        } catch (FuncionNoEncontradaException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (SillasInsuficientesException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dato inválido: " + e.getMessage());
+        }
+    }
+}` }],
+    rub: ["`venderBoletas` de Funcion es `void`, valida primero y solo después modifica.", "La cantidad inválida usa `IllegalArgumentException`; las sillas, una checked propia con los dos números en el mensaje.", "`buscarFuncion` lanza en vez de retornar `null`.", "`Cine.venderBoletas` declara las dos checked y no las atrapa.", "Solo Taquilla atrapa e imprime; el modelo no imprime nada."] },
+  { n: "T4", t: "Mini-práctica tipo parcial: reservas de canchas", min: 40, src: "Problema nuevo · dominio del club", fig: "t4",
+    txt: ["«Implementa en Java una aplicación basada en el siguiente diagrama UML.» Los get son los obvios. Funcionalidad mínima esperada:"],
+    list: ["`buscarCancha` lanza `CanchaNoEncontradaException` si no existe una cancha con ese código.",
+      "`reservar(codigo, documento, hora)`: si la hora no está entre `HORA_APERTURA` (incluida) y `HORA_CIERRE` (excluida), lanza `IllegalArgumentException`. Si la cancha no existe, deja pasar la excepción de `buscarCancha`. Si esa cancha ya tiene una reserva a esa hora, lanza `CanchaOcupadaException`. Si todo está bien, crea la reserva, la guarda y la retorna.",
+      "`calcularIngresos`: suma la tarifa de la cancha de cada reserva.",
+      "`contarReservasDe(documento)`: cuántas reservas tiene ese socio.",
+      "Un Main que pruebe una reserva buena y un caso de cada error, imprimiendo los mensajes. Al final, exporta el ZIP."],
+    checks: [
+      { q: "¿En qué orden van las validaciones de reservar?", o: ["Hora, cancha que existe, cancha libre; y al final crear y guardar la reserva", "Crear la reserva y después validar", "Cancha libre, hora, cancha que existe", "Da igual el orden"], a: 0 },
+      { q: "¿Qué excepciones declara reservar con throws?", o: ["CanchaNoEncontradaException y CanchaOcupadaException", "Solo CanchaOcupadaException: la otra la lanza buscarCancha", "Las dos y además IllegalArgumentException, obligatoriamente", "Ninguna: las atrapa por dentro"], a: 0 }],
+    hints: ["Orden sugerido: las dos excepciones → Cancha → Reserva → SistemaReservas → Main. Cada una compila con lo anterior.", "Para saber si está ocupada, recorre `reservas` y compara la cancha (`r.getCancha() == cancha`) y la hora. Es el mismo objeto Cancha, así que `==` sirve aquí."],
+    sol: [
+      { p: "Las excepciones: cada una con los datos en el mensaje.", c: `
+public class CanchaNoEncontradaException extends Exception {
+    public CanchaNoEncontradaException(String codigo) {
+        super("No existe la cancha " + codigo);
+    }
+}
+
+public class CanchaOcupadaException extends Exception {
+    public CanchaOcupadaException(String codigo, int hora) {
+        super("La cancha " + codigo + " ya está reservada a las " + hora);
+    }
+}` },
+      { p: "Cancha y Reserva son estructura pura: atributos, constructor y getters. Reserva conoce su cancha (la flecha con `1`).", c: `
+public class Cancha {
+    private String codigo;
+    private String deporte;
+    private double tarifa;
+
+    public Cancha(String codigo, String deporte, double tarifa) {
+        this.codigo = codigo;
+        this.deporte = deporte;
+        this.tarifa = tarifa;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getDeporte() {
+        return deporte;
+    }
+
+    public double getTarifa() {
+        return tarifa;
+    }
+}
+
+public class Reserva {
+    private Cancha cancha;
+    private String documento;
+    private int hora;
+
+    public Reserva(Cancha cancha, String documento, int hora) {
+        this.cancha = cancha;
+        this.documento = documento;
+        this.hora = hora;
+    }
+
+    public Cancha getCancha() {
+        return cancha;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public int getHora() {
+        return hora;
+    }
+}` },
+      { p: "SistemaReservas: las dos listas se crean en el constructor; `reservar` valida en orden y modifica al final.", c: `
+import java.util.ArrayList;
+
+public class SistemaReservas {
+    public static final int HORA_APERTURA = 6;
+    public static final int HORA_CIERRE = 22;
+
+    private ArrayList<Cancha> canchas;
+    private ArrayList<Reserva> reservas;
+
+    public SistemaReservas() {
+        this.canchas = new ArrayList<>();
+        this.reservas = new ArrayList<>();
+    }
+
+    public void agregarCancha(Cancha cancha) {
+        canchas.add(cancha);
+    }
+
+    public Cancha buscarCancha(String codigo) throws CanchaNoEncontradaException {
+        for (Cancha c : canchas) {
+            if (c.getCodigo().equals(codigo)) {
+                return c;
+            }
+        }
+        throw new CanchaNoEncontradaException(codigo);
+    }
+
+    public Reserva reservar(String codigo, String documento, int hora) throws CanchaNoEncontradaException, CanchaOcupadaException {
+        if (hora < HORA_APERTURA || hora >= HORA_CIERRE) {
+            throw new IllegalArgumentException("Hora fuera del horario: " + hora);
+        }
+        Cancha cancha = buscarCancha(codigo);
+        for (Reserva r : reservas) {
+            if (r.getCancha() == cancha && r.getHora() == hora) {
+                throw new CanchaOcupadaException(codigo, hora);
+            }
+        }
+        Reserva nueva = new Reserva(cancha, documento, hora);
+        reservas.add(nueva);
+        return nueva;
+    }
+
+    public double calcularIngresos() {
+        double total = 0;
+        for (Reserva r : reservas) {
+            total += r.getCancha().getTarifa();
+        }
+        return total;
+    }
+
+    public int contarReservasDe(String documento) {
+        int contador = 0;
+        for (Reserva r : reservas) {
+            if (r.getDocumento().equals(documento)) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+}` },
+      { p: "Un Main de prueba. Con F1 (80000) y T1 (50000) imprime: reserva OK de F1 a las 18, «La cancha F1 ya está reservada a las 18», «No existe la cancha X9», «Hora fuera del horario: 23», reserva OK de T1 a las 7, y al final 130000.0 y 2.", c: `
+public class Main {
+    public static void main(String[] args) {
+        SistemaReservas sis = new SistemaReservas();
+        sis.agregarCancha(new Cancha("F1", "Fútbol 5", 80000));
+        sis.agregarCancha(new Cancha("T1", "Tenis", 50000));
+        String[][] pruebas = { {"F1", "101", "18"}, {"F1", "102", "18"}, {"X9", "101", "10"}, {"T1", "101", "23"}, {"T1", "101", "7"} };
+        for (String[] p : pruebas) {
+            try {
+                sis.reservar(p[0], p[1], Integer.parseInt(p[2]));
+                System.out.println("Reserva OK: " + p[0] + " a las " + p[2]);
+            } catch (CanchaNoEncontradaException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (CanchaOcupadaException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Dato inválido: " + e.getMessage());
+            }
+        }
+        System.out.println(sis.calcularIngresos());
+        System.out.println(sis.contarReservasDe("101"));
+    }
+}` }],
+    rub: ["Estructura según el diagrama: clases, atributos, las dos listas creadas en el constructor y el atributo cancha en Reserva. **15 pts**", "Excepciones propias: `extends Exception`, constructor con `super(...)` y mensaje con los datos. **15 pts**", "`reservar`: las tres validaciones en orden, `throws` correcto y la lista se modifica solo al final. **20 pts**", "`buscarCancha`, `calcularIngresos` y `contarReservasDe`. **10 pts**", "Main que atrapa e informa, compila y está en el ZIP a tiempo. **10 pts**"],
+    rubNote: "Es mi propuesta de reparto sobre 70. La ajusto cuando vea la calificación real de tu Parcial 1." }
+];
+
+/* ---------- Quiz ---------- */
+const QUIZ = {
+  A: [
+    { t: "mc", k: "Selección múltiple con caso", code: `
+try {
+    System.out.println("1");
+    club.agregarSocio(socio);   // el club está lleno
+    System.out.println("2");
+} catch (CupoLlenoException e) {
+    System.out.println("3");
+} finally {
+    System.out.println("4");
+}
+System.out.println("5");`, q: "El club está lleno, así que agregarSocio lanza CupoLlenoException. ¿Qué imprime?",
+      o: ["1 · 3 · 4 · 5", "1 · 2 · 3 · 4 · 5", "1 · 3 · 5", "1 · 3 · 4"], a: 0,
+      oe: ["La excepción salta el 2; el catch imprime 3; el finally, 4; y como quedó atrapada, el programa sigue con 5.",
+        "El 2 no sale: cuando agregarSocio lanza, el resto del try se salta.",
+        "Falta el 4: el finally corre siempre, también cuando hubo excepción.",
+        "Falta el 5: la excepción quedó atrapada, así que el programa sigue después del try."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class CupoLlenoException extends Exception { ... }
+
+public void agregarSocio(Socio socio) {
+    if (socios.size() >= capacidad) {
+        throw new CupoLlenoException("No hay cupo en " + nombre);
+    }
+    socios.add(socio);
+}`, q: "¿Qué pasa al compilar Club?",
+      o: ["Compila; si el club se llena, el programa se detiene", "No compila: CupoLlenoException es checked y el método no la atrapa ni la declara con `throws`", "Compila, porque las excepciones propias no se revisan", "No compila porque falta un `return` después del `throw`"], a: 1,
+      oe: ["Eso pasaría si fuera unchecked (de RuntimeException). Hereda de Exception: es checked.",
+        "Una checked se atrapa o se declara. Se arregla agregando `throws CupoLlenoException` a la firma.",
+        "Las propias se revisan igual que las de Java: lo que importa es de quién heredan.",
+        "Después de un `throw` no hace falta `return`: el método ya terminó en esa línea."] },
+    { t: "mc", k: "Selección múltiple con caso", fig: "qa3", q: "Club (el modelo) lanza CupoLlenoException, y Consola (la interfaz) llama a `club.agregarSocio(socio)`. ¿Dónde conviene atrapar la excepción?",
+      o: ["En Club, con un catch que imprime el mensaje y sigue", "En Consola, que le muestra el mensaje al usuario", "En Socio, antes de crearlo", "En ninguna parte: mejor que agregarSocio retorne false"], a: 1,
+      oe: ["El modelo no imprime ni decide cómo se le avisa al usuario. Si atrapa adentro, Consola nunca se entera de que falló.",
+        "El modelo lanza y la interfaz atrapa. Consola sabe cómo hablarle al usuario.",
+        "Socio no sabe nada del cupo del club: el error ocurre en Club.",
+        "Un `false` se puede ignorar sin querer, y no dice por qué falló. La excepción lleva el mensaje."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa la excepción propia.",
+      tpl: `public class SocioNoEncontradoException ___ Exception {
+    public SocioNoEncontradoException(String documento) {
+        ___("No existe un socio con documento " + documento);
+    }
+}`,
+      blanks: [{ o: ["implements", "extends", "throws", "catch"], a: 1 }, { o: ["this", "throw", "super", "return"], a: 2 }],
+      e: "Una excepción propia es una clase que hereda de Exception: `extends`. Su constructor le pasa el mensaje al padre con `super(...)`, como cualquier hija; Exception lo guarda y `getMessage()` lo retorna." },
+    { t: "write", k: "Código corto · escribir", q: "Escribe la línea que lanza una CupoLlenoException con el mensaje \"Club lleno\".",
+      rx: /^thrownewCupoLlenoException\(".*"\);?$/, model: "throw new CupoLlenoException(\"Club lleno\");",
+      e: "`throw` (sin s) va en el cuerpo y recibe un objeto: por eso `new`. `throws` (con s) va en la firma. Confundirlos es el error más común." }
+  ],
+  B: [
+    { t: "mc", k: "Selección múltiple con caso", code: `
+try {
+    club.agregarSocio(socio);
+} catch (Exception e) {
+    System.out.println("Algo falló");
+} catch (CupoLlenoException e) {
+    System.out.println("Club lleno");
+}`, q: "¿Qué pasa con este código?",
+      o: ["Si el club está lleno, imprime «Club lleno»", "Si el club está lleno, imprime «Algo falló» y luego «Club lleno»", "No compila: el segundo catch nunca se alcanzaría, porque Exception ya atrapa CupoLlenoException", "Compila, y el segundo catch se ignora en silencio"], a: 2,
+      oe: ["Nunca llegaría al segundo catch: el primero atrapa todo lo que hereda de Exception.",
+        "Solo corre un catch por excepción: el primero que coincide.",
+        "Javac dice «exception CupoLlenoException has already been caught». Los catch van del más específico al más general.",
+        "Java no lo ignora: lo marca como error de compilación."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+static int contarSocios(Club club) {
+    try {
+        return club.getCantidadSocios();   // el club tiene 3 socios
+    } finally {
+        System.out.println("Conteo terminado");
+    }
+}
+
+// en main:
+System.out.println(contarSocios(club));`, q: "¿Qué imprime main?",
+      o: ["3", "Conteo terminado y luego 3", "3 y luego Conteo terminado", "No compila: no puede haber código después de un return"], a: 1,
+      oe: ["Falta el finally: corre aunque haya un return en el try.",
+        "El finally corre justo antes de que el método termine de retornar; después, main imprime el 3.",
+        "Al revés: el println de main corre cuando contarSocios ya terminó, y el finally fue parte de terminar.",
+        "El finally no es «código después del return»: es parte del try, y está permitido."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public void agregarSocio(Socio socio) {
+    try {
+        validarCupo();
+    } catch (CupoLlenoException e) {
+    }
+    socios.add(socio);
+}`, q: "El club ya está lleno. ¿Qué pasa al llamar agregarSocio?",
+      o: ["Lanza la excepción y el socio no se agrega", "El socio se agrega igual y nadie se entera del error", "No compila por el catch vacío", "Se imprime el mensaje de la excepción"], a: 1,
+      oe: ["El catch vacío la atrapa: no sale de agregarSocio.",
+        "El catch vacío se traga el error y la ejecución sigue hasta el `add`. El club queda con más socios que su capacidad.",
+        "Un catch vacío compila. Por eso es tan peligroso.",
+        "Nadie imprime nada: el catch está vacío."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa el código de la interfaz que inscribe al socio y muestra el error si lo hay.",
+      tpl: `___ {
+    club.agregarSocio(socio);
+    System.out.println("Inscrito");
+} ___ (CupoLlenoException e) {
+    System.out.println("Error: " + e.___());
+}`,
+      blanks: [{ o: ["try", "throw", "do", "if"], a: 0 }, { o: ["throws", "catch", "finally", "except"], a: 1 }, { o: ["getError", "message", "getMessage", "printError"], a: 2 }],
+      e: "`try` abre el bloque que puede fallar, `catch` atrapa el tipo indicado y `getMessage()` retorna el texto que se le pasó al constructor de la excepción." },
+    { t: "write", k: "Código corto · escribir", q: "Escribe la firma del método agregarSocio: recibe un Socio, no retorna nada y puede lanzar CupoLlenoException. Sin la llave.",
+      rx: /^publicvoidagregarSocio\(Socio[A-Za-z_$][\w$]*\)throwsCupoLlenoException\{?$/, model: "public void agregarSocio(Socio socio) throws CupoLlenoException",
+      e: "Tipo de retorno antes del nombre; en los parámetros, también el tipo antes del nombre (`Socio socio`); y `throws` con la excepción al final de la firma." }
+  ]
+};
+
+/* ---------- Render ---------- */
+document.querySelectorAll("[data-fig]").forEach((d) => { d.innerHTML = umlSvg(FIG[d.dataset.fig], false); });
+document.querySelectorAll("pre[data-code]").forEach((p) => { const c = CODE[p.dataset.code]; p.innerHTML = codeHTML(c.s, !!c.d); });
+/* Archivos para copiar y experimentos */
+(function renderFiles() {
+  const box = $("#files");
+  FILES.forEach((f) => {
+    const d = el("details", "rev");
+    d.appendChild(el("summary", "", f.name));
+    const body = el("div", "rev-body");
+    const src = f.lines.join("\n").replace(/\n+$/, "");
+    const row = el("div", "copyrow"); const b = el("button", "btn small ghost", "Copiar " + f.name); b.type = "button"; const msg = el("span", "copymsg"); msg.setAttribute("aria-live", "polite");
+    const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(src, false);
+    b.addEventListener("click", () => {
+      const fallback = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = "Quedó seleccionado: cópialo con Ctrl+C."; };
+      try { navigator.clipboard.writeText(src).then(() => { msg.textContent = "Copiado."; }, fallback); } catch (e) { fallback(); }
+    });
+    row.appendChild(b); row.appendChild(msg); body.appendChild(row); body.appendChild(pre);
+    d.appendChild(body); box.appendChild(d);
+  });
+  const ex = $("#exps");
+  EXPS.forEach((x, i) => {
+    const d = el("details", "rev");
+    const s = el("summary"); s.appendChild(el("span", "", "Experimento " + (i + 1) + " · ")); rich(s, x.t); d.appendChild(s);
+    const body = el("div", "rev-body"); body.appendChild(rich(el("p"), "**Qué pasa y por qué:** " + x.r)); d.appendChild(body);
+    ex.appendChild(d);
+  });
+})();
+
+
+/* ---------- Taller ---------- */
+function fmtT(s) { return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function timerEl(min, id) {
+  const w = el("div", "timer"), t = el("span", "mono tval", fmtT(min * 60)), b = el("button", "btn small", "Iniciar");
+  b.type = "button"; b.id = id; t.setAttribute("role", "timer");
+  let left = min * 60, iv = null;
+  b.addEventListener("click", () => {
+    if (w.classList.contains("over")) { w.classList.remove("over"); left = min * 60; t.textContent = fmtT(left); b.textContent = "Iniciar"; return; }
+    if (iv) { clearInterval(iv); iv = null; w.classList.remove("run"); b.textContent = "Seguir"; return; }
+    w.classList.add("run"); b.textContent = "Pausar";
+    iv = setInterval(() => {
+      left--; t.textContent = fmtT(Math.max(left, 0));
+      if (left <= 0) { clearInterval(iv); iv = null; w.classList.remove("run"); w.classList.add("over"); t.textContent = "Tiempo"; b.textContent = "Reiniciar"; }
+    }, 1000);
+  });
+  w.appendChild(el("span", "eyebrow", "Meta " + min + " min")); w.appendChild(t); w.appendChild(b);
+  return w;
+}
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(timerEl(p.min, "timer-" + p.n));
+    if (p.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[p.fig], false); a.appendChild(fg); }
+    const tx = el("div", "prob-txt"); p.txt.forEach((t) => tx.appendChild(rich(el("p"), t)));
+    if (p.list) { const ul = el("ul"); p.list.forEach((t) => ul.appendChild(rich(el("li"), t))); tx.appendChild(ul); }
+    a.appendChild(tx);
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", (ck.label || "Chequeo rápido") + " · " + ck.q)); if (ck.code) { const cp = el("pre", "code sm"); cp.innerHTML = codeHTML(ck.code, false); c.appendChild(cp); }
+      const opts = el("div", "opts"), fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.o.forEach((o, oi) => {
+        const b = rich(el("button", "opt"), o); b.type = "button"; b.id = "ck-" + p.n + "-" + ci + "-" + oi;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Compara tu código con la solución."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(rich(el("p"), ht)); d.appendChild(b); rv.appendChild(d); });
+    const dr = el("details", "rev"); dr.appendChild(el("summary", "", p.rubTitle || "Rúbrica tipo profe"));
+    const rb = el("div", "rev-body"); const ul = el("ul", "rub"); p.rub.forEach((r) => ul.appendChild(rich(el("li"), r))); rb.appendChild(ul);
+    if (p.rubNote) rb.appendChild(el("p", "muted", p.rubNote));
+    dr.appendChild(rb); rv.appendChild(dr);
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body");
+    p.sol.forEach((s) => { sb.appendChild(rich(el("p"), s.p)); if (s.c) { const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(s.c, false); sb.appendChild(pre); } });
+    ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+
+/* ---------- Quiz ---------- */
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); rich(lt, it.q); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[it.fig], false); fs.appendChild(fg); }
+    if (it.code) { const pre = el("pre", "code"); pre.innerHTML = codeHTML(it.code, false); fs.appendChild(pre); }
+    if (it.t === "mc") {
+      const ops = el("div", "qopts");
+      it.o.forEach((o, oi) => {
+        const lab = el("label", "qopt"), r = el("input"); r.type = "radio"; r.name = key + "-q" + i; r.id = key + "-q" + i + "-o" + oi; r.value = String(oi);
+        lab.appendChild(r); lab.appendChild(rich(el("span", "", String.fromCharCode(65 + oi) + ") "), o)); ops.appendChild(lab);
+      });
+      fs.appendChild(ops);
+    } else if (it.t === "fill") {
+      const pre = el("pre", "code qfill"); let b = 0;
+      it.tpl.split("\n").forEach((line) => {
+        const cl = el("span", "cl"); const segs = line.split("___");
+        segs.forEach((sg, j) => {
+          if (j > 0) {
+            const sel = el("select"); sel.id = key + "-q" + i + "-b" + b; sel.setAttribute("aria-label", "Espacio " + (b + 1));
+            const o0 = el("option", "", "—"); o0.value = ""; sel.appendChild(o0);
+            it.blanks[b].o.forEach((o, oi) => { const op = el("option", "", o); op.value = String(oi); sel.appendChild(op); });
+            cl.appendChild(sel); b++;
+          }
+          if (sg) { const sp = el("span"); sp.innerHTML = hl(sg); cl.appendChild(sp); }
+        });
+        if (!line) cl.appendChild(document.createTextNode(" "));
+        pre.appendChild(cl);
+      });
+      fs.appendChild(pre);
+    } else {
+      const inp = el("input", "qwrite"); inp.type = "text"; inp.id = key + "-q" + i + "-w"; inp.autocomplete = "off"; inp.spellcheck = false;
+      inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off"); inp.setAttribute("aria-label", "Tu respuesta"); inp.placeholder = "Escribe aquí tu línea de Java";
+      fs.appendChild(inp);
+    }
+    const ex = el("div", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+function readAnswer(key, it, i) {
+  if (it.t === "mc") { const c = document.querySelector('input[name="' + key + "-q" + i + '"]:checked'); return c ? Number(c.value) : null; }
+  if (it.t === "fill") { const v = it.blanks.map((_, b) => $("#" + key + "-q" + i + "-b" + b).value); return v.some((x) => x === "") ? null : v.map(Number); }
+  const v = $("#" + key + "-q" + i + "-w").value.trim(); return v ? v : null;
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase()), items = QUIZ[key];
+  const answers = items.map((it, i) => readAnswer(key, it, i));
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : "Te faltan " + missing + " preguntas por responder."; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0; const saved = [];
+  items.forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i], ex = fs.querySelector(".qexp"), ans = answers[i];
+    let ok = false; ex.textContent = "";
+    if (it.t === "mc") {
+      ok = ans === it.a;
+      fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === ans) lab.classList.add("wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + "Por qué cada opción:"));
+      const ul = el("ul");
+      it.oe.forEach((t, oi) => { const li = el("li"); li.appendChild(el("span", "mk " + (oi === it.a ? "y" : "n"), String.fromCharCode(65 + oi) + (oi === it.a ? " ✓" : " ✗"))); li.appendChild(rich(el("span"), t)); ul.appendChild(li); });
+      ex.appendChild(ul);
+      saved.push(String.fromCharCode(65 + ans));
+    } else if (it.t === "fill") {
+      ok = it.blanks.every((bl, b) => ans[b] === bl.a);
+      it.blanks.forEach((bl, b) => { const s = $("#" + key + "-q" + i + "-b" + b); s.classList.add(ans[b] === bl.a ? "right" : "wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** Así va: " + it.blanks.map((bl) => "`" + bl.o[bl.a] + "`").join(", ") + ". ") + it.e));
+      saved.push(it.blanks.map((bl, b) => bl.o[ans[b]]).join(" | "));
+    } else {
+      ok = it.rx.test(ans.replace(/\s+/g, ""));
+      $("#" + key + "-q" + i + "-w").classList.add(ok ? "right" : "wrong");
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** ") + "Respuesta modelo: `" + it.model + "`. " + it.e));
+      saved.push(ans.slice(0, 200));
+    }
+    if (ok) score++;
+    ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    fs.querySelectorAll("input, select").forEach((x) => (x.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT_MSG : "Todavía no. Lee por qué fallaste cada una, repasa esa idea de la teoría y haz el Quiz B."));
+  const note = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(note);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: saved, fecha: new Date().toISOString() });
+      note.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { note.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

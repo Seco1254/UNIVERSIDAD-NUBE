@@ -51,6 +51,7 @@ Cada rama se estudia distinto. En DPOO se mantienen las 4 secciones, pero así:
 | Física 1 | M9 · Mini-simulacro de 40 min (intentos en `intentos/`, nota sobre 70) | https://claude.ai/artifact/UXeERsnHz1KwRKXLtDuVpi | `FISICA_1/PARCIAL_2/artifacts/M9.html` |
 | DPOO | Plan Examen 2 (tracker de progreso en `progreso/`) | https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug | `DPOO/EXAMEN_2/artifacts/plan.html` |
 | DPOO | M1 · De UML a Java (intentos en `intentos/`) | https://claude.ai/artifact/T8pydDxRpDQE4CxTnz7hiB | `DPOO/EXAMEN_2/artifacts/M1.html` |
+| DPOO | M2 · Manejo de errores (lab paso a paso de la pila de llamadas) | https://claude.ai/artifact/L8yPB3eYWLmFf69W1hy3nB | `DPOO/EXAMEN_2/artifacts/M2.html` |
 
 ## Convenciones
 

@@ -232,9 +232,9 @@ footer{font-size:.82rem; color:var(--muted); max-width:72ch}
     </div>
     <div class="days" id="days"></div>
     <div class="rules">
-      <p><b>El Proyecto 2 va primero hasta el jueves.</b> Si te come el día, haz la teoría y el quiz del módulo y usa tu proyecto como taller.</p>
-      <p><b>Si te atrasas:</b> recorta primero M3 (deja solo el quiz) y después los labs. Nunca recortes M2, M5, M6 ni el simulacro.</p>
-      <p><b>Si vas adelantado:</b> en M1 y M4 haz el quiz primero; si sacas 4/5, ese tiempo va para M5 y M6.</p>
+      <p><b>Ajuste del 5 de noviembre:</b> el Proyecto 2 se llevó el miércoles y el jueves, así que M2 pasa al viernes. M4 y M5 van juntos en un solo módulo el sábado, con M6. M7 y M8 van juntos el domingo, y M3 queda en versión corta (quiz primero). El simulacro sigue el lunes.</p>
+      <p><b>Si te vuelves a atrasar:</b> recorta primero M3 y después los labs y los T4 del taller. Nunca recortes M2, M4–M5, M6 ni el simulacro.</p>
+      <p><b>Si vas adelantado:</b> en M4–M5 y M7–M8 haz el quiz primero; si sacas 4/5, ese tiempo va para el simulacro.</p>
     </div>
   </section>
 
@@ -369,16 +369,16 @@ const LOADS = {1:"Liviana", 2:"Suave", 3:"Media", 4:"Pesada"};
 const DAYS = [
   {d:"2026-11-03", n:"Mar", f:"3 nov", load:1, what:"M1 De UML a Java", mods:["M1"], h:"1–1,5 h", tags:[["Clase 25",""]],
     note:"Hoy hay clase (librerías y frameworks): pregúntale al profe lo de «Por confirmar» y súbeme la carpeta 06.", link:["#confirmar","Qué preguntar y qué subir →"]},
-  {d:"2026-11-04", n:"Mié", f:"4 nov", load:3, what:"M2 Manejo de errores", mods:["M2"], h:"2,5–3 h", tags:[],
-    note:"Mañana entregas el Proyecto 2. Si te come el día, haz la teoría y el quiz, y como taller agrégale excepciones propias a tu proyecto."},
-  {d:"2026-11-05", n:"Jue", f:"5 nov", load:1, what:"M3 Librerías, frameworks y APIs (+ Swing)", mods:["M3"], h:"~1 h", tags:[["Clase 26",""],["Entrega Proyecto 2","due"]],
-    note:"Hoy es la clase de Swing y entregas el Proyecto 2. M3 es corto a propósito."},
-  {d:"2026-11-06", n:"Vie", f:"6 nov", load:2, what:"M4 Análisis y modelo del mundo", mods:["M4"], h:"~2 h", tags:[],
-    note:"Ya practicaste análisis en el Taller 4 y en el Proyecto 1. Si te sientes bien, haz el quiz primero."},
-  {d:"2026-11-07", n:"Sáb", f:"7 nov", load:4, what:"M5 Diseño: roles, responsabilidades y colaboraciones + M6 Pruebas con JUnit", mods:["M5","M6"], h:"4–5 h", tags:[],
-    note:"Bloque largo: diseño en la mañana y pruebas en la tarde."},
-  {d:"2026-11-08", n:"Dom", f:"8 nov", load:4, what:"M7 Principios SOLID + M8 Patrones", mods:["M7","M8"], h:"4–5 h", tags:[],
-    note:"Principios primero: los patrones se apoyan en ellos."},
+  {d:"2026-11-04", n:"Mié", f:"4 nov", load:3, what:"Proyecto 2", mods:[], h:"—", tags:[],
+    note:"El proyecto se llevó el día: M2 pasó al viernes."},
+  {d:"2026-11-05", n:"Jue", f:"5 nov", load:1, what:"Entrega del Proyecto 2 y M1 aprobado (Quiz B 4/5)", mods:["M2"], h:"—", tags:[["Clase 26",""],["Entrega Proyecto 2","due"]],
+    note:"M1 aprobado con 4/5. Mañana va M2: abre el módulo desde aquí."},
+  {d:"2026-11-06", n:"Vie", f:"6 nov", load:2, what:"M2 Manejo de errores", mods:["M2"], h:"~2 h", tags:[],
+    note:"Si vas corto: teoría completa, el lab, T1 y T2 del taller y el quiz. T3 y T4 sirven de calentamiento el domingo."},
+  {d:"2026-11-07", n:"Sáb", f:"7 nov", load:4, what:"M4–M5 Del análisis al diseño + M6 Pruebas con JUnit", mods:["M4","M6"], h:"4–5 h", tags:[],
+    note:"Bloque largo: análisis y diseño en la mañana (un solo módulo) y pruebas en la tarde."},
+  {d:"2026-11-08", n:"Dom", f:"8 nov", load:4, what:"M7–M8 Principios y patrones + M3 en versión corta", mods:["M7","M3"], h:"4–5 h", tags:[],
+    note:"Principios y patrones van juntos; M3 (librerías y frameworks) queda en su quiz, al final."},
   {d:"2026-11-09", n:"Lun", f:"9 nov", load:2, what:"M9 Simulacro de 80 min + repaso de plantillas", mods:["M9"], h:"~2 h", tags:[],
     note:"Simulacro en tu IDE, sin internet y con cronómetro. Después lo corregimos y repasas tus plantillas."},
   {d:"2026-11-10", n:"Mar", f:"10 nov", load:0, what:"30 min con tus plantillas, y Examen 2", mods:[], h:"11:00 · Llega temprano", exam:true,
@@ -390,22 +390,22 @@ const MODS = [
     dominar:["Leer todo el diagrama: visibilidad (`+` `-` `#`), tipos, abstractos en cursiva, estáticos subrayados e «interface».","Traducir cada flecha: asociación y multiplicidad (`0..*` → `ArrayList`), herencia (`extends` y `super`), realización (`implements`) y dependencia.","El orden para implementar un UML en 80 minutos, compilando seguido y exportando el ZIP con tiempo."],
     taller:["El UML de tu Parcial 1 (tienda de coleccionables), rehecho contra reloj","Los UML de 2025-20 y 2026-10 que publicó el profe","Una variante nueva con interfaz y clase abstracta"],
     trampas:["Olvidar `super(...)` en el constructor de la hija: el profe lo recalcó.","No crear la lista en el constructor (`NullPointerException` al agregar).","Comparar textos con `==` en vez de `equals`."]},
-  {id:"M2", t:"Manejo de errores", dayIso:"2026-11-04", day:"Mié 4", h:"2,5–3 h", prio:"alta", deps:["M1"], extra:"Clase 24 + excepciones del Examen 1",
+  {id:"M2", t:"Manejo de errores", dayIso:"2026-11-06", day:"Vie 6", h:"~2 h", prio:"alta", deps:["M1"], extra:"Clase 24 + excepciones del Examen 1",
     src:"13b. Estrategias para el manejo de errores · 4. Excepciones (carpeta 03) · repaso_base/Excepciones (carpeta 02) · lectura [23]",
     dominar:["Checked o unchecked, `throw` o `throws`, y qué corre en cada camino de un `try/catch/finally`.","Crear excepciones propias con un mensaje que diga qué falló y con qué dato.","Dónde se lanza y dónde se atrapa: el modelo valida y lanza; la interfaz atrapa y le avisa al usuario."],
     taller:["6 trazas de `try/catch/finally` para predecir la salida","Excepciones propias para la tienda de coleccionables o tu Proyecto 2","Cambiar códigos de error y `null` por excepciones"],
     trampas:["El `catch` vacío que se traga el error.","Atrapar `Exception` antes que la específica: no compila.","Retornar `null` para avisar que algo falló."]},
-  {id:"M3", t:"Librerías, frameworks y APIs (+ Swing)", dayIso:"2026-11-05", day:"Jue 5", h:"~1 h", prio:"baja", deps:[], extra:"Clases 25 y 26: las ves esta semana",
+  {id:"M3", t:"Librerías, frameworks y APIs (+ Swing)", dayIso:"2026-11-08", day:"Dom 8, versión corta", h:"30–45 min", prio:"baja", deps:[], extra:"Recortado por el ajuste: quiz primero",
     src:"12a. Reutilización (carpeta 03) · lecturas [19] [20] · tus notas de las clases del martes y el jueves",
     dominar:["Librería o framework: a la librería la llamas tú; el framework te llama a ti.","Qué es una API (local o un servicio remoto) y qué la hace buena, según Bloch.","Swing en lo básico: una ventana, sus componentes y un listener que reacciona a un clic."],
     taller:["Clasificar herramientas que ya usaste: JUnit, Swing, `java.util`…","Criticar y rediseñar la API de una clase del Club Deportivo Séneca"],
     trampas:["Creer que un framework es solo una librería grande.","Confundir API con interfaz gráfica."]},
-  {id:"M4", t:"Análisis: el modelo del mundo del problema", dayIso:"2026-11-06", day:"Vie 6", h:"~2 h", prio:"media", deps:[], extra:"Clase 12 + Taller 4",
+  {id:"M4", t:"Análisis: el modelo del mundo del problema", dayIso:"2026-11-07", day:"Sáb 7, con M5", h:"3 h con M5", prio:"media", deps:[], extra:"Un solo artifact con M5",
     src:"01 El mundo del problema · 02 Análisis y problema del mundo (carpeta 02) · 5. Análisis y modelo del mundo (carpeta 03) · lectura [5]",
     dominar:["Qué va en el modelo del mundo (conceptos del negocio) y qué no (clases de software).","Requerimientos funcionales, no funcionales y restricciones; historias de usuario con criterios de aceptación.","Del enunciado al diagrama: sustantivos → clases o atributos, verbos → responsabilidades, y luego relaciones con multiplicidad."],
     taller:["Taller 4 (Cines), rehecho contra reloj","El análisis del Proyecto 1 (Club Deportivo Séneca), revisado con la receta","Un enunciado nuevo"],
     trampas:["Meter software en el modelo del mundo: menú, controlador, archivo.","Atributos que en realidad son relaciones con otra clase.","Requerimientos que no se pueden verificar: «rápido», «fácil de usar»."]},
-  {id:"M5", t:"Diseño: roles, responsabilidades y colaboraciones", dayIso:"2026-11-07", day:"Sáb 7", h:"2,5–3 h", prio:"alta", deps:["M4"], extra:"El tema con más clases (14 y 17–19)",
+  {id:"M5", t:"Diseño: roles, responsabilidades y colaboraciones", dayIso:"2026-11-07", day:"Sáb 7, con M4", h:"3 h con M4", prio:"alta", deps:["M4"], extra:"El tema con más clases (14 y 17–19)",
     src:"03 Diseño · 04 Diseño 2 · 06 Nam – Núcleo de Pedidos (carpeta 02) · 6. El proceso de diseño · Historias de usuario a diseño de objetos (carpeta 03) · lectura [9]",
     dominar:["Responsabilidades (saber, hacer, decidir) y a qué objeto asignarlas: al que tiene la información.","Los 6 estereotipos de rol de Wirfs-Brock y los estilos de control: centralizado, delegado y disperso.","De una historia de usuario a tarjetas CRC y a las colaboraciones entre objetos."],
     taller:["Nam – Núcleo de Pedidos, el caso de clase","Hoja de trabajo del procesador de imágenes","Competencia y Banco de Historias de Usuario","El diseño de tu Proyecto 2, revisado con el checklist"],
@@ -415,12 +415,12 @@ const MODS = [
     dominar:["Diseñar los casos antes del código: el normal, los límites y los de error, en una tabla.","Escenarios con `@BeforeEach` y la estructura preparar → ejecutar → verificar.","Los asserts que más salen: `assertEquals`, `assertTrue`, `assertNull` y `assertThrows`."],
     taller:["Taller 5 (Hamburguesas) con su esqueleto, rehecho","Pruebas para la tienda de coleccionables, con las excepciones de M2","Encontrar el error que tus pruebas no detectan"],
     trampas:["Invertir esperado y obtenido en `assertEquals`.","Comparar `double` sin margen de error.","Probar solo el caso feliz."]},
-  {id:"M7", t:"Principios: acoplamiento, cohesión y SOLID", dayIso:"2026-11-08", day:"Dom 8", h:"~2 h", prio:"media", deps:["M5"], extra:"Clases 15 y 22",
+  {id:"M7", t:"Principios: acoplamiento, cohesión y SOLID", dayIso:"2026-11-08", day:"Dom 8, con M8", h:"3–3,5 h con M8", prio:"media", deps:["M5"], extra:"Un solo artifact con M8",
     src:"05 Aspectos metodológicos (carpeta 02) · 6b. Aspectos metodológicos · 11a. Principios de diseño · Ejemplo SOLID SpotiAlpes (carpeta 03) · lecturas [10] [14]",
     dominar:["Acoplamiento y cohesión: cómo se ven en el código y por qué se busca bajo y alta.","Los 5 principios SOLID, cada uno con su olor (cómo se ve la violación) y su arreglo.","Responder «¿qué principio viola?» imaginando un requerimiento nuevo: ¿cuántas clases tocas y por qué?"],
     taller:["El ejemplo SOLID de SpotiAlpes, rehecho","Violaciones nuevas para encontrar y arreglar","Tu Proyecto 2, revisado con los 5 principios"],
     trampas:["Creer que responsabilidad única es «un método por clase».","Pensar que si compila, la herencia está bien: Liskov pide que la hija cumpla lo que promete el padre.","Confundir inversión de dependencias con inyección de dependencias."]},
-  {id:"M8", t:"Patrones de diseño", dayIso:"2026-11-08", day:"Dom 8", h:"2–2,5 h", prio:"media", deps:["M7"], extra:"Clase 23",
+  {id:"M8", t:"Patrones de diseño", dayIso:"2026-11-08", day:"Dom 8, con M7", h:"3–3,5 h con M7", prio:"media", deps:["M7"], extra:"Clase 23",
     src:"09 Patrones de Diseño (carpeta 02) · 11b. Patrones de diseño (carpeta 03) · lecturas [16] [17] [18]",
     dominar:["Qué es un patrón (nombre, problema, solución, consecuencias) y las 3 familias del Gang of Four.","Singleton, Facade y Adapter (diapositivas) y Strategy (lectura [17]): el problema, su UML y su esqueleto en Java.","Reconocer el patrón a partir de un caso corto, que es como sale en selección múltiple."],
     taller:["Cada patrón implementado en el Club Deportivo Séneca","Reconocer patrones en código que no los nombra"],
@@ -446,9 +446,9 @@ const TPL = [
   {c:"super(nombre, precio);", d:"Clase hija: llama al constructor del padre y sobrescribe con `@Override`.", m:"M1"},
   {c:"this.socios = new ArrayList<>();", d:"Asociación `0..*`: la lista se crea en el constructor, con métodos para agregar y buscar.", m:"M1"},
   {c:"public abstract class Coleccionable implements Vendible", d:"Clase abstracta e interfaz con `implements`.", m:"M1"},
-  {c:"throw new CupoLlenoException(nombreClase);", d:"Excepción propia: `extends Exception`, `throw`, `throws` y `try/catch`.", m:"M2"},
+  {c:"throw new CupoLlenoException(\"No hay cupo en \" + nombre);", d:"Excepción propia: `extends Exception`, `throw`, `throws` y `try/catch`.", m:"M2"},
   {c:"Clase · Responsabilidades · Colaboradores", d:"Tarjeta CRC para una historia de usuario.", m:"M5"},
-  {c:"assertThrows(CupoLlenoException.class, () -> club.inscribir(socio));", d:"Clase de prueba: escenario con `@BeforeEach`, `assertEquals` y `assertThrows`.", m:"M6"},
+  {c:"assertThrows(CupoLlenoException.class, () -> club.agregarSocio(socio));", d:"Clase de prueba: escenario con `@BeforeEach`, `assertEquals` y `assertThrows`.", m:"M6"},
   {c:"public static Club getInstancia()", d:"Singleton, Facade, Adapter y Strategy.", m:"M8"}
 ];
 

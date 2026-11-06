@@ -98,7 +98,7 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 ### M1 — De UML a Java
 > **Artifact:** [M1 · De UML a Java](https://claude.ai/artifact/T8pydDxRpDQE4CxTnz7hiB). Usa un mini-caso propio (un club con socios); el código de la teoría y del taller está probado en Java 21. Tu Parcial 1 y los UML del profe entran como T5 cuando subas la carpeta 06.
 
-*Refuerzo (Examen 1) · Base de la práctica de 70 pts · Mar 3 · 1–1,5 h*
+*Refuerzo (Examen 1) · Base de la práctica de 70 pts · Mar 3 · 1–1,5 h · ✅ Quiz B 4/5 (falló escribir la firma: puso `documento: String` en vez de `String documento`)*
 *Material: repaso_base/UML (carpeta 02) · 2. UML (carpeta 03) · UML de parciales anteriores (carpeta 06)*
 
 - **Teoría:** leer todo el diagrama de clases: visibilidad (`+` público, `-` privado, `#` protegido), atributos `nombre: Tipo`, métodos `nombre(p: Tipo): Retorno`, abstractos en cursiva, estáticos subrayados, «interface». Cada flecha y su código: asociación con multiplicidad (`1` → un atributo; `0..*` → una lista que se crea en el constructor), agregación y composición, herencia (`extends` y `super(...)`), realización (`implements`) y dependencia (un parámetro o una variable local).
@@ -109,7 +109,9 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 - **Trampas:** olvidar `super(...)`; no crear la lista en el constructor (`NullPointerException` al agregar); comparar `String` con `==`; ignorar la multiplicidad.
 
 ### M2 — Manejo de errores
-*Mié 4 · 2,5–3 h · Clase 24 + excepciones del Examen 1*
+> **Artifact:** [M2 · Manejo de errores](https://claude.ai/artifact/L8yPB3eYWLmFf69W1hy3nB). Sigue con el club de M1; el lab corre un programa paso a paso (pila de llamadas, consola y predicciones). Todo el código, las trazas y los mensajes del compilador están probados en Java 21.
+
+*Vie 6 (movido por el ajuste) · ~2 h · Clase 24 + excepciones del Examen 1*
 *Material: 13b. Estrategias para el manejo de errores · 4. Excepciones (carpeta 03) · repaso_base/Excepciones (carpeta 02) · lectura [23] (Clean Code, cap. 7)*
 
 - **Teoría:** la familia de las excepciones: `Exception` (checked: el compilador obliga a manejarla) y `RuntimeException` (unchecked). `throw` lanza; `throws` avisa en la firma. Qué corre en cada camino de un `try/catch/finally`. Excepciones propias con un mensaje que diga qué falló y con qué dato. Estrategias: excepciones en vez de códigos de error, no retornar `null`, no pasar `null`, definir las excepciones pensando en quien las atrapa. **Dónde se lanza y dónde se atrapa:** el modelo valida y lanza; la capa que puede hacer algo (la interfaz) atrapa y le avisa al usuario.
@@ -199,18 +201,18 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 
 | Día | Fecha | Carga | Módulo | Tiempo | Además |
 |---|---|---|---|---|---|
-| 1 | Mar 3 nov | Liviana | **M1** De UML a Java | 1–1,5 h | Clase 25 (librerías y frameworks): pregúntale al profe lo de «Por confirmar». Súbeme la carpeta 06. |
-| 2 | Mié 4 nov | Media | **M2** Manejo de errores | 2,5–3 h | Proyecto 2 |
-| 3 | Jue 5 nov | Liviana | **M3** Librerías, frameworks y APIs (+ Swing) | ~1 h | Clase 26 (Swing) · **entrega del Proyecto 2** |
-| 4 | Vie 6 nov | Suave | **M4** Análisis | ~2 h | |
-| 5 | Sáb 7 nov | Pesada | **M5** Diseño + **M6** Pruebas | 4–5 h | |
-| 6 | Dom 8 nov | Pesada | **M7** Principios + **M8** Patrones | 4–5 h | |
+| 1 | Mar 3 nov | Liviana | **M1** De UML a Java ✅ | 1–1,5 h | Clase 25 (librerías y frameworks) |
+| 2 | Mié 4 nov | Media | Proyecto 2 (M2 pasó al viernes) | — | |
+| 3 | Jue 5 nov | Liviana | Quiz B de **M1**: 4/5 ✅ | — | Clase 26 (Swing) · **entrega del Proyecto 2** |
+| 4 | Vie 6 nov | Suave | **M2** Manejo de errores | ~2 h | Si vas corto: teoría, lab, T1, T2 y quiz |
+| 5 | Sáb 7 nov | Pesada | **M4–M5** Del análisis al diseño (un solo artifact) + **M6** Pruebas | 4–5 h | |
+| 6 | Dom 8 nov | Pesada | **M7–M8** Principios y patrones (un solo artifact) + **M3** en versión corta | 4–5 h | M3: quiz primero |
 | 7 | Lun 9 nov | Suave | **M9** Simulacro + repaso de plantillas | ~2 h | |
 | — | **Mar 10 nov** | — | 30 min con tus plantillas y **EXAMEN 2** (11:00) | — | Llega temprano |
 
-**El Proyecto 2 va primero hasta el jueves.** Si te come el día, haz la teoría y el quiz del módulo y usa tu proyecto como taller.
-**Si te atrasas:** recorta primero M3 (deja solo el quiz) y después los labs. **Nunca recortes M2, M5, M6 ni el simulacro.**
-**Si vas adelantado:** en M1 y M4 haz el quiz primero; si sacas ≥ 4/5, ese tiempo va para M5 y M6.
+**Ajuste del 5 de noviembre:** el Proyecto 2 se llevó el miércoles y el jueves. M2 pasa al viernes; M4 y M5 se juntan en un solo artifact el sábado, con M6; M7 y M8 se juntan el domingo (progreso en los docs `M4`/`M5` y `M7`/`M8`, como M6–M7 en Física), y M3 queda en versión corta. El simulacro sigue el lunes.
+**Si te vuelves a atrasar:** recorta primero M3 y después los labs y los T4 del taller. **Nunca recortes M2, M4–M5, M6 ni el simulacro.**
+**Si vas adelantado:** en M4–M5 y M7–M8 haz el quiz primero; si sacas ≥ 4/5, ese tiempo va para el simulacro.
 
 ---
 
@@ -218,8 +220,8 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 
 | Módulo | Teoría | Lab | Taller | Quiz (nota) | Estado |
 |---|---|---|---|---|---|
-| M1 De UML a Java | ☐ | ☐ | ☐ | — | ⏳ |
-| M2 Manejo de errores | ☐ | ☐ | ☐ | — | 🔒 |
+| M1 De UML a Java | ☐ | ☐ | ☐ | 4/5 (Quiz B; el A fue 0/5) | ✅ |
+| M2 Manejo de errores | ☐ | ☐ | ☐ | — | ⏳ |
 | M3 Librerías, frameworks y APIs | ☐ | ☐ | ☐ | — | 🔒 |
 | M4 Análisis | ☐ | ☐ | ☐ | — | 🔒 |
 | M5 Diseño: roles, responsabilidades y colaboraciones | ☐ | ☐ | ☐ | — | 🔒 |
