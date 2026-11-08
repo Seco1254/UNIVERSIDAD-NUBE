@@ -1,0 +1,1409 @@
+<title>M4–M5 Del análisis al diseño</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+/* ---- Propio de M4–M5: tarjetas CRC, enunciados y el lab de asignación ---- */
+.enun{background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--ink); border-radius:0 var(--r) var(--r) 0; padding:12px 16px; font-size:.95rem; max-width:76ch}
+.crcs{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:10px}
+.crc{background:var(--surface); border:1.5px solid var(--ink); border-radius:4px; display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); min-width:0}
+.crc h5{grid-column:1 / -1; margin:0; padding:6px 10px; font:700 .95rem var(--f-display); border-bottom:1.5px solid var(--ink); background:var(--accent-soft)}
+.crc ul{list-style:none; margin:0; padding:8px 10px; display:grid; gap:4px; font-size:.86rem; align-content:start}
+.crc ul + ul{border-left:1px solid var(--rule); color:var(--muted)}
+.crc .cap{font-family:var(--f-mono); font-size:.64rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.side{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.side > div{display:grid; grid-template-columns:minmax(0,1fr); gap:6px; align-content:start; min-width:0}
+.side h4 .bad{color:var(--red)} .side h4 .good{color:var(--green)}
+.assign{display:grid; grid-template-columns:minmax(0,1fr); border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.arow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,15rem); gap:6px 12px; padding:10px 12px; border-bottom:1px solid var(--rule); align-items:center}
+.arow:last-child{border-bottom:0}
+.arow select{font:inherit; font-size:.9rem; padding:5px 8px; border:1.5px solid var(--rule); border-radius:7px; background:var(--paper); color:var(--ink); width:100%}
+.arow select.right{border-color:var(--green); background:var(--green-soft)} .arow select.wrong{border-color:var(--red); background:var(--red-soft)}
+.arow .why{grid-column:1 / -1; font-size:.86rem}
+.arow .why.ok{color:var(--green)} .arow .why.no{color:var(--red)}
+@media (max-width:560px){ .arow{grid-template-columns:minmax(0,1fr)} }
+.meter{display:grid; gap:6px; font-size:.92rem}
+.meter-bar{height:14px; border-radius:99px; background:var(--rule); overflow:hidden}
+.meter-bar i{display:block; height:100%; width:0; background:var(--orange); transition:width .3s}
+@media (prefers-reduced-motion: reduce){ .meter-bar i{transition:none} }
+.labres{display:grid; grid-template-columns:minmax(0,1fr); gap:10px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#vocab">Vocabulario</a>
+  <a href="#teoria"><span>1</span>Teoría</a>
+  <a href="#lab"><span>2</span>Lab</a>
+  <a href="#taller"><span>3</span>Taller</a>
+  <a href="#quiz"><span>4</span>Quiz</a>
+</div></nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">DPOO · Examen 2 · Módulos 4 y 5 de 9</p>
+    <h1>Del análisis al diseño</h1>
+    <div class="meta"><span class="stereo">«dos módulos en uno»</span><span>Domingo 8 de noviembre · ~2,5 h</span><span>Clases 12 a 19: el bloque con más clases</span></div>
+    <p class="lede">El análisis responde «qué hay en el problema»: los conceptos, sus datos y sus relaciones. El diseño responde «quién hace qué»: a qué clase le toca cada responsabilidad y cómo colaboran. En selección múltiple suele salir así: «¿a quién le asignas esta responsabilidad?» o «¿qué estilo de control es este?».</p>
+    <ul class="goals">
+      <li>Pasar de un enunciado al modelo del mundo y separar requerimientos, restricciones e historias de usuario.</li>
+      <li>Asignar cada responsabilidad a la clase que tiene la información, y reconocer los estereotipos de rol.</li>
+      <li>Distinguir el control centralizado del delegado, y armar tarjetas CRC a partir de una historia de usuario.</li>
+    </ul>
+    <div class="shortcut"><p><b>¿Ya lo dominas?</b> Haz el quiz primero. Con 4/5 te saltas los dos módulos.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
+    <p class="note muted">No tengo las diapositivas del profe de estos temas (03 Diseño, 04 Diseño 2, el caso Nam). Esto sale de las lecturas del curso, sobre todo Wirfs-Brock (lectura [9]). Si en clase usaron otros nombres, quédate con los del profe.</p>
+  </header>
+
+  <!-- ============ VOCABULARIO ============ -->
+  <section id="vocab" aria-labelledby="v-h">
+    <div class="sec-head">
+      <h2 id="v-h">Vocabulario de este módulo</h2>
+      <p class="note">En el orden en que lo vas a usar. Lo de M1 y M2 se da por sabido.</p>
+    </div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:20%"><col style="width:34%"><col style="width:46%"></colgroup>
+      <thead><tr><th>Término</th><th>Cómo se ve</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td>Modelo del mundo</td><td>Un diagrama de clases con atributos y relaciones</td><td>Los conceptos del problema, sus datos y cómo se relacionan, todavía sin decisiones de software.</td></tr>
+        <tr><td>Requerimiento funcional</td><td>«El sistema debe calcular el total»</td><td>Algo que el sistema hace.</td></tr>
+        <tr><td>Requerimiento no funcional</td><td>«Debe responder en menos de 2 segundos»</td><td>Qué tan bien lo hace: velocidad, plataformas, seguridad.</td></tr>
+        <tr><td>Restricción</td><td>«Máximo 3 pedidos por domiciliario»</td><td>Una condición del problema que el sistema tiene que respetar.</td></tr>
+        <tr><td>Historia de usuario</td><td>«Como cliente quiero… para…»</td><td>Un requerimiento escrito desde quien lo usa: rol, acción y beneficio.</td></tr>
+        <tr><td>Criterio de aceptación</td><td>«Un pedido de 36000 paga 41000 con el envío»</td><td>Una condición concreta y verificable para saber si la historia quedó bien.</td></tr>
+        <tr><td>Responsabilidad</td><td>Un método o un dato de una clase</td><td>Algo que un objeto sabe, hace o decide.</td></tr>
+        <tr><td>Colaboración</td><td><code>pedido.calcularTotal()</code> llamado desde otra clase</td><td>Un objeto le pide algo a otro para cumplir su responsabilidad.</td></tr>
+        <tr><td>Estereotipo de rol</td><td>Contenedor de información, coordinador…</td><td>El papel típico que juega una clase en el diseño.</td></tr>
+        <tr><td>Estilo de control</td><td>Centralizado, delegado o disperso</td><td>Cómo se reparten las decisiones entre los objetos.</td></tr>
+        <tr><td>Clase Dios</td><td>Una clase con casi todos los métodos</td><td>El síntoma del control centralizado: una clase decide todo y las demás son solo datos.</td></tr>
+        <tr><td>Tarjeta CRC</td><td>Clase · Responsabilidades · Colaboradores</td><td>Una ficha por clase para repartir responsabilidades antes de programar.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Seis ideas con su ejemplo resuelto, la receta para las preguntas de diseño y tus plantillas. Todo sobre un mismo caso: el restaurante La Parrilla.</p></div>
+
+    <div class="block">
+      <h3>El caso del módulo</h3>
+      <div class="enun">«La Parrilla recibe pedidos a domicilio. Cada pedido tiene un número, una dirección de entrega y uno o más productos del menú, cada uno con su cantidad. Cada producto tiene nombre y precio. El total del pedido es la suma de precio por cantidad de sus productos, más un costo de envío de 5000 si esa suma es menor a 40000. Un domiciliario puede tener a lo sumo 3 pedidos asignados al mismo tiempo. El sistema debe permitir crear pedidos, agregarles productos, calcular el total y asignarlos a un domiciliario disponible. Debe responder en menos de 2 segundos y funcionar en Android y en iOS. Los precios están en pesos colombianos.»</div>
+      <p class="note muted">Es un caso hecho para el módulo, no el caso Nam del profe.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <article class="idea" id="idea1">
+      <h3><span class="ix">Idea 1 · Análisis</span>El modelo del mundo: qué hay en el problema</h3>
+      <div class="prose">
+        <p>Antes de programar se entiende el problema. El <b>modelo del mundo</b> es un diagrama de clases con los conceptos del negocio, sus atributos y sus relaciones. Todavía no tiene decisiones de software: nada de consolas, listas ni archivos. Si se lo muestras al dueño del restaurante, debería reconocer todo lo que ve.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 1 · Del enunciado al modelo del mundo</p>
+        <ol class="wsteps">
+          <li><p><b>Qué haces:</b> subrayas los sustantivos: restaurante, pedido, número, dirección, producto, menú, cantidad, nombre, precio, total, costo de envío, domiciliario, sistema, Android, iOS, pesos.</p><p><b>Por qué:</b> los sustantivos son los candidatos a clases o atributos.</p></li>
+          <li><p><b>Qué descartas:</b> «sistema», «Android» e «iOS» son software y plataformas (van a los requerimientos no funcionales). «Menú» es la lista de productos del restaurante: será una relación, no una clase. «Total» y «costo de envío» se calculan, no se guardan.</p><p><b>Por qué:</b> el modelo del mundo solo tiene conceptos del negocio y datos que se guardan.</p></li>
+          <li><p><b>Qué decides:</b> lo que tiene datos propios es clase (Pedido tiene número y dirección; Producto, nombre y precio). Lo que es un dato simple es atributo (precio, dirección). La «cantidad» no es de Producto ni de Pedido: es de cada producto <i>dentro</i> de un pedido. Por eso aparece una clase nueva, LineaPedido.</p><p><b>Por qué:</b> si pusieras la cantidad en Producto, un producto tendría una sola cantidad para todos los pedidos.</p></li>
+          <li><p><b>Qué dibujas:</b> las relaciones con su multiplicidad. Un pedido tiene una o más líneas (<code>1..*</code>, con rombo lleno: las líneas no existen sin su pedido). Cada línea, un producto (<code>1</code>). El restaurante conoce sus pedidos, su menú y sus domiciliarios (<code>0..*</code>). Un domiciliario tiene de 0 a 3 pedidos (<code>0..3</code>).</p><p><b>Por qué:</b> la multiplicidad sale de frases como «uno o más» y «a lo sumo 3».</p><div class="fig" data-fig="mundo"></div></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 2 -->
+    <article class="idea" id="idea2">
+      <h3><span class="ix">Idea 2 · Análisis</span>Requerimientos, restricciones e historias de usuario</h3>
+      <div class="prose">
+        <ul>
+          <li><b>Funcionales:</b> lo que el sistema hace. Crear pedidos, agregarles productos, calcular el total, asignar un domiciliario.</li>
+          <li><b>No funcionales:</b> qué tan bien lo hace. Responder en menos de 2 segundos, funcionar en Android y en iOS.</li>
+          <li><b>Restricciones:</b> condiciones del problema que el sistema respeta. A lo sumo 3 pedidos por domiciliario, envío de 5000 bajo 40000, precios en pesos.</li>
+        </ul>
+        <p>Una <b>historia de usuario</b> escribe un requerimiento funcional desde quien lo usa: <code>Como [rol] quiero [acción] para [beneficio]</code>. Va con <b>criterios de aceptación</b>: condiciones concretas que alguien puede revisar y decir «sí se cumple» o «no se cumple».</p>
+        <p class="muted">Si el profe define «restricción» de otra forma en sus diapositivas, usa la de él.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 2 · Una historia bien escrita</p>
+        <ol class="wsteps">
+          <li><p><b>Qué haces:</b> tomas un requerimiento funcional: calcular el total.</p><p><b>Por qué:</b> cada historia sale de algo que un usuario quiere hacer.</p></li>
+          <li><p><b>Qué escribes:</b> «Como cliente quiero ver el total de mi pedido antes de confirmarlo para saber cuánto voy a pagar».</p><p><b>Por qué:</b> tiene rol (cliente), acción (ver el total) y beneficio (saber cuánto pagar).</p></li>
+          <li><p><b>Qué escribes:</b> los criterios de aceptación. «Un pedido de 2 hamburguesas de 18000 cuesta 41000 (36000 más 5000 de envío)». «Un pedido de 54000 cuesta 54000, sin envío».</p><p><b>Por qué:</b> son verificables. En M6 cada criterio se vuelve una prueba con JUnit.</p></li>
+          <li><p><b>Lo que no es una historia:</b> «El sistema debe ser rápido» (es no funcional y no se puede verificar así) y «Crear la clase Pedido» (es una tarea de programación, no algo que quiera un usuario).</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 3 -->
+    <article class="idea" id="idea3">
+      <h3><span class="ix">Idea 3 · Diseño</span>Responsabilidades: a quién le toca cada cosa</h3>
+      <div class="prose">
+        <p>Diseñar es repartir responsabilidades. Una responsabilidad es algo que un objeto <b>sabe</b> (su nombre, su precio), <b>hace</b> (calcular un subtotal) o <b>decide</b> (si puede recibir otro pedido).</p>
+        <p><b>La regla de oro: la responsabilidad va a la clase que tiene la información para cumplirla.</b> Si una clase tiene que sacarle a otra todos sus datos con getters para hacer un cálculo, ese cálculo está en la clase equivocada.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 3 · ¿Quién calcula el total?</p>
+        <ol class="wsteps">
+          <li><p><b>Qué ves:</b> una versión donde Restaurante calcula el total de un pedido sacando todo con getters.</p><pre class="code" data-code="e3-1"></pre></li>
+          <li><p><b>Qué te preguntas:</b> ¿quién tiene la información? El precio lo tiene Producto; la cantidad, LineaPedido; las líneas, Pedido. Restaurante no tiene nada de eso: lo saca con getters encadenados (<code>l.getProducto().getPrecio()</code>).</p><p><b>Por qué importa:</b> esa cadena de getters es la pista de que el cálculo está lejos de sus datos.</p></li>
+          <li><p><b>Qué escribes:</b> LineaPedido calcula su propio subtotal, porque tiene la cantidad y conoce su producto.</p><pre class="code" data-code="e3-2"></pre></li>
+          <li><p><b>Qué escribes:</b> Pedido suma los subtotales de sus líneas y decide si cobra el envío, porque tiene las líneas.</p><pre class="code" data-code="e3-3"></pre></li>
+          <li><p><b>Qué borras:</b> el método de Restaurante (lo tachado). Quien necesite el total ahora se lo pide al pedido.</p><p><b>Por qué:</b> cada clase hace lo que puede hacer con lo que tiene. Si cambia la regla del envío, solo cambias Pedido.</p><pre class="code" data-code="e3-4"></pre></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 4 -->
+    <article class="idea" id="idea4">
+      <h3><span class="ix">Idea 4 · Diseño</span>Los estereotipos de rol</h3>
+      <p class="prose-p">Wirfs-Brock (lectura [9]) describe seis papeles típicos de una clase. Sirven para describir un diseño y para revisar que ninguna clase haga de todo.</p>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:26%"><col style="width:38%"><col style="width:36%"></colgroup>
+        <thead><tr><th>Estereotipo</th><th>Qué hace</th><th>En La Parrilla</th></tr></thead>
+        <tbody>
+          <tr><td>Contenedor de información <span class="muted">(information holder)</span></td><td>Sabe datos y los da</td><td>Producto, LineaPedido</td></tr>
+          <tr><td>Estructurador <span class="muted">(structurer)</span></td><td>Mantiene relaciones entre objetos: listas, búsquedas</td><td>Restaurante, con sus listas de pedidos y del menú</td></tr>
+          <tr><td>Proveedor de servicios <span class="muted">(service provider)</span></td><td>Hace un trabajo para otros, casi siempre un cálculo</td><td>Una CalculadoraEnvio que da el costo según la distancia</td></tr>
+          <tr><td>Coordinador <span class="muted">(coordinator)</span></td><td>Reacciona a un evento repartiendo el trabajo; decide poco</td><td>Restaurante al asignar: le pregunta a cada domiciliario y le pasa el pedido al primero que pueda</td></tr>
+          <tr><td>Controlador <span class="muted">(controller)</span></td><td>Toma decisiones y dirige de cerca lo que hacen otros</td><td>Un Despachador que decide el orden de salida y a quién va cada pedido</td></tr>
+          <tr><td>Interfaz <span class="muted">(interfacer)</span></td><td>Comunica el sistema con el exterior: el usuario u otro sistema</td><td>ConsolaPedidos</td></tr>
+        </tbody>
+      </table></div>
+      <ul class="prose">
+        <li>Una clase puede tener más de un papel: Restaurante es estructurador y coordinador.</li>
+        <li>La diferencia que más se confunde: el <b>coordinador</b> reparte el trabajo casi sin decidir; el <b>controlador</b> decide y dirige.</li>
+      </ul>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 4 · Clasificar tres clases</p>
+        <ol class="wsteps">
+          <li><p><b>Producto:</b> solo tiene nombre, precio y sus getters. No calcula ni decide nada.</p><p><b>Entonces:</b> contenedor de información.</p></li>
+          <li><p><b>ConsolaPedidos:</b> lee lo que escribe el usuario, llama al restaurante y muestra los resultados.</p><p><b>Entonces:</b> interfaz. Es la frontera del sistema con el usuario.</p></li>
+          <li><p><b>Restaurante en <code>asignarPedido</code>:</b> recorre sus domiciliarios, le pregunta a cada uno si está disponible y le pasa el pedido al primero que diga que sí. La decisión «¿puedo recibir otro?» la toma cada domiciliario.</p><p><b>Entonces:</b> coordinador. Si Restaurante contara los pedidos de cada domiciliario y decidiera él, sería un controlador, y además centralizado.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 5 -->
+    <article class="idea" id="idea5">
+      <h3><span class="ix">Idea 5 · Diseño</span>Colaboraciones y estilos de control</h3>
+      <div class="prose">
+        <p>Una <b>colaboración</b> es un objeto pidiéndole algo a otro. Según cómo se reparten las decisiones, hay tres estilos de control:</p>
+        <ul>
+          <li><b>Centralizado:</b> una clase toma todas las decisiones y las demás son solo datos con getters. Es fácil de encontrar, pero esa clase crece sin control (la clase Dios) y cualquier cambio la toca.</li>
+          <li><b>Delegado:</b> las decisiones están en las clases que tienen la información, y un coordinador reparte el trabajo. Es el que se recomienda.</li>
+          <li><b>Disperso:</b> la lógica está tan repartida que ninguna clase tiene la visión de conjunto, y para seguir una operación hay que saltar por muchas clases.</li>
+        </ul>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 5 · Asignar un pedido, en los dos estilos</p>
+        <div class="side">
+          <div><h4><span class="bad">Centralizado</span></h4><pre class="code sm" data-code="e5-c"></pre></div>
+          <div><h4><span class="good">Delegado</span></h4><pre class="code sm" data-code="e5-d"></pre></div>
+        </div>
+        <ol class="wsteps">
+          <li><p><b>Qué ves en el centralizado:</b> Restaurante abre al domiciliario, cuenta sus pedidos y le agrega uno. La regla «a lo sumo 3» vive en Restaurante, lejos de los datos.</p></li>
+          <li><p><b>Qué cambia en el delegado:</b> cada domiciliario responde si está disponible y se asigna el pedido. Restaurante solo pregunta y reparte: es un coordinador.</p></li>
+          <li><p><b>Por qué es mejor:</b> si mañana el máximo pasa a 4, o depende del vehículo, solo cambias Domiciliario. La regla queda donde está la información.</p></li>
+          <li><p><b>De paso, M2:</b> si nadie está disponible, en vez de retornar <code>null</code> se lanza <code>SinDomiciliarioException</code>.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 6 -->
+    <article class="idea" id="idea6">
+      <h3><span class="ix">Idea 6 · Diseño</span>Tarjetas CRC: de una historia de usuario a objetos</h3>
+      <div class="prose">
+        <p>Una tarjeta CRC es una ficha por clase con tres partes: la <b>C</b>lase, sus <b>R</b>esponsabilidades y sus <b>C</b>olaboradores (a quién le pide algo). Sirven para repartir el trabajo antes de programar, y salen directo de las historias de usuario.</p>
+      </div>
+      <ol class="recipe">
+        <li><b>Toma la historia</b> y subraya la acción.</li>
+        <li><b>¿Quién recibe la petición?</b> Una interfaz (la consola) y, detrás, un coordinador.</li>
+        <li><b>¿Qué información hace falta y quién la tiene?</b></li>
+        <li><b>Reparte:</b> cada parte va a quien tiene la información. Anota a quién le pide algo cada clase: esos son sus colaboradores.</li>
+        <li><b>Revisa:</b> si una tarjeta tiene casi todo, estás centralizando.</li>
+      </ol>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 6 · «Como cliente quiero ver el total de mi pedido antes de confirmarlo para saber cuánto voy a pagar»</p>
+        <ol class="wsteps">
+          <li><p><b>La acción:</b> ver el total. <b>Quién recibe la petición:</b> ConsolaPedidos, que se la pasa a Restaurante.</p></li>
+          <li><p><b>Qué hace falta:</b> encontrar el pedido (lo tiene Restaurante), sumar sus líneas (las tiene Pedido) y el subtotal de cada una (lo sabe LineaPedido, que le pide el precio a Producto).</p></li>
+          <li><p><b>Así quedan las tarjetas.</b> Ninguna tiene todo: el control es delegado.</p><div class="crcs" id="crc-ej6"></div></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="idea" id="receta">
+      <h3><span class="ix">Receta</span>Las preguntas de diseño del examen</h3>
+      <ol class="recipe">
+        <li><b>«¿A quién le asignas…?»</b> Busca qué datos necesita esa responsabilidad y quién los tiene. Descarta la clase que tendría que pedir todo con getters.</li>
+        <li><b>«¿Qué estereotipo tiene…?»</b> Mira qué hace casi siempre: guardar datos, mantener listas, calcular para otros, repartir trabajo, decidir y dirigir, o hablar con el exterior.</li>
+        <li><b>«¿Qué estilo de control es…?»</b> Busca quién decide. Si una sola clase decide todo con los getters de las demás: centralizado. Si cada una decide lo suyo y alguien reparte: delegado.</li>
+        <li><b>«¿Qué va en el modelo del mundo?»</b> Solo conceptos del negocio. Nada de consolas, listas, archivos ni plataformas.</li>
+        <li><b>«¿Qué tipo de requerimiento es…?»</b> ¿Algo que el sistema hace? Funcional. ¿Qué tan bien lo hace? No funcional. ¿Una regla del problema? Restricción.</li>
+      </ol>
+    </article>
+
+    <div class="tpl-box">
+      <p class="eyebrow">Plantillas de memoria · M4–M5</p>
+      <div class="tpl-grid">
+        <div><h4>Historia de usuario</h4><pre class="code sm" data-code="tpl-1"></pre></div>
+        <div><h4>Tarjeta CRC</h4><pre class="code sm" data-code="tpl-2"></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de diseño</h2><p>Dos ejercicios interactivos: repartir las responsabilidades de La Parrilla y reconocer estereotipos.</p></div>
+    <div class="lab">
+      <h3>A · ¿A quién le toca?</h3>
+      <p class="prose-p">Escoge la clase que debería tener cada responsabilidad y toca «Revisar». Al final ves si tu diseño quedó centralizado o delegado, y las tarjetas CRC del diseño recomendado.</p>
+      <div class="assign" id="lab-a"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-a-check">Revisar</button><button type="button" class="btn ghost" id="lab-a-reset">Empezar de nuevo</button><span class="muted" id="lab-a-msg"></span></div>
+      <div class="labres" id="lab-a-res" hidden></div>
+    </div>
+    <div class="lab">
+      <h3>B · ¿Qué estereotipo es?</h3>
+      <p class="prose-p">Lee lo que hace cada clase y escoge su papel principal.</p>
+      <div class="assign" id="lab-b"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-b-check">Revisar</button><button type="button" class="btn ghost" id="lab-b-reset">Empezar de nuevo</button><span class="muted" id="lab-b-msg"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Tres ejercicios en papel sobre un caso nuevo (el torneo del club) y un refactor en el IDE.</p></div>
+    <p class="prose-p">Pon el cronómetro. Los de papel los puedes mandar en una foto al chat; el de código, pegado o en ZIP.</p>
+    <div class="enun">«El club organiza torneos. Cada torneo tiene un nombre y entre 4 y 16 equipos inscritos. Cada equipo tiene un nombre y entre 5 y 12 jugadores; cada jugador tiene documento, nombre y número de camiseta. Se juegan partidos entre dos equipos del torneo, con su fecha y los goles de cada equipo. El sistema debe registrar los resultados, mostrar la tabla de posiciones (3 puntos por ganar, 1 por empatar) y el goleador, y funcionar en el navegador.»</div>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>3 de selección múltiple con un caso y 2 de código corto. Pasas M4 y M5 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title sub"><span class="sec-num">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Antes, relee las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M6 · Pruebas con JUnit, donde los criterios de aceptación se vuelven pruebas y las excepciones de M2 se prueban con <code>assertThrows</code>.</p>
+    <p>El código del caso (versión centralizada y delegada) está probado en Java 21.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- Utilidades ---------- */
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const f1 = (n) => Math.round(n * 10) / 10;
+/* Texto con `código` y **negrita** → nodos, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { parent.appendChild(el("code", "", part)); return; }
+    part.split("**").forEach((p2, j) => { if (p2) parent.appendChild(j % 2 ? el("b", "", p2) : document.createTextNode(p2)); });
+  });
+  return parent;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Resaltado de Java ---------- */
+const RX = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@[A-Za-z]+)|\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|super|static|final|void|if|else|for|while|throw|throws|try|catch|finally|null|true|false|import|package|boolean|int|double|char|long)\b|\b([A-Z][A-Za-z0-9_]*)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(line) {
+  let out = "", last = 0;
+  line.replace(RX, (m, com, str, ann, kw, ty, num, idx) => {
+    out += esc(line.slice(last, idx));
+    const cls = com ? "c-com" : str ? "c-str" : ann ? "c-ann" : kw ? "c-kw" : ty ? "c-ty" : "c-num";
+    out += '<span class="' + cls + '">' + esc(m) + "</span>";
+    last = idx + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+/* diff: cada línea empieza con "+ " (nueva), "- " (se borra) o "  " (igual). */
+function codeHTML(src, diff) {
+  const lines = src.replace(/^\n/, "").replace(/\n\s*$/, "").split("\n");
+  return lines.map((raw) => {
+    let mk = "  ", line = raw;
+    if (diff) {
+      if (raw === "+" || raw === "-") { mk = raw + " "; line = ""; }
+      else if (raw.length < 2) { mk = "  "; line = raw.trim(); }
+      else { mk = raw.slice(0, 2); line = raw.slice(2); }
+    }
+    const add = diff && mk === "+ ", del = diff && mk === "- ";
+    const gut = diff ? '<span class="gut" aria-hidden="true">' + (add ? "+" : del ? "−" : " ") + "</span>" : "";
+    const sr = add ? '<span class="sr">Línea nueva: </span>' : del ? '<span class="sr">Línea que se borra: </span>' : "";
+    const body = hl(line) || " ";
+    return '<span class="cl' + (add ? " add" : "") + (del ? " del" : "") + '">' + gut + sr + (del ? "<s>" + body + "</s>" : body) + "</span>";
+  }).join("");
+}
+
+/* ---------- Diagramas UML en SVG ---------- */
+const LH = 16;
+const memW = (t) => t.length * 6.3 + 16;
+const nameW = (t) => t.length * 7.4 + 24;
+function wrapK(k, inner, inter, label) {
+  if (inter && k) return '<g class="hit" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return "<g" + (k ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>";
+}
+function memSvg(m, x, yy, w, inter) {
+  const cls = "u-m" + (m.s ? " st" : "") + (m.a ? " abs" : "");
+  const inner = '<rect class="hl" x="' + (x + 1) + '" y="' + yy + '" width="' + (w - 2) + '" height="' + LH + '"/><text class="' + cls + '" x="' + (x + 8) + '" y="' + (yy + 11.8) + '">' + esc(m.t) + "</text>";
+  return wrapK(m.k || "", inner, inter, m.t);
+}
+function umlBox(c, inter, G) {
+  const name = c.name || c.id, attrs = c.attrs || [], ops = c.ops || [];
+  const w = c.w || Math.ceil(Math.max(c.minW || 110, nameW(name), c.stereo ? (c.stereo.length + 2) * 6 + 16 : 0, ...attrs.map((m) => memW(m.t)), ...ops.map((m) => memW(m.t))));
+  const x = typeof c.x === "function" ? Math.round(c.x(G, w)) : c.x, y = c.y;
+  const headH = c.stereo ? 36 : 24, aH = c.simple ? 0 : (attrs.length ? attrs.length * LH + 8 : 8), oH = c.simple ? 0 : (ops.length ? ops.length * LH + 8 : 8), h = headH + aH + oH;
+  let s = '<rect class="u-bg' + (c.tone ? " t-" + c.tone : "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2"/>';
+  let hd = '<rect class="hl" x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (w - 2) + '" height="' + (headH - 1) + '"/>';
+  if (c.stereo) hd += '<text class="u-st" x="' + (x + w / 2) + '" y="' + (y + 14) + '" text-anchor="middle">«' + esc(c.stereo) + "»</text>";
+  hd += '<text class="u-nm' + (c.abs ? " abs" : "") + '" x="' + (x + w / 2) + '" y="' + (y + (c.stereo ? 29 : 16.5)) + '" text-anchor="middle">' + esc(name) + "</text>";
+  s += wrapK(c.k || "", hd, inter, "Clase " + name);
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH) + '" x2="' + (x + w) + '" y2="' + (y + headH) + '"/>';
+  attrs.forEach((m, i) => { s += memSvg(m, x, y + headH + 4 + i * LH, w, inter); });
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH + aH) + '" x2="' + (x + w) + '" y2="' + (y + headH + aH) + '"/>';
+  ops.forEach((m, i) => { s += memSvg(m, x, y + headH + aH + 4 + i * LH, w, inter); });
+  return { svg: "<g>" + s + "</g>", x, y, w, h };
+}
+const REL_NAME = { assoc: "Asociación", inherit: "Herencia", realize: "Realización", dep: "Dependencia", aggr: "Agregación", comp: "Composición" };
+function relSvg(r, inter) {
+  const P = r.pts.map((p) => p.slice()), n = P.length;
+  const [ax, ay] = P[n - 2], [bx, by] = P[n - 1];
+  const L = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L, uy = (by - ay) / L;
+  const tri = r.type === "inherit" || r.type === "realize";
+  const dash = r.type === "realize" || r.type === "dep" ? ' stroke-dasharray="5 4"' : "";
+  const pts = P.map((p) => p.slice());
+  if (tri) pts[n - 1] = [bx - ux * 12, by - uy * 12];
+  let dia = "";
+  if (r.type === "aggr" || r.type === "comp") {
+    const [sx, sy] = P[0], [tx, ty] = P[1], L2 = Math.hypot(tx - sx, ty - sy) || 1, vx = (tx - sx) / L2, vy = (ty - sy) / L2, nx = -vy, ny = vx;
+    const d = [[sx, sy], [sx + vx * 9 + nx * 5.5, sy + vy * 9 + ny * 5.5], [sx + vx * 18, sy + vy * 18], [sx + vx * 9 - nx * 5.5, sy + vy * 9 - ny * 5.5]];
+    dia = '<path class="u-dia' + (r.type === "comp" ? " full" : "") + '" d="M' + d.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") + ' Z"/>';
+    pts[0] = [sx + vx * 18, sy + vy * 18];
+  }
+  const dstr = "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L");
+  let head = "";
+  if (tri) {
+    const nx = -uy, ny = ux;
+    head = '<path class="u-tri" d="M' + f1(bx) + " " + f1(by) + " L" + f1(bx - ux * 12 + nx * 7) + " " + f1(by - uy * 12 + ny * 7) + " L" + f1(bx - ux * 12 - nx * 7) + " " + f1(by - uy * 12 - ny * 7) + ' Z"/>';
+  } else {
+    const c = Math.cos(0.45), s = Math.sin(0.45), len = 11;
+    head = '<path class="u-arr" d="M' + f1(bx - len * (ux * c - uy * s)) + " " + f1(by - len * (uy * c + ux * s)) + " L" + f1(bx) + " " + f1(by) + " L" + f1(bx - len * (ux * c + uy * s)) + " " + f1(by - len * (uy * c - ux * s)) + '"/>';
+  }
+  let lb = "";
+  (r.labels || []).forEach((t) => { lb += '<text class="u-lb" x="' + f1(t.x) + '" y="' + f1(t.y) + '" text-anchor="' + (t.a || "start") + '">' + esc(t.t) + "</text>"; });
+  const label = REL_NAME[r.type] + (r.labels && r.labels.length ? " " + r.labels.map((t) => t.t).join(" ") : "");
+  const inner = '<path class="u-hit" d="' + dstr + '"/><path class="u-rl"' + dash + ' d="' + dstr + '"/>' + dia + head + lb;
+  if (inter && r.k) return '<g class="rel hit" data-k="' + r.k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return '<g class="rel">' + inner + "</g>";
+}
+function umlSvg(spec, inter) {
+  const G = {}; let boxes = "";
+  spec.cls.forEach((c) => { const b = umlBox(c, inter, G); G[c.id] = b; boxes += b.svg; });
+  const A = (id, side, t = 0.5) => { const g = G[id]; if (side === "t") return [g.x + g.w * t, g.y]; if (side === "b") return [g.x + g.w * t, g.y + g.h]; if (side === "l") return [g.x, g.y + g.h * t]; return [g.x + g.w, g.y + g.h * t]; };
+  const RL = spec.rels ? spec.rels(A, G) : []; let rs = ""; RL.forEach((r) => { rs += relSvg(r, inter); });
+  let W = 0, H = 0; Object.values(G).forEach((g) => { W = Math.max(W, g.x + g.w); H = Math.max(H, g.y + g.h); });
+  RL.forEach((r) => { r.pts.forEach((p) => { W = Math.max(W, p[0]); H = Math.max(H, p[1]); }); (r.labels || []).forEach((t) => { W = Math.max(W, t.a === "end" ? t.x : t.x + t.t.length * 6.3); H = Math.max(H, t.y + 4); }); });
+  W = Math.ceil(W + 10); H = Math.ceil(H + 10);
+  return '<svg class="uml" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="--w:' + W + 'px" role="' + (inter ? "group" : "img") + '" aria-label="' + esc(spec.aria || "Diagrama de clases") + '">' + boxes + rs + "</svg>";
+}
+const centerOn = (id) => (G, w) => G[id].x + G[id].w / 2 - w / 2;
+/* Dos cajas en fila con una relación: para el diccionario de flechas. */
+function pairSpec(a, b, type, o) {
+  o = o || {};
+  const gap = type === "inherit" || type === "realize" ? 62 : 96;
+  const wa = Math.ceil(Math.max(96, nameW(a))), wb = Math.ceil(Math.max(96, nameW(b)));
+  return {
+    aria: o.aria,
+    cls: [{ id: "A", name: a, x: 10, y: 14, w: wa }, { id: "B", name: b, x: 10 + wa + gap, y: 14, w: wb, stereo: o.stereo }],
+    rels: (A, G) => {
+      const y = 34, r = { type, pts: [[G.A.x + G.A.w, y], [G.B.x, y]] };
+      if (o.rol) r.labels = [{ x: G.B.x - 14, y: y - 6, t: o.rol, a: "end" }, { x: G.B.x - 14, y: y + 15, t: o.mult, a: "end" }];
+      return [r];
+    }
+  };
+}
+
+
+const MOD = "M4–M5";
+const NEXT_MSG = "Aprobado. Pasas a M6 · Pruebas con JUnit.";
+
+/* ---------- Figuras ---------- */
+const FIG = {
+  mundo: {
+    aria: "Modelo del mundo de La Parrilla: Restaurante conoce pedidos, productos del menú y domiciliarios; Pedido se compone de una o más LineaPedido; cada LineaPedido conoce un Producto; cada Domiciliario tiene de cero a tres pedidos",
+    cls: [
+      { id: "Producto", x: 10, y: 10, attrs: [{ t: "- nombre: String" }, { t: "- precio: double" }] },
+      { id: "LineaPedido", x: 220, y: 10, attrs: [{ t: "- cantidad: int" }] },
+      { id: "Pedido", x: 430, y: 10, attrs: [{ t: "- numero: int" }, { t: "- direccion: String" }] },
+      { id: "Restaurante", x: 220, y: 180, attrs: [{ t: "- nombre: String" }] },
+      { id: "Domiciliario", x: 470, y: 180, attrs: [{ t: "- nombre: String" }] }
+    ],
+    rels: (A, G) => {
+      const P = G.Pedido, L = G.LineaPedido, Pr = G.Producto, R = G.Restaurante, D = G.Domiciliario, y1 = 40;
+      return [
+        { type: "comp", pts: [[P.x, y1], [L.x + L.w, y1]], labels: [{ x: L.x + L.w + 16, y: y1 - 6, t: "-lineas" }, { x: L.x + L.w + 16, y: y1 + 15, t: "1..*" }] },
+        { type: "assoc", pts: [[L.x, y1], [Pr.x + Pr.w, y1]], labels: [{ x: Pr.x + Pr.w + 16, y: y1 - 6, t: "-producto" }, { x: Pr.x + Pr.w + 16, y: y1 + 15, t: "1" }] },
+        { type: "assoc", pts: [[R.x + 90, R.y], [R.x + 90, 130], [P.x + 20, 130], [P.x + 20, P.y + P.h]], labels: [{ x: P.x + 12, y: P.y + P.h + 22, t: "-pedidos", a: "end" }, { x: P.x + 12, y: P.y + P.h + 36, t: "0..*", a: "end" }] },
+        { type: "assoc", pts: [[R.x, R.y + 28], [Pr.x + 58, R.y + 28], [Pr.x + 58, Pr.y + Pr.h]], labels: [{ x: Pr.x + 66, y: Pr.y + Pr.h + 22, t: "-menu" }, { x: Pr.x + 66, y: Pr.y + Pr.h + 36, t: "0..*" }] },
+        { type: "assoc", pts: [[R.x + R.w, R.y + 28], [D.x, R.y + 28]], labels: [{ x: D.x - 14, y: R.y + 22, t: "-domiciliarios", a: "end" }, { x: D.x - 14, y: R.y + 43, t: "0..*", a: "end" }] },
+        { type: "assoc", pts: [[P.x + 110, D.y], [P.x + 110, P.y + P.h]], labels: [{ x: P.x + 118, y: P.y + P.h + 22, t: "-asignados" }, { x: P.x + 118, y: P.y + P.h + 36, t: "0..3" }] }
+      ];
+    }
+  },
+  torneo: {
+    aria: "Modelo del mundo del torneo: Torneo conoce entre 4 y 16 equipos y de cero a muchos partidos; cada Equipo tiene entre 5 y 12 jugadores; cada Partido tiene un equipo local y uno visitante",
+    cls: [
+      { id: "Torneo", x: 10, y: 10, attrs: [{ t: "- nombre: String" }] },
+      { id: "Equipo", x: 300, y: 10, attrs: [{ t: "- nombre: String" }] },
+      { id: "Jugador", x: 560, y: 10, attrs: [{ t: "- documento: String" }, { t: "- nombre: String" }, { t: "- numero: int" }] },
+      { id: "Partido", x: 300, y: 190, attrs: [{ t: "- fecha: String" }, { t: "- golesLocal: int" }, { t: "- golesVisitante: int" }] }
+    ],
+    rels: (A, G) => {
+      const T = G.Torneo, E = G.Equipo, J = G.Jugador, P = G.Partido, y1 = 34;
+      return [
+        { type: "assoc", pts: [[T.x + T.w, y1], [E.x, y1]], labels: [{ x: E.x - 14, y: y1 - 6, t: "-equipos", a: "end" }, { x: E.x - 14, y: y1 + 15, t: "4..16", a: "end" }] },
+        { type: "assoc", pts: [[E.x + E.w, y1], [J.x, y1]], labels: [{ x: J.x - 14, y: y1 - 6, t: "-jugadores", a: "end" }, { x: J.x - 14, y: y1 + 15, t: "5..12", a: "end" }] },
+        { type: "assoc", pts: [[T.x + 58, T.y + T.h], [T.x + 58, P.y + 40], [P.x, P.y + 40]], labels: [{ x: P.x - 14, y: P.y + 34, t: "-partidos", a: "end" }, { x: P.x - 14, y: P.y + 55, t: "0..*", a: "end" }] },
+        { type: "assoc", pts: [[E.x + 30, P.y], [E.x + 30, E.y + E.h]], labels: [{ x: E.x + 22, y: E.y + E.h + 24, t: "-local", a: "end" }, { x: E.x + 22, y: E.y + E.h + 38, t: "1", a: "end" }] },
+        { type: "assoc", pts: [[E.x + 90, P.y], [E.x + 90, E.y + E.h]], labels: [{ x: E.x + 98, y: E.y + E.h + 24, t: "-visitante" }, { x: E.x + 98, y: E.y + E.h + 38, t: "1" }] }
+      ];
+    }
+  },
+  qa1: {
+    aria: "Pedido se compone de LineaPedido, que conoce un Producto",
+    cls: [
+      { id: "Pedido", x: 10, y: 10, attrs: [{ t: "- numero: int" }] },
+      { id: "LineaPedido", x: 230, y: 10, attrs: [{ t: "- cantidad: int" }] },
+      { id: "Producto", x: 450, y: 10, attrs: [{ t: "- nombre: String" }, { t: "- precio: double" }] }
+    ],
+    rels: (A, G) => [
+      { type: "comp", pts: [[G.Pedido.x + G.Pedido.w, 34], [G.LineaPedido.x, 34]], labels: [{ x: G.LineaPedido.x - 14, y: 28, t: "-lineas", a: "end" }, { x: G.LineaPedido.x - 14, y: 49, t: "1..*", a: "end" }] },
+      { type: "assoc", pts: [[G.LineaPedido.x + G.LineaPedido.w, 34], [G.Producto.x, 34]], labels: [{ x: G.Producto.x - 14, y: 28, t: "-producto", a: "end" }, { x: G.Producto.x - 14, y: 49, t: "1", a: "end" }] }
+    ]
+  }
+};
+
+/* ---------- Código ---------- */
+const CODE = {
+  "e3-1": { s: `
+public class Restaurante {
+    public double calcularTotal(Pedido p) {
+        double total = 0;
+        for (LineaPedido l : p.getLineas()) {
+            total += l.getProducto().getPrecio() * l.getCantidad();
+        }
+        if (total < 40000) {
+            total += 5000;
+        }
+        return total;
+    }
+}` },
+  "e3-2": { d: 1, s: `
+  public class LineaPedido {
+      private Producto producto;
+      private int cantidad;
+
++     public double calcularSubtotal() {
++         return producto.getPrecio() * cantidad;
++     }
+  }` },
+  "e3-3": { d: 1, s: `
+  public class Pedido {
++     public static final double COSTO_ENVIO = 5000;
++     public static final double MINIMO_SIN_ENVIO = 40000;
+
+      private ArrayList<LineaPedido> lineas;
+
++     public double calcularTotal() {
++         double total = 0;
++         for (LineaPedido l : lineas) {
++             total += l.calcularSubtotal();
++         }
++         if (total < MINIMO_SIN_ENVIO) {
++             total += COSTO_ENVIO;
++         }
++         return total;
++     }
+  }` },
+  "e3-4": { d: 1, s: `
+  public class Restaurante {
+-     public double calcularTotal(Pedido p) {
+-         double total = 0;
+-         for (LineaPedido l : p.getLineas()) {
+-             total += l.getProducto().getPrecio() * l.getCantidad();
+-         }
+-         if (total < 40000) {
+-             total += 5000;
+-         }
+-         return total;
+-     }
+  }
+
+  // Quien necesite el total, se lo pide al pedido:
++ double total = pedido.calcularTotal();` },
+  "e5-c": { s: `
+public class Restaurante {
+    public String asignarPedido(Pedido p) {
+        for (Domiciliario d : domiciliarios) {
+            if (d.getPedidos().size() < 3) {
+                d.getPedidos().add(p);
+                return d.getNombre();
+            }
+        }
+        return null;
+    }
+}
+// Domiciliario: solo nombre, pedidos y getters.` },
+  "e5-d": { s: `
+public class Domiciliario {
+    public static final int MAX_PEDIDOS = 3;
+    private ArrayList<Pedido> pedidos;
+
+    public boolean estaDisponible() {
+        return pedidos.size() < MAX_PEDIDOS;
+    }
+
+    public void asignar(Pedido p) {
+        pedidos.add(p);
+    }
+}
+
+public class Restaurante {
+    public Domiciliario asignarPedido(Pedido p) throws SinDomiciliarioException {
+        for (Domiciliario d : domiciliarios) {
+            if (d.estaDisponible()) {
+                d.asignar(p);
+                return d;
+            }
+        }
+        throw new SinDomiciliarioException(p.getNumero());
+    }
+}` },
+  "tpl-1": { s: `
+Como [rol] quiero [acción] para [beneficio].
+
+Criterios de aceptación:
+- Dado [situación], cuando [acción], entonces [resultado].
+- Dado [otra situación], ...` },
+  "tpl-2": { s: `
+Clase: Pedido
+Responsabilidades              | Colaboradores
+- Conocer sus líneas           | LineaPedido
+- Agregar un producto          | LineaPedido
+- Calcular el total con envío  | LineaPedido` }
+};
+
+/* Tarjetas CRC del diseño recomendado */
+const CRC_EJ6 = [
+  { c: "ConsolaPedidos", r: ["Pedir el número del pedido", "Mostrar el total al cliente"], k: ["Restaurante"] },
+  { c: "Restaurante", r: ["Buscar el pedido por número"], k: ["Pedido"] },
+  { c: "Pedido", r: ["Conocer sus líneas", "Calcular el total con el envío"], k: ["LineaPedido"] },
+  { c: "LineaPedido", r: ["Calcular su subtotal"], k: ["Producto"] },
+  { c: "Producto", r: ["Saber su nombre y su precio"], k: ["—"] }
+];
+const CRC_LAB = [
+  { c: "ConsolaPedidos", r: ["Leer lo que escribe el usuario y mostrarle resultados"], k: ["Restaurante"] },
+  { c: "Restaurante", r: ["Guardar la lista de pedidos del día", "Buscar un domiciliario disponible y asignarle el pedido"], k: ["Pedido", "Domiciliario"] },
+  { c: "Pedido", r: ["Agregar un producto con su cantidad", "Calcular el total con el envío"], k: ["LineaPedido"] },
+  { c: "LineaPedido", r: ["Calcular su subtotal"], k: ["Producto"] },
+  { c: "Producto", r: ["Saber su nombre y su precio"], k: ["—"] },
+  { c: "Domiciliario", r: ["Saber si puede recibir otro pedido", "Recibir un pedido asignado"], k: ["Pedido"] }
+];
+function crcCards(box, list) {
+  box.textContent = "";
+  list.forEach((t) => {
+    const card = el("div", "crc");
+    card.appendChild(el("h5", "", t.c));
+    const r = el("ul"); r.appendChild(el("li", "cap", "Responsabilidades")); t.r.forEach((x) => r.appendChild(el("li", "", x)));
+    const k = el("ul"); k.appendChild(el("li", "cap", "Colaboradores")); t.k.forEach((x) => k.appendChild(el("li", "", x)));
+    card.appendChild(r); card.appendChild(k); box.appendChild(card);
+  });
+}
+
+/* ---------- Lab A: repartir responsabilidades ---------- */
+const CLASES = ["Restaurante", "Pedido", "LineaPedido", "Producto", "Domiciliario", "ConsolaPedidos"];
+const LAB_A = [
+  { r: "Saber su nombre y su precio", a: "Producto", e: "Son sus propios datos: Producto es un contenedor de información." },
+  { r: "Calcular el subtotal de una línea (precio por cantidad)", a: "LineaPedido", e: "Tiene la cantidad y conoce su producto, que le da el precio." },
+  { r: "Agregar un producto con su cantidad a un pedido", a: "Pedido", e: "El pedido crea y guarda sus propias líneas (es una composición)." },
+  { r: "Calcular el total de un pedido, con el costo de envío", a: "Pedido", e: "Tiene sus líneas: suma sus subtotales y decide el envío." },
+  { r: "Saber si puede recibir otro pedido (a lo sumo 3)", a: "Domiciliario", e: "Conoce sus propios pedidos asignados: la decisión es suya." },
+  { r: "Buscar un domiciliario disponible y asignarle el pedido", a: "Restaurante", e: "Es el único que conoce a todos los domiciliarios: coordina, preguntándole a cada uno." },
+  { r: "Guardar la lista de pedidos del día", a: "Restaurante", e: "Mantener listas y buscar en ellas es trabajo de estructurador." },
+  { r: "Leer lo que escribe el usuario y mostrarle los resultados", a: "ConsolaPedidos", e: "Es la frontera con el usuario: una interfaz. El modelo no lee ni imprime." }
+];
+const ESTEREOS = ["Contenedor de información", "Estructurador", "Proveedor de servicios", "Coordinador", "Controlador", "Interfaz"];
+const LAB_B = [
+  { r: "**Producto** guarda nombre y precio; casi todo lo que tiene son getters.", a: "Contenedor de información", e: "Sabe datos y los da. No calcula ni decide." },
+  { r: "**Menu** mantiene la lista de productos y permite buscarlos por nombre.", a: "Estructurador", e: "Mantiene la relación con muchos objetos y busca entre ellos." },
+  { r: "**CalculadoraEnvio** recibe una dirección y retorna el costo del envío según la distancia.", a: "Proveedor de servicios", e: "Hace un cálculo para otros y no guarda nada importante." },
+  { r: "**Restaurante**, cuando llega un pedido, le pregunta a cada domiciliario si está disponible y se lo pasa al primero que pueda.", a: "Coordinador", e: "Reparte el trabajo; la decisión de si puede o no la toma cada domiciliario." },
+  { r: "**Despachador** decide en qué orden salen los pedidos según la hora y la distancia, y le dice a cada domiciliario cuál llevar.", a: "Controlador", e: "Decide él y dirige de cerca a los demás." },
+  { r: "**ConsolaPedidos** lee lo que escribe el usuario y le muestra los resultados.", a: "Interfaz", e: "Comunica el sistema con el exterior." }
+];
+function buildAssign(boxId, items, options, key) {
+  const box = $("#" + boxId); box.textContent = "";
+  items.forEach((it, i) => {
+    const row = el("div", "arow");
+    const lab = rich(el("label"), it.r); lab.htmlFor = key + "-" + i; row.appendChild(lab);
+    const sel = el("select"); sel.id = key + "-" + i;
+    const o0 = el("option", "", "Escoge…"); o0.value = ""; sel.appendChild(o0);
+    options.forEach((o) => { const op = el("option", "", o); op.value = o; sel.appendChild(op); });
+    row.appendChild(sel);
+    const why = el("p", "why"); why.hidden = true; row.appendChild(why);
+    box.appendChild(row);
+  });
+}
+function checkAssign(boxId, items, key, msgId) {
+  const sels = items.map((_, i) => $("#" + key + "-" + i));
+  const missing = sels.filter((s) => !s.value).length;
+  if (missing) { $("#" + msgId).textContent = missing === 1 ? "Te falta 1 por escoger." : "Te faltan " + missing + " por escoger."; return null; }
+  let ok = 0;
+  items.forEach((it, i) => {
+    const s = sels[i], good = s.value === it.a, why = s.parentElement.querySelector(".why");
+    s.classList.remove("right", "wrong"); s.classList.add(good ? "right" : "wrong"); if (good) ok++;
+    why.hidden = false; why.className = "why " + (good ? "ok" : "no"); why.textContent = "";
+    rich(why, (good ? "✓ " : "✗ Es " + it.a + ". ") + it.e);
+  });
+  $("#" + msgId).textContent = "Acertaste " + ok + " de " + items.length + ".";
+  return sels.map((s) => s.value);
+}
+buildAssign("lab-a", LAB_A, CLASES, "la");
+buildAssign("lab-b", LAB_B, ESTEREOS, "lb");
+$("#lab-a-check").addEventListener("click", () => {
+  const vals = checkAssign("lab-a", LAB_A, "la", "lab-a-msg"); if (!vals) return;
+  const enRest = vals.filter((v) => v === "Restaurante").length, res = $("#lab-a-res"); res.hidden = false; res.textContent = "";
+  const m = el("div", "meter");
+  m.appendChild(el("p", "", "Le diste " + enRest + " de " + LAB_A.length + " responsabilidades a Restaurante (en el diseño delegado son 2)."));
+  const bar = el("div", "meter-bar"); const fill = el("i"); bar.appendChild(fill); m.appendChild(bar);
+  m.appendChild(rich(el("p"), enRest >= 4 ? "**Tu diseño quedó centralizado:** Restaurante hace casi todo y se vuelve una clase Dios. Vuelve a mirar cuáles de esas responsabilidades tienen sus datos en otra clase." : "**Tu diseño está delegado:** cada clase hace lo que puede con lo que tiene, y Restaurante coordina."));
+  res.appendChild(m);
+  setTimeout(() => { fill.style.width = (enRest / LAB_A.length * 100) + "%"; }, 30);
+  res.appendChild(el("h4", "", "Las tarjetas CRC del diseño recomendado"));
+  const cards = el("div", "crcs"); crcCards(cards, CRC_LAB); res.appendChild(cards);
+});
+$("#lab-a-reset").addEventListener("click", () => { buildAssign("lab-a", LAB_A, CLASES, "la"); $("#lab-a-res").hidden = true; $("#lab-a-msg").textContent = ""; });
+$("#lab-b-check").addEventListener("click", () => { checkAssign("lab-b", LAB_B, "lb", "lab-b-msg"); });
+$("#lab-b-reset").addEventListener("click", () => { buildAssign("lab-b", LAB_B, ESTEREOS, "lb"); $("#lab-b-msg").textContent = ""; });
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "El modelo del mundo del torneo", min: 20, src: "En papel · caso nuevo",
+    txt: ["Con el enunciado del torneo de arriba, dibuja el modelo del mundo: clases, atributos y relaciones con multiplicidad. Sin métodos todavía."],
+    checks: [
+      { q: "¿Cuál es la multiplicidad de Torneo hacia Equipo?", o: ["0..*", "4..16", "1", "1..*"], a: 1 },
+      { q: "¿Cuál de estas va en el modelo del mundo?", o: ["TablaPosicionesGUI", "Partido", "ArrayList", "Navegador"], a: 1 },
+      { q: "Los goles de un partido, ¿dónde van?", o: ["En Equipo", "En Jugador", "En Partido, uno para cada equipo", "En Torneo"], a: 2 }],
+    hints: ["Subraya los sustantivos y descarta lo que es software (sistema, navegador) y lo que se calcula (tabla de posiciones, goleador).", "Un partido es entre dos equipos: son dos relaciones de Partido a Equipo, una para el local y otra para el visitante."],
+    sol: [
+      { p: "**Clases:** Torneo, Equipo, Jugador y Partido. **Se descartan:** sistema y navegador (software y plataforma), tabla de posiciones y goleador (se calculan, no se guardan).", fig: "torneo" },
+      { p: "**Multiplicidades:** las dicen las frases «entre 4 y 16» (`4..16`) y «entre 5 y 12» (`5..12`). Los goles van en Partido, uno por equipo, porque cada partido tiene su propio resultado." }],
+    rub: ["Las cuatro clases, sin clases de software.", "Atributos en su clase: los goles en Partido y el número de camiseta en Jugador.", "Multiplicidades `4..16` y `5..12` sacadas del enunciado.", "Partido conoce dos equipos (local y visitante).", "Nada de métodos ni de tipos como ArrayList en el modelo del mundo."] },
+  { n: "T2", t: "Requerimientos e historias de usuario", min: 10, src: "En papel · caso nuevo",
+    txt: ["Clasifica estas frases del torneo en requerimiento funcional, no funcional o restricción: «registrar los resultados», «funcionar en el navegador», «entre 5 y 12 jugadores por equipo», «mostrar el goleador», «3 puntos por ganar». Después escribe dos historias de usuario con dos criterios de aceptación cada una."],
+    checks: [
+      { q: "«Funcionar en el navegador» es…", o: ["Funcional", "No funcional", "Restricción", "Una historia de usuario"], a: 1 },
+      { q: "«Entre 5 y 12 jugadores por equipo» es…", o: ["Funcional", "No funcional", "Restricción", "Un criterio de aceptación"], a: 2 }],
+    hints: ["Funcional: algo que el sistema hace. No funcional: qué tan bien o dónde. Restricción: una regla del problema.", "Un criterio de aceptación tiene datos concretos: «si el local hace 2 goles y el visitante 1, el local suma 3 puntos»."],
+    sol: [
+      { p: "**Funcionales:** registrar los resultados, mostrar el goleador. **No funcional:** funcionar en el navegador. **Restricciones:** entre 5 y 12 jugadores por equipo, 3 puntos por ganar." },
+      { p: "Dos historias de ejemplo:", c: `
+Como organizador quiero registrar el resultado de un partido
+para que la tabla de posiciones se actualice.
+- Si el local hace 2 goles y el visitante 1, el local suma 3 puntos y el visitante 0.
+- Si quedan 1 a 1, cada equipo suma 1 punto.
+
+Como hincha quiero ver la tabla de posiciones
+para saber cómo va mi equipo.
+- Los equipos salen ordenados de más a menos puntos.
+- Un equipo sin partidos jugados aparece con 0 puntos.` }],
+    rub: ["Las cinco frases bien clasificadas.", "Cada historia tiene rol, acción y beneficio.", "Cada criterio es verificable: tiene datos concretos y un resultado esperado."] },
+  { n: "T3", t: "Tarjetas CRC de una historia", min: 20, src: "En papel · caso nuevo",
+    txt: ["Haz las tarjetas CRC para la historia «Como organizador quiero registrar el resultado de un partido para que la tabla de posiciones se actualice». Usa la receta de la idea 6 y revisa al final que ninguna tarjeta tenga todo."],
+    checks: [
+      { q: "¿Quién decide qué equipo ganó un partido?", o: ["Torneo", "Partido, porque tiene los goles", "Equipo", "La consola"], a: 1 },
+      { q: "¿Quién guarda los puntos de cada equipo?", o: ["Torneo, en un mapa", "Equipo, sus propios puntos", "Partido", "Jugador"], a: 1 }],
+    hints: ["La petición llega a una interfaz y, detrás, a Torneo, que conoce los partidos y los equipos.", "Partido tiene los goles: puede decir quién ganó o si fue empate. Cada Equipo puede sumar sus propios puntos."],
+    sol: [{ p: "Una solución con control delegado. Torneo coordina, Partido decide el resultado y Equipo suma sus puntos.", c: `
+Clase: ConsolaTorneo
+- Pedir el partido y los goles        | Torneo
+- Mostrar la tabla actualizada        | Torneo
+
+Clase: Torneo
+- Buscar el partido                   | Partido
+- Registrar el resultado              | Partido, Equipo
+- Armar la tabla de posiciones        | Equipo
+
+Clase: Partido
+- Guardar los goles de cada equipo    | —
+- Decir el ganador o si hubo empate   | Equipo
+
+Clase: Equipo
+- Sumar puntos                        | —
+- Saber sus puntos                    | —` }],
+    rub: ["Hay una interfaz que recibe la petición y un coordinador (Torneo) detrás.", "La decisión del ganador está en Partido, que tiene los goles.", "Cada Equipo suma y sabe sus propios puntos.", "Ninguna tarjeta tiene casi todo."] },
+  { n: "T4", t: "Refactor de una clase Dios", min: 25, src: "En el IDE · caso del módulo",
+    txt: ["Este Restaurante hace todo: calcula los totales y asigna los pedidos sacando los datos con getters. Pásalo a control delegado sin cambiar lo que hace: LineaPedido calcula su subtotal, Pedido su total, Domiciliario decide si está disponible y Restaurante solo coordina. Si nadie está disponible, lanza `SinDomiciliarioException` (M2) en vez de retornar `null`. Con dos hamburguesas de 18000 el total debe seguir dando 41000.0, y con tres, 54000.0."],
+    code: `
+public class Restaurante {
+    private ArrayList<Domiciliario> domiciliarios;
+
+    public void agregarProducto(Pedido p, Producto producto, int cantidad) {
+        p.getLineas().add(new LineaPedido(producto, cantidad));
+    }
+
+    public double calcularTotal(Pedido p) {
+        double total = 0;
+        for (LineaPedido l : p.getLineas()) {
+            total += l.getProducto().getPrecio() * l.getCantidad();
+        }
+        if (total < 40000) {
+            total += 5000;
+        }
+        return total;
+    }
+
+    public String asignarPedido(Pedido p) {
+        for (Domiciliario d : domiciliarios) {
+            if (d.getPedidos().size() < 3) {
+                d.getPedidos().add(p);
+                return d.getNombre();
+            }
+        }
+        return null;
+    }
+}`,
+    checks: [{ q: "¿Qué método nuevo va en Domiciliario?", o: ["`public int contarPedidos()`, para que Restaurante compare con 3", "`public boolean estaDisponible()`", "`public ArrayList<Pedido> getPedidos()`", "Ninguno: Domiciliario es solo datos"], a: 1 }],
+    hints: ["Busca cada cadena de getters (`l.getProducto().getPrecio()`, `d.getPedidos().size()`): cada una es un cálculo que debería estar en la clase dueña de esos datos.", "Agrega a Pedido el método `agregarProducto(producto, cantidad)`, y quita de Restaurante el que recibía el pedido."],
+    sol: [
+      { p: "**LineaPedido** calcula su subtotal.", c: `
+public double calcularSubtotal() {
+    return producto.getPrecio() * cantidad;
+}` },
+      { p: "**Pedido** agrega sus líneas y calcula su total.", c: `
+public static final double COSTO_ENVIO = 5000;
+public static final double MINIMO_SIN_ENVIO = 40000;
+
+public void agregarProducto(Producto producto, int cantidad) {
+    lineas.add(new LineaPedido(producto, cantidad));
+}
+
+public double calcularTotal() {
+    double total = 0;
+    for (LineaPedido l : lineas) {
+        total += l.calcularSubtotal();
+    }
+    if (total < MINIMO_SIN_ENVIO) {
+        total += COSTO_ENVIO;
+    }
+    return total;
+}` },
+      { p: "**Domiciliario** decide si está disponible y recibe el pedido.", c: `
+public static final int MAX_PEDIDOS = 3;
+
+public boolean estaDisponible() {
+    return pedidos.size() < MAX_PEDIDOS;
+}
+
+public void asignar(Pedido p) {
+    pedidos.add(p);
+}` },
+      { p: "**Restaurante** solo coordina, y lanza la excepción si nadie puede. Con un domiciliario y cuatro pedidos, los tres primeros van a Ana y el cuarto da «No hay domiciliario disponible para el pedido 13».", c: `
+public class SinDomiciliarioException extends Exception {
+    public SinDomiciliarioException(int numeroPedido) {
+        super("No hay domiciliario disponible para el pedido " + numeroPedido);
+    }
+}
+
+public Domiciliario asignarPedido(Pedido p) throws SinDomiciliarioException {
+    for (Domiciliario d : domiciliarios) {
+        if (d.estaDisponible()) {
+            d.asignar(p);
+            return d;
+        }
+    }
+    throw new SinDomiciliarioException(p.getNumero());
+}` }],
+    rub: ["Ya no hay cadenas de getters en Restaurante.", "`calcularSubtotal` en LineaPedido y `calcularTotal` en Pedido, con las constantes.", "`estaDisponible()` en Domiciliario, con la regla del máximo adentro.", "Restaurante solo pregunta y reparte, y lanza `SinDomiciliarioException` en vez de retornar `null`.", "Los totales siguen dando 41000.0 y 54000.0."] }
+];
+
+/* ---------- Quiz ---------- */
+const QUIZ = {
+  A: [
+    { t: "mc", k: "Selección múltiple con caso", fig: "qa1", q: "En La Parrilla, ¿a quién le asignas «calcular el subtotal de una línea» (precio por cantidad)?",
+      o: ["A Restaurante", "A Pedido", "A LineaPedido", "A Producto"], a: 2,
+      oe: ["Restaurante no tiene ni el precio ni la cantidad: tendría que sacarlos con getters. Eso centraliza.",
+        "Pedido tiene las líneas, pero la cantidad es de cada línea: Pedido le pide el subtotal a cada una.",
+        "Tiene la cantidad y conoce su producto, que le da el precio. Es quien tiene la información.",
+        "Producto sabe el precio, pero no la cantidad: la cantidad cambia en cada pedido."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class ConsolaPedidos {
+    private Restaurante restaurante;
+
+    public void mostrarTotal() {
+        int numero = leerEntero("Número del pedido: ");
+        Pedido p = restaurante.buscarPedido(numero);
+        System.out.println("Total: " + p.calcularTotal());
+    }
+}`, q: "¿Qué estereotipo de rol tiene ConsolaPedidos?",
+      o: ["Contenedor de información", "Estructurador", "Interfaz", "Proveedor de servicios"], a: 2,
+      oe: ["No guarda datos propios importantes: lee del usuario y muestra resultados.",
+        "No mantiene listas ni busca entre objetos: le pide la búsqueda a Restaurante.",
+        "Comunica el sistema con el exterior (el usuario): lee lo que escribe y le muestra el total.",
+        "No hace un cálculo para otros: el total lo calcula Pedido."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class Restaurante {
+    public String asignarPedido(Pedido p) {
+        for (Domiciliario d : domiciliarios) {
+            if (d.getPedidos().size() < 3) {
+                d.getPedidos().add(p);
+                return d.getNombre();
+            }
+        }
+        return null;
+    }
+}`, q: "¿Qué estilo de control muestra este código, y cuál es su problema?",
+      o: ["Centralizado: Restaurante decide con los datos del domiciliario, y la regla del máximo queda lejos de ellos", "Delegado: cada clase hace su parte", "Disperso: la lógica está repartida en muchas clases", "Ninguno: el código está bien porque compila"], a: 0,
+      oe: ["Restaurante abre al domiciliario con getters, cuenta sus pedidos y decide. Si la regla cambia, hay que cambiar Restaurante.",
+        "Domiciliario no decide nada: solo entrega su lista. Delegado sería `d.estaDisponible()`.",
+        "Al revés: toda la lógica está en una sola clase.",
+        "Compilar no dice nada del diseño: la pregunta es quién decide."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa el `calcularTotal` de Pedido con control delegado. El envío se cobra si la suma es menor a 40000.",
+      tpl: `public double calcularTotal() {
+    double total = 0;
+    for (LineaPedido l : lineas) {
+        total += l.___();
+    }
+    if (total ___ MINIMO_SIN_ENVIO) {
+        total += COSTO_ENVIO;
+    }
+    return total;
+}`,
+      blanks: [{ o: ["getPrecio", "calcularSubtotal", "getCantidad", "calcularTotal"], a: 1 }, { o: [">", ">=", "<", "=="], a: 2 }],
+      e: "Pedido le pide a cada línea su subtotal: no calcula con los datos de otros. Y «menor a 40000» es `<`: el envío se cobra cuando la suma no alcanza el mínimo." },
+    { t: "write", k: "Código corto · escribir", q: "Escribe la firma del método que pondrías en Domiciliario para responder si puede recibir otro pedido (a lo sumo 3). Sin la llave.",
+      rx: /^publicboolean[a-z][A-Za-z0-9_]*\(\)\{?$/, model: "public boolean estaDisponible()",
+      e: "Domiciliario conoce sus pedidos, así que la decisión es suya. Es una pregunta de sí o no: retorna `boolean` y no necesita parámetros. Valen otros nombres, como `puedeRecibirPedido()`." }
+  ],
+  B: [
+    { t: "mc", k: "Selección múltiple con caso", q: "¿Cuál es una historia de usuario bien escrita para La Parrilla?",
+      o: ["Como cliente quiero ver el total de mi pedido antes de confirmarlo para saber cuánto voy a pagar", "El sistema debe ser rápido", "Crear la clase Pedido con una lista de líneas", "Como usuario quiero que todo funcione bien"], a: 0,
+      oe: ["Tiene rol, acción y beneficio, y se le pueden escribir criterios verificables.",
+        "Es un requerimiento no funcional, y además no se puede verificar así.",
+        "Es una tarea de programación, no algo que quiera un usuario.",
+        "Tiene la forma, pero «que todo funcione bien» no es una acción concreta ni se puede verificar."] },
+    { t: "mc", k: "Selección múltiple con caso", q: "«La aplicación debe responder en menos de 2 segundos». ¿Qué tipo de requerimiento es?",
+      o: ["Funcional", "No funcional", "Una restricción del negocio", "Una historia de usuario"], a: 1,
+      oe: ["No es algo que el sistema haga, sino qué tan bien lo hace.",
+        "Habla de qué tan bien funciona el sistema (rendimiento): es no funcional.",
+        "Las restricciones del negocio son reglas del problema, como «a lo sumo 3 pedidos».",
+        "No tiene la forma «Como… quiero… para…»."] },
+    { t: "mc", k: "Selección múltiple con caso", q: "¿Cuál de estas NO va en el modelo del mundo de La Parrilla?",
+      o: ["Pedido", "Producto", "Domiciliario", "ConsolaPedidos"], a: 3,
+      oe: ["Es un concepto del negocio: el dueño del restaurante sabe qué es un pedido.",
+        "Es un concepto del negocio: está en el menú.",
+        "Es un concepto del negocio: es quien lleva los pedidos.",
+        "Es una clase de software (la interfaz). Aparece en el diseño, no en el modelo del mundo."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa la clase que debe responder si puede recibir otro pedido. La regla es «a lo sumo 3 pedidos al mismo tiempo».",
+      tpl: `public class ___ {
+    private ArrayList<Pedido> pedidosAsignados;
+
+    public boolean estaDisponible() {
+        return pedidosAsignados.size() ___ 3;
+    }
+}`,
+      blanks: [{ o: ["Restaurante", "Domiciliario", "Pedido", "ConsolaPedidos"], a: 1 }, { o: ["<=", "<", "==", ">"], a: 1 }],
+      e: "Domiciliario es quien tiene sus pedidos asignados, así que la decisión es suya. Con a lo sumo 3, puede recibir otro mientras tenga menos de 3: `size() < 3` (con `<=` aceptaría un cuarto)." },
+    { t: "write", k: "Código corto · escribir", q: "Restaurante va a asignar un pedido con control delegado. Escribe la condición del `if` con la que le pregunta al domiciliario `d` si está disponible: solo la línea del `if`, sin el cuerpo.",
+      rx: /^if\(d\.estaDisponible\(\)(==true)?\)\{?$/, model: "if (d.estaDisponible())",
+      e: "Restaurante pregunta y el domiciliario decide. Si escribieras `d.getPedidos().size() < 3`, la decisión volvería a Restaurante: eso es centralizar." }
+  ]
+};
+
+/* ---------- Render ---------- */
+document.querySelectorAll("[data-fig]").forEach((d) => { d.innerHTML = umlSvg(FIG[d.dataset.fig], false); });
+document.querySelectorAll("pre[data-code]").forEach((p) => { const c = CODE[p.dataset.code]; p.innerHTML = codeHTML(c.s, !!c.d); });
+crcCards($("#crc-ej6"), CRC_EJ6);
+/* ---------- Taller ---------- */
+function fmtT(s) { return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function timerEl(min, id) {
+  const w = el("div", "timer"), t = el("span", "mono tval", fmtT(min * 60)), b = el("button", "btn small", "Iniciar");
+  b.type = "button"; b.id = id; t.setAttribute("role", "timer");
+  let left = min * 60, iv = null;
+  b.addEventListener("click", () => {
+    if (w.classList.contains("over")) { w.classList.remove("over"); left = min * 60; t.textContent = fmtT(left); b.textContent = "Iniciar"; return; }
+    if (iv) { clearInterval(iv); iv = null; w.classList.remove("run"); b.textContent = "Seguir"; return; }
+    w.classList.add("run"); b.textContent = "Pausar";
+    iv = setInterval(() => {
+      left--; t.textContent = fmtT(Math.max(left, 0));
+      if (left <= 0) { clearInterval(iv); iv = null; w.classList.remove("run"); w.classList.add("over"); t.textContent = "Tiempo"; b.textContent = "Reiniciar"; }
+    }, 1000);
+  });
+  w.appendChild(el("span", "eyebrow", "Meta " + min + " min")); w.appendChild(t); w.appendChild(b);
+  return w;
+}
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(timerEl(p.min, "timer-" + p.n));
+    if (p.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[p.fig], false); a.appendChild(fg); }
+    const tx = el("div", "prob-txt"); p.txt.forEach((t) => tx.appendChild(rich(el("p"), t)));
+    if (p.list) { const ul = el("ul"); p.list.forEach((t) => ul.appendChild(rich(el("li"), t))); tx.appendChild(ul); }
+    a.appendChild(tx); if (p.code) { const pc = el("pre", "code sm"); pc.innerHTML = codeHTML(p.code, false); a.appendChild(pc); }
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", (ck.label || "Chequeo rápido") + " · " + ck.q)); if (ck.code) { const cp = el("pre", "code sm"); cp.innerHTML = codeHTML(ck.code, false); c.appendChild(cp); }
+      const opts = el("div", "opts"), fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.o.forEach((o, oi) => {
+        const b = rich(el("button", "opt"), o); b.type = "button"; b.id = "ck-" + p.n + "-" + ci + "-" + oi;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Compara tu código con la solución."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(rich(el("p"), ht)); d.appendChild(b); rv.appendChild(d); });
+    const dr = el("details", "rev"); dr.appendChild(el("summary", "", p.rubTitle || "Rúbrica tipo profe"));
+    const rb = el("div", "rev-body"); const ul = el("ul", "rub"); p.rub.forEach((r) => ul.appendChild(rich(el("li"), r))); rb.appendChild(ul);
+    if (p.rubNote) rb.appendChild(el("p", "muted", p.rubNote));
+    dr.appendChild(rb); rv.appendChild(dr);
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body");
+    p.sol.forEach((s) => { sb.appendChild(rich(el("p"), s.p)); if (s.fig) { const sf = el("div", "fig"); sf.innerHTML = umlSvg(FIG[s.fig], false); sb.appendChild(sf); } if (s.c) { const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(s.c, false); sb.appendChild(pre); } });
+    ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+
+/* ---------- Quiz ---------- */
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); rich(lt, it.q); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[it.fig], false); fs.appendChild(fg); }
+    if (it.code) { const pre = el("pre", "code"); pre.innerHTML = codeHTML(it.code, false); fs.appendChild(pre); }
+    if (it.t === "mc") {
+      const ops = el("div", "qopts");
+      it.o.forEach((o, oi) => {
+        const lab = el("label", "qopt"), r = el("input"); r.type = "radio"; r.name = key + "-q" + i; r.id = key + "-q" + i + "-o" + oi; r.value = String(oi);
+        lab.appendChild(r); lab.appendChild(rich(el("span", "", String.fromCharCode(65 + oi) + ") "), o)); ops.appendChild(lab);
+      });
+      fs.appendChild(ops);
+    } else if (it.t === "fill") {
+      const pre = el("pre", "code qfill"); let b = 0;
+      it.tpl.split("\n").forEach((line) => {
+        const cl = el("span", "cl"); const segs = line.split("___");
+        segs.forEach((sg, j) => {
+          if (j > 0) {
+            const sel = el("select"); sel.id = key + "-q" + i + "-b" + b; sel.setAttribute("aria-label", "Espacio " + (b + 1));
+            const o0 = el("option", "", "—"); o0.value = ""; sel.appendChild(o0);
+            it.blanks[b].o.forEach((o, oi) => { const op = el("option", "", o); op.value = String(oi); sel.appendChild(op); });
+            cl.appendChild(sel); b++;
+          }
+          if (sg) { const sp = el("span"); sp.innerHTML = hl(sg); cl.appendChild(sp); }
+        });
+        if (!line) cl.appendChild(document.createTextNode(" "));
+        pre.appendChild(cl);
+      });
+      fs.appendChild(pre);
+    } else {
+      const inp = el("input", "qwrite"); inp.type = "text"; inp.id = key + "-q" + i + "-w"; inp.autocomplete = "off"; inp.spellcheck = false;
+      inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off"); inp.setAttribute("aria-label", "Tu respuesta"); inp.placeholder = "Escribe aquí tu línea de Java";
+      fs.appendChild(inp);
+    }
+    const ex = el("div", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+function readAnswer(key, it, i) {
+  if (it.t === "mc") { const c = document.querySelector('input[name="' + key + "-q" + i + '"]:checked'); return c ? Number(c.value) : null; }
+  if (it.t === "fill") { const v = it.blanks.map((_, b) => $("#" + key + "-q" + i + "-b" + b).value); return v.some((x) => x === "") ? null : v.map(Number); }
+  const v = $("#" + key + "-q" + i + "-w").value.trim(); return v ? v : null;
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase()), items = QUIZ[key];
+  const answers = items.map((it, i) => readAnswer(key, it, i));
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : "Te faltan " + missing + " preguntas por responder."; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0; const saved = [];
+  items.forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i], ex = fs.querySelector(".qexp"), ans = answers[i];
+    let ok = false; ex.textContent = "";
+    if (it.t === "mc") {
+      ok = ans === it.a;
+      fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === ans) lab.classList.add("wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + "Por qué cada opción:"));
+      const ul = el("ul");
+      it.oe.forEach((t, oi) => { const li = el("li"); li.appendChild(el("span", "mk " + (oi === it.a ? "y" : "n"), String.fromCharCode(65 + oi) + (oi === it.a ? " ✓" : " ✗"))); li.appendChild(rich(el("span"), t)); ul.appendChild(li); });
+      ex.appendChild(ul);
+      saved.push(String.fromCharCode(65 + ans));
+    } else if (it.t === "fill") {
+      ok = it.blanks.every((bl, b) => ans[b] === bl.a);
+      it.blanks.forEach((bl, b) => { const s = $("#" + key + "-q" + i + "-b" + b); s.classList.add(ans[b] === bl.a ? "right" : "wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** Así va: " + it.blanks.map((bl) => "`" + bl.o[bl.a] + "`").join(", ") + ". ") + it.e));
+      saved.push(it.blanks.map((bl, b) => bl.o[ans[b]]).join(" | "));
+    } else {
+      ok = it.rx.test(ans.replace(/\s+/g, ""));
+      $("#" + key + "-q" + i + "-w").classList.add(ok ? "right" : "wrong");
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** ") + "Respuesta modelo: `" + it.model + "`. " + it.e));
+      saved.push(ans.slice(0, 200));
+    }
+    if (ok) score++;
+    ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    fs.querySelectorAll("input, select").forEach((x) => (x.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT_MSG : "Todavía no. Lee por qué fallaste cada una, repasa esa idea de la teoría y haz el Quiz B."));
+  const note = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(note);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: saved, fecha: new Date().toISOString() });
+      note.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { note.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

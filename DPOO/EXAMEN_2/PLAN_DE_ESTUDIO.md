@@ -132,6 +132,8 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 - **Trampas:** creer que un framework es solo una librería grande; confundir API con interfaz gráfica.
 
 ### M4 — Análisis: el modelo del mundo del problema
+> **Artifact (junto con M5):** [M4–M5 · Del análisis al diseño](https://claude.ai/artifact/Lhm7C1zAVUvpvLU2EDoxDb). Caso propio (el restaurante La Parrilla) y taller sobre el torneo del club; el código centralizado y el delegado están probados en Java 21.
+
 *Vie 6 · ~2 h · Clase 12 + Taller 4*
 *Material: 01 El mundo del problema · 02 Análisis y problema del mundo (carpeta 02) · 5. Análisis y modelo del mundo (carpeta 03) · lectura [5]*
 
@@ -204,13 +206,14 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | 1 | Mar 3 nov | Liviana | **M1** De UML a Java ✅ | 1–1,5 h | Clase 25 (librerías y frameworks) |
 | 2 | Mié 4 nov | Media | Proyecto 2 (M2 pasó al viernes) | — | |
 | 3 | Jue 5 nov | Liviana | Quiz B de **M1**: 4/5 ✅ | — | Clase 26 (Swing) · **entrega del Proyecto 2** |
-| 4 | Vie 6 nov | Suave | **M2** Manejo de errores | ~2 h | Si vas corto: teoría, lab, T1, T2 y quiz |
-| 5 | Sáb 7 nov | Pesada | **M4–M5** Del análisis al diseño (un solo artifact) + **M6** Pruebas | 4–5 h | |
-| 6 | Dom 8 nov | Pesada | **M7–M8** Principios y patrones (un solo artifact) + **M3** en versión corta | 4–5 h | M3: quiz primero |
-| 7 | Lun 9 nov | Suave | **M9** Simulacro + repaso de plantillas | ~2 h | |
+| 4 | Vie 6 nov | Suave | **M2** Manejo de errores: teoría y lab | ~2 h | |
+| 5 | Sáb 7 nov | Pesada | **M2**: taller, dudas en el chat y Quiz A (1/5) | — | |
+| 6 | Dom 8 nov | Pesada | **M2** ✅ (Quiz B 4/5) + **M4–M5** Del análisis al diseño + **M6** Pruebas | 4–5 h | Si no alcanza M6, pasa al lunes temprano |
+| 7 | Lun 9 nov | Suave | **M7–M8** exprés (quiz primero, con lo esencial de M3) + **M9** mini-simulacro de 40 min | ~3 h | |
 | — | **Mar 10 nov** | — | 30 min con tus plantillas y **EXAMEN 2** (11:00) | — | Llega temprano |
 
 **Ajuste del 5 de noviembre:** el Proyecto 2 se llevó el miércoles y el jueves. M2 pasa al viernes; M4 y M5 se juntan en un solo artifact el sábado, con M6; M7 y M8 se juntan el domingo (progreso en los docs `M4`/`M5` y `M7`/`M8`, como M6–M7 en Física), y M3 queda en versión corta. El simulacro sigue el lunes.
+**Ajuste del 8 de noviembre:** M2 tomó el viernes y el sábado. El domingo van M4–M5 y M6; el lunes, M7–M8 en versión exprés y un mini-simulacro de 40 minutos en vez del de 80, como en Física.
 **Si te vuelves a atrasar:** recorta primero M3 y después los labs y los T4 del taller. **Nunca recortes M2, M4–M5, M6 ni el simulacro.**
 **Si vas adelantado:** en M4–M5 y M7–M8 haz el quiz primero; si sacas ≥ 4/5, ese tiempo va para el simulacro.
 
@@ -221,10 +224,10 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | Módulo | Teoría | Lab | Taller | Quiz (nota) | Estado |
 |---|---|---|---|---|---|
 | M1 De UML a Java | ☐ | ☐ | ☐ | 4/5 (Quiz B; el A fue 0/5) | ✅ |
-| M2 Manejo de errores | ☐ | ☐ | ☐ | — | ⏳ |
+| M2 Manejo de errores | ☐ | ☐ | ☐ | 4/5 (Quiz B; el A fue 1/5) | ✅ |
 | M3 Librerías, frameworks y APIs | ☐ | ☐ | ☐ | — | 🔒 |
-| M4 Análisis | ☐ | ☐ | ☐ | — | 🔒 |
-| M5 Diseño: roles, responsabilidades y colaboraciones | ☐ | ☐ | ☐ | — | 🔒 |
+| M4 Análisis | ☐ | ☐ | ☐ | — | ⏳ |
+| M5 Diseño: roles, responsabilidades y colaboraciones | ☐ | ☐ | ☐ | — | ⏳ |
 | M6 Pruebas con JUnit | ☐ | ☐ | ☐ | — | 🔒 |
 | M7 Principios | ☐ | ☐ | ☐ | — | 🔒 |
 | M8 Patrones | ☐ | ☐ | ☐ | — | 🔒 |
