@@ -333,12 +333,12 @@ details.rev{min-width:0}
     <div class="meta"><span class="stereo">«dos módulos en uno»</span><span>Domingo 8 de noviembre · ~2,5 h</span><span>Clases 12 a 19: el bloque con más clases</span></div>
     <p class="lede">El análisis responde «qué hay en el problema»: los conceptos, sus datos y sus relaciones. El diseño responde «quién hace qué»: a qué clase le toca cada responsabilidad y cómo colaboran. En selección múltiple suele salir así: «¿a quién le asignas esta responsabilidad?» o «¿qué estilo de control es este?».</p>
     <ul class="goals">
-      <li>Pasar de un enunciado al modelo del mundo y separar requerimientos, restricciones e historias de usuario.</li>
+      <li>Pasar de un enunciado al modelo del mundo y separar requerimientos, reglas del dominio, restricciones e historias de usuario.</li>
       <li>Asignar cada responsabilidad a la clase que tiene la información, y reconocer los estereotipos de rol.</li>
       <li>Distinguir el control centralizado del delegado, y armar tarjetas CRC a partir de una historia de usuario.</li>
     </ul>
     <div class="shortcut"><p><b>¿Ya lo dominas?</b> Haz el quiz primero. Con 4/5 te saltas los dos módulos.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
-    <p class="note muted">No tengo las diapositivas del profe de estos temas (03 Diseño, 04 Diseño 2, el caso Nam). Esto sale de las lecturas del curso, sobre todo Wirfs-Brock (lectura [9]). Si en clase usaron otros nombres, quédate con los del profe.</p>
+    <p class="note muted">Actualizado con el caso Ñam del profe (idea 7 y lab C) y con su vocabulario: <b>reglas del dominio</b> para las reglas del negocio y <b>restricciones</b> para los límites del proyecto. El resto sale de las lecturas del curso, sobre todo Wirfs-Brock (lectura [9]).</p>
   </header>
 
   <!-- ============ VOCABULARIO ============ -->
@@ -354,7 +354,8 @@ details.rev{min-width:0}
         <tr><td>Modelo del mundo</td><td>Un diagrama de clases con atributos y relaciones</td><td>Los conceptos del problema, sus datos y cómo se relacionan, todavía sin decisiones de software.</td></tr>
         <tr><td>Requerimiento funcional</td><td>«El sistema debe calcular el total»</td><td>Algo que el sistema hace.</td></tr>
         <tr><td>Requerimiento no funcional</td><td>«Debe responder en menos de 2 segundos»</td><td>Qué tan bien lo hace: velocidad, plataformas, seguridad.</td></tr>
-        <tr><td>Restricción</td><td>«Máximo 3 pedidos por domiciliario»</td><td>Una condición del problema que el sistema tiene que respetar.</td></tr>
+        <tr><td>Regla del dominio</td><td>«Máximo 3 pedidos por domiciliario»</td><td>Una regla del negocio que el sistema tiene que respetar. Así la llama el profe en el caso Ñam.</td></tr>
+        <tr><td>Restricción</td><td>«La base de datos ya existe y no se puede cambiar»</td><td>Una condición del proyecto que limita el diseño: presupuesto, sistemas que ya existen, el equipo, la tecnología.</td></tr>
         <tr><td>Historia de usuario</td><td>«Como cliente quiero… para…»</td><td>Un requerimiento escrito desde quien lo usa: rol, acción y beneficio.</td></tr>
         <tr><td>Criterio de aceptación</td><td>«Un pedido de 36000 paga 41000 con el envío»</td><td>Una condición concreta y verificable para saber si la historia quedó bien.</td></tr>
         <tr><td>Responsabilidad</td><td>Un método o un dato de una clase</td><td>Algo que un objeto sabe, hace o decide.</td></tr>
@@ -396,15 +397,16 @@ details.rev{min-width:0}
 
     <!-- Idea 2 -->
     <article class="idea" id="idea2">
-      <h3><span class="ix">Idea 2 · Análisis</span>Requerimientos, restricciones e historias de usuario</h3>
+      <h3><span class="ix">Idea 2 · Análisis</span>Requerimientos, reglas del dominio, restricciones e historias de usuario</h3>
       <div class="prose">
         <ul>
           <li><b>Funcionales:</b> lo que el sistema hace. Crear pedidos, agregarles productos, calcular el total, asignar un domiciliario.</li>
           <li><b>No funcionales:</b> qué tan bien lo hace. Responder en menos de 2 segundos, funcionar en Android y en iOS.</li>
-          <li><b>Restricciones:</b> condiciones del problema que el sistema respeta. A lo sumo 3 pedidos por domiciliario, envío de 5000 bajo 40000, precios en pesos.</li>
+          <li><b>Reglas del dominio:</b> reglas del negocio que el sistema respeta. A lo sumo 3 pedidos por domiciliario, envío de 5000 bajo 40000, precios en pesos.</li>
+          <li><b>Restricciones:</b> condiciones del proyecto que limitan el diseño. En el caso Ñam del profe: el presupuesto (minimizar consultas a una API externa que cobra), un sistema legado (la base de datos ya existe y no se puede modificar) y el equipo (4 desarrolladores, en Java).</li>
         </ul>
         <p>Una <b>historia de usuario</b> escribe un requerimiento funcional desde quien lo usa: <code>Como [rol] quiero [acción] para [beneficio]</code>. Va con <b>criterios de aceptación</b>: condiciones concretas que alguien puede revisar y decir «sí se cumple» o «no se cumple».</p>
-        <p class="muted">Si el profe define «restricción» de otra forma en sus diapositivas, usa la de él.</p>
+        <p class="muted">Así separa el profe las «entradas del diseño» en el caso Ñam (idea 7): requerimientos no funcionales, reglas del dominio y restricciones. Esta página antes llamaba «restricciones» a las reglas del dominio; quédate con los nombres del profe.</p>
       </div>
       <div class="worked">
         <p class="wk-t">Ejemplo resuelto 2 · Una historia bien escrita</p>
@@ -515,6 +517,45 @@ details.rev{min-width:0}
       </div>
     </article>
 
+    <!-- Idea 7 -->
+    <article class="idea" id="idea7">
+      <h3><span class="ix">Idea 7 · Del profe</span>El caso Ñam: el proceso de diseño completo</h3>
+      <div class="enun">«Ñam es una plataforma de domicilios con varios restaurantes afiliados, cada uno con su menú. El Núcleo de Pedidos recibe lo que hace el usuario en la app: arma un carrito que sobrevive aunque cierre la app; al confirmar, cobra con una pasarela de pagos externa (tarjeta, PSE o Nequi), avisa al restaurante y asigna un repartidor cercano usando un servicio externo de mapas; y en cada cambio de estado (confirmado, en preparación, en camino, entregado) le avisa al usuario por push, WhatsApp o SMS.»</div>
+      <div class="prose">
+        <p><b>1. Entender el problema: las entradas del diseño.</b> El profe las separa en tres:</p>
+        <ul>
+          <li><b>Requerimientos no funcionales:</b> el menú carga en menos de 1 s; el 40 % de los pedidos llega entre 11:30 y 13:30; un pedido cobrado no se pierde aunque algo se caiga; un repartidor tiene un solo pedido activo.</li>
+          <li><b>Reglas del dominio:</b> validar horario y zona de cobertura; total = platos + envío + propina; sin pago exitoso no hay pedido; un pedido es de un solo restaurante.</li>
+          <li><b>Restricciones:</b> minimizar consultas a la API externa (cobra); la base de datos relacional ya existe y no se puede cambiar; 4 desarrolladores, en Java.</li>
+        </ul>
+        <p><b>2. Dibujar la frontera</b> con un diagrama de contexto (qué hace Ñam y con qué se conecta, sin saber qué hay adentro) y <b>3. una primera descomposición:</b> la API Móvil (habla con la app), el Motor de Notificaciones (arma y envía mensajes) y el Núcleo de Pedidos, que es lo que se diseña.</p>
+        <p><b>4. Candidatos desde cuatro perspectivas:</b> el dominio del problema (Usuario, Restaurante, Plato, Carrito, Item Carrito, Pedido, Repartidor, Dirección, Pago), lo que hace el sistema (Despachador, Manejador de Carritos, Buscador de Fotos, Conector DB), el flujo de datos (Conexión DB, Resultado Query…) y los agrupadores (Catálogo de Restaurantes). Los elementos externos (API Móvil, Motor de Notificaciones, Pasarela de Pagos, Servicio de Mapas) no se diseñan, pero colaboran.</p>
+      </div>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:34%"><col style="width:24%"><col style="width:42%"></colgroup>
+        <thead><tr><th>Candidato</th><th>Estereotipo</th><th>Lo que eso decide</th></tr></thead>
+        <tbody>
+          <tr><td>Pedido</td><td>Controlador</td><td>Concentra la lógica: la clase más difícil, con más errores y que más va a cambiar. Es el único controlador.</td></tr>
+          <tr><td>Despachador</td><td>Coordinador</td><td>Delega el trabajo pesado (como calcular tiempos); su lógica es simple.</td></tr>
+          <tr><td>Manejador de Carritos, Catálogo de Restaurantes, Restaurante, Buscador de Fotos</td><td>Estructuradores</td><td>Organizan y entregan elementos; no deciden qué va dentro.</td></tr>
+          <tr><td>Conector DB</td><td>Proveedor de servicios</td><td>Recurso pasivo: espera peticiones, nunca inicia.</td></tr>
+          <tr><td>Conexión DB, Pasarela de Pagos, Servicio de Mapas</td><td>Interfaces</td><td>Ocultan y aíslan los detalles externos (Nequi, tarjeta…).</td></tr>
+          <tr><td>Carrito, Item Carrito, Plato, Repartidor, Dirección, Pago, Usuario</td><td>Contenedores de información</td><td>Los que no tienen estereotipo marcado; cada uno responde por sus datos.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 7 · Lo que el profe saca del caso</p>
+        <ol class="wsteps">
+          <li><p><b>Los estereotipos son decisiones de diseño disfrazadas.</b> Sin escribir una línea de código ya se decidió que el Pedido será la clase más compleja y que el Despachador solo coordina.</p></li>
+          <li><p><b>Responsabilidades, con una regla que ya conoces:</b> el <b>Carrito</b>, y no el Manejador de Carritos, calcula el total (platos + domicilio + propina): la información y el comportamiento que la usa se quedan juntos. Y aparece un rol que no estaba: crear y sostener los componentes de larga vida no tenía dueño, así que nace el <b>Núcleo de Pedidos</b> como elemento propio. También se reparte en dos niveles quién resuelve los identificadores: el Catálogo sabe qué restaurante es cada id, y cada Restaurante sabe qué plato es cada id de su menú. Así, agregar un restaurante no obliga a tocar nada más.</p></li>
+          <li><p><b>Colaboraciones:</b> se diseñan cuatro escenarios clave: consultar el menú (el más frecuente), agregar un plato (el que más se repite por sesión), confirmar el pedido (el más crítico: ahí se mueve la plata) y asignar el repartidor (el de más elementos externos). Se revisan tres problemas típicos: <b>muchas conexiones desde fuera del vecindario</b> (no pasa), <b>muchos mensajes de bajo nivel</b> (casi pasa con el servicio de mapas: se resolvió con un solo mensaje grueso que pide todos los tiempos de una vez, y así la restricción de costo se volvió una decisión de diseño) y <b>muchas alternativas y caminos condicionales</b> (sí pasa al confirmar: pago rechazado, restaurante que no responde, ningún repartidor; señal de que el Pedido será el elemento más complejo).</p></li>
+          <li><p><b>Estilo de control:</b> <b>delegado</b>. El Núcleo y el Despachador coordinan; el Carrito, el Restaurante y la Conexión DB resuelven lo suyo con autonomía. El Pedido se acerca a ser centralizado, pero es una decisión consciente: la lógica de un pedido queda en un solo lugar, y si crece se descompone. Lo importante no es el estilo «correcto», sino que sea <b>consistente</b>.</p></li>
+          <li><p><b>Los dos extremos del profe:</b> centralizado es lo que sale cuando no se diseña: una clase <code>AlgoService</code> o <code>AlgoManager</code> de cientos de líneas que valida, cobra, asigna y notifica, rodeada de clases que solo tienen get y set. Delegado es la cocina en hora pico: el expedidor reparte los platos de cada orden y vigila que salgan a tiempo, pero no le dice a la parrilla cómo cocinar. El expedidor es un coordinador.</p></li>
+          <li><p><b>Decisiones al bajar a clases:</b> el dinero como entero de pesos y no <code>double</code> (para no descubrir en producción un total de 24.999,9999); el estado del pedido como enumeración con transiciones, no como <code>String</code> (nadie escribe «en camimo»); y solo el Pedido cambia su propio estado: el Despachador no lo marca EN_CAMINO por su cuenta, se lo pide. Ninguna decisión es la única posible ni la óptima. Lo que tienen es una justificación, y esa justificación va en el documento de diseño.</p></li>
+        </ol>
+      </div>
+    </article>
+
     <article class="idea" id="receta">
       <h3><span class="ix">Receta</span>Las preguntas de diseño del examen</h3>
       <ol class="recipe">
@@ -522,7 +563,7 @@ details.rev{min-width:0}
         <li><b>«¿Qué estereotipo tiene…?»</b> Mira qué hace casi siempre: guardar datos, mantener listas, calcular para otros, repartir trabajo, decidir y dirigir, o hablar con el exterior.</li>
         <li><b>«¿Qué estilo de control es…?»</b> Busca quién decide. Si una sola clase decide todo con los getters de las demás: centralizado. Si cada una decide lo suyo y alguien reparte: delegado.</li>
         <li><b>«¿Qué va en el modelo del mundo?»</b> Solo conceptos del negocio. Nada de consolas, listas, archivos ni plataformas.</li>
-        <li><b>«¿Qué tipo de requerimiento es…?»</b> ¿Algo que el sistema hace? Funcional. ¿Qué tan bien lo hace? No funcional. ¿Una regla del problema? Restricción.</li>
+        <li><b>«¿Qué tipo de requerimiento es…?»</b> ¿Algo que el sistema hace? Funcional. ¿Qué tan bien lo hace? No funcional. ¿Una regla del negocio? Regla del dominio. ¿Un límite del proyecto (presupuesto, legado, equipo)? Restricción.</li>
       </ol>
     </article>
 
@@ -537,7 +578,7 @@ details.rev{min-width:0}
 
   <!-- ============ 2. LAB ============ -->
   <section id="lab" aria-labelledby="l-h">
-    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de diseño</h2><p>Dos ejercicios interactivos: repartir las responsabilidades de La Parrilla y reconocer estereotipos.</p></div>
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de diseño</h2><p>Tres ejercicios interactivos: repartir las responsabilidades de La Parrilla, reconocer estereotipos y repasar los del caso Ñam del profe.</p></div>
     <div class="lab">
       <h3>A · ¿A quién le toca?</h3>
       <p class="prose-p">Escoge la clase que debería tener cada responsabilidad y toca «Revisar». Al final ves si tu diseño quedó centralizado o delegado, y las tarjetas CRC del diseño recomendado.</p>
@@ -550,6 +591,12 @@ details.rev{min-width:0}
       <p class="prose-p">Lee lo que hace cada clase y escoge su papel principal.</p>
       <div class="assign" id="lab-b"></div>
       <div class="qrow"><button type="button" class="btn" id="lab-b-check">Revisar</button><button type="button" class="btn ghost" id="lab-b-reset">Empezar de nuevo</button><span class="muted" id="lab-b-msg"></span></div>
+    </div>
+    <div class="lab">
+      <h3>C · Los estereotipos de Ñam, según el profe</h3>
+      <p class="prose-p">Repaso de la idea 7: escoge el estereotipo que el profe le asignó a cada candidato del caso Ñam.</p>
+      <div class="assign" id="lab-c"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-c-check">Revisar</button><button type="button" class="btn ghost" id="lab-c-reset">Empezar de nuevo</button><span class="muted" id="lab-c-msg"></span></div>
     </div>
   </section>
 
@@ -981,6 +1028,18 @@ $("#lab-a-check").addEventListener("click", () => {
 $("#lab-a-reset").addEventListener("click", () => { buildAssign("lab-a", LAB_A, CLASES, "la"); $("#lab-a-res").hidden = true; $("#lab-a-msg").textContent = ""; });
 $("#lab-b-check").addEventListener("click", () => { checkAssign("lab-b", LAB_B, "lb", "lab-b-msg"); });
 $("#lab-b-reset").addEventListener("click", () => { buildAssign("lab-b", LAB_B, ESTEREOS, "lb"); $("#lab-b-msg").textContent = ""; });
+const LAB_NAM = [
+  { r: "**Pedido**: decide si el pedido es viable, lo confirma y coordina el cobro y la asignación.", a: "Controlador", e: "El único controlador del caso: concentra las decisiones de un pedido." },
+  { r: "**Despachador**: escoge el repartidor, pero le delega a otros el trabajo pesado (calcular tiempos).", a: "Coordinador", e: "Reparte el trabajo con lógica simple." },
+  { r: "**Manejador de Carritos**: mantiene los carritos activos y entrega el de cada usuario.", a: "Estructurador", e: "Organiza y entrega; no decide qué va dentro del carrito." },
+  { r: "**Catálogo de Restaurantes**: mantiene juntos los restaurantes y los encuentra por su identificador.", a: "Estructurador", e: "Mantiene una colección y busca en ella." },
+  { r: "**Conector DB**: abre y reconecta conexiones a la base de datos cuando se las piden.", a: "Proveedor de servicios", e: "Recurso pasivo: espera peticiones y nunca inicia." },
+  { r: "**Pasarela de Pagos**: oculta los detalles de cobrar con tarjeta, PSE o Nequi.", a: "Interfaz", e: "Aísla el sistema de un servicio externo." },
+  { r: "**Carrito**: sabe sus items y calcula su total (platos + domicilio + propina).", a: "Contenedor de información", e: "Responde por sus datos, y calcula con ellos; el profe lo deja sin estereotipo marcado, o sea, information holder." }
+];
+buildAssign("lab-c", LAB_NAM, ESTEREOS, "lc");
+$("#lab-c-check").addEventListener("click", () => { checkAssign("lab-c", LAB_NAM, "lc", "lab-c-msg"); });
+$("#lab-c-reset").addEventListener("click", () => { buildAssign("lab-c", LAB_NAM, ESTEREOS, "lc"); $("#lab-c-msg").textContent = ""; });
 
 /* ---------- Taller ---------- */
 const PROBS = [
@@ -996,13 +1055,13 @@ const PROBS = [
       { p: "**Multiplicidades:** las dicen las frases «entre 4 y 16» (`4..16`) y «entre 5 y 12» (`5..12`). Los goles van en Partido, uno por equipo, porque cada partido tiene su propio resultado." }],
     rub: ["Las cuatro clases, sin clases de software.", "Atributos en su clase: los goles en Partido y el número de camiseta en Jugador.", "Multiplicidades `4..16` y `5..12` sacadas del enunciado.", "Partido conoce dos equipos (local y visitante).", "Nada de métodos ni de tipos como ArrayList en el modelo del mundo."] },
   { n: "T2", t: "Requerimientos e historias de usuario", min: 10, src: "En papel · caso nuevo",
-    txt: ["Clasifica estas frases del torneo en requerimiento funcional, no funcional o restricción: «registrar los resultados», «funcionar en el navegador», «entre 5 y 12 jugadores por equipo», «mostrar el goleador», «3 puntos por ganar». Después escribe dos historias de usuario con dos criterios de aceptación cada una."],
+    txt: ["Clasifica estas frases del torneo en requerimiento funcional, no funcional o regla del dominio: «registrar los resultados», «funcionar en el navegador», «entre 5 y 12 jugadores por equipo», «mostrar el goleador», «3 puntos por ganar». Después escribe dos historias de usuario con dos criterios de aceptación cada una."],
     checks: [
-      { q: "«Funcionar en el navegador» es…", o: ["Funcional", "No funcional", "Restricción", "Una historia de usuario"], a: 1 },
-      { q: "«Entre 5 y 12 jugadores por equipo» es…", o: ["Funcional", "No funcional", "Restricción", "Un criterio de aceptación"], a: 2 }],
-    hints: ["Funcional: algo que el sistema hace. No funcional: qué tan bien o dónde. Restricción: una regla del problema.", "Un criterio de aceptación tiene datos concretos: «si el local hace 2 goles y el visitante 1, el local suma 3 puntos»."],
+      { q: "«Funcionar en el navegador» es…", o: ["Funcional", "No funcional", "Regla del dominio", "Una historia de usuario"], a: 1 },
+      { q: "«Entre 5 y 12 jugadores por equipo» es…", o: ["Funcional", "No funcional", "Regla del dominio", "Un criterio de aceptación"], a: 2 }],
+    hints: ["Funcional: algo que el sistema hace. No funcional: qué tan bien o dónde. Regla del dominio: una regla del negocio.", "Un criterio de aceptación tiene datos concretos: «si el local hace 2 goles y el visitante 1, el local suma 3 puntos»."],
     sol: [
-      { p: "**Funcionales:** registrar los resultados, mostrar el goleador. **No funcional:** funcionar en el navegador. **Restricciones:** entre 5 y 12 jugadores por equipo, 3 puntos por ganar." },
+      { p: "**Funcionales:** registrar los resultados, mostrar el goleador. **No funcional:** funcionar en el navegador. **Reglas del dominio:** entre 5 y 12 jugadores por equipo, 3 puntos por ganar." },
       { p: "Dos historias de ejemplo:", c: `
 Como organizador quiero registrar el resultado de un partido
 para que la tabla de posiciones se actualice.
@@ -1189,10 +1248,10 @@ public class Restaurante {
         "Es una tarea de programación, no algo que quiera un usuario.",
         "Tiene la forma, pero «que todo funcione bien» no es una acción concreta ni se puede verificar."] },
     { t: "mc", k: "Selección múltiple con caso", q: "«La aplicación debe responder en menos de 2 segundos». ¿Qué tipo de requerimiento es?",
-      o: ["Funcional", "No funcional", "Una restricción del negocio", "Una historia de usuario"], a: 1,
+      o: ["Funcional", "No funcional", "Una regla del dominio", "Una historia de usuario"], a: 1,
       oe: ["No es algo que el sistema haga, sino qué tan bien lo hace.",
         "Habla de qué tan bien funciona el sistema (rendimiento): es no funcional.",
-        "Las restricciones del negocio son reglas del problema, como «a lo sumo 3 pedidos».",
+        "Las reglas del dominio son reglas del negocio, como «a lo sumo 3 pedidos».",
         "No tiene la forma «Como… quiero… para…»."] },
     { t: "mc", k: "Selección múltiple con caso", q: "¿Cuál de estas NO va en el modelo del mundo de La Parrilla?",
       o: ["Pedido", "Producto", "Domiciliario", "ConsolaPedidos"], a: 3,

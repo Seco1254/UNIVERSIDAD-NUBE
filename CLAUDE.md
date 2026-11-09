@@ -63,3 +63,4 @@ Cada rama se estudia distinto. En DPOO se mantienen las 4 secciones, pero así:
 - El plan de cada evaluación vive en `<MATERIA>/<EVALUACION>/PLAN_DE_ESTUDIO.md`. El material fuente (parciales, soluciones, programa) está en `material/` junto al plan.
 - Cada módulo es su propio Artifact. El quiz de cada módulo guarda los intentos en la base de datos del artifact (colección `intentos`). El plan-artifact lleva el progreso en su colección `progreso` (docs `M1`…`M9`: `teoria`, `lab`, `taller`, `quiz`, `url`). Cuando el estudiante pasa un quiz, actualiza ese doc con `ArtifactData`.
 - Las soluciones oficiales pueden tener errores: verifica antes de usarlas como modelo. Los errores conocidos están anotados en cada plan.
+- DPOO: el resumen de las diapositivas del profe está en `DPOO/EXAMEN_2/material/01_notas_material_profe.md`. Usa su vocabulario (por ejemplo, «reglas del dominio» y «restricciones» por separado, given-when-then y las 9 estrategias de errores).

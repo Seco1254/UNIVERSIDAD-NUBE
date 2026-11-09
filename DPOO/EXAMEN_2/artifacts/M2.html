@@ -292,6 +292,14 @@ footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72
 .wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
 details.rev{min-width:0}
 /* ---- Propio de M2: consola, pila de llamadas y cajas de excepción ---- */
+.assign{display:grid; grid-template-columns:minmax(0,1fr); border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.arow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,15rem); gap:6px 12px; padding:10px 12px; border-bottom:1px solid var(--rule); align-items:center}
+.arow:last-child{border-bottom:0}
+.arow select{font:inherit; font-size:.9rem; padding:5px 8px; border:1.5px solid var(--rule); border-radius:7px; background:var(--paper); color:var(--ink); width:100%}
+.arow select.right{border-color:var(--green); background:var(--green-soft)} .arow select.wrong{border-color:var(--red); background:var(--red-soft)}
+.arow .why{grid-column:1 / -1; font-size:.86rem}
+.arow .why.ok{color:var(--green)} .arow .why.no{color:var(--red)}
+@media (max-width:560px){ .arow{grid-template-columns:minmax(0,1fr)} }
 :root{--term-bg:#1d1b26; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-new:rgba(255,226,122,.16)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--term-bg:#0b0a10; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-new:rgba(255,226,122,.14)} }
 :root[data-theme="dark"]{--term-bg:#0b0a10; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-new:rgba(255,226,122,.14)}
@@ -525,7 +533,7 @@ details.rev{min-width:0}
         <li><span class="n">No</span><span>No uses excepciones para el flujo normal, como salir de un ciclo o revisar si algo existe.</span></li>
         <li><span class="n">No</span><span>No retornes ni pases <code>null</code> para avisar un error (Clean Code, cap. 7).</span></li>
       </ul>
-      <p class="note muted">Estas estrategias salen de Clean Code, cap. 7 (lectura [23]). No tengo las diapositivas 13b del curso: si traen otra estrategia, la agrego.</p>
+      <p class="note muted">Estos consejos salen de Clean Code, cap. 7 (lectura [23]). Las diapositivas del profe («Estrategias para el manejo de errores») traen además su proceso de diseño y nueve estrategias con nombre propio: están en la idea 6.</p>
       <div class="worked">
         <p class="wk-t">Ejemplo resuelto 5 · La receta aplicada a un enunciado</p>
         <p><i>«El club tiene una capacidad máxima: inscribir a alguien cuando está lleno es un error que la consola debe informar. Buscar un documento que no existe también. Recibir un socio null es un error de programación.»</i></p>
@@ -535,6 +543,49 @@ details.rev{min-width:0}
           <li><p><b>Qué escribes en el modelo:</b> las validaciones al principio del método, y el <code>add</code> al final.</p><p><b>Por qué:</b> si algo falla, la lista no se toca.</p><pre class="code" data-code="e5-1"></pre></li>
           <li><p><b>Qué escribes en la interfaz:</b> un <code>try</code> con un <code>catch</code> por cada error que el usuario debe ver.</p><p><b>Por qué:</b> el usuario lee el mensaje; el modelo nunca imprime.</p><pre class="code" data-code="e5-2"></pre></li>
           <li><p><b>Lo que viene en M6:</b> cada excepción se prueba con <code>assertThrows</code>, así: <code>assertThrows(CupoLlenoException.class, () -&gt; club.agregarSocio(luis));</code></p></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="idea" id="idea6">
+      <h3><span class="ix">Idea 6 · Del profe</span>El diseño del manejo del error</h3>
+      <div class="prose">
+        <p>El profe trata el manejo de errores como parte de la <b>calidad del software</b>, con un balance difícil: entre más errores se quieran manejar, más cuesta construir la aplicación. Por eso propone diseñarlo en <b>cuatro pasos</b>:</p>
+        <ol>
+          <li><b>Identificar qué puede salir mal.</b> No te puedes preparar para un error que no imaginaste. (A) <b>Fuentes de errores:</b> usuarios, datos, otros sistemas y hardware. (B) <b>Situaciones indeseables:</b> salen de los requerimientos funcionales, como los <i>caminos de excepción</i> de un caso de uso (el usuario puso un password inválido o pidió una cuenta que no existe). (C) <b>Analizar colaboraciones:</b> con las relaciones e interacciones de tu sistema, con librerías añadidas y con archivos. Ahí entran las <b>regiones de confianza</b>: confías más en objetos hechos por ti o tu equipo, menos en los de otros equipos y menos aún en los de otras empresas. Entre más control tengas sobre un colaborador, menos esfuerzo inviertes en sus errores.</li>
+          <li><b>Planear el manejo.</b> No todos los errores se manejan igual. Se mira la <b>probabilidad de ocurrencia</b>, la <b>posibilidad de prevenirlo</b>, su <b>impacto</b> y la <b>posibilidad de corregirlo</b>.</li>
+          <li><b>Diseñar el manejo:</b> asignar responsabilidades y colaboraciones para detectar, reaccionar, diagnosticar y corregir (abajo).</li>
+          <li><b>Documentar el diseño de las excepciones:</b> no solo las soluciones, también los problemas que las motivaron («las soluciones sin contexto no sirven de nada»). Sin exagerar con los diagramas, y con las precondiciones y poscondiciones de los métodos importantes.</li>
+        </ol>
+      </div>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:26%"><col style="width:74%"></colgroup>
+        <thead><tr><th>Las 9 estrategias</th><th>Qué se hace · ejemplo del profe</th></tr></thead>
+        <tbody>
+          <tr><td>1. Prevenir</td><td>Que el error no pueda ocurrir, y así no hay que reaccionar.</td></tr>
+          <tr><td>2. Inacción</td><td>No hacer nada. Si no está el servicio que recomienda contenido según la ubicación, Netflix simplemente no muestra esa parte.</td></tr>
+          <tr><td>3. Balk</td><td>Avisarle a quien hizo la petición que hubo un error, para que él lo corrija: «Sign in failed. Check your username or password.»</td></tr>
+          <tr><td>4. Suspensión temporal</td><td>No seguir hasta que se restablezcan las condiciones.</td></tr>
+          <tr><td>5. Acciones provisionales</td><td>Algo que permite seguir pero no es definitivo; al final el usuario resuelve. Office guarda archivos de recuperación y Dropbox guarda versiones en conflicto.</td></tr>
+          <tr><td>6. Alternativa</td><td>Hacer otra actividad en vez de la que falló. La más sencilla es anunciar o registrar que hubo un error.</td></tr>
+          <tr><td>7. Apelar a una autoridad superior</td><td>Pedirle a alguien más, casi siempre al usuario, que resuelva. Django pregunta en la consola qué valor poner por defecto.</td></tr>
+          <tr><td>8. Deshacer (rollback)</td><td>Revertir todo lo que se alcanzó a hacer. ¿Qué pasa si una transferencia falla después del débito en la cuenta de origen?</td></tr>
+          <tr><td>9. Reintentar</td><td>Intentar otra vez. Ojo: casi nunca tiene sentido reintentar de inmediato, porque el problema no desaparece al instante.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="prose">
+        <p><b>Detectar:</b> la detección es <b>activa</b> (al intentar leer un archivo que no existe, te enteras) o <b>pasiva</b> (hay que revisar, por ejemplo, si un archivo quedó bien guardado). Con excepciones, el responsable de detectar es el que crea y lanza la excepción (<code>throw</code>). El error se anuncia con excepciones o con códigos de error.</p>
+        <p><b>Reaccionar:</b> lo más cerca posible del punto donde se produjo el error; <b>nadie debería atrapar lo que no puede manejar</b>; y mejor que no reaccionen los <i>information holders</i>, sino elementos que toman decisiones. Otra opción es dejar pasar la excepción, tal cual o <b>convirtiendo una excepción de bajo nivel en una de alto nivel</b>.</p>
+        <p><b>Diseñar la excepción:</b> cómo se identifica el error preciso, qué información (atributos) debe llevar y qué se necesita para corregir o reaccionar. Conviene una jerarquía de excepciones, pero no demasiadas.</p>
+        <p><b>Problemas típicos:</b> no haber considerado una excepción; enviar excepciones a clientes que no estaban preparados; manejar el error de forma inútil (en casi cualquier caso, un <code>catch</code> vacío es un error en el manejo del error); validaciones redundantes, sobre cosas que nunca van a fallar; y exagerar en las correcciones.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 6 · De bajo nivel a alto nivel</p>
+        <ol class="wsteps">
+          <li><p><b>El problema:</b> guardar un pedido en un archivo puede lanzar <code>IOException</code>, una excepción de bajo nivel (de archivos). A la consola no le sirve saber de archivos: le sirve saber que el pedido no se guardó.</p></li>
+          <li><p><b>Qué escribes:</b> atrapas la de bajo nivel donde ocurre y lanzas una propia, de alto nivel, con un mensaje que diga qué pedido falló.</p><pre class="code sm" data-code="e6-conv"></pre></li>
+          <li><p><b>Qué pasa al usarlo:</b> con una ruta que sí existe imprime <code>Guardado</code>; con una carpeta que no existe, la consola atrapa <code>PersistenciaException</code> e imprime <code>Error: No se pudo guardar el pedido 8</code>. Lo corrí.</p></li>
+          <li><p><b>Con el caso Ñam del profe:</b> en «confirmar pedido» hay tres caminos de excepción: pago rechazado (balk: se le avisa al usuario), restaurante que no responde (reintentar más tarde o una alternativa) y ningún repartidor disponible (suspensión temporal). Y si el servidor se cae después del cobro pero antes de crear el pedido, la regla «sin pago exitoso no hay pedido» pide deshacer (rollback).</p></li>
         </ol>
       </div>
     </article>
@@ -599,6 +650,12 @@ details.rev{min-width:0}
       <p class="prose-p">Crea un proyecto con estos ocho archivos (los cuatro primeros son los de M1) y córrelo: debe imprimir <code>Error: No hay cupo en Los Andes</code>, <code>Ana</code> y <code>Error: No existe un socio con documento 999</code>. Después rompe una cosa a la vez y lee qué pasa.</p>
       <div class="files" id="files"></div>
       <div class="reveals" id="exps"></div>
+    </div>
+    <div class="lab">
+      <h3>¿Qué estrategia es? (del profe)</h3>
+      <p class="prose-p">Repaso de la idea 6: escoge cuál de las nueve estrategias del profe describe cada situación.</p>
+      <div class="assign" id="lab-e"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-e-check">Revisar</button><button type="button" class="btn ghost" id="lab-e-reset">Empezar de nuevo</button><span class="muted" id="lab-e-msg"></span></div>
     </div>
   </section>
 
@@ -773,6 +830,45 @@ function pairSpec(a, b, type, o) {
 
 
 const MOD = "M2";
+/* ---------- Lab B: estrategias del profe ---------- */
+const ESTR = ["Prevenir", "Inacción", "Balk", "Suspensión temporal", "Acciones provisionales", "Alternativa", "Apelar a una autoridad superior", "Deshacer (rollback)", "Reintentar"];
+const LAB_E = [
+  { r: "El campo de la cédula no deja escribir letras.", a: ESTR[0], e: "El error no puede ocurrir: se previene." },
+  { r: "Se cayó el servicio que recomienda «cerca de ti» y la app simplemente no muestra esa fila; todo lo demás sigue igual.", a: ESTR[1], e: "No se hace nada: no vale la pena." },
+  { r: "«Usuario o contraseña incorrectos»: el que pidió entrar corrige y vuelve a intentar.", a: ESTR[2], e: "Se le anuncia el error a quien hizo la petición, para que él lo maneje." },
+  { r: "La app deja de recibir pedidos hasta que vuelva la conexión con la pasarela de pagos.", a: ESTR[3], e: "No se sigue hasta que se restablezcan las condiciones." },
+  { r: "El sistema guarda una «copia en conflicto» del archivo, y el usuario decide después cuál queda.", a: ESTR[4], e: "Algo provisional para seguir adelante; la decisión final es del usuario." },
+  { r: "El servicio de mapas no responde: se estima el tiempo con la distancia en línea recta y se registra el error.", a: ESTR[5], e: "Se hace otra actividad en lugar de la que falló." },
+  { r: "La consola le pregunta al usuario qué valor por defecto ponerle a la columna nueva.", a: ESTR[6], e: "Se le pide a alguien más (aquí, el usuario) que resuelva." },
+  { r: "El cobro salió bien pero el pedido no se pudo crear: se le devuelve la plata al usuario.", a: ESTR[7], e: "Se revierte lo que se alcanzó a hacer." },
+  { r: "La pasarela no contestó; el sistema vuelve a intentar el cobro un minuto después.", a: ESTR[8], e: "Se intenta otra vez, y no de inmediato." }
+];
+function buildAssign(boxId, items, options, key) {
+  const box = $("#" + boxId); box.textContent = "";
+  items.forEach((it, i) => {
+    const row = el("div", "arow");
+    const lab = rich(el("label"), it.r); lab.htmlFor = key + "-" + i; row.appendChild(lab);
+    const sel = el("select"); sel.id = key + "-" + i;
+    const o0 = el("option", "", "Escoge…"); o0.value = ""; sel.appendChild(o0);
+    options.forEach((o) => { const op = el("option", "", o); op.value = o; sel.appendChild(op); });
+    row.appendChild(sel);
+    const why = el("p", "why"); why.hidden = true; row.appendChild(why);
+    box.appendChild(row);
+  });
+}
+function checkAssign(items, key, msgId) {
+  const sels = items.map((_, i) => $("#" + key + "-" + i));
+  const missing = sels.filter((s) => !s.value).length;
+  if (missing) { $("#" + msgId).textContent = missing === 1 ? "Te falta 1 por escoger." : "Te faltan " + missing + " por escoger."; return; }
+  let ok = 0;
+  items.forEach((it, i) => {
+    const s = sels[i], good = s.value === it.a, why = s.parentElement.querySelector(".why");
+    s.classList.remove("right", "wrong"); s.classList.add(good ? "right" : "wrong"); if (good) ok++;
+    why.hidden = false; why.className = "why " + (good ? "ok" : "no"); why.textContent = "";
+    rich(why, (good ? "✓ " : "✗ Es " + it.a + ". ") + it.e);
+  });
+  $("#" + msgId).textContent = "Acertaste " + ok + " de " + items.length + ".";
+}
 const NEXT_MSG = "Aprobado. Pasas a M4–M5 · Del análisis al diseño.";
 
 /* ---------- Figuras ---------- */
@@ -874,6 +970,27 @@ const FIG = {
 
 /* ---------- Código de la teoría ---------- */
 const CODE = {
+  "e6-conv": { s: `
+public class PersistenciaException extends Exception {
+    public PersistenciaException(String mensaje) {
+        super(mensaje);
+    }
+}
+
+public class ArchivoPedidos {
+    private String ruta;
+
+    public void guardar(int numeroPedido, double total) throws PersistenciaException {
+        try {
+            FileWriter w = new FileWriter(ruta, true);
+            w.write(numeroPedido + ";" + total + "\n");
+            w.close();
+        } catch (IOException e) {
+            // Bajo nivel (archivos) → alto nivel (del negocio)
+            throw new PersistenciaException("No se pudo guardar el pedido " + numeroPedido);
+        }
+    }
+}` },
   "e1": { s: `
 // Main.java
 club.agregarSocio(luis);                 // 1. main llama
@@ -1791,6 +1908,9 @@ public void agregarSocio(Socio socio) {
 /* ---------- Render ---------- */
 document.querySelectorAll("[data-fig]").forEach((d) => { d.innerHTML = umlSvg(FIG[d.dataset.fig], false); });
 document.querySelectorAll("pre[data-code]").forEach((p) => { const c = CODE[p.dataset.code]; p.innerHTML = codeHTML(c.s, !!c.d); });
+buildAssign("lab-e", LAB_E, ESTR, "le");
+$("#lab-e-check").addEventListener("click", () => checkAssign(LAB_E, "le", "lab-e-msg"));
+$("#lab-e-reset").addEventListener("click", () => { buildAssign("lab-e", LAB_E, ESTR, "le"); $("#lab-e-msg").textContent = ""; });
 /* Archivos para copiar y experimentos */
 (function renderFiles() {
   const box = $("#files");

@@ -314,6 +314,7 @@ details.rev{min-width:0}
 .arow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,11rem); gap:6px 12px; padding:10px 12px; border-bottom:1px solid var(--rule); align-items:center}
 .arow:last-child{border-bottom:0}
 .arow label{font-family:var(--f-mono); font-size:.86rem; overflow-wrap:anywhere}
+.arow label.plain{font-family:var(--f-body); font-size:.92rem}
 .arow select{font:inherit; font-size:.9rem; padding:5px 8px; border:1.5px solid var(--rule); border-radius:7px; background:var(--paper); color:var(--ink); width:100%}
 .arow select.right{border-color:var(--green); background:var(--green-soft)} .arow select.wrong{border-color:var(--red); background:var(--red-soft)}
 .arow .why{grid-column:1 / -1; font-size:.86rem}
@@ -358,7 +359,7 @@ details.rev{min-width:0}
       <li>Leer lo que dice JUnit cuando una prueba no pasa y saber si el error está en el código o en la prueba.</li>
     </ul>
     <div class="shortcut"><p><b>¿Ya lo dominas?</b> Haz el quiz primero. Con 4/5 te saltas el módulo.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
-    <p class="note muted">No tengo las diapositivas 07 y 08 ni el esqueleto del Taller 5 (Hamburguesas). Todo aquí usa JUnit 5, que es el que trae <code>assertThrows</code>. Si el esqueleto del profe usa <code>@Before</code> y <code>@Test(expected = ...)</code>, es JUnit 4: avísame y te muestro las diferencias. Todas las pruebas de esta página las corrí con JUnit 5.10 y Java 21, y los mensajes que ves son los que salieron.</p>
+    <p class="note muted">Actualizado con las diapositivas del profe («Diseño de pruebas unitarias» y «Diseño de pruebas 2») y la lectura 15. El profe usa JUnit 5 en Eclipse, igual que aquí. Las ideas 7, 8 y 9 son su vocabulario: given-when-then, cuatro fases, particiones y valores de borde, caja negra y blanca, niveles y regresión. Todas las pruebas de esta página las corrí con JUnit 5.10 y Java 21, y los mensajes que ves son los que salieron.</p>
   </header>
 
   <!-- ============ VOCABULARIO ============ -->
@@ -384,6 +385,11 @@ details.rev{min-width:0}
         <tr><td>Caso normal, límite y de error</td><td>36000 · 40000 justo · nadie disponible</td><td>Los tres tipos de casos que hay que probar: uno típico, justo donde cambia la regla y uno que debe lanzar una excepción.</td></tr>
         <tr><td>Lambda</td><td><code>() -> club.agregarSocio("Eva")</code></td><td>Un pedazo de código empacado sin ejecutar, que le pasas a otro método para que él lo ejecute cuando quiera.</td></tr>
         <tr><td><code>assertThrows</code></td><td><code>assertThrows(CupoLlenoException.class, () -> ...)</code></td><td>Verifica que ese código lance esa excepción. Si no la lanza, la prueba falla.</td></tr>
+        <tr><td>Given-when-then</td><td>Comentarios <code>// Given</code>, <code>// When</code>, <code>// Then</code></td><td>La forma del profe de decir preparar, ejecutar, verificar: dado un escenario, cuando pasa algo, entonces se espera esto.</td></tr>
+        <tr><td>Patrón de cuatro fases</td><td><code>@BeforeEach</code> · prueba · asserts · <code>@AfterEach</code></td><td>Definir la estructura, ejecutar, chequear y destruir la estructura para volver al estado inicial.</td></tr>
+        <tr><td>Particiones de equivalencia</td><td>«paga envío» · «no paga envío»</td><td>Grupos de entradas que el código trata igual. Se prueba un representante de cada grupo.</td></tr>
+        <tr><td>Valores de borde (BVA)</td><td>39999 · 40000 · 40001</td><td>Los valores justo en la frontera entre dos particiones y a cada lado. Es lo que en la idea 4 llamamos «límite».</td></tr>
+        <tr><td>Caja negra y caja blanca</td><td>Probar contra el enunciado · mirar la cobertura</td><td>Caja negra: pruebas sacadas de la especificación, sin mirar el código. Caja blanca: pruebas que miran la estructura interna, como qué líneas y ramas se ejecutaron.</td></tr>
         <tr><td>Pasa, falla y error</td><td>✔ · ✘ <code>expected… but was…</code> · ✘ <code>NullPointerException</code></td><td>Pasa: todos los asserts se cumplen. Falla: un assert no se cumplió. Error: saltó una excepción que nadie esperaba antes del assert.</td></tr>
       </tbody>
     </table></div>
@@ -571,6 +577,91 @@ details.rev{min-width:0}
       </div>
     </article>
 
+
+    <!-- Idea 7 -->
+    <article class="idea" id="idea7">
+      <h3><span class="ix">Idea 7 · Del profe</span>Cómo escoger los casos: particiones, bordes y cobertura</h3>
+      <div class="prose">
+        <p>El profe ordena las técnicas para diseñar casos de prueba en tres familias:</p>
+        <ul>
+          <li><b>Basadas en la especificación (caja negra):</b> salen del enunciado, sin mirar el código. Son las <b>particiones de equivalencia</b>, el <b>análisis de valores de borde</b> (BVA), las <b>tablas de decisión</b> (combinaciones de condiciones) y los <b>diagramas de transición de estado</b> (por ejemplo, tres intentos de PIN y la cuenta se bloquea).</li>
+          <li><b>Basadas en la estructura (caja blanca):</b> miran el código por dentro. Es la <b>cobertura</b>: de instrucciones (cada línea se ejecuta al menos una vez), de condiciones (cada condición da <code>true</code> y <code>false</code>), de ramas (cada camino de un <code>if</code>) y de condiciones múltiples (todas las combinaciones).</li>
+          <li><b>Basadas en la experiencia:</b> explorar la aplicación sin guion y adivinar errores por lo que ya has visto fallar.</li>
+        </ul>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 7 · El envío, con las palabras del profe</p>
+        <ol class="wsteps">
+          <li><p><b>Particiones de equivalencia:</b> la regla «envío si la suma es menor a 40000» parte las sumas en dos grupos que el código trata igual: <b>de 0 a 39999</b> (paga envío) y <b>de 40000 en adelante</b> (no paga). Escoges un representante de cada una, por ejemplo 20000 y 60000.</p><p><b>Por qué:</b> probar 20000, 21000 y 22000 es probar tres veces lo mismo; con uno por partición basta.</p></li>
+          <li><p><b>Valores de borde:</b> pruebas en la frontera entre las dos particiones y a cada lado: <b>39999, 40000 y 40001</b>. Es lo que la idea 4 llamaba «el límite»: el profe lo llama BVA (<i>boundary value analysis</i>).</p><p><b>Por qué:</b> los errores de <code>&lt;</code> contra <code>&lt;=</code> solo se ven en el borde.</p></li>
+          <li><p><b>Cobertura (caja blanca):</b> si solo tuvieras la prueba de 54000, la línea <code>total += COSTO_ENVIO;</code> nunca se ejecutaría. En Eclipse, «Coverage As» la pinta de rojo, y la rama verdadera del <code>if</code> queda sin cubrir. La prueba de 36000 la cubre.</p><p><b>Lo que dice el profe:</b> no todo el código tiene que quedar cubierto, pero todos los requerimientos sí.</p></li>
+          <li><p><b>Para varios valores de una partición</b>, JUnit tiene <code>@ParameterizedTest</code>: la misma prueba corre una vez por cada valor.</p><pre class="code sm" data-code="e7-param"></pre></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 8 -->
+    <article class="idea" id="idea8">
+      <h3><span class="ix">Idea 8 · Del profe</span>Given-when-then, las cuatro fases y las pruebas independientes</h3>
+      <div class="prose">
+        <p><b>Given-when-then</b> es la forma en que el profe escribe un escenario de prueba: <b>given</b> (dado), cómo está el mundo antes; <b>when</b> (cuando), lo que se ejecuta; <b>then</b> (entonces), lo que debe haber cambiado. Es lo mismo que preparar, ejecutar y verificar. Su ejemplo: <i>dado</i> que tengo 100 acciones de MSFT y 150 de APPL, <i>cuando</i> pido vender 20 de MSFT, <i>entonces</i> debo tener 80 de MSFT, seguir con 150 de APPL y debe haber una orden de venta.</p>
+        <p>El <b>patrón de cuatro fases</b> es el más común en pruebas unitarias: (1) <b>definir la estructura</b>, el escenario; (2) <b>ejecutar</b> el sistema; (3) <b>chequear</b> el resultado con asserts; (4) <b>destruir la estructura</b>, para volver al estado inicial. En JUnit 5 la fase 1 va en <code>@BeforeEach</code> y la 4 en <code>@AfterEach</code>.</p>
+        <p>Las tres preocupaciones del diseño de pruebas, según el profe: <b>el estado inicial</b> (escribe qué supone cada prueba antes de empezar), <b>no cambiar el estado del sistema</b> (si una prueba crea algo, lo deshace) y <b>reducir el acoplamiento entre pruebas</b> (ninguna depende de lo que dejó otra; piensa como si corrieran todas al mismo tiempo).</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 8 · Una prueba con las cuatro fases</p>
+        <ol class="wsteps">
+          <li><p><b>Fase 1, definir la estructura:</b> <code>setUp()</code> con <code>@BeforeEach</code> crea el pedido y el archivo con el que se va a trabajar.</p></li>
+          <li><p><b>Fases 2 y 3:</b> la prueba, con sus comentarios given, when y then. El último argumento de <code>assertEquals</code> es un <b>mensaje</b>, el texto que JUnit muestra si falla. El profe lo usa en sus ejemplos.</p></li>
+          <li><p><b>Fase 4, destruir la estructura:</b> <code>tearDown()</code> con <code>@AfterEach</code> borra el archivo, así la siguiente prueba arranca igual. Lo corrí: el archivo no queda en el disco.</p><pre class="code sm" data-code="e8"></pre></li>
+          <li><p><b>Cuidado con el orden de los argumentos:</b> con <code>double</code>, el tercer número es el margen y el texto va de último: <code>assertEquals(esperado, obtenido, margen, "mensaje")</code>. Con <code>int</code> o <code>String</code> no hay margen: <code>assertEquals(esperado, obtenido, "mensaje")</code>.</p></li>
+        </ol>
+      </div>
+      <div class="prose">
+        <p><b>Los cuatro principios con los que el profe cierra el tema:</b></p>
+        <ol>
+          <li><b>Pruebas pequeñas:</b> una prueba, una responsabilidad. Es la responsabilidad única (M7) aplicada a las pruebas.</li>
+          <li><b>Pruebas independientes:</b> sin depender del orden, de otras pruebas ni de operaciones externas, y sin efectos de borde.</li>
+          <li><b>No quemar valores:</b> nada que dependa de un computador o una ubicación en particular, como una ruta <code>C:\Users\...</code>.</li>
+          <li><b>Asserts de alto nivel:</b> <code>assertTrue(ana.estaDisponible())</code> en vez de comparar a mano; <code>assertThrows</code> en vez de un <code>try/catch</code> en la prueba.</li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 9 -->
+    <article class="idea" id="idea9">
+      <h3><span class="ix">Idea 9 · Del profe</span>Niveles de pruebas, TDD, regresión y el resto de JUnit</h3>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:24%"><col style="width:76%"></colgroup>
+        <thead><tr><th>Nivel</th><th>Qué prueba</th></tr></thead>
+        <tbody>
+          <tr><td>Unitarias</td><td>Una unidad pequeña (un método, una clase o una interfaz) <b>aislada</b> del resto. Para aislarla se usan <b>stubs</b> (devuelven datos predefinidos) o <b>mocks</b> (además verifican cómo los llamaron), como el notificador falso de M7–M8. Son las que se programan en el curso.</td></tr>
+          <tr><td>De integración</td><td>Varias unidades juntas: las interfaces y las interacciones entre módulos. Se integran de abajo hacia arriba (<i>bottom-up</i>), de arriba hacia abajo (<i>top-down</i>) o todo de una (<i>big-bang</i>).</td></tr>
+          <tr><td>De sistema</td><td>El sistema completo contra sus requerimientos: destructivas (carga extrema), no destructivas (uso normal) e inyección de fallos (los <i>chaos monkeys</i>).</td></tr>
+          <tr><td>De aceptación</td><td>Si el usuario o el cliente acepta el sistema: aceptación de usuario, operacional, contractual, y pruebas alfa y beta.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="prose">
+        <p><b>TDD (desarrollo guiado por pruebas):</b> primero se escriben las pruebas, se corren (fallan, porque aún no hay código), se implementa el requerimiento hasta que todas pasen y al final se refactoriza. «¡Probar primero, implementar después!»</p>
+        <p><b>Pruebas de regresión:</b> volver a correr pruebas después de un cambio, para verificar que no se dañó lo que ya funcionaba. Hay tres estrategias: <b>reset all</b> (correr todas: la más costosa), <b>test selection</b> (solo algunas, separando las reutilizables de las obsoletas) y <b>prioritization</b> (escoger por impacto, criticidad y frecuencia de cambio). Para escogerlas conviene incluir las que fallan seguido, las de funcionalidades visibles o principales, las de partes que cambiaron hace poco, las de integración, las complejas y las de frontera.</p>
+        <p><b>Pasa, falla y error</b> son los tres resultados que muestra el profe, como en la idea 6: éxito, falla (el resultado no es el esperado) y error (la operación lanzó una excepción).</p>
+      </div>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:38%"><col style="width:62%"></colgroup>
+        <thead><tr><th>En JUnit 5</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td><code>@DisplayName("...")</code></td><td>Un nombre legible para la prueba en el reporte.</td></tr>
+          <tr><td><code>@BeforeAll</code> · <code>@AfterEach</code></td><td>Corre una sola vez antes de todas · después de cada prueba.</td></tr>
+          <tr><td><code>@ParameterizedTest</code> + <code>@ValueSource</code></td><td>La misma prueba con varios valores.</td></tr>
+          <tr><td><code>@RepeatedTest(5)</code></td><td>La misma prueba, cinco veces.</td></tr>
+          <tr><td><code>@Order(1)</code></td><td>Un orden fijo, para que se pueda reproducir. Pero una buena prueba no debería necesitarlo.</td></tr>
+          <tr><td><code>@Nested</code></td><td>Agrupa pruebas relacionadas dentro de otra clase.</td></tr>
+          <tr><td><code>assertNotEquals</code> · <code>assertAll</code> · <code>assertTimeout</code></td><td>Que no sea igual · varios asserts que se revisan todos · que termine en un tiempo máximo.</td></tr>
+          <tr><td><code>assumeTrue</code> · <code>assumeFalse</code></td><td>Suposiciones: si no se cumplen, la prueba <b>se aborta</b> (no falla), porque no tiene sentido seguir. Lo corrí: JUnit la cuenta como «aborted».</td></tr>
+        </tbody>
+      </table></div>
+    </article>
+
     <article class="idea" id="receta">
       <h3><span class="ix">Receta</span>Pruebas en el examen</h3>
       <p class="prose-p"><b>Si te piden escribir pruebas:</b></p>
@@ -585,6 +676,7 @@ details.rev{min-width:0}
       <ol class="recipe">
         <li><b>«¿Qué verifica esta prueba?»</b> Lee el assert, no el nombre del método. Lo que se verifica es lo que está en el assert.</li>
         <li><b>«¿Qué caso falta?»</b> Busca dónde cambia la regla (el límite) y qué debería lanzar una excepción.</li>
+        <li><b>«¿Qué técnica es?»</b> Grupos de entradas que se tratan igual → particiones de equivalencia. Justo en la frontera → valores de borde. Mirar qué líneas o ramas se ejecutaron → caja blanca (cobertura). Volver a correr pruebas después de un cambio → regresión.</li>
         <li><b>«¿Por qué sale en rojo?»</b> <code>expected… but was…</code> es una falla: compara los dos números. Una excepción sin <i>expected</i> es un error: busca qué quedó en <code>null</code>.</li>
       </ol>
     </article>
@@ -600,7 +692,7 @@ details.rev{min-width:0}
 
   <!-- ============ 2. LAB ============ -->
   <section id="lab" aria-labelledby="l-h">
-    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de pruebas</h2><p>Primero predices qué sale en verde y qué en rojo. Después le metes errores al código y miras cuáles pruebas los detectan. Al final, el experimento en tu IDE.</p></div>
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de pruebas</h2><p>Primero predices qué sale en verde y qué en rojo. Después le metes errores al código y miras cuáles pruebas los detectan. Luego, el vocabulario del profe y, al final, el experimento en tu IDE.</p></div>
     <div class="lab">
       <h3>A · El semáforo</h3>
       <p class="prose-p">Esta versión de Pedido tiene un error escondido, y la clase de prueba tiene sus propios problemas. Para cada prueba, predice si <b>pasa</b>, <b>falla</b> (un assert no se cumple) o da <b>error</b> (salta una excepción antes del assert).</p>
@@ -620,8 +712,14 @@ details.rev{min-width:0}
       <div class="muts" id="muts"></div>
       <div class="meter" id="mut-sum" hidden></div>
     </div>
+    <div class="lab">
+      <h3>C · Con las palabras del profe</h3>
+      <p class="prose-p">Escoge el término del profe que describe cada situación.</p>
+      <div class="assign" id="lab-d"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-d-check">Revisar</button><button type="button" class="btn ghost" id="lab-d-reset">Empezar de nuevo</button><span class="muted" id="lab-d-msg"></span></div>
+    </div>
     <div class="block">
-      <h3>C · Experimento en tu IDE</h3>
+      <h3>D · Experimento en tu IDE</h3>
       <p class="prose-p">Monta JUnit 5 en un proyecto, copia los cinco archivos y corre las pruebas: deben salir las 5 en verde. Después rompe el código a propósito, una cosa a la vez, y lee lo que dice JUnit. Si el profe te da un proyecto que ya trae JUnit (como el esqueleto del Taller 5), sáltate la preparación.</p>
       <div class="ide">
         <div><h4>Eclipse</h4><ol><li>Clic derecho en <code>Pedido.java</code> → New → JUnit Test Case.</li><li>Escoge <b>New JUnit Jupiter test</b> y dale Finish.</li><li>Si pregunta si agrega JUnit 5 al build path, di que sí.</li><li>Para correr: clic derecho en la clase de prueba → Run As → JUnit Test.</li></ol></div>
@@ -990,6 +1088,47 @@ public class ClubTest {
         assertEquals(2, club.getCantidadSocios());
     }
 }` },
+  "e7-param": { s: `
+@ParameterizedTest
+@ValueSource(ints = {40000, 40001, 60000})
+public void desdeElMinimoNoPagaEnvio(int precio) {
+    pedido.agregarProducto(new Producto("Combo", precio), 1);
+    assertEquals(precio, pedido.calcularTotal(), 0.01);
+}
+// Corre 3 veces, una por valor. Necesita:
+// import org.junit.jupiter.params.ParameterizedTest;
+// import org.junit.jupiter.params.provider.ValueSource;` },
+  "e8": { s: `
+public class PedidoTest {
+    private Producto hamburguesa;
+    private Pedido pedido;
+    private File archivo;
+
+    @BeforeEach
+    public void setUp() {
+        // Fase 1: definir la estructura
+        hamburguesa = new Producto("Hamburguesa", 18000);
+        pedido = new Pedido(1);
+        archivo = new File("pedido-prueba.txt");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        // Fase 4: destruir la estructura
+        archivo.delete();
+    }
+
+    @Test
+    @DisplayName("Un pedido de 36000 paga envío")
+    public void totalConEnvio() {
+        // Given: un pedido con 2 hamburguesas de 18000
+        pedido.agregarProducto(hamburguesa, 2);
+        // When: calculo el total (fase 2)
+        double total = pedido.calcularTotal();
+        // Then: incluye los 5000 del envío (fase 3)
+        assertEquals(41000.0, total, 0.01, "Debe sumar el envío");
+    }
+}` },
   "tpl-1": { s: `
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -1155,7 +1294,7 @@ function buildAssign(boxId, items, options, key) {
   const box = $("#" + boxId); box.textContent = "";
   items.forEach((it, i) => {
     const row = el("div", "arow");
-    const lab = el("label", "", it.r); lab.htmlFor = key + "-" + i; row.appendChild(lab);
+    const lab = el("label", key === "ld" ? "plain" : "", it.r); lab.htmlFor = key + "-" + i; row.appendChild(lab);
     const sel = el("select"); sel.id = key + "-" + i;
     const o0 = el("option", "", "Predice…"); o0.value = ""; sel.appendChild(o0);
     options.forEach((o) => { const op = el("option", "", o); op.value = o; sel.appendChild(op); });
@@ -1181,6 +1320,34 @@ $("#lab-a-check").addEventListener("click", () => {
   $("#lab-a-res").hidden = false;
 });
 $("#lab-a-reset").addEventListener("click", () => { buildAssign("lab-a", LAB_A, SEM, "la"); $("#lab-a-res").hidden = true; $("#lab-a-msg").textContent = ""; });
+
+/* ---------- Lab C: vocabulario del profe ---------- */
+const TERM = ["Particiones de equivalencia", "Valores de borde", "Caja blanca (cobertura)", "Given-when-then", "Patrón de cuatro fases", "Regresión", "Prueba de integración", "Prueba de aceptación"];
+const LAB_D = [
+  { r: "Divides las sumas en «paga envío» y «no paga envío», y pruebas 20000 y 60000 como representantes.", a: TERM[0], e: "Grupos que el código trata igual, con un representante de cada uno." },
+  { r: "Pruebas 39999, 40000 y 40001.", a: TERM[1], e: "Justo en la frontera entre las dos particiones y a cada lado." },
+  { r: "Eclipse pinta de rojo la línea del envío porque ninguna prueba la ejecutó.", a: TERM[2], e: "Mirar qué se ejecutó por dentro es caja blanca: cobertura de instrucciones." },
+  { r: "Escribes: dado un pedido de 2 hamburguesas, cuando calculo el total, entonces da 41000.", a: TERM[3], e: "Dado (given), cuando (when), entonces (then)." },
+  { r: "setUp crea un archivo, la prueba lo usa y lo revisa, y un método con @AfterEach lo borra.", a: TERM[4], e: "Definir la estructura, ejecutar, chequear y destruir la estructura." },
+  { r: "Cambiaste calcularTotal y vuelves a correr las pruebas viejas para ver que nada se dañó.", a: TERM[5], e: "Verificar que un cambio no rompió lo que ya funcionaba." },
+  { r: "Pruebas que Restaurante, Pedido y Domiciliario funcionen juntos al asignar un pedido.", a: TERM[6], e: "Varias unidades juntas y sus interacciones." },
+  { r: "El dueño del restaurante usa la app una semana y decide si la recibe.", a: TERM[7], e: "El cliente decide si el sistema cumple lo que necesita." }
+];
+buildAssign("lab-d", LAB_D, TERM, "ld");
+$("#lab-d-check").addEventListener("click", () => {
+  const sels = LAB_D.map((_, i) => $("#ld-" + i));
+  const missing = sels.filter((s) => !s.value).length;
+  if (missing) { $("#lab-d-msg").textContent = missing === 1 ? "Te falta 1 por escoger." : "Te faltan " + missing + " por escoger."; return; }
+  let ok = 0;
+  LAB_D.forEach((it, i) => {
+    const s = sels[i], good = s.value === it.a, why = s.parentElement.querySelector(".why");
+    s.classList.remove("right", "wrong"); s.classList.add(good ? "right" : "wrong"); if (good) ok++;
+    why.hidden = false; why.className = "why " + (good ? "ok" : "no"); why.textContent = "";
+    rich(why, (good ? "✓ " : "✗ Es " + it.a + ". ") + it.e);
+  });
+  $("#lab-d-msg").textContent = "Acertaste " + ok + " de " + LAB_D.length + ".";
+});
+$("#lab-d-reset").addEventListener("click", () => { buildAssign("lab-d", LAB_D, TERM, "ld"); $("#lab-d-msg").textContent = ""; });
 
 /* ---------- Lab B: mutantes ---------- */
 const SUITE = ["subtotalEsPrecioPorCantidad()", "totalConEnvio()", "totalSinEnvio()", "totalJustoEnElMinimoNoPagaEnvio()"];
@@ -1646,7 +1813,7 @@ public void totalSinEnvio() {
     pedido.agregarProducto(hamburguesa, 3);    // 54000
     assertEquals(54000.0, pedido.calcularTotal(), 0.01);
 }`, q: "El envío de 5000 se cobra si la suma es menor a 40000. Estas son las únicas pruebas de `calcularTotal`. ¿Qué caso falta, y por qué?",
-      o: ["Uno de 72000, para probar un pedido más grande", "Uno que sume exactamente 40000, porque ahí cambia la regla y es donde se esconde un `<=` en vez de `<`", "Otro de 36000 con otro producto, para confirmar", "Ninguno: ya se probó un pedido con envío y uno sin envío"], a: 1,
+      o: ["Uno de 72000, para probar un pedido más grande", "Uno que sume exactamente 40000: es un valor de borde, porque ahí cambia la regla y es donde se esconde un `<=` en vez de `<`", "Otro de 36000 con otro producto, para confirmar", "Ninguno: ya se probó un pedido con envío y uno sin envío"], a: 1,
       oe: ["72000 cae del mismo lado que 54000 (sin envío): no prueba nada nuevo.",
         "Es el caso límite. Con `<=` en vez de `<`, las dos pruebas que hay siguen pasando; solo una de 40000 lo destapa (debe dar 40000.0, no 45000.0).",
         "Cae del mismo lado que la de 41000: no prueba nada nuevo.",
@@ -1692,7 +1859,7 @@ public void nuevoDisponible() {
 }`, q: "JUnit corre primero `lleno()` y después `nuevoDisponible()`. ¿Qué pasa con `nuevoDisponible()`?",
       o: ["Falla, porque Ana quedó con 3 pedidos de la prueba anterior", "Pasa, porque `@BeforeEach` crea una Ana nueva, sin pedidos, antes de cada prueba", "Depende del orden en que JUnit corra las pruebas", "No compila, porque `ana` se usa en dos pruebas"], a: 1,
       oe: ["Eso pasaría si Ana se creara una sola vez para todas. Con `@BeforeEach`, cada prueba arranca con su propia Ana.",
-        "`setUp()` corre antes de cada prueba (y JUnit además crea un objeto de prueba nuevo para cada una). Por eso las pruebas no dependen unas de otras.",
+        "`setUp()` corre antes de cada prueba (y JUnit además crea un objeto de prueba nuevo para cada una). Por eso las pruebas no dependen unas de otras: es lo que el profe llama reducir el acoplamiento entre pruebas.",
         "Justamente por `@BeforeEach` el orden no importa. Lo comprobé forzando ese orden: las dos pasan.",
         "Un atributo de la clase de prueba se puede usar en todas sus pruebas: para eso está."] },
     { t: "mc", k: "Selección múltiple con caso", code: `assertEquals(pedido.calcularTotal(), 41000.0, 0.01);`,
@@ -1702,13 +1869,22 @@ public void nuevoDisponible() {
         "El primer argumento (36000.0, lo que dio el código) sale como «expected». El mensaje engaña: parece que el código dio 41000. Por eso el esperado va primero.",
         "Los valores son distintos, así que falla con cualquier orden. Lo único que cambia es el mensaje.",
         "Compila: los dos argumentos son `double`. El compilador no sabe cuál es el esperado."] },
-    { t: "mc", k: "Selección múltiple con caso", code: `assertEquals(0.3, 0.1 + 0.2);`,
-      q: "Esta prueba falla con «expected: <0.3> but was: <0.30000000000000004>». ¿Por qué?",
-      o: ["Porque un `double` no guarda 0.1 exacto, y sin margen JUnit compara exacto", "Porque `assertEquals` no acepta `double`", "Porque el esperado y el obtenido están invertidos", "No falla: 0.1 + 0.2 da 0.3 exacto"], a: 0,
-      oe: ["Un `double` guarda una aproximación en binario, y la suma queda en 0.30000000000000004. Con margen, `assertEquals(0.3, 0.1 + 0.2, 0.0001)`, pasa.",
-        "Sí los acepta: por eso compila y corre. Lo que pasa es que sin margen los compara exactos.",
-        "El orden está bien: 0.3 es lo esperado.",
-        "La corrí: falla con ese mensaje exacto."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public double calcularTotal() {
+    double total = 0;
+    for (LineaPedido l : lineas) {
+        total += l.calcularSubtotal();
+    }
+    if (total < MINIMO_SIN_ENVIO) {
+        total += COSTO_ENVIO;      // Eclipse la pinta de rojo
+    }
+    return total;
+}`, q: "Corres las pruebas con «Coverage As» en Eclipse y la línea del envío sale en rojo. ¿Qué técnica estás usando y qué te dice?",
+      o: ["Caja blanca (cobertura): ninguna prueba ejecuta la rama del envío, así que falta un caso con una suma menor a 40000", "Caja negra: la línea tiene un error de compilación", "Particiones de equivalencia: el envío está mal calculado", "Regresión: hay que volver a correr todas las pruebas"], a: 0,
+      oe: ["Mirar qué líneas y ramas se ejecutaron es caja blanca. La línea en rojo no está mal: ninguna prueba pasó por ahí. Con un pedido de 36000 queda cubierta.",
+        "Caja negra no mira el código, y el rojo de la cobertura no es un error de compilación.",
+        "Las particiones salen del enunciado, no de colorear líneas. Además, la cobertura no dice si el cálculo está bien o mal, solo si se ejecutó.",
+        "Regresión es volver a correr pruebas después de un cambio. Aquí lo que falta es una prueba nueva."] },
     { t: "fill", k: "Código corto · completar", q: "Completa las dos pruebas. El envío se cobra si la suma es menor a 40000, y un domiciliario recibe a lo sumo 3 pedidos.",
       tpl: `@Test
 public void totalJustoEnElMinimoNoPagaEnvio() {

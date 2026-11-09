@@ -225,6 +225,8 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 **Ajuste del 5 de noviembre:** el Proyecto 2 se llevó el miércoles y el jueves. M2 pasa al viernes; M4 y M5 se juntan en un solo artifact el sábado, con M6; M7 y M8 se juntan el domingo (progreso en los docs `M4`/`M5` y `M7`/`M8`, como M6–M7 en Física), y M3 queda en versión corta. El simulacro sigue el lunes.
 **Ajuste del 8 de noviembre:** M2 tomó el viernes y el sábado. El domingo van M4–M5 y M6; el lunes, M7–M8 en versión exprés y un mini-simulacro de 40 minutos en vez del de 80, como en Física.
 
+**Material del profe (recibido el 8 de noviembre en la noche):** diapositivas de aspectos metodológicos, patrones de diseño (con Proxy), diseño de pruebas unitarias, diseño de pruebas 2, estrategias para el manejo de errores, la lectura 15 y el caso Ñam. Resumen en `material/01_notas_material_profe.md`. Se actualizaron M2, M4–M5, M6, M7–M8 y la hoja del M9 con su vocabulario (por ejemplo: «reglas del dominio» y «restricciones» como las separa el profe, given-when-then, las 9 estrategias de errores y el patrón Proxy). Falta: 11a Principios de diseño (SOLID, SpotiAlpes), 11b Patrones, Taller 5 con su esqueleto y los UML de parciales anteriores.
+
 **Ajuste del 9 de noviembre:** M4–M5 quedó aprobado el domingo en la noche y M6 pasó al lunes, antes de M7–M8 y del simulacro. Si el simulacro no cabe el lunes, va el martes temprano.
 **Si te vuelves a atrasar:** recorta primero M3 y después los labs y los T4 del taller. **Nunca recortes M2, M4–M5, M6 ni el simulacro.**
 **Si vas adelantado:** en M4–M5 y M7–M8 haz el quiz primero; si sacas ≥ 4/5, ese tiempo va para el simulacro.

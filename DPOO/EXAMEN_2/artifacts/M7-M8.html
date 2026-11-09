@@ -329,15 +329,16 @@ details.rev{min-width:0}
   <header class="head">
     <p class="eyebrow">DPOO · Examen 2 · Módulos 7 y 8 de 9 (+ lo esencial de M3)</p>
     <h1>Principios y patrones</h1>
-    <div class="meta"><span class="stereo">«versión exprés»</span><span>Lunes 9 de noviembre · ~1–1,5 h</span><span>Clases 15, 22, 23 y 25–26</span></div>
+    <div class="meta"><span class="stereo">«versión exprés»</span><span>Lunes 9 de noviembre · ~1–1,5 h</span><span>Clases 15, 22, 23 y 25–26 · con el material del profe</span></div>
     <p class="lede">Los principios dicen cómo se ve un buen diseño: clases que cambian por una sola razón, que se extienden sin modificarse y que dependen de interfaces. Los patrones son soluciones con nombre para problemas que se repiten. En el examen casi siempre salen como selección múltiple: «¿qué principio viola este código?» o «¿qué patrón resuelve este caso?».</p>
     <ul class="goals">
+      <li>Aplicar las 4 recomendaciones del profe: menos complejidad, pensar en los cambios, menos acoplamiento e inyección de dependencias.</li>
       <li>Reconocer cuál de los cinco principios SOLID viola un fragmento de código, y cómo se arregla.</li>
-      <li>Escoger entre Singleton, Strategy, Adapter y Facade para un caso, y escribir su esqueleto en Java.</li>
+      <li>Escoger entre Proxy, Singleton, Strategy, Adapter y Facade para un caso, y escribir su esqueleto en Java.</li>
       <li>Distinguir una librería de un framework y leer un listener de Swing.</li>
     </ul>
     <div class="shortcut"><p><b>Versión exprés: haz el quiz primero.</b> Con 4/5 pasas; lee solo las ideas de las preguntas que fallaste y sigue al simulacro.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
-    <p class="note muted">No tengo las diapositivas del profe (11a, 11b, 12a, ni el ejemplo SpotiAlpes). Esto sale de las lecturas del curso: Clean Code (lectura [10]), Gang of Four (lectura [16]) y Head First (lectura [17]). Si en clase usaron otros ejemplos o nombres, quédate con los del profe. Todo el código de esta página compila y corre en Java 21.</p>
+    <p class="note muted">Actualizado con las diapositivas del profe «Aspectos metodológicos del diseño» y «Patrones de diseño», y con el caso Ñam. Lo que viene de ahí está marcado «Del profe»: las 4 recomendaciones, los consejos para asignar responsabilidades y el patrón <b>Proxy</b>, que es el que él explica en detalle. SOLID, Singleton, Strategy, Adapter y Facade salen de las lecturas del curso, porque no tengo las diapositivas 11a ni el ejemplo SpotiAlpes. Todo el código de esta página compila y corre en Java 21.</p>
   </header>
 
   <!-- ============ VOCABULARIO ============ -->
@@ -355,7 +356,9 @@ details.rev{min-width:0}
         <tr><td>SOLID</td><td>Cinco letras, cinco principios</td><td>Responsabilidad única, abierto/cerrado, sustitución de Liskov, segregación de interfaces e inversión de dependencias.</td></tr>
         <tr><td>Depender de una abstracción</td><td><code>private Notificador notificador;</code> (una interfaz)</td><td>Usar una interfaz en vez de una clase concreta, para poder cambiar la clase sin tocar a quien la usa.</td></tr>
         <tr><td>Inyección de dependencias</td><td><code>new Restaurante(new NotificadorCorreo())</code></td><td>Pasarle a un objeto lo que necesita (por el constructor) en vez de que lo cree él con <code>new</code>.</td></tr>
+        <tr><td>Inyección por constructor o por setter</td><td><code>new Pedido(pasarela, conector)</code> · <code>setPasarela(p)</code></td><td>Las dos formas de inyectar del profe: el objeto llega al crearlo, o después con un método set.</td></tr>
         <tr><td>Patrón de diseño</td><td>Un nombre + un problema + una solución</td><td>Una solución probada para un problema de diseño que se repite.</td></tr>
+        <tr><td>Proxy</td><td>Una clase con la misma interfaz que el objeto real, que se pone en medio</td><td>Un sustituto que controla el acceso a otro objeto, por ejemplo uno remoto o costoso. El cliente no sabe si habla con el proxy o con el real.</td></tr>
         <tr><td>Singleton</td><td><code>getInstancia()</code> estático y constructor privado</td><td>Una clase de la que existe un solo objeto, y todos llegan a él por el mismo método.</td></tr>
         <tr><td>Strategy</td><td>Una interfaz con varias implementaciones intercambiables</td><td>Sacar un algoritmo que cambia (cómo se cobra el envío) a su propia familia de clases.</td></tr>
         <tr><td>Adapter</td><td>Una clase que implementa tu interfaz y por dentro llama a otra</td><td>Hacer que una clase con otra interfaz (una librería que no puedes cambiar) encaje en tu sistema.</td></tr>
@@ -371,6 +374,59 @@ details.rev{min-width:0}
   <!-- ============ 1. TEORÍA ============ -->
   <section id="teoria" aria-labelledby="t-h">
     <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Tres partes: los principios, los patrones y lo esencial de librerías y frameworks. Cada idea tiene su ejemplo resuelto sobre La Parrilla, con lo que se borra tachado y lo nuevo resaltado.</p></div>
+
+    <p class="part">Del profe · Aspectos metodológicos<small>Las 4 recomendaciones y los consejos para asignar responsabilidades</small></p>
+
+    <article class="idea" id="prof1">
+      <h3><span class="ix">Del profe · 1</span>Las 4 recomendaciones para el diseño</h3>
+      <div class="prose">
+        <ol>
+          <li><b>Reduzca la complejidad.</b> Si un diseño es difícil de entender y de explicar, será difícil de implementar, mantener y expandir. Prefiera diseños simples, estructuras claras (que se vea el rol de cada parte y dónde está cada cosa) y diseños sostenibles, que muestren las decisiones que se tomaron.</li>
+          <li><b>Piense en los cambios que sufrirá el diseño.</b> No diseñe para requerimientos que nadie conoce, pero sí sabiendo que habrá cambios. Pregúntese qué <i>conocimiento</i> tendrá cada clase (TransferenciaBancaria sabrá entre qué cuentas, cuándo y por cuánto), qué <i>acciones</i> (ValidadorSaldo validará el saldo) y qué <i>decisiones</i> (SelectorFormato decidirá el formato). Diseñe para que cada cambio toque partes pequeñas y predecibles, y que el sistema sea modular cuando tenga sentido.</li>
+          <li><b>Reduzca el acoplamiento.</b> El acoplamiento es qué tantas y qué tan fuertes son las dependencias entre clases. Si es alto, un cambio en una obliga a cambiar la otra; si es bajo, posiblemente no. El encapsulamiento es la base: las clases deben depender de lo que la otra ofrece, no de cómo está hecha por dentro.</li>
+          <li><b>Prefiera la inyección de dependencias.</b> Si una clase necesita a otra, hay dos opciones: que la <i>busque</i>, pasando por otros objetos, o que alguien se la <i>inyecte</i>. La segunda es la inyección de dependencias, y se hace por el constructor o por un método setter.</li>
+        </ol>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto · Ñam: ¿cómo consigue el Pedido la pasarela y la base de datos?</p>
+        <ol class="wsteps">
+          <li><p><b>El problema (caso Ñam del profe):</b> el Pedido necesita al Conector DB y a la Pasarela de Pagos. En la alternativa 1 los busca: para eso conoce al Restaurante, que conoce al Núcleo, que los tiene. Son tres dependencias para usar dos cosas.</p></li>
+          <li><p><b>Qué cambias:</b> el Núcleo se los inyecta al crearlo. El Pedido solo conoce las dos interfaces que de verdad usa.</p><pre class="code sm" data-code="p1-di"></pre></li>
+          <li><p><b>Qué ganas:</b> menos acoplamiento, y en las pruebas (M6) le pasas una pasarela falsa que no cobra plata de verdad. Lo corrí con una pasarela falsa que aprueba: imprime <code>BD: Pedido pagado por 41000</code> y <code>true</code>. Después, con <code>setPasarela</code> le inyecté una que rechaza y retornó <code>false</code>.</p></li>
+          <li><p><b>Piense en los cambios, con Ñam:</b> el profe lista cambios como aceptar un medio de pago nuevo, cupones, pedidos de varios restaurantes, cambiar de proveedor de mapas o cambiar el criterio para asignar repartidores. Su ejercicio: ¿cuáles tocan un solo elemento y cuáles se riegan por todo el sistema? Los segundos muestran dónde quedó mal puesta una responsabilidad. Por ejemplo, con la pasarela inyectada como interfaz, un medio de pago nuevo es una clase nueva.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="idea" id="prof2">
+      <h3><span class="ix">Del profe · 2</span>Consejos para asignar responsabilidades, estilos de control y el documento de diseño</h3>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:28%"><col style="width:72%"></colgroup>
+        <thead><tr><th>Consejo</th><th>Qué dice</th></tr></thead>
+        <tbody>
+          <tr><td>Asignación progresiva</td><td>Empiece por las responsabilidades más gruesas (las más complejas, que definen la estructura). Sea oportunista: si ya sabe quién debe asumir una, asígnesela. No hay solución óptima y el proceso es iterativo.</td></tr>
+          <tr><td>Descripción</td><td>Precisa, sin verbos vagos como «manejar» o «gestionar», y corta: una frase basta.</td></tr>
+          <tr><td>Concentrar contra distribuir</td><td>Ningún elemento con demasiadas responsabilidades; elementos coherentes (lo que hacen está relacionado); cada objeto en un solo dominio.</td></tr>
+          <tr><td>Ajustar</td><td>Si una responsabilidad es muy grande, descompóngala. No repita ni sobreponga responsabilidades: las clases <code>deprecated</code> de Java siguen ahí años después porque otra clase asumió su trabajo y todavía hay código que depende de ellas.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto · Reescribir responsabilidades vagas</p>
+        <ol class="wsteps">
+          <li><p><b>Vaga:</b> «Pedido: gestiona el pedido». <b>Precisa:</b> «Calcula el total con el envío» y «Decide si el pedido es viable: restaurante abierto y dirección cubierta».</p></li>
+          <li><p><b>Vaga:</b> «Despachador: maneja los repartidores». <b>Precisa:</b> «Decide qué repartidor atiende un pedido» y «Mantiene los repartidores disponibles y su ubicación». Son las del caso Ñam.</p></li>
+        </ol>
+      </div>
+      <div class="prose">
+        <p><b>Estilos de control, como los cierra el profe:</b></p>
+        <ul>
+          <li><b>Centralizado:</b> las decisiones se concentran en pocos elementos, típicamente <b>controladores</b>, que terminan dependiendo de los <i>information holders</i> y con una lógica compleja. Ventaja: es fácil encontrar los puntos críticos.</li>
+          <li><b>Delegado:</b> las decisiones se reparten entre algunos centrales y otros más pequeños; los centrales actúan como <b>coordinadores</b>. Ventajas: menos acoplamiento, mensajes de más alto nivel y trabajo más fácil de repartir en el equipo. Riesgos: colaboraciones muy complejas, o muchas sin trabajo real.</li>
+          <li><b>Disperso:</b> las decisiones están repartidas entre muchos y no hay un centro de control claro. Es difícil corregir y cualquier cambio afecta a muchos elementos.</li>
+        </ul>
+        <p><b>Documento de diseño:</b> puede ser informal y no es un manual de implementación. Contenido típico: contexto y alcance; objetivos y no-objetivos (lo que se deja por fuera a propósito); el diseño con su justificación (elementos, diagramas de contexto, APIs, persistencia, pseudocódigo de lo crítico); alternativas consideradas; y preocupaciones transversales como la seguridad.</p>
+      </div>
+    </article>
 
     <p class="part">Parte A · Principios<small>Acoplamiento, cohesión y SOLID</small></p>
     <div class="solid">
@@ -465,7 +521,21 @@ details.rev{min-width:0}
 
     <p class="part">Parte B · Patrones<small>Un nombre, un problema, una solución y sus consecuencias</small></p>
     <div class="prose">
+      <p><b>Del profe:</b> la idea nació en la arquitectura, con <i>A Pattern Language</i> de Christopher Alexander (1977): 253 patrones que le dan nombre a un problema recurrente y a su solución, con sus consecuencias positivas y negativas, y que forman un lenguaje común. En software el primer libro fue el del Gang of Four (1995). Estudiar patrones sirve para tener un lenguaje común y preciso, herramientas para adaptar a tu diseño y criterios para encontrar aciertos y errores en un diseño. Pero no todos los catálogos son buenos (que aparezca en un libro no lo hace mejor), y los patrones no son las únicas soluciones: <b>nos toca decidir</b>.</p>
       <p>Un <b>patrón de diseño</b> es una solución probada para un problema que se repite. El libro del Gang of Four (lectura [16]) los agrupa en tres familias: <b>creacionales</b> (cómo se crean los objetos: Singleton), <b>estructurales</b> (cómo se arman clases para formar algo más grande: Adapter, Facade) y <b>de comportamiento</b> (cómo se reparten un algoritmo o una responsabilidad: Strategy). Dos consejos del libro que están detrás de casi todos: <b>programa contra una interfaz</b>, no contra una clase concreta, y <b>prefiere la composición a la herencia</b> (tener un objeto en vez de heredar de él).</p>
+    </div>
+
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:22%"><col style="width:42%"><col style="width:36%"></colgroup>
+      <thead><tr><th>Familia</th><th>Los 23 del catálogo del Gang of Four</th><th>De qué se tratan</th></tr></thead>
+      <tbody>
+        <tr><td>Creacionales</td><td>Abstract Factory, Builder, Factory Method, Prototype, <b>Singleton</b></td><td>Cómo se crean los objetos, para que el sistema no dependa de la forma de crearlos.</td></tr>
+        <tr><td>Estructurales</td><td><b>Adapter</b>, Bridge, Composite, Decorator, <b>Facade</b>, Flyweight, <b>Proxy</b></td><td>Cómo se componen clases y objetos para formar estructuras más grandes.</td></tr>
+        <tr><td>De comportamiento</td><td>Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, <b>Strategy</b>, Template Method, Visitor</td><td>Cómo se reparten las responsabilidades entre objetos y cómo se diseñan sus colaboraciones.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <p><b>Los elementos con que el catálogo describe cada patrón:</b> <i>Intent, Also Known As, Motivation, Applicability</i> (cuándo y para qué usarlo); <i>Structure, Participants, Collaborations</i> (sus elementos, con responsabilidades y colaboraciones); <i>Consequences</i> (qué se gana y qué se pierde); <i>Implementation, Sample Code, Known Uses</i> (detalles y ejemplos); y <i>Related Patterns</i>.</p>
     </div>
 
     <!-- Idea 6 -->
@@ -535,6 +605,21 @@ details.rev{min-width:0}
       </div>
     </article>
 
+
+    <article class="idea" id="proxy">
+      <h3><span class="ix">Del profe · Estructural</span>Proxy: un sustituto que controla el acceso</h3>
+      <div class="prose"><p><b>Intent</b> (en el catálogo): «Provide a surrogate or placeholder for another object to control access to it», un sustituto de otro objeto que controla el acceso a él. <b>El problema del profe:</b> un Cliente que, si el sujeto es local, lo llama directo y, si es remoto, tiene cientos de instrucciones para hablarle por la red. <b>La solución:</b> el Cliente solo conoce una interfaz; la implementan el sujeto local, el remoto y el proxy, y el único que le habla al remoto es el proxy, que sabe hacer las invocaciones remotas. En Java está implementado dentro del framework RMI (<i>Remote Method Invocation</i>).</p></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto · El servicio de mapas de Ñam</p>
+        <ol class="wsteps">
+          <li><p><b>El problema:</b> en Ñam el Despachador usa un servicio externo de mapas, y cada consulta se cobra (es una restricción del caso). Si la misma ruta se pregunta dos veces, se paga dos veces.</p><pre class="code sm" data-code="px-antes"></pre></li>
+          <li><p><b>Qué escribes:</b> la interfaz que conoce el Despachador, el remoto que la implementa y el proxy, que tiene la misma interfaz y es el único que le habla al remoto. Aquí el proxy controla el acceso guardando las respuestas.</p><pre class="code sm" data-code="px"></pre><div class="fig" data-fig="proxy"></div></li>
+          <li><p><b>Qué pasa al usarlo:</b> con <code>new Despachador(new ProxyMapas(new MapasRemoto()))</code>, dos estimaciones de la misma ruta imprimen <code>Consulta pagada: Donde Lucho -> Calle 19</code> una sola vez y retornan 12 las dos veces. El Despachador no se enteró: sigue hablando con un <code>ServicioMapas</code>.</p></li>
+          <li><p><b>Proxy, Adapter o Facade:</b> el <b>proxy tiene la misma interfaz</b> que el objeto real y controla el acceso a él. El adapter <b>cambia</b> la interfaz para que encaje. El facade <b>simplifica</b> varias clases detrás de una puerta nueva.</p></li>
+        </ol>
+      </div>
+    </article>
+
     <p class="part">Parte C · Librerías, frameworks y APIs<small>Lo esencial de M3</small></p>
     <!-- Idea 10 -->
     <article class="idea" id="idea10">
@@ -560,7 +645,8 @@ details.rev{min-width:0}
       <h3><span class="ix">Receta</span>Las preguntas de principios y patrones</h3>
       <ol class="recipe">
         <li><b>«¿Qué principio viola?»</b> Imagina el próximo cambio y busca la señal: varias razones para cambiar → <b>S</b>. Un <code>if</code> por tipo que crece → <b>O</b>. Una hija que lanza excepción o deja vacío un método heredado → <b>L</b>. Una clase obligada a implementar métodos que no usa → <b>I</b>. Un <code>new</code> de una clase concreta adentro, o un atributo de tipo concreto → <b>D</b>.</li>
-        <li><b>«¿Qué patrón usas?»</b> Un solo objeto para todos → <b>Singleton</b>. Varias formas de hacer lo mismo, intercambiables → <b>Strategy</b>. Una clase ajena con otra interfaz → <b>Adapter</b>. Muchos pasos sobre muchas clases → <b>Facade</b>. Si el caso no tiene ese problema, la respuesta es «ninguno»: no metas patrones donde no hacen falta.</li>
+        <li><b>«¿Qué recomendación aplica?»</b> Un diseño difícil de explicar → reducir la complejidad. Un cambio que se riega por todo → pensar en los cambios. Una clase que depende de cómo está hecha otra → reducir el acoplamiento. Una clase que busca lo que necesita pasando por otras → inyección de dependencias.</li>
+        <li><b>«¿Qué patrón usas?»</b> Controlar el acceso a un objeto remoto o costoso, con su misma interfaz → <b>Proxy</b>. Un solo objeto para todos → <b>Singleton</b>. Varias formas de hacer lo mismo, intercambiables → <b>Strategy</b>. Una clase ajena con otra interfaz → <b>Adapter</b>. Muchos pasos sobre muchas clases → <b>Facade</b>. Si el caso no tiene ese problema, la respuesta es «ninguno»: no metas patrones donde no hacen falta.</li>
         <li><b>«¿Qué está mal en este Singleton?»</b> Revisa tres cosas: constructor <code>private</code>, atributo <code>static</code> y método <code>static</code>.</li>
         <li><b>«¿Librería o framework?»</b> ¿Quién llama a quién? Si tú lo llamas, librería. Si él llama tu código, framework.</li>
       </ol>
@@ -571,6 +657,7 @@ details.rev{min-width:0}
       <div class="tpl-grid">
         <div><h4>Singleton</h4><pre class="code sm" data-code="tpl-1"></pre></div>
         <div><h4>Strategy y Adapter</h4><pre class="code sm" data-code="tpl-2"></pre></div>
+        <div><h4>Proxy e inyección</h4><pre class="code sm" data-code="tpl-3"></pre></div>
       </div>
     </div>
   </section>
@@ -808,6 +895,24 @@ const FIG = {
       ];
     }
   },
+  proxy: {
+    aria: "Proxy: Despachador conoce la interfaz ServicioMapas; MapasRemoto y ProxyMapas la implementan; ProxyMapas conoce a MapasRemoto",
+    cls: [
+      { id: "Despachador", x: 10, y: 10, simple: 1 },
+      { id: "ServicioMapas", x: 230, y: 10, stereo: "interface", ops: [{ t: "+ minutosEntre(origen: String, destino: String): int" }] },
+      { id: "ProxyMapas", x: 230, y: 160, simple: 1 },
+      { id: "MapasRemoto", x: 470, y: 160, simple: 1 }
+    ],
+    rels: (A, G) => {
+      const D = G.Despachador, S = G.ServicioMapas, P = G.ProxyMapas, R = G.MapasRemoto, sb = S.y + S.h;
+      return [
+        { type: "assoc", pts: [[D.x + D.w, 34], [S.x, 34]], labels: [{ x: S.x - 18, y: 25, t: "-mapas", a: "end" }] },
+        { type: "realize", pts: [[P.x + P.w / 2, P.y], [P.x + P.w / 2, sb]] },
+        { type: "realize", pts: [[R.x + R.w / 2, R.y], [R.x + R.w / 2, sb]] },
+        { type: "assoc", pts: [[P.x + P.w, 172], [R.x, 172]], labels: [{ x: R.x - 18, y: 163, t: "-remoto", a: "end" }] }
+      ];
+    }
+  },
   facade: {
     aria: "Facade: ConsolaPedidos usa solo FachadaPedidos, que conoce Inventario, Caja, Cocina y Despacho",
     cls: [
@@ -828,6 +933,108 @@ const FIG = {
 
 /* ---------- Código ---------- */
 const CODE = {
+  "p1-di": { d: 1, s: `
+  public class Pedido {
+      private PasarelaPagos pasarela;
+      private ConectorDB conector;
+
+-     // Alternativa 1: el Pedido busca lo que necesita
+-     public Pedido(Restaurante restaurante) {
+-         this.pasarela = restaurante.getNucleo().getPasarela();
+-         this.conector = restaurante.getNucleo().getConector();
+-     }
++     // Alternativa 2: inyección por constructor
++     public Pedido(PasarelaPagos pasarela, ConectorDB conector) {
++         this.pasarela = pasarela;
++         this.conector = conector;
++     }
++
++     // Inyección por setter
++     public void setPasarela(PasarelaPagos pasarela) {
++         this.pasarela = pasarela;
++     }
+
+      public boolean confirmar(int total) {
+          boolean pagado = pasarela.cobrar(total);
+          if (pagado) {
+              conector.guardar("Pedido pagado por " + total);
+          }
+          return pagado;
+      }
+  }
+
+  // El Núcleo arma el pedido con lo que necesita:
++ Pedido p = new Pedido(pasarelaNequi, conectorDB);` },
+  "px-antes": { s: `
+public class Despachador {
+    private MapasRemoto mapas;   // cada consulta se paga
+
+    public int estimarMinutos(String restaurante, String direccion) {
+        return mapas.minutosEntre(restaurante, direccion);
+    }
+}` },
+  "px": { s: `
+public interface ServicioMapas {
+    int minutosEntre(String origen, String destino);
+}
+
+public class MapasRemoto implements ServicioMapas {
+    @Override
+    public int minutosEntre(String origen, String destino) {
+        // Aquí irían cientos de instrucciones de red, y cada consulta se paga.
+        System.out.println("Consulta pagada: " + origen + " -> " + destino);
+        return 12;
+    }
+}
+
+public class ProxyMapas implements ServicioMapas {
+    private MapasRemoto remoto;
+    private HashMap<String, Integer> guardados;
+
+    public ProxyMapas(MapasRemoto remoto) {
+        this.remoto = remoto;
+        this.guardados = new HashMap<>();
+    }
+
+    @Override
+    public int minutosEntre(String origen, String destino) {
+        String clave = origen + "->" + destino;
+        if (!guardados.containsKey(clave)) {
+            guardados.put(clave, remoto.minutosEntre(origen, destino));
+        }
+        return guardados.get(clave);
+    }
+}
+
+public class Despachador {
+    private ServicioMapas mapas;   // solo conoce la interfaz
+
+    public Despachador(ServicioMapas mapas) {
+        this.mapas = mapas;
+    }
+
+    public int estimarMinutos(String restaurante, String direccion) {
+        return mapas.minutosEntre(restaurante, direccion);
+    }
+}` },
+  "tpl-3": { s: `
+// Proxy: MISMA interfaz que el real, y controla el acceso
+public class ProxyX implements InterfazX {
+    private XReal real;                    // solo el proxy le habla
+    @Override
+    public Resultado operacion(...) {
+        // controla: guarda, verifica, conecta...
+        return real.operacion(...);
+    }
+}
+
+// Inyección: lo que necesito llega de afuera
+public Pedido(PasarelaPagos pasarela) {   // por constructor
+    this.pasarela = pasarela;
+}
+public void setPasarela(PasarelaPagos p) { // por setter
+    this.pasarela = p;
+}` },
   "e1": { d: 1, s: `
   public class Pedido {
       public double calcularTotal() { ... }
@@ -1216,13 +1423,14 @@ public class Inscripcion {
     }
 }`, a: PRINC[5], e: "Hace una sola cosa, depende de clases del modelo (no de detalles como correo o archivos) y le pide a cada una lo que sabe. No hace falta cambiarla." }
 ];
-const PATS = ["Singleton", "Strategy", "Adapter", "Facade", "Ninguno"];
+const PATS = ["Proxy", "Singleton", "Strategy", "Adapter", "Facade", "Ninguno"];
 const LAB_B = [
   { r: "Toda la aplicación del club debe usar el mismo registro de auditoría, y nadie debe poder crear otro.", a: "Singleton", e: "Un solo objeto, al que todos llegan por el mismo método." },
   { r: "La cuota cambia según el plan: mensual, trimestral con 5 % de descuento o anual con 15 %. Quieren poder agregar planes sin tocar Socio.", a: "Strategy", e: "Varias formas de calcular lo mismo, intercambiables: una interfaz de plan con una clase por plan." },
   { r: "Compraron una librería de torniquetes con el método `abrirPuerta(int codigoTarjeta)`, pero el club usa la interfaz `ControlAcceso` con `permitirEntrada(Socio s)`.", a: "Adapter", e: "Una clase ajena con otra interfaz, que no se puede cambiar: el adaptador implementa ControlAcceso y llama a `abrirPuerta`." },
   { r: "Para inscribir a un socio, la pantalla llama en orden a validar documento, crear el socio, cobrar la matrícula, generar el carné y enviar la bienvenida.", a: "Facade", e: "Muchos pasos sobre muchas clases: una fachada con `inscribirSocio(...)` que los hace en orden." },
   { r: "Clase `Sede` con nombre y dirección, y sus getters.", a: "Ninguno", e: "No hay ningún problema que resolver: es un contenedor de información. Meter un patrón aquí solo complica." },
+  { r: "Las fotos de los platos están en otro servidor y pesan mucho. Quieren que la pantalla use un objeto con la misma interfaz que la foto real, que la descargue solo cuando el usuario la abre.", a: "Proxy", e: "Un sustituto con la misma interfaz que controla el acceso al objeto real (aquí, cargarlo cuando hace falta)." },
   { r: "El club cambia de proveedor de pagos y el nuevo tiene `charge(String token, int cents)`; el sistema usa `MedioPago.pagar(double monto)`.", a: "Adapter", e: "Otra vez una interfaz ajena que no coincide con la tuya." }
 ];
 const LIBFW = ["Librería", "Framework"];
@@ -1402,12 +1610,18 @@ public class DomiciliarioEnPrueba extends Domiciliario {
         "El problema no es de qué depende Restaurante.",
         "Restaurante está escrito para `Domiciliario`, y con un `DomiciliarioEnPrueba` revienta: la hija no cumple lo que promete el padre.",
         "Compilar no garantiza que la herencia esté bien: el error sale al correr."] },
-    { t: "mc", k: "Selección múltiple con caso", q: "El sistema de La Parrilla calcula distancias con la interfaz `CalculadoraDistancia` (`double km(String origen, String destino)`). Compraron una librería de mapas que no pueden modificar, con el método `long distanciaEnMetros(double lat1, double lon1, double lat2, double lon2)`. ¿Qué patrón usas?",
-      o: ["Facade", "Adapter", "Singleton", "Strategy"], a: 1,
-      oe: ["Facade simplifica varias clases con muchos pasos. Aquí es una sola clase con otra interfaz.",
-        "Una clase ajena, que no se puede cambiar, con una interfaz distinta de la tuya: un adaptador que implementa `CalculadoraDistancia` y por dentro llama a `distanciaEnMetros`, convirtiendo metros a km.",
-        "Singleton asegura un solo objeto; no traduce interfaces.",
-        "Strategy sirve para escoger entre varias formas de hacer algo. Aquí el problema es que la interfaz no encaja."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class Despachador {
+    private ServicioMapas mapas;
+    ...
+}
+// ServicioMapas es una interfaz; MapasRemoto la implementa
+// y cada consulta al servicio externo se paga.`, q: "En Ñam quieren que una ruta que ya se consultó no se vuelva a pagar, y que solo una clase le hable al servicio remoto, sin cambiar nada del Despachador. ¿Qué patrón usas?",
+      o: ["Proxy", "Adapter", "Facade", "Singleton"], a: 0,
+      oe: ["Un ProxyMapas con la misma interfaz `ServicioMapas` se pone en medio, controla el acceso (guarda las respuestas) y es el único que le habla al remoto. El Despachador no se entera. Es el patrón que explica el profe.",
+        "Adapter cambia una interfaz que no encaja. Aquí la interfaz ya encaja: lo que se quiere es controlar el acceso.",
+        "Facade simplifica varias clases con muchos pasos. Aquí es un solo objeto, con la misma interfaz.",
+        "Singleton asegura un solo objeto, pero no se pone en medio ni controla el acceso a otro."] },
     { t: "fill", k: "Código corto · completar", q: "Completa el Singleton.",
       tpl: `public class ConfiguracionRestaurante {
     private ___ ConfiguracionRestaurante instancia;
