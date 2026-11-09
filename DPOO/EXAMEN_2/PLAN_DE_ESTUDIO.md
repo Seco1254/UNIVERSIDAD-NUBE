@@ -169,7 +169,9 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 - **Trampas:** invertir esperado y obtenido en `assertEquals`; comparar `double` sin margen; probar solo el caso feliz; pruebas que dependen del orden en que corren.
 
 ### M7 — Principios: acoplamiento, cohesión y SOLID
-*Dom 8 · ~2 h · Clases 15 y 22*
+> **Artifact (junto con M8 y lo esencial de M3):** [M7–M8 · Principios y patrones](https://claude.ai/artifact/Uq2PJGHFJ8n55FcY1T9ajk). Versión exprés: quiz primero. Diez ideas con ejemplo resuelto sobre La Parrilla (SOLID, Singleton, Strategy, Adapter, Facade, librería y framework con Swing), labs de clasificación sobre el Club Deportivo y taller en el IDE. Todo el código compila y corre en Java 21.
+
+*Lun 9 (exprés, con M8) · ~1 h · Clases 15 y 22*
 *Material: 05 Aspectos metodológicos (carpeta 02) · 6b. Aspectos metodológicos · 11a. Principios de diseño · Ejemplo SOLID SpotiAlpes (carpeta 03) · lecturas [10] (Clean Code, cap. 10) y [14] (MVC)*
 
 - **Teoría:** acoplamiento (cuánto depende una clase de otras) y cohesión (qué tan relacionadas están sus responsabilidades): se busca bajo acoplamiento y alta cohesión. Separar modelo, vista y controlador. SOLID uno por uno, cada uno con su olor y su arreglo: responsabilidad única, abierto/cerrado, sustitución de Liskov, segregación de interfaces e inversión de dependencias.
@@ -180,7 +182,9 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 - **Trampas:** creer que responsabilidad única es «un método por clase»; pensar que si compila, la herencia está bien; confundir inversión de dependencias con inyección de dependencias.
 
 ### M8 — Patrones de diseño
-*Dom 8 · 2–2,5 h · Clase 23*
+> **Artifact:** el mismo de M7: [M7–M8 · Principios y patrones](https://claude.ai/artifact/Uq2PJGHFJ8n55FcY1T9ajk).
+
+*Lun 9 (exprés, con M7) · Clase 23*
 *Material: 09 Patrones de Diseño (carpeta 02) · 11b. Patrones de diseño (carpeta 03) · lecturas [16] (Gang of Four, cap. 1), [17] (Head First Design Patterns, cap. 1) y [18]*
 
 - **Teoría:** qué es un patrón: un nombre, un problema, una solución y sus consecuencias. Las 3 familias: creacionales, estructurales y de comportamiento. Dos ideas del libro: programar contra una interfaz y preferir la composición a la herencia. Los patrones de las diapositivas, Singleton, Facade y Adapter, más Strategy (lectura [17]): de cada uno, el problema que resuelve, su UML y su esqueleto en Java. Los detalles que se suelen hacer mal (lectura [18]).
@@ -189,8 +193,12 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 - **Quiz:** qué patrón resuelve un caso; qué está mal en un Singleton; Adapter o Facade; escribir un Singleton; escribir un Adapter para una clase dada.
 - **Trampas:** Singleton con constructor público; confundir Adapter (hace encajar una interfaz) con Facade (simplifica un subsistema); meter patrones donde no hacen falta.
 
-### M9 — Simulacro de 80 minutos, estilo Porras
-*Lun 9 · ~2 h (80 min + corrección) · En tu IDE, sin internet*
+### M9 — Mini-simulacro de 40 minutos, estilo Porras
+> **Artifact:** [M9 · Mini-simulacro](https://claude.ai/artifact/3AQBd7wjFgjh1dGM6HzDUK). Medio examen: 4 de selección múltiple con caso (30 pts) y una práctica de 70 pts (el parqueadero: interfaz, clase abstracta, dos hijas, lista, dos excepciones propias y dos pruebas JUnit). Cronómetro, rúbrica tipo profe, hoja de plantillas para el martes y el código pegado queda guardado en `intentos` para corregirlo. La solución compila y sus pruebas pasan.
+
+*Lun 9 en la noche, o mar 10 a las 8:00 · 40 min + corrección · En tu IDE, sin internet*
+
+*(Plan original, antes del ajuste: simulacro de 80 minutos.)*
 
 - Un examen nuevo con la estructura del Parcial 1: **4 de selección múltiple con caso** (7,5 pts c/u) y **una práctica de 70 pts**: un UML nuevo que implementas en Java con sus excepciones propias y sus pruebas JUnit, y entregas en ZIP. Si el profe confirma otra estructura, el simulacro la sigue.
 - Cronometrado: 80 minutos, como en la sala Turing.
@@ -233,9 +241,9 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | M4 Análisis | ☐ | ☐ | ☐ | 4/5 (Quiz A; falló la firma con mayúscula: `Disponible()` en vez de `estaDisponible()`) | ✅ |
 | M5 Diseño: roles, responsabilidades y colaboraciones | ☐ | ☐ | ☐ | 4/5 (Quiz A, junto con M4) | ✅ |
 | M6 Pruebas con JUnit | ☐ | ☐ | ☐ | — | ⏳ |
-| M7 Principios | ☐ | ☐ | ☐ | — | 🔒 |
-| M8 Patrones | ☐ | ☐ | ☐ | — | 🔒 |
-| M9 Simulacro | — | — | — | —/100 | 🔒 |
+| M7 Principios | ☐ | ☐ | ☐ | — | ⏳ |
+| M8 Patrones | ☐ | ☐ | ☐ | — | ⏳ |
+| M9 Simulacro | — | — | — | —/100 | ⏳ |
 
 ---
 

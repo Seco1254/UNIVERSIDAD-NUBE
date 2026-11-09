@@ -1,0 +1,1672 @@
+<title>M7–M8 Principios y patrones</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+/* ---- Propio de M7–M8 ---- */
+:root{--term-bg:#1d1b26; --term-fg:#ece9f7; --term-err:#ff9b9b}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--term-bg:#0b0a10} }
+:root[data-theme="dark"]{--term-bg:#0b0a10}
+.console{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.6; background:var(--term-bg); color:var(--term-fg); border-radius:8px; padding:10px 12px; white-space:pre-wrap; overflow-wrap:anywhere}
+.console .e{color:var(--term-err)}
+.side{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.side > div{display:grid; grid-template-columns:minmax(0,1fr); gap:6px; align-content:start; min-width:0}
+.side h4 .bad{color:var(--red)} .side h4 .good{color:var(--green)}
+.part{font:800 1.35rem var(--f-display); margin:8px 0 0; padding-top:10px; border-top:2px solid var(--ink)}
+.part small{display:block; font:500 .9rem var(--f-body); color:var(--muted)}
+.solid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr)); gap:8px}
+.solid > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px 12px; display:grid; gap:4px; align-content:start; min-width:0; font-size:.9rem}
+.solid b.l{font:900 1.4rem var(--f-display); color:var(--accent); line-height:1}
+.assign{display:grid; grid-template-columns:minmax(0,1fr); border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.arow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,13rem); gap:6px 12px; padding:10px 12px; border-bottom:1px solid var(--rule); align-items:center}
+.arow:last-child{border-bottom:0}
+.arow select{font:inherit; font-size:.9rem; padding:5px 8px; border:1.5px solid var(--rule); border-radius:7px; background:var(--paper); color:var(--ink); width:100%}
+.arow select.right{border-color:var(--green); background:var(--green-soft)} .arow select.wrong{border-color:var(--red); background:var(--red-soft)}
+.arow .why{grid-column:1 / -1; font-size:.86rem}
+.arow .why.ok{color:var(--green)} .arow .why.no{color:var(--red)}
+.arow pre{grid-column:1 / -1}
+@media (max-width:560px){ .arow{grid-template-columns:minmax(0,1fr)} }
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#vocab">Vocabulario</a>
+  <a href="#teoria"><span>1</span>Teoría</a>
+  <a href="#lab"><span>2</span>Lab</a>
+  <a href="#taller"><span>3</span>Taller</a>
+  <a href="#quiz"><span>4</span>Quiz</a>
+</div></nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">DPOO · Examen 2 · Módulos 7 y 8 de 9 (+ lo esencial de M3)</p>
+    <h1>Principios y patrones</h1>
+    <div class="meta"><span class="stereo">«versión exprés»</span><span>Lunes 9 de noviembre · ~1–1,5 h</span><span>Clases 15, 22, 23 y 25–26</span></div>
+    <p class="lede">Los principios dicen cómo se ve un buen diseño: clases que cambian por una sola razón, que se extienden sin modificarse y que dependen de interfaces. Los patrones son soluciones con nombre para problemas que se repiten. En el examen casi siempre salen como selección múltiple: «¿qué principio viola este código?» o «¿qué patrón resuelve este caso?».</p>
+    <ul class="goals">
+      <li>Reconocer cuál de los cinco principios SOLID viola un fragmento de código, y cómo se arregla.</li>
+      <li>Escoger entre Singleton, Strategy, Adapter y Facade para un caso, y escribir su esqueleto en Java.</li>
+      <li>Distinguir una librería de un framework y leer un listener de Swing.</li>
+    </ul>
+    <div class="shortcut"><p><b>Versión exprés: haz el quiz primero.</b> Con 4/5 pasas; lee solo las ideas de las preguntas que fallaste y sigue al simulacro.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
+    <p class="note muted">No tengo las diapositivas del profe (11a, 11b, 12a, ni el ejemplo SpotiAlpes). Esto sale de las lecturas del curso: Clean Code (lectura [10]), Gang of Four (lectura [16]) y Head First (lectura [17]). Si en clase usaron otros ejemplos o nombres, quédate con los del profe. Todo el código de esta página compila y corre en Java 21.</p>
+  </header>
+
+  <!-- ============ VOCABULARIO ============ -->
+  <section id="vocab" aria-labelledby="v-h">
+    <div class="sec-head">
+      <h2 id="v-h">Vocabulario de este módulo</h2>
+      <p class="note">En el orden en que lo vas a usar. Interfaces, herencia y excepciones (M1 y M2) se dan por sabidas.</p>
+    </div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:22%"><col style="width:34%"><col style="width:44%"></colgroup>
+      <thead><tr><th>Término</th><th>Cómo se ve</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td>Acoplamiento</td><td>Una clase que usa muchas otras, o sus detalles</td><td>Cuánto depende una clase de otras. Se busca bajo: si cambias una, se dañan pocas.</td></tr>
+        <tr><td>Cohesión</td><td>Métodos que trabajan sobre los mismos datos</td><td>Qué tan relacionadas están las responsabilidades de una clase. Se busca alta: una clase, un tema.</td></tr>
+        <tr><td>SOLID</td><td>Cinco letras, cinco principios</td><td>Responsabilidad única, abierto/cerrado, sustitución de Liskov, segregación de interfaces e inversión de dependencias.</td></tr>
+        <tr><td>Depender de una abstracción</td><td><code>private Notificador notificador;</code> (una interfaz)</td><td>Usar una interfaz en vez de una clase concreta, para poder cambiar la clase sin tocar a quien la usa.</td></tr>
+        <tr><td>Inyección de dependencias</td><td><code>new Restaurante(new NotificadorCorreo())</code></td><td>Pasarle a un objeto lo que necesita (por el constructor) en vez de que lo cree él con <code>new</code>.</td></tr>
+        <tr><td>Patrón de diseño</td><td>Un nombre + un problema + una solución</td><td>Una solución probada para un problema de diseño que se repite.</td></tr>
+        <tr><td>Singleton</td><td><code>getInstancia()</code> estático y constructor privado</td><td>Una clase de la que existe un solo objeto, y todos llegan a él por el mismo método.</td></tr>
+        <tr><td>Strategy</td><td>Una interfaz con varias implementaciones intercambiables</td><td>Sacar un algoritmo que cambia (cómo se cobra el envío) a su propia familia de clases.</td></tr>
+        <tr><td>Adapter</td><td>Una clase que implementa tu interfaz y por dentro llama a otra</td><td>Hacer que una clase con otra interfaz (una librería que no puedes cambiar) encaje en tu sistema.</td></tr>
+        <tr><td>Facade (fachada)</td><td>Un método que llama a varios subsistemas en orden</td><td>Una puerta simple para un conjunto de clases complicado.</td></tr>
+        <tr><td>Librería</td><td><code>ArrayList</code>, <code>Math</code></td><td>Código ajeno que tú llamas cuando quieres.</td></tr>
+        <tr><td>Framework</td><td>JUnit, Swing</td><td>Código ajeno que te llama a ti: tú llenas los huecos (<code>@Test</code>, un listener). Eso es la inversión de control.</td></tr>
+        <tr><td>API</td><td>Las firmas públicas de una clase o un servicio</td><td>El contrato de lo que algo ofrece, sin decir cómo lo hace por dentro.</td></tr>
+        <tr><td>Listener</td><td><code>boton.addActionListener(e -> ...)</code></td><td>El código que Swing ejecuta cuando pasa un evento, como un clic.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Tres partes: los principios, los patrones y lo esencial de librerías y frameworks. Cada idea tiene su ejemplo resuelto sobre La Parrilla, con lo que se borra tachado y lo nuevo resaltado.</p></div>
+
+    <p class="part">Parte A · Principios<small>Acoplamiento, cohesión y SOLID</small></p>
+    <div class="solid">
+      <div><b class="l">S</b><span><b>Responsabilidad única.</b> Una clase debe tener una sola razón para cambiar.</span></div>
+      <div><b class="l">O</b><span><b>Abierto/cerrado.</b> Abierta para extenderse, cerrada para modificarse: lo nuevo se agrega con clases nuevas.</span></div>
+      <div><b class="l">L</b><span><b>Sustitución de Liskov.</b> Una hija debe poder usarse donde se usa el padre, sin sorpresas.</span></div>
+      <div><b class="l">I</b><span><b>Segregación de interfaces.</b> Nadie debe implementar métodos que no usa.</span></div>
+      <div><b class="l">D</b><span><b>Inversión de dependencias.</b> Depende de interfaces, no de clases concretas.</span></div>
+    </div>
+
+    <!-- Idea 1 -->
+    <article class="idea" id="idea1">
+      <h3><span class="ix">Idea 1 · S</span>Cohesión y responsabilidad única</h3>
+      <div class="prose">
+        <p>Una clase es <b>cohesiva</b> cuando todo lo que hace es sobre un mismo tema. El principio de <b>responsabilidad única</b> lo dice en forma de prueba: si hay dos razones distintas por las que alguien te pediría cambiar la clase, tiene dos responsabilidades. No quiere decir «un método por clase»: Pedido puede tener varios métodos, siempre que todos sean sobre el pedido.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 1 · Pedido que también imprime y guarda</p>
+        <ol class="wsteps">
+          <li><p><b>Qué ves:</b> Pedido calcula su total, imprime la factura en consola y la guarda en un archivo.</p><p><b>Qué te preguntas:</b> ¿quién me pediría cambiar esta clase? El dueño, si cambia la regla del envío. El diseñador, si cambia el formato de la factura. Sistemas, si se guarda en otro lugar. Son tres razones: tres responsabilidades.</p></li>
+          <li><p><b>Qué haces:</b> dejas en Pedido lo que es del pedido (calcular) y sacas imprimir y guardar a sus propias clases. La consola es la interfaz con el usuario (M4–M5): el modelo no imprime.</p><pre class="code sm" data-code="e1"></pre></li>
+          <li><p><b>Qué ganas:</b> si cambia el formato de la factura, solo tocas FacturaConsola. Pedido queda cohesivo, y además más fácil de probar con JUnit (M6), porque no imprime.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 2 -->
+    <article class="idea" id="idea2">
+      <h3><span class="ix">Idea 2 · O</span>Abierto/cerrado: agregar sin modificar</h3>
+      <div class="prose">
+        <p>El olor típico es una cadena de <code>if</code>/<code>else if</code> según un tipo guardado en un <code>String</code>. Cada tipo nuevo obliga a abrir y modificar el mismo método, y con eso arriesgas romper lo que ya funcionaba. El arreglo: una interfaz con una clase por tipo. Un tipo nuevo es una clase nueva, y el código viejo no se toca.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 2 · Los tipos de envío</p>
+        <ol class="wsteps">
+          <li><p><b>Qué ves:</b> el total depende del tipo de envío, y cada tipo es una rama del <code>if</code>.</p><pre class="code sm" data-code="e2-antes"></pre><p><b>El problema:</b> si mañana llega «envío programado», tienes que modificar <code>calcularTotal</code>, que ya estaba probado.</p></li>
+          <li><p><b>Qué escribes:</b> una interfaz con lo que cambia (el costo del envío) y una clase por tipo.</p><pre class="code sm" data-code="e2-pol"></pre></li>
+          <li><p><b>Qué cambias en Pedido:</b> en vez del <code>String</code>, guarda una <code>PoliticaEnvio</code> y le pide el costo. El <code>if</code> desaparece.</p><pre class="code sm" data-code="e2-ped"></pre></li>
+          <li><p><b>Qué ganas:</b> «envío programado» es una clase nueva que implementa <code>PoliticaEnvio</code>. Pedido no se toca. Con 2 hamburguesas: normal da 41000.0, express 45000.0 y recoger 36000.0, igual que antes. Esta forma de arreglarlo es el patrón <b>Strategy</b> (idea 7).</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 3 -->
+    <article class="idea" id="idea3">
+      <h3><span class="ix">Idea 3 · L</span>Sustitución de Liskov: la hija cumple lo que promete el padre</h3>
+      <div class="prose">
+        <p>Si <code>B extends A</code>, cualquier código escrito para <code>A</code> debe funcionar igual con un <code>B</code>. Que compile no basta. Las señales de que una hija rompe la promesa: sobrescribe un método para lanzar una excepción nueva, para no hacer nada, o pide más de lo que pedía el padre.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 3 · El pedido cerrado</p>
+        <ol class="wsteps">
+          <li><p><b>Qué ves:</b> alguien quiso modelar un pedido ya cerrado como una hija de Pedido que no deja agregar productos.</p><pre class="code sm" data-code="e3"></pre></li>
+          <li><p><b>Qué pasa al correrlo:</b> el método funciona con un Pedido y revienta con un PedidoCerrado, aunque el compilador dijo que podía pasarlo.</p><pre class="console" data-raw="liskov"></pre></li>
+          <li><p><b>Qué está mal:</b> Pedido promete «puedes agregarme productos»; PedidoCerrado no lo cumple. Un pedido cerrado no es un pedido al que se le agregan cosas, así que no debe heredar de él.</p><p><b>El arreglo:</b> no usar herencia para esto. Que «cerrado» sea un atributo de Pedido, y que <code>agregarProducto</code> declare en su firma la excepción que lanza si está cerrado (<code>throws PedidoCerradoException</code>, como en M2). Así quien llama lo sabe desde el contrato.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 4 -->
+    <article class="idea" id="idea4">
+      <h3><span class="ix">Idea 4 · I</span>Segregación de interfaces: interfaces pequeñas</h3>
+      <div class="prose">
+        <p>Una interfaz grande obliga a sus clases a implementar métodos que no usan, y terminan con métodos vacíos o que lanzan excepciones. El arreglo: varias interfaces pequeñas, y cada clase implementa las que le sirven. En Java una clase puede implementar varias.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 4 · Empleado que hace de todo</p>
+        <ol class="wsteps">
+          <li><p><b>Qué ves:</b> la interfaz Empleado obliga a todos a cocinar, entregar y cobrar. El domiciliario no cocina, así que su <code>cocinar</code> lanza una excepción.</p><pre class="code sm" data-code="e4-antes"></pre></li>
+          <li><p><b>Qué haces:</b> partes la interfaz en tres, una por rol, y el domiciliario implementa solo las suyas.</p><pre class="code sm" data-code="e4-desp"></pre></li>
+          <li><p><b>Qué ganas:</b> ya no existe <code>domiciliario.cocinar(...)</code>: el error que antes salía al correr ahora ni compila. Fíjate que el arreglo también cumple Liskov: nadie promete algo que no hace.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 5 -->
+    <article class="idea" id="idea5">
+      <h3><span class="ix">Idea 5 · D</span>Inversión de dependencias: depender de interfaces</h3>
+      <div class="prose">
+        <p>Si Restaurante crea adentro un <code>new NotificadorWhatsApp()</code>, queda pegado a WhatsApp: para usar correo hay que modificarlo, y para probarlo con JUnit se mandan WhatsApp de verdad. El principio dice que la clase importante (Restaurante) y el detalle (WhatsApp) dependan los dos de una <b>interfaz</b>.</p>
+        <p class="muted">Ojo con los nombres: la <b>inversión</b> de dependencias es el principio (depender de interfaces). La <b>inyección</b> de dependencias es la técnica para lograrlo: pasar el objeto por el constructor.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 5 · El notificador</p>
+        <ol class="wsteps">
+          <li><p><b>Qué cambias:</b> el atributo pasa a ser de tipo interfaz, y el objeto llega por el constructor en vez de crearse adentro.</p><pre class="code sm" data-code="e5"></pre></li>
+          <li><p><b>Qué ganas:</b> <code>new Restaurante(new NotificadorWhatsApp())</code> imprime <code>[WhatsApp] Pedido 7 confirmado</code>, y <code>new Restaurante(new NotificadorCorreo())</code> imprime <code>[Correo] Pedido 8 confirmado</code>, sin tocar Restaurante.</p></li>
+          <li><p><b>Y en las pruebas (M6):</b> le pasas un notificador falso que solo guarda el mensaje, y verificas sin mandar nada.</p><pre class="code sm" data-code="e5-test"></pre></li>
+        </ol>
+      </div>
+    </article>
+
+    <p class="part">Parte B · Patrones<small>Un nombre, un problema, una solución y sus consecuencias</small></p>
+    <div class="prose">
+      <p>Un <b>patrón de diseño</b> es una solución probada para un problema que se repite. El libro del Gang of Four (lectura [16]) los agrupa en tres familias: <b>creacionales</b> (cómo se crean los objetos: Singleton), <b>estructurales</b> (cómo se arman clases para formar algo más grande: Adapter, Facade) y <b>de comportamiento</b> (cómo se reparten un algoritmo o una responsabilidad: Strategy). Dos consejos del libro que están detrás de casi todos: <b>programa contra una interfaz</b>, no contra una clase concreta, y <b>prefiere la composición a la herencia</b> (tener un objeto en vez de heredar de él).</p>
+    </div>
+
+    <!-- Idea 6 -->
+    <article class="idea" id="idea6">
+      <h3><span class="ix">Idea 6 · Creacional</span>Singleton: un solo objeto para todos</h3>
+      <div class="prose"><p><b>Problema:</b> de una clase debe existir un solo objeto (la configuración del restaurante), y todos deben llegar al mismo. <b>Solución:</b> el constructor es privado, la clase guarda su única instancia en un atributo estático y la entrega con un método estático.</p></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 6 · La configuración del restaurante</p>
+        <ol class="wsteps">
+          <li><p><b>Qué escribes:</b> el atributo <code>private static</code> con la única instancia. Estático porque es de la clase, no de un objeto.</p></li>
+          <li><p><b>Qué escribes:</b> el constructor <code>private</code>. Así nadie fuera de la clase puede hacer <code>new</code>.</p></li>
+          <li><p><b>Qué escribes:</b> <code>public static getInstancia()</code>: la primera vez crea el objeto y después siempre retorna el mismo.</p><pre class="code sm" data-code="e6"></pre><div class="fig" data-fig="singleton"></div></li>
+          <li><p><b>Qué pasa al usarlo:</b> dos llamadas a <code>getInstancia()</code> dan el mismo objeto (<code>a == b</code> imprime <code>true</code>). Y si alguien intenta <code>new</code> desde otra clase, no compila:</p><pre class="console" data-raw="singleton"></pre></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 7 -->
+    <article class="idea" id="idea7">
+      <h3><span class="ix">Idea 7 · Comportamiento</span>Strategy: el algoritmo que cambia, en su propia clase</h3>
+      <div class="prose"><p><b>Problema:</b> una parte de un cálculo cambia según el caso (el costo del envío), y no quieres un <code>if</code> por caso. <b>Solución:</b> una interfaz para ese algoritmo, una clase por variante, y el objeto que la usa (el contexto) guarda una referencia a la interfaz. Es justo el arreglo de la idea 2: Strategy es la forma más común de cumplir abierto/cerrado.</p></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 7 · Las piezas del patrón en el envío</p>
+        <ol class="wsteps">
+          <li><p><b>La estrategia:</b> la interfaz <code>PoliticaEnvio</code>. <b>Las estrategias concretas:</b> EnvioNormal, EnvioExpress y RecogerEnTienda. <b>El contexto:</b> Pedido, que tiene una <code>PoliticaEnvio</code> y le delega el cálculo.</p><div class="fig" data-fig="strategy"></div></li>
+          <li><p><b>Cómo se usa:</b> quien crea el pedido escoge la estrategia: <code>new Pedido(new EnvioExpress())</code>. Se puede cambiar sin tocar Pedido.</p></li>
+          <li><p><b>Cómo se reconoce en un caso:</b> «varias formas de hacer lo mismo, y se escoge una» (formas de envío, de descuento, de ordenar, de calcular la cuota).</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 8 -->
+    <article class="idea" id="idea8">
+      <h3><span class="ix">Idea 8 · Estructural</span>Adapter: hacer encajar una interfaz ajena</h3>
+      <div class="prose"><p><b>Problema:</b> tu sistema trabaja con la interfaz <code>MedioPago</code> (<code>pagar(monto)</code>), y compraron una librería de pagos con otro método (<code>realizarCobro(cuenta, centavos)</code>) que no puedes modificar. <b>Solución:</b> una clase adaptadora que implementa tu interfaz y por dentro traduce la llamada a la librería.</p></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 8 · La pasarela de pagos</p>
+        <ol class="wsteps">
+          <li><p><b>Qué tienes:</b> tu interfaz y la clase de la librería.</p><pre class="code sm" data-code="e8-dado"></pre></li>
+          <li><p><b>Qué escribes:</b> el adaptador. <code>implements MedioPago</code> para que tu sistema lo acepte; un atributo con la pasarela; y en <code>pagar</code>, la traducción: pesos a centavos y el código 200 a <code>true</code>.</p><pre class="code sm" data-code="e8-adapter"></pre><div class="fig" data-fig="adapter"></div></li>
+          <li><p><b>Qué pasa al usarlo:</b> <code>MedioPago medio = new PasarelaXYZAdapter(new PasarelaXYZ(), "cuenta-123");</code> y <code>medio.pagar(41000.0)</code> imprime <code>XYZ cobra 4100000 centavos a cuenta-123</code> y retorna <code>true</code>. El resto del sistema nunca supo de XYZ.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 9 -->
+    <article class="idea" id="idea9">
+      <h3><span class="ix">Idea 9 · Estructural</span>Facade: una puerta simple a un subsistema</h3>
+      <div class="prose"><p><b>Problema:</b> para hacer un pedido, la consola tiene que llamar en orden al inventario, la caja, la cocina y el despacho. Si el orden cambia, cambian todas las pantallas. <b>Solución:</b> una fachada con un solo método que hace la secuencia. La consola solo conoce la fachada.</p></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 9 · Hacer un pedido</p>
+        <ol class="wsteps">
+          <li><p><b>Qué escribes:</b> la fachada, con los subsistemas como atributos y un método que los llama en orden.</p><pre class="code sm" data-code="e9"></pre><div class="fig" data-fig="facade"></div></li>
+          <li><p><b>Qué pasa al usarla:</b> <code>fachada.hacerPedido(7, 41000.0)</code> imprime las cuatro líneas en orden: reservado, cobrado, preparando y programado.</p></li>
+          <li><p><b>Adapter o Facade:</b> los dos envuelven otras clases, pero por razones distintas.</p>
+            <div class="tw"><table class="vocab">
+              <colgroup><col style="width:22%"><col style="width:39%"><col style="width:39%"></colgroup>
+              <thead><tr><th></th><th>Adapter</th><th>Facade</th></tr></thead>
+              <tbody>
+                <tr><td>Para qué</td><td>Hacer encajar una interfaz que no coincide</td><td>Simplificar un conjunto de clases</td></tr>
+                <tr><td>Envuelve</td><td>Normalmente una clase</td><td>Varias clases de un subsistema</td></tr>
+                <tr><td>Interfaz</td><td>Implementa una que ya existe en tu sistema</td><td>Define una nueva, más simple</td></tr>
+                <tr><td>Pista en el caso</td><td>«no podemos cambiar la librería», «otro nombre de método»</td><td>«muchos pasos en orden», «muchas clases»</td></tr>
+              </tbody>
+            </table></div></li>
+        </ol>
+      </div>
+    </article>
+
+    <p class="part">Parte C · Librerías, frameworks y APIs<small>Lo esencial de M3</small></p>
+    <!-- Idea 10 -->
+    <article class="idea" id="idea10">
+      <h3><span class="ix">Idea 10 · M3</span>Quién llama a quién</h3>
+      <div class="prose">
+        <ul>
+          <li><b>Librería:</b> tú la llamas cuando quieres. <code>ArrayList</code>, <code>Math.round</code>, una librería para leer JSON.</li>
+          <li><b>Framework:</b> él te llama a ti. Tú escribes las piezas y el framework decide cuándo correrlas: JUnit corre tus métodos <code>@Test</code>, Swing corre tu listener cuando hay un clic. Eso se llama <b>inversión de control</b>. Un framework no es una librería grande: la diferencia es quién manda.</li>
+          <li><b>API:</b> el contrato de lo que algo ofrece (las firmas públicas), sin decir cómo lo hace. Puede ser una clase o un servicio remoto. No es lo mismo que una interfaz gráfica. Una buena API (Bloch, lectura [19]) es fácil de usar bien y difícil de usar mal, con nombres claros y lo mínimo necesario.</li>
+        </ul>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 10 · Una ventana de Swing con un botón</p>
+        <ol class="wsteps">
+          <li><p><b>Qué escribes:</b> una clase que hereda de <code>JFrame</code> (la ventana), con un botón y una etiqueta.</p></li>
+          <li><p><b>Qué escribes:</b> el listener: con <code>addActionListener</code> le dices a Swing qué hacer cuando hay un clic. Es una lambda, como en <code>assertThrows</code> (M6): código empacado que Swing ejecuta cuando quiere.</p><pre class="code sm" data-code="e10"></pre></li>
+          <li><p><b>Por qué es un framework:</b> tú nunca llamas al listener. Swing espera el clic y lo llama. Fíjate también en el diseño: la ventana es la interfaz y solo le pide el total al pedido (M4–M5).</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="idea" id="receta">
+      <h3><span class="ix">Receta</span>Las preguntas de principios y patrones</h3>
+      <ol class="recipe">
+        <li><b>«¿Qué principio viola?»</b> Imagina el próximo cambio y busca la señal: varias razones para cambiar → <b>S</b>. Un <code>if</code> por tipo que crece → <b>O</b>. Una hija que lanza excepción o deja vacío un método heredado → <b>L</b>. Una clase obligada a implementar métodos que no usa → <b>I</b>. Un <code>new</code> de una clase concreta adentro, o un atributo de tipo concreto → <b>D</b>.</li>
+        <li><b>«¿Qué patrón usas?»</b> Un solo objeto para todos → <b>Singleton</b>. Varias formas de hacer lo mismo, intercambiables → <b>Strategy</b>. Una clase ajena con otra interfaz → <b>Adapter</b>. Muchos pasos sobre muchas clases → <b>Facade</b>. Si el caso no tiene ese problema, la respuesta es «ninguno»: no metas patrones donde no hacen falta.</li>
+        <li><b>«¿Qué está mal en este Singleton?»</b> Revisa tres cosas: constructor <code>private</code>, atributo <code>static</code> y método <code>static</code>.</li>
+        <li><b>«¿Librería o framework?»</b> ¿Quién llama a quién? Si tú lo llamas, librería. Si él llama tu código, framework.</li>
+      </ol>
+    </article>
+
+    <div class="tpl-box">
+      <p class="eyebrow">Plantillas de memoria · M7–M8</p>
+      <div class="tpl-grid">
+        <div><h4>Singleton</h4><pre class="code sm" data-code="tpl-1"></pre></div>
+        <div><h4>Strategy y Adapter</h4><pre class="code sm" data-code="tpl-2"></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de diseño</h2><p>Tres clasificadores rápidos, con casos nuevos: el Club Deportivo. Escoge y toca «Revisar».</p></div>
+    <div class="lab">
+      <h3>A · Detector de olores</h3>
+      <p class="prose-p">Cada fragmento viola un principio, o ninguno. Escoge cuál.</p>
+      <div class="assign" id="lab-a"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-a-check">Revisar</button><button type="button" class="btn ghost" id="lab-a-reset">Empezar de nuevo</button><span class="muted" id="lab-a-msg"></span></div>
+    </div>
+    <div class="lab">
+      <h3>B · ¿Qué patrón es?</h3>
+      <p class="prose-p">Lee el caso y escoge el patrón que lo resuelve, o «Ninguno» si no hace falta.</p>
+      <div class="assign" id="lab-b"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-b-check">Revisar</button><button type="button" class="btn ghost" id="lab-b-reset">Empezar de nuevo</button><span class="muted" id="lab-b-msg"></span></div>
+    </div>
+    <div class="lab">
+      <h3>C · ¿Librería o framework?</h3>
+      <p class="prose-p">Pregúntate quién llama a quién.</p>
+      <div class="assign" id="lab-c"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-c-check">Revisar</button><button type="button" class="btn ghost" id="lab-c-reset">Empezar de nuevo</button><span class="muted" id="lab-c-msg"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller en el IDE</h2><p>Si vas corto de tiempo, haz solo T1 y T2 y deja el resto para después del examen.</p></div>
+    <p class="prose-p">Pon el cronómetro y mándame el código (pegado o en ZIP) con lo que dijo JUnit o la consola. Si subes el ejemplo SpotiAlpes del profe, lo rehacemos primero.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>3 de selección múltiple con un caso y 2 de código corto. Pasas M7 y M8 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title sub"><span class="sec-num">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Antes, relee las ideas de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M9 · Mini-simulacro de 40 minutos, con selección múltiple de todos los módulos y una práctica corta en tu IDE.</p>
+    <p>Todo el código de esta página compila y corre en Java 21; las pruebas JUnit se corrieron con JUnit 5.10.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- Utilidades ---------- */
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const f1 = (n) => Math.round(n * 10) / 10;
+/* Texto con `código` y **negrita** → nodos, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { parent.appendChild(el("code", "", part)); return; }
+    part.split("**").forEach((p2, j) => { if (p2) parent.appendChild(j % 2 ? el("b", "", p2) : document.createTextNode(p2)); });
+  });
+  return parent;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Resaltado de Java ---------- */
+const RX = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@[A-Za-z]+)|\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|super|static|final|void|if|else|for|while|throw|throws|try|catch|finally|null|true|false|import|package|boolean|int|double|char|long)\b|\b([A-Z][A-Za-z0-9_]*)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(line) {
+  let out = "", last = 0;
+  line.replace(RX, (m, com, str, ann, kw, ty, num, idx) => {
+    out += esc(line.slice(last, idx));
+    const cls = com ? "c-com" : str ? "c-str" : ann ? "c-ann" : kw ? "c-kw" : ty ? "c-ty" : "c-num";
+    out += '<span class="' + cls + '">' + esc(m) + "</span>";
+    last = idx + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+/* diff: cada línea empieza con "+ " (nueva), "- " (se borra) o "  " (igual). */
+function codeHTML(src, diff) {
+  const lines = src.replace(/^\n/, "").replace(/\n\s*$/, "").split("\n");
+  return lines.map((raw) => {
+    let mk = "  ", line = raw;
+    if (diff) {
+      if (raw === "+" || raw === "-") { mk = raw + " "; line = ""; }
+      else if (raw.length < 2) { mk = "  "; line = raw.trim(); }
+      else { mk = raw.slice(0, 2); line = raw.slice(2); }
+    }
+    const add = diff && mk === "+ ", del = diff && mk === "- ";
+    const gut = diff ? '<span class="gut" aria-hidden="true">' + (add ? "+" : del ? "−" : " ") + "</span>" : "";
+    const sr = add ? '<span class="sr">Línea nueva: </span>' : del ? '<span class="sr">Línea que se borra: </span>' : "";
+    const body = hl(line) || " ";
+    return '<span class="cl' + (add ? " add" : "") + (del ? " del" : "") + '">' + gut + sr + (del ? "<s>" + body + "</s>" : body) + "</span>";
+  }).join("");
+}
+
+/* ---------- Diagramas UML en SVG ---------- */
+const LH = 16;
+const memW = (t) => t.length * 6.3 + 16;
+const nameW = (t) => t.length * 7.4 + 24;
+function wrapK(k, inner, inter, label) {
+  if (inter && k) return '<g class="hit" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return "<g" + (k ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>";
+}
+function memSvg(m, x, yy, w, inter) {
+  const cls = "u-m" + (m.s ? " st" : "") + (m.a ? " abs" : "");
+  const inner = '<rect class="hl" x="' + (x + 1) + '" y="' + yy + '" width="' + (w - 2) + '" height="' + LH + '"/><text class="' + cls + '" x="' + (x + 8) + '" y="' + (yy + 11.8) + '">' + esc(m.t) + "</text>";
+  return wrapK(m.k || "", inner, inter, m.t);
+}
+function umlBox(c, inter, G) {
+  const name = c.name || c.id, attrs = c.attrs || [], ops = c.ops || [];
+  const w = c.w || Math.ceil(Math.max(c.minW || 110, nameW(name), c.stereo ? (c.stereo.length + 2) * 6 + 16 : 0, ...attrs.map((m) => memW(m.t)), ...ops.map((m) => memW(m.t))));
+  const x = typeof c.x === "function" ? Math.round(c.x(G, w)) : c.x, y = c.y;
+  const headH = c.stereo ? 36 : 24, aH = c.simple ? 0 : (attrs.length ? attrs.length * LH + 8 : 8), oH = c.simple ? 0 : (ops.length ? ops.length * LH + 8 : 8), h = headH + aH + oH;
+  let s = '<rect class="u-bg' + (c.tone ? " t-" + c.tone : "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2"/>';
+  let hd = '<rect class="hl" x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (w - 2) + '" height="' + (headH - 1) + '"/>';
+  if (c.stereo) hd += '<text class="u-st" x="' + (x + w / 2) + '" y="' + (y + 14) + '" text-anchor="middle">«' + esc(c.stereo) + "»</text>";
+  hd += '<text class="u-nm' + (c.abs ? " abs" : "") + '" x="' + (x + w / 2) + '" y="' + (y + (c.stereo ? 29 : 16.5)) + '" text-anchor="middle">' + esc(name) + "</text>";
+  s += wrapK(c.k || "", hd, inter, "Clase " + name);
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH) + '" x2="' + (x + w) + '" y2="' + (y + headH) + '"/>';
+  attrs.forEach((m, i) => { s += memSvg(m, x, y + headH + 4 + i * LH, w, inter); });
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH + aH) + '" x2="' + (x + w) + '" y2="' + (y + headH + aH) + '"/>';
+  ops.forEach((m, i) => { s += memSvg(m, x, y + headH + aH + 4 + i * LH, w, inter); });
+  return { svg: "<g>" + s + "</g>", x, y, w, h };
+}
+const REL_NAME = { assoc: "Asociación", inherit: "Herencia", realize: "Realización", dep: "Dependencia", aggr: "Agregación", comp: "Composición" };
+function relSvg(r, inter) {
+  const P = r.pts.map((p) => p.slice()), n = P.length;
+  const [ax, ay] = P[n - 2], [bx, by] = P[n - 1];
+  const L = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L, uy = (by - ay) / L;
+  const tri = r.type === "inherit" || r.type === "realize";
+  const dash = r.type === "realize" || r.type === "dep" ? ' stroke-dasharray="5 4"' : "";
+  const pts = P.map((p) => p.slice());
+  if (tri) pts[n - 1] = [bx - ux * 12, by - uy * 12];
+  let dia = "";
+  if (r.type === "aggr" || r.type === "comp") {
+    const [sx, sy] = P[0], [tx, ty] = P[1], L2 = Math.hypot(tx - sx, ty - sy) || 1, vx = (tx - sx) / L2, vy = (ty - sy) / L2, nx = -vy, ny = vx;
+    const d = [[sx, sy], [sx + vx * 9 + nx * 5.5, sy + vy * 9 + ny * 5.5], [sx + vx * 18, sy + vy * 18], [sx + vx * 9 - nx * 5.5, sy + vy * 9 - ny * 5.5]];
+    dia = '<path class="u-dia' + (r.type === "comp" ? " full" : "") + '" d="M' + d.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") + ' Z"/>';
+    pts[0] = [sx + vx * 18, sy + vy * 18];
+  }
+  const dstr = "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L");
+  let head = "";
+  if (tri) {
+    const nx = -uy, ny = ux;
+    head = '<path class="u-tri" d="M' + f1(bx) + " " + f1(by) + " L" + f1(bx - ux * 12 + nx * 7) + " " + f1(by - uy * 12 + ny * 7) + " L" + f1(bx - ux * 12 - nx * 7) + " " + f1(by - uy * 12 - ny * 7) + ' Z"/>';
+  } else {
+    const c = Math.cos(0.45), s = Math.sin(0.45), len = 11;
+    head = '<path class="u-arr" d="M' + f1(bx - len * (ux * c - uy * s)) + " " + f1(by - len * (uy * c + ux * s)) + " L" + f1(bx) + " " + f1(by) + " L" + f1(bx - len * (ux * c + uy * s)) + " " + f1(by - len * (uy * c - ux * s)) + '"/>';
+  }
+  let lb = "";
+  (r.labels || []).forEach((t) => { lb += '<text class="u-lb" x="' + f1(t.x) + '" y="' + f1(t.y) + '" text-anchor="' + (t.a || "start") + '">' + esc(t.t) + "</text>"; });
+  const label = REL_NAME[r.type] + (r.labels && r.labels.length ? " " + r.labels.map((t) => t.t).join(" ") : "");
+  const inner = '<path class="u-hit" d="' + dstr + '"/><path class="u-rl"' + dash + ' d="' + dstr + '"/>' + dia + head + lb;
+  if (inter && r.k) return '<g class="rel hit" data-k="' + r.k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return '<g class="rel">' + inner + "</g>";
+}
+function umlSvg(spec, inter) {
+  const G = {}; let boxes = "";
+  spec.cls.forEach((c) => { const b = umlBox(c, inter, G); G[c.id] = b; boxes += b.svg; });
+  const A = (id, side, t = 0.5) => { const g = G[id]; if (side === "t") return [g.x + g.w * t, g.y]; if (side === "b") return [g.x + g.w * t, g.y + g.h]; if (side === "l") return [g.x, g.y + g.h * t]; return [g.x + g.w, g.y + g.h * t]; };
+  const RL = spec.rels ? spec.rels(A, G) : []; let rs = ""; RL.forEach((r) => { rs += relSvg(r, inter); });
+  let W = 0, H = 0; Object.values(G).forEach((g) => { W = Math.max(W, g.x + g.w); H = Math.max(H, g.y + g.h); });
+  RL.forEach((r) => { r.pts.forEach((p) => { W = Math.max(W, p[0]); H = Math.max(H, p[1]); }); (r.labels || []).forEach((t) => { W = Math.max(W, t.a === "end" ? t.x : t.x + t.t.length * 6.3); H = Math.max(H, t.y + 4); }); });
+  W = Math.ceil(W + 10); H = Math.ceil(H + 10);
+  return '<svg class="uml" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="--w:' + W + 'px" role="' + (inter ? "group" : "img") + '" aria-label="' + esc(spec.aria || "Diagrama de clases") + '">' + boxes + rs + "</svg>";
+}
+const centerOn = (id) => (G, w) => G[id].x + G[id].w / 2 - w / 2;
+/* Dos cajas en fila con una relación: para el diccionario de flechas. */
+function pairSpec(a, b, type, o) {
+  o = o || {};
+  const gap = type === "inherit" || type === "realize" ? 62 : 96;
+  const wa = Math.ceil(Math.max(96, nameW(a))), wb = Math.ceil(Math.max(96, nameW(b)));
+  return {
+    aria: o.aria,
+    cls: [{ id: "A", name: a, x: 10, y: 14, w: wa }, { id: "B", name: b, x: 10 + wa + gap, y: 14, w: wb, stereo: o.stereo }],
+    rels: (A, G) => {
+      const y = 34, r = { type, pts: [[G.A.x + G.A.w, y], [G.B.x, y]] };
+      if (o.rol) r.labels = [{ x: G.B.x - 14, y: y - 6, t: o.rol, a: "end" }, { x: G.B.x - 14, y: y + 15, t: o.mult, a: "end" }];
+      return [r];
+    }
+  };
+}
+
+
+const MOD = "M7–M8";
+const NEXT_MSG = "Aprobado. Pasas a M9 · Mini-simulacro de 40 minutos.";
+
+/* ---------- Figuras ---------- */
+const FIG = {
+  singleton: {
+    aria: "Diagrama de ConfiguracionRestaurante: atributo estático instancia, constructor privado y método estático getInstancia",
+    cls: [{ id: "ConfiguracionRestaurante", x: 10, y: 10, attrs: [{ t: "- instancia: ConfiguracionRestaurante", s: 1 }, { t: "- costoEnvio: double" }], ops: [{ t: "- ConfiguracionRestaurante()" }, { t: "+ getInstancia(): ConfiguracionRestaurante", s: 1 }, { t: "+ getCostoEnvio(): double" }] }],
+    rels: () => []
+  },
+  strategy: {
+    aria: "Strategy: Pedido conoce una PoliticaEnvio; EnvioNormal, EnvioExpress y RecogerEnTienda implementan la interfaz PoliticaEnvio",
+    cls: [
+      { id: "Pedido", x: 10, y: 10, attrs: [{ t: "- envio: PoliticaEnvio" }], ops: [{ t: "+ calcularTotal(): double" }] },
+      { id: "PoliticaEnvio", x: 250, y: 10, stereo: "interface", ops: [{ t: "+ calcularCosto(subtotal: double): double" }] },
+      { id: "EnvioNormal", x: 190, y: 150, simple: 1 },
+      { id: "EnvioExpress", x: 320, y: 150, simple: 1 },
+      { id: "RecogerEnTienda", x: 460, y: 150, simple: 1 }
+    ],
+    rels: (A, G) => {
+      const P = G.Pedido, I = G.PoliticaEnvio, by = I.y + I.h;
+      return [
+        { type: "assoc", pts: [[P.x + P.w, 40], [I.x, 40]], labels: [{ x: I.x - 12, y: 34, t: "-envio", a: "end" }, { x: I.x - 12, y: 55, t: "1", a: "end" }] },
+        { type: "realize", pts: [[G.EnvioNormal.x + G.EnvioNormal.w / 2, 150], [I.x + 60, by]] },
+        { type: "realize", pts: [[G.EnvioExpress.x + G.EnvioExpress.w / 2, 150], [I.x + I.w / 2, by]] },
+        { type: "realize", pts: [[G.RecogerEnTienda.x + G.RecogerEnTienda.w / 2, 150], [I.x + I.w - 60, by]] }
+      ];
+    }
+  },
+  adapter: {
+    aria: "Adapter: PasarelaXYZAdapter implementa la interfaz MedioPago y conoce una PasarelaXYZ, a la que le traduce las llamadas",
+    cls: [
+      { id: "MedioPago", x: 10, y: 10, stereo: "interface", ops: [{ t: "+ pagar(monto: double): boolean" }] },
+      { id: "PasarelaXYZAdapter", x: 10, y: 140, attrs: [{ t: "- pasarela: PasarelaXYZ" }, { t: "- cuenta: String" }], ops: [{ t: "+ pagar(monto: double): boolean" }] },
+      { id: "PasarelaXYZ", x: 330, y: 140, stereo: "librería", ops: [{ t: "+ realizarCobro(cuenta: String, centavos: long): int" }] }
+    ],
+    rels: (A, G) => {
+      const M = G.MedioPago, D = G.PasarelaXYZAdapter, X = G.PasarelaXYZ;
+      return [
+        { type: "realize", pts: [[D.x + D.w / 2, D.y], [M.x + M.w / 2, M.y + M.h]] },
+        { type: "assoc", pts: [[D.x + D.w, 176], [X.x, 176]], labels: [{ x: X.x - 12, y: 170, t: "-pasarela", a: "end" }, { x: X.x - 12, y: 191, t: "1", a: "end" }] }
+      ];
+    }
+  },
+  facade: {
+    aria: "Facade: ConsolaPedidos usa solo FachadaPedidos, que conoce Inventario, Caja, Cocina y Despacho",
+    cls: [
+      { id: "ConsolaPedidos", x: 10, y: 10, simple: 1 },
+      { id: "FachadaPedidos", x: 200, y: 10, ops: [{ t: "+ hacerPedido(pedido: int, monto: double)" }] },
+      { id: "Inventario", x: 10, y: 140, simple: 1 },
+      { id: "Caja", x: 160, y: 140, simple: 1 },
+      { id: "Cocina", x: 290, y: 140, simple: 1 },
+      { id: "Despacho", x: 420, y: 140, simple: 1 }
+    ],
+    rels: (A, G) => {
+      const C = G.ConsolaPedidos, F = G.FachadaPedidos, fy = F.y + F.h;
+      const sub = ["Inventario", "Caja", "Cocina", "Despacho"];
+      return [{ type: "assoc", pts: [[C.x + C.w, 22], [F.x, 22]] }].concat(sub.map((k, i) => ({ type: "assoc", pts: [[F.x + 40 + i * 60, fy], [G[k].x + G[k].w / 2, 140]] })));
+    }
+  }
+};
+
+/* ---------- Código ---------- */
+const CODE = {
+  "e1": { d: 1, s: `
+  public class Pedido {
+      public double calcularTotal() { ... }
+
+-     public void imprimirFactura() {
+-         System.out.println("Pedido " + numero);
+-         System.out.println("Total: " + calcularTotal());
+-     }
+-
+-     public void guardarEnArchivo(String ruta) throws IOException {
+-         FileWriter w = new FileWriter(ruta);
+-         w.write("Pedido " + numero + ";" + calcularTotal());
+-         w.close();
+-     }
+  }
+
++ public class FacturaConsola {
++     public void mostrar(Pedido p) {
++         System.out.println("Pedido " + p.getNumero());
++         System.out.println("Total: " + p.calcularTotal());
++     }
++ }
++
++ public class ArchivoPedidos {
++     public void guardar(Pedido p, String ruta) throws IOException { ... }
++ }` },
+  "e2-antes": { s: `
+public class Pedido {
+    private ArrayList<LineaPedido> lineas;
+    private String tipoEnvio;   // "normal", "express" o "recoger"
+
+    public double calcularTotal() {
+        double subtotal = 0;
+        for (LineaPedido l : lineas) {
+            subtotal += l.calcularSubtotal();
+        }
+        if (tipoEnvio.equals("normal")) {
+            if (subtotal < 40000) {
+                subtotal += 5000;
+            }
+        } else if (tipoEnvio.equals("express")) {
+            subtotal += 9000;
+        }
+        return subtotal;
+    }
+}` },
+  "e2-pol": { d: 1, s: `
++ public interface PoliticaEnvio {
++     double calcularCosto(double subtotal);
++ }
++
++ public class EnvioNormal implements PoliticaEnvio {
++     @Override
++     public double calcularCosto(double subtotal) {
++         if (subtotal < 40000) {
++             return 5000;
++         }
++         return 0;
++     }
++ }
++
++ public class EnvioExpress implements PoliticaEnvio {
++     @Override
++     public double calcularCosto(double subtotal) {
++         return 9000;
++     }
++ }
++
++ public class RecogerEnTienda implements PoliticaEnvio {
++     @Override
++     public double calcularCosto(double subtotal) {
++         return 0;
++     }
++ }` },
+  "e2-ped": { d: 1, s: `
+  public class Pedido {
+      private ArrayList<LineaPedido> lineas;
+-     private String tipoEnvio;
++     private PoliticaEnvio envio;
+
+-     public Pedido(String tipoEnvio) {
++     public Pedido(PoliticaEnvio envio) {
+          this.lineas = new ArrayList<>();
+-         this.tipoEnvio = tipoEnvio;
++         this.envio = envio;
+      }
+
+      public double calcularTotal() {
+          double subtotal = 0;
+          for (LineaPedido l : lineas) {
+              subtotal += l.calcularSubtotal();
+          }
+-         if (tipoEnvio.equals("normal")) {
+-             if (subtotal < 40000) {
+-                 subtotal += 5000;
+-             }
+-         } else if (tipoEnvio.equals("express")) {
+-             subtotal += 9000;
+-         }
+-         return subtotal;
++         return subtotal + envio.calcularCosto(subtotal);
+      }
+  }` },
+  "e3": { s: `
+public class PedidoCerrado extends Pedido {
+    @Override
+    public void agregarProducto(Producto producto, int cantidad) {
+        throw new UnsupportedOperationException("El pedido ya está cerrado");
+    }
+}
+
+// En otra clase, un método escrito para cualquier Pedido:
+public static void agregarPostreDeCortesia(Pedido p) {
+    p.agregarProducto(new Producto("Postre", 0), 1);
+}
+
+agregarPostreDeCortesia(new Pedido());         // bien
+agregarPostreDeCortesia(new PedidoCerrado());  // ¿?` },
+  "e4-antes": { s: `
+public interface Empleado {
+    void cocinar(String pedido);
+    void entregar(String pedido);
+    void cobrar(String pedido);
+}
+
+public class Domiciliario implements Empleado {
+    @Override
+    public void cocinar(String pedido) {
+        throw new UnsupportedOperationException("Un domiciliario no cocina");
+    }
+    // entregar y cobrar sí hacen algo
+}` },
+  "e4-desp": { d: 1, s: `
+- public interface Empleado {
+-     void cocinar(String pedido);
+-     void entregar(String pedido);
+-     void cobrar(String pedido);
+- }
++ public interface Cocinero {
++     void cocinar(String pedido);
++ }
++ public interface Repartidor {
++     void entregar(String pedido);
++ }
++ public interface Cajero {
++     void cobrar(String pedido);
++ }
+
+- public class Domiciliario implements Empleado {
++ public class Domiciliario implements Repartidor, Cajero {
+-     public void cocinar(String pedido) {
+-         throw new UnsupportedOperationException("Un domiciliario no cocina");
+-     }
+      // entregar y cobrar, iguales
+  }` },
+  "e5": { d: 1, s: `
++ public interface Notificador {
++     void notificar(String mensaje);
++ }
+
+- public class NotificadorWhatsApp {
++ public class NotificadorWhatsApp implements Notificador {
+      ...
+  }
+
+  public class Restaurante {
+-     private NotificadorWhatsApp notificador = new NotificadorWhatsApp();
++     private Notificador notificador;
++
++     public Restaurante(Notificador notificador) {
++         this.notificador = notificador;
++     }
+
+      public void confirmar(int numeroPedido) {
+-         notificador.enviarWhatsApp("Pedido " + numeroPedido + " confirmado");
++         notificador.notificar("Pedido " + numeroPedido + " confirmado");
+      }
+  }` },
+  "e5-test": { s: `
+public class NotificadorFalso implements Notificador {
+    private String ultimo;
+
+    @Override
+    public void notificar(String mensaje) {
+        ultimo = mensaje;
+    }
+
+    public String getUltimo() {
+        return ultimo;
+    }
+}
+
+@Test
+public void confirmarAvisaAlCliente() {
+    NotificadorFalso falso = new NotificadorFalso();
+    Restaurante r = new Restaurante(falso);
+    r.confirmar(7);
+    assertEquals("Pedido 7 confirmado", falso.getUltimo());
+}` },
+  "e6": { s: `
+public class ConfiguracionRestaurante {
+    private static ConfiguracionRestaurante instancia;
+
+    private double costoEnvio;
+
+    private ConfiguracionRestaurante() {
+        this.costoEnvio = 5000;
+    }
+
+    public static ConfiguracionRestaurante getInstancia() {
+        if (instancia == null) {
+            instancia = new ConfiguracionRestaurante();
+        }
+        return instancia;
+    }
+
+    public double getCostoEnvio() {
+        return costoEnvio;
+    }
+}
+
+// Desde cualquier clase:
+double envio = ConfiguracionRestaurante.getInstancia().getCostoEnvio();` },
+  "e8-dado": { s: `
+// Tu sistema ya usa esta interfaz:
+public interface MedioPago {
+    boolean pagar(double monto);
+}
+
+// La librería que compraron (no la puedes cambiar):
+public class PasarelaXYZ {
+    // Retorna 200 si el cobro se aprobó.
+    public int realizarCobro(String cuenta, long centavos) { ... }
+}` },
+  "e8-adapter": { s: `
+public class PasarelaXYZAdapter implements MedioPago {
+    private PasarelaXYZ pasarela;
+    private String cuenta;
+
+    public PasarelaXYZAdapter(PasarelaXYZ pasarela, String cuenta) {
+        this.pasarela = pasarela;
+        this.cuenta = cuenta;
+    }
+
+    @Override
+    public boolean pagar(double monto) {
+        long centavos = Math.round(monto * 100);
+        int codigo = pasarela.realizarCobro(cuenta, centavos);
+        return codigo == 200;
+    }
+}` },
+  "e9": { s: `
+public class FachadaPedidos {
+    private Inventario inventario = new Inventario();
+    private Caja caja = new Caja();
+    private Cocina cocina = new Cocina();
+    private Despacho despacho = new Despacho();
+
+    public void hacerPedido(int pedido, double monto) {
+        inventario.reservar(pedido);
+        caja.cobrar(pedido, monto);
+        cocina.preparar(pedido);
+        despacho.programar(pedido);
+    }
+}
+
+// La consola solo hace esto:
+fachada.hacerPedido(7, 41000.0);` },
+  "e10": { s: `
+import java.awt.FlowLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class VentanaPedido extends JFrame {
+    public VentanaPedido(Pedido pedido) {
+        super("La Parrilla");
+        JButton boton = new JButton("Ver total");
+        JLabel etiqueta = new JLabel("Total: ?");
+
+        // El listener: Swing lo ejecuta en cada clic.
+        boton.addActionListener(e -> etiqueta.setText("Total: " + pedido.calcularTotal()));
+
+        setLayout(new FlowLayout());
+        add(boton);
+        add(etiqueta);
+        setSize(300, 120);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+}` },
+  "tpl-1": { s: `
+public class Unica {
+    private static Unica instancia;        // 1. static
+
+    private Unica() { }                    // 2. private
+
+    public static Unica getInstancia() {   // 3. static
+        if (instancia == null) {
+            instancia = new Unica();
+        }
+        return instancia;
+    }
+}` },
+  "tpl-2": { s: `
+// Strategy: lo que cambia va en una interfaz
+public interface Estrategia {
+    double calcular(double x);
+}
+public class Contexto {
+    private Estrategia estrategia;         // por el constructor
+    public double hacer(double x) {
+        return estrategia.calcular(x);
+    }
+}
+
+// Adapter: implementa TU interfaz, llama a la AJENA
+public class AjenaAdapter implements MiInterfaz {
+    private Ajena ajena;
+    @Override
+    public boolean miMetodo(double monto) {
+        return ajena.otroMetodo(...);      // traduce
+    }
+}` }
+};
+const RAW = {
+  liskov: "Pedido normal: bien\nException in thread \"main\" java.lang.UnsupportedOperationException: El pedido ya está cerrado\n\tat PedidoCerrado.agregarProducto(PedidoCerrado.java:4)\n\tat Main.agregarPostreDeCortesia(Main.java:4)\n\tat Main.main(Main.java:10)",
+  singleton: "Main.java:3: error: ConfiguracionRestaurante() has private access in ConfiguracionRestaurante\n        ConfiguracionRestaurante c = new ConfiguracionRestaurante();\n                                     ^\n(«el constructor es privado en ConfiguracionRestaurante»)"
+};
+
+/* ---------- Lab ---------- */
+const PRINC = ["S · Responsabilidad única", "O · Abierto/cerrado", "L · Sustitución de Liskov", "I · Segregación de interfaces", "D · Inversión de dependencias", "Ninguno: está bien"];
+const LAB_A = [
+  { c: `
+public class Socio {
+    public double calcularCuota() { ... }
+    public void enviarCorreoBienvenida() {
+        // se conecta al servidor de correo y envía
+    }
+    public void generarCarnetPDF(String ruta) { ... }
+}`, a: PRINC[0], e: "Tres razones para cambiar: la regla de la cuota, el servidor de correo y el formato del carné. El correo y el PDF van en sus propias clases." },
+  { c: `
+public double calcularCuota(Socio s) {
+    if (s.getTipo().equals("estudiante")) {
+        return 50000;
+    } else if (s.getTipo().equals("adulto")) {
+        return 120000;
+    } else if (s.getTipo().equals("pensionado")) {
+        return 70000;
+    }
+    return 0;
+}`, a: PRINC[1], e: "Cada tipo de socio nuevo obliga a modificar este método. El arreglo es una interfaz de cuota con una clase por tipo (Strategy)." },
+  { c: `
+public class SocioInvitado extends Socio {
+    @Override
+    public void inscribirEnClase(Clase c) {
+        throw new UnsupportedOperationException("Los invitados no se inscriben");
+    }
+}`, a: PRINC[2], e: "Un código escrito para Socio que inscribe en una clase revienta con un SocioInvitado. La hija no cumple lo que promete el padre." },
+  { c: `
+public interface Instalacion {
+    void reservar();
+    void iluminar();
+    void calentarAgua();
+}
+
+public class CanchaTenis implements Instalacion {
+    public void calentarAgua() { }   // una cancha no tiene agua
+    ...
+}`, a: PRINC[3], e: "CanchaTenis está obligada a implementar `calentarAgua`, que no usa. Se parte en interfaces pequeñas (Reservable, Iluminable, Climatizable)." },
+  { c: `
+public class Club {
+    private CorreoGmail correo = new CorreoGmail();
+
+    public void avisarTorneo(String mensaje) {
+        correo.enviarGmail(mensaje);
+    }
+}`, a: PRINC[4], e: "Club depende de una clase concreta que crea él mismo. Debe depender de una interfaz (por ejemplo, Notificador) que reciba por el constructor." },
+  { c: `
+public class Inscripcion {
+    private Socio socio;
+    private Clase clase;
+
+    public double calcularValor() {
+        return clase.getPrecio() - socio.calcularDescuento();
+    }
+}`, a: PRINC[5], e: "Hace una sola cosa, depende de clases del modelo (no de detalles como correo o archivos) y le pide a cada una lo que sabe. No hace falta cambiarla." }
+];
+const PATS = ["Singleton", "Strategy", "Adapter", "Facade", "Ninguno"];
+const LAB_B = [
+  { r: "Toda la aplicación del club debe usar el mismo registro de auditoría, y nadie debe poder crear otro.", a: "Singleton", e: "Un solo objeto, al que todos llegan por el mismo método." },
+  { r: "La cuota cambia según el plan: mensual, trimestral con 5 % de descuento o anual con 15 %. Quieren poder agregar planes sin tocar Socio.", a: "Strategy", e: "Varias formas de calcular lo mismo, intercambiables: una interfaz de plan con una clase por plan." },
+  { r: "Compraron una librería de torniquetes con el método `abrirPuerta(int codigoTarjeta)`, pero el club usa la interfaz `ControlAcceso` con `permitirEntrada(Socio s)`.", a: "Adapter", e: "Una clase ajena con otra interfaz, que no se puede cambiar: el adaptador implementa ControlAcceso y llama a `abrirPuerta`." },
+  { r: "Para inscribir a un socio, la pantalla llama en orden a validar documento, crear el socio, cobrar la matrícula, generar el carné y enviar la bienvenida.", a: "Facade", e: "Muchos pasos sobre muchas clases: una fachada con `inscribirSocio(...)` que los hace en orden." },
+  { r: "Clase `Sede` con nombre y dirección, y sus getters.", a: "Ninguno", e: "No hay ningún problema que resolver: es un contenedor de información. Meter un patrón aquí solo complica." },
+  { r: "El club cambia de proveedor de pagos y el nuevo tiene `charge(String token, int cents)`; el sistema usa `MedioPago.pagar(double monto)`.", a: "Adapter", e: "Otra vez una interfaz ajena que no coincide con la tuya." }
+];
+const LIBFW = ["Librería", "Framework"];
+const LAB_C = [
+  { r: "`java.util.ArrayList`: tú creas la lista y llamas `add` y `get` cuando quieres.", a: "Librería", e: "Tú la llamas." },
+  { r: "JUnit: escribes métodos con `@Test` y nunca los llamas tú.", a: "Framework", e: "JUnit busca tus métodos y los corre: él te llama a ti." },
+  { r: "Swing: escribes un listener y lo registras con `addActionListener`.", a: "Framework", e: "Swing ejecuta tu listener cuando hay un clic: inversión de control." },
+  { r: "`Math.round(x)`: lo llamas para redondear.", a: "Librería", e: "Es una llamada tuya, cuando la necesitas." },
+  { r: "Una librería de JSON: llamas `convertidor.aJson(socio)` para obtener el texto.", a: "Librería", e: "Tú decides cuándo llamarla y con qué." }
+];
+function buildAssign(boxId, items, options, key) {
+  const box = $("#" + boxId); box.textContent = "";
+  items.forEach((it, i) => {
+    const row = el("div", "arow");
+    if (it.c) { const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(it.c, false); row.appendChild(pre); }
+    const lab = el("label"); if (it.r) rich(lab, it.r); else lab.textContent = "Fragmento " + (i + 1) + ": ¿qué principio viola?";
+    lab.htmlFor = key + "-" + i; row.appendChild(lab);
+    const sel = el("select"); sel.id = key + "-" + i;
+    const o0 = el("option", "", "Escoge…"); o0.value = ""; sel.appendChild(o0);
+    options.forEach((o) => { const op = el("option", "", o); op.value = o; sel.appendChild(op); });
+    row.appendChild(sel);
+    const why = el("p", "why"); why.hidden = true; row.appendChild(why);
+    box.appendChild(row);
+  });
+}
+function checkAssign(items, key, msgId) {
+  const sels = items.map((_, i) => $("#" + key + "-" + i));
+  const missing = sels.filter((s) => !s.value).length;
+  if (missing) { $("#" + msgId).textContent = missing === 1 ? "Te falta 1 por escoger." : "Te faltan " + missing + " por escoger."; return; }
+  let ok = 0;
+  items.forEach((it, i) => {
+    const s = sels[i], good = s.value === it.a, why = s.parentElement.querySelector(".why");
+    s.classList.remove("right", "wrong"); s.classList.add(good ? "right" : "wrong"); if (good) ok++;
+    why.hidden = false; why.className = "why " + (good ? "ok" : "no"); why.textContent = "";
+    rich(why, (good ? "✓ " : "✗ Es " + it.a + ". ") + it.e);
+  });
+  $("#" + msgId).textContent = "Acertaste " + ok + " de " + items.length + ".";
+}
+[["lab-a", LAB_A, PRINC, "la"], ["lab-b", LAB_B, PATS, "lb"], ["lab-c", LAB_C, LIBFW, "lc"]].forEach(([id, items, opts, key]) => {
+  buildAssign(id, items, opts, key);
+  $("#" + id + "-check").addEventListener("click", () => checkAssign(items, key, id + "-msg"));
+  $("#" + id + "-reset").addEventListener("click", () => { buildAssign(id, items, opts, key); $("#" + id + "-msg").textContent = ""; });
+});
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "De if por tipo a Strategy", min: 20, src: "En el IDE · caso del módulo",
+    txt: ["Toma el Pedido con `tipoEnvio` de la idea 2 y pásalo a Strategy sin mirar la solución: la interfaz `PoliticaEnvio`, las tres clases y Pedido recibiendo la política por el constructor. Después escribe la prueba de JUnit de cada tipo de envío (M6) y córrelas. Con 2 hamburguesas de 18000, normal da 41000.0 y recoger 36000.0; con 3 y express, 63000.0."],
+    checks: [{ q: "¿Qué recibe ahora el constructor de Pedido?", o: ["Un `String` con el tipo", "Una `PoliticaEnvio`", "Un `EnvioNormal` siempre", "Nada: Pedido crea la política adentro"], a: 1 }],
+    hints: ["Lo que cambia entre tipos es el costo del envío: eso va en la interfaz, con el subtotal como parámetro.", "Que Pedido cree la política adentro con `new` sería volver a violar la D: recíbela por el constructor."],
+    sol: [{ p: "La interfaz, las clases y Pedido son los de la idea 2. Las pruebas:", c: `
+@Test
+public void envioNormalBajoElMinimo() {
+    Pedido p = new Pedido(new EnvioNormal());
+    p.agregarProducto(hamburguesa, 2);
+    assertEquals(41000.0, p.calcularTotal(), 0.01);
+}
+
+@Test
+public void envioExpressSiemprePaga() {
+    Pedido p = new Pedido(new EnvioExpress());
+    p.agregarProducto(hamburguesa, 3);
+    assertEquals(63000.0, p.calcularTotal(), 0.01);
+}
+
+@Test
+public void recogerEnTiendaNoPaga() {
+    Pedido p = new Pedido(new RecogerEnTienda());
+    p.agregarProducto(hamburguesa, 2);
+    assertEquals(36000.0, p.calcularTotal(), 0.01);
+}` }, { p: "Corrida: las 3 en verde." }],
+    rub: ["La interfaz tiene un solo método con el subtotal como parámetro.", "Una clase por tipo, con `implements` y `@Override`.", "Pedido guarda una `PoliticaEnvio` que llega por el constructor; ya no hay `if` por tipo.", "Las tres pruebas en verde con los valores del enunciado."] },
+  { n: "T2", t: "Un Singleton con su prueba", min: 10, src: "En el IDE · caso del módulo",
+    txt: ["Escribe `ConfiguracionRestaurante` como Singleton, con el costo de envío (5000) y su getter. Escribe una prueba que verifique que dos llamadas a `getInstancia()` dan el mismo objeto. Para eso existe `assertSame(a, b)`, que pasa si `a` y `b` son el mismo objeto (no solo iguales)."],
+    checks: [{ q: "¿Qué pasa si el constructor queda `public`?", o: ["No compila", "Compila, pero cualquiera puede crear otra configuración y deja de ser Singleton", "`getInstancia()` lanza una excepción", "Nada: da lo mismo"], a: 1 }],
+    hints: ["Son tres piezas: atributo `private static`, constructor `private` y método `public static`."],
+    sol: [{ p: "La clase es la de la idea 6. La prueba:", c: `
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.junit.jupiter.api.Test;
+
+public class ConfiguracionTest {
+    @Test
+    public void siempreEsLaMismaInstancia() {
+        assertSame(ConfiguracionRestaurante.getInstancia(), ConfiguracionRestaurante.getInstancia());
+    }
+}` }, { p: "Corrida: en verde. Y si desde otra clase escribes `new ConfiguracionRestaurante()`, no compila: «has private access»." }],
+    rub: ["Atributo `private static`, constructor `private`, método `public static`.", "`getInstancia()` crea el objeto solo la primera vez.", "La prueba usa `assertSame`."] },
+  { n: "T3", t: "Un Adapter para el club", min: 15, src: "En el IDE · caso nuevo",
+    txt: ["El club usa la interfaz `ControlAcceso` y compró la librería de torniquetes `TorniqueteABC`, que no se puede modificar. Escribe `TorniqueteAdapter` para que el club la use sin enterarse. Pruébalo en un `main`: un socio con código 4521 debe hacer que se imprima «ABC abre la puerta para la tarjeta 4521» y que el método retorne `true`."],
+    code: `
+public interface ControlAcceso {
+    boolean permitirEntrada(Socio s);
+}
+
+// Librería: no se puede cambiar.
+public class TorniqueteABC {
+    // Retorna "OK" si abrió.
+    public String abrirPuerta(int codigoTarjeta) {
+        System.out.println("ABC abre la puerta para la tarjeta " + codigoTarjeta);
+        return "OK";
+    }
+}
+
+// Socio tiene: public int getCodigoTarjeta()`,
+    checks: [{ q: "¿Qué escribe la primera línea del adaptador?", o: ["`public class TorniqueteAdapter extends TorniqueteABC`", "`public class TorniqueteAdapter implements ControlAcceso`", "`public interface TorniqueteAdapter`", "`public class TorniqueteABC implements ControlAcceso`"], a: 1 }],
+    hints: ["El adaptador implementa la interfaz del club y tiene un atributo de tipo `TorniqueteABC`.", "La traducción: del socio sacas el código de la tarjeta; del `\"OK\"` sacas un `boolean` con `equals`."],
+    sol: [{ p: "Una solución:", c: `
+public class TorniqueteAdapter implements ControlAcceso {
+    private TorniqueteABC torniquete;
+
+    public TorniqueteAdapter(TorniqueteABC torniquete) {
+        this.torniquete = torniquete;
+    }
+
+    @Override
+    public boolean permitirEntrada(Socio s) {
+        String respuesta = torniquete.abrirPuerta(s.getCodigoTarjeta());
+        return respuesta.equals("OK");
+    }
+}` }],
+    rub: ["`implements ControlAcceso` (no `extends` de la librería).", "Atributo con el torniquete, que llega por el constructor.", "Traduce los dos lados: socio → código y \"OK\" → `boolean`, con `equals` y no `==`.", "La librería no se modificó."] },
+  { n: "T4", t: "Diagnóstico en papel", min: 10, src: "En papel · caso nuevo",
+    txt: ["Esta clase tiene dos problemas de principios. Di cuáles son, por qué, y escribe cómo quedaría (los nombres de las clases nuevas y sus métodos; no hace falta el código completo)."],
+    code: `
+public class ClubSeneca {
+    private ArrayList<Socio> socios;
+    private CorreoGmail correo = new CorreoGmail();
+
+    public void inscribir(Socio s) {
+        socios.add(s);
+        correo.enviarGmail(s.getCorreo(), "Bienvenido al club");
+    }
+
+    public void imprimirListado() {
+        for (Socio s : socios) {
+            System.out.println(s.getNombre() + " - " + s.getTipo());
+        }
+    }
+}`,
+    checks: [{ q: "¿Qué principio viola `private CorreoGmail correo = new CorreoGmail();`?", o: ["S", "O", "L", "D"], a: 3 }],
+    hints: ["Uno de los problemas es una dependencia de una clase concreta; el otro, una responsabilidad que es de la interfaz con el usuario."],
+    sol: [{ p: "**D:** ClubSeneca depende de CorreoGmail, que crea él mismo. Arreglo: una interfaz `Notificador` con `notificar(String destino, String mensaje)`, `CorreoGmail implements Notificador`, y el club la recibe por el constructor. **S:** `imprimirListado` es trabajo de la interfaz (consola), no del modelo. Arreglo: el club retorna la lista o un texto, y una clase `ConsolaClub` la imprime." }],
+    rub: ["Encontró la D y propuso una interfaz recibida por el constructor.", "Encontró la S (el modelo imprime) y movió la impresión a la interfaz.", "Explicó el porqué con el cambio que lo rompería (otro servicio de correo, otro formato)."] }
+];
+
+/* ---------- Quiz ---------- */
+const QUIZ = {
+  A: [
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public double calcularDescuento(Pedido p) {
+    if (p.getDia().equals("martes")) {
+        return p.calcularTotal() * 0.5;
+    } else if (p.getDia().equals("sabado")) {
+        return p.calcularTotal() * 0.1;
+    }
+    return 0;
+}`, q: "El restaurante va a agregar un descuento nuevo cada mes. ¿Qué principio viola este método, y cómo se arregla?",
+      o: ["Responsabilidad única: hay que partir el método en dos", "Abierto/cerrado: cada descuento nuevo modifica el método; se arregla con una interfaz de descuento y una clase por descuento", "Sustitución de Liskov: el martes no puede sustituir al sábado", "Inversión de dependencias: hay que usar un Singleton"], a: 1,
+      oe: ["El método hace una sola cosa: calcular el descuento. El problema no es cuántas cosas hace, sino que crece con cada caso.",
+        "Cada descuento nuevo es un `else if` más en el mismo método. Con Strategy, un descuento nuevo es una clase nueva y este código no se toca.",
+        "Liskov es sobre herencia: una hija que no cumple lo que promete el padre. Aquí no hay herencia.",
+        "No hay ninguna dependencia de una clase concreta, y un Singleton no arregla el `if`."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class Domiciliario {
+    public void asignar(Pedido p) { ... }
+}
+
+public class DomiciliarioEnPrueba extends Domiciliario {
+    @Override
+    public void asignar(Pedido p) {
+        throw new UnsupportedOperationException("Aún no puede recibir pedidos");
+    }
+}`, q: "Restaurante recorre su lista de `Domiciliario` y le asigna pedidos al primero disponible. ¿Qué principio viola `DomiciliarioEnPrueba`?",
+      o: ["Segregación de interfaces", "Inversión de dependencias", "Sustitución de Liskov", "Ninguno: compila, así que está bien"], a: 2,
+      oe: ["No hay ninguna interfaz grande que obligue a implementar métodos de más.",
+        "El problema no es de qué depende Restaurante.",
+        "Restaurante está escrito para `Domiciliario`, y con un `DomiciliarioEnPrueba` revienta: la hija no cumple lo que promete el padre.",
+        "Compilar no garantiza que la herencia esté bien: el error sale al correr."] },
+    { t: "mc", k: "Selección múltiple con caso", q: "El sistema de La Parrilla calcula distancias con la interfaz `CalculadoraDistancia` (`double km(String origen, String destino)`). Compraron una librería de mapas que no pueden modificar, con el método `long distanciaEnMetros(double lat1, double lon1, double lat2, double lon2)`. ¿Qué patrón usas?",
+      o: ["Facade", "Adapter", "Singleton", "Strategy"], a: 1,
+      oe: ["Facade simplifica varias clases con muchos pasos. Aquí es una sola clase con otra interfaz.",
+        "Una clase ajena, que no se puede cambiar, con una interfaz distinta de la tuya: un adaptador que implementa `CalculadoraDistancia` y por dentro llama a `distanciaEnMetros`, convirtiendo metros a km.",
+        "Singleton asegura un solo objeto; no traduce interfaces.",
+        "Strategy sirve para escoger entre varias formas de hacer algo. Aquí el problema es que la interfaz no encaja."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa el Singleton.",
+      tpl: `public class ConfiguracionRestaurante {
+    private ___ ConfiguracionRestaurante instancia;
+
+    ___ ConfiguracionRestaurante() {
+        this.costoEnvio = 5000;
+    }
+
+    public static ConfiguracionRestaurante getInstancia() {
+        if (instancia == null) {
+            instancia = new ConfiguracionRestaurante();
+        }
+        return instancia;
+    }
+}`,
+      blanks: [{ o: ["static", "final", "public", "abstract"], a: 0 }, { o: ["public", "private", "static", "protected"], a: 1 }],
+      e: "La instancia es `static` porque es de la clase: la usa el método estático `getInstancia()`. Y el constructor es `private` para que nadie fuera de la clase pueda hacer `new`." },
+    { t: "write", k: "Código corto · escribir", q: "Escribe la primera línea (con la llave) de la clase `EnvioProgramado`, una estrategia nueva para la interfaz `PoliticaEnvio`.",
+      rx: /^publicclassEnvioProgramadoimplementsPoliticaEnvio\{?$/, model: "public class EnvioProgramado implements PoliticaEnvio {",
+      e: "Una estrategia concreta implementa la interfaz de la estrategia: `implements`, no `extends` (`PoliticaEnvio` es una interfaz). Pedido no se toca: eso es abierto/cerrado." }
+  ],
+  B: [
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class Pedido {
+    public double calcularTotal() { ... }
+    public void imprimirFactura() {
+        System.out.println("Total: " + calcularTotal());
+    }
+    public void guardarEnArchivo(String ruta) throws IOException { ... }
+}`, q: "¿Qué principio viola Pedido, y por qué?",
+      o: ["Responsabilidad única: cambia por la regla del total, por el formato de la factura y por cómo se guarda", "Abierto/cerrado: tiene demasiados métodos", "Segregación de interfaces: no implementa ninguna", "Ninguno: todos los métodos son sobre el pedido"], a: 0,
+      oe: ["Tres razones para cambiar, tres responsabilidades. Imprimir es de la interfaz y guardar es de otra clase.",
+        "Abierto/cerrado no es sobre cuántos métodos hay, sino sobre tener que modificar código para agregar casos.",
+        "Segregación es sobre interfaces grandes que obligan a implementar de más.",
+        "Todos usan el pedido, pero imprimir y guardar son trabajos distintos que cambian por razones distintas."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+public class Restaurante {
+    private NotificadorWhatsApp notificador = new NotificadorWhatsApp();
+    ...
+}`, q: "Quieren poder avisar por correo o por WhatsApp, y probar Restaurante con JUnit sin mandar mensajes. ¿Qué cambio aplica la inversión de dependencias?",
+      o: ["Crear una interfaz `Notificador`, que el atributo sea de ese tipo y que llegue por el constructor", "Volver `NotificadorWhatsApp` un Singleton", "Hacer que Restaurante herede de `NotificadorWhatsApp`", "Copiar el código de WhatsApp dentro de Restaurante"], a: 0,
+      oe: ["Restaurante y WhatsApp dependen ahora de la interfaz. Se puede pasar WhatsApp, correo o un notificador falso en las pruebas.",
+        "Seguiría pegado a la clase concreta, ahora además con un objeto único.",
+        "Más acoplado todavía, y un restaurante no es un notificador.",
+        "Sube el acoplamiento y baja la cohesión: lo contrario."] },
+    { t: "mc", k: "Selección múltiple con caso", q: "En Swing escribes `boton.addActionListener(e -> etiqueta.setText(\"Hola\"));` y nunca llamas tú a ese código. ¿Qué es Swing y por qué?",
+      o: ["Una librería, porque la importas con `import`", "Un framework, porque él llama tu código cuando pasa el evento (inversión de control)", "Una API remota", "Un patrón de diseño"], a: 1,
+      oe: ["Las librerías y los frameworks se importan igual. La diferencia es quién llama a quién.",
+        "Tú registras el listener y Swing decide cuándo ejecutarlo: el framework te llama a ti.",
+        "Swing corre en tu programa, no es un servicio remoto.",
+        "Swing usa patrones por dentro, pero es un framework de interfaces gráficas."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa el adaptador de la pasarela de pagos.",
+      tpl: `public class PasarelaXYZAdapter ___ MedioPago {
+    private PasarelaXYZ pasarela;
+    private String cuenta;
+
+    @Override
+    public boolean pagar(double monto) {
+        long centavos = Math.round(monto * 100);
+        int codigo = pasarela.___(cuenta, centavos);
+        return codigo == 200;
+    }
+}`,
+      blanks: [{ o: ["implements", "extends", "uses", "adapts"], a: 0 }, { o: ["pagar", "realizarCobro", "cobrar", "getInstancia"], a: 1 }],
+      e: "El adaptador implementa tu interfaz (`MedioPago` es interfaz: `implements`) y por dentro llama al método de la librería, `realizarCobro`. Si llamara `pagar`, se llamaría a sí mismo." },
+    { t: "write", k: "Código corto · escribir", q: "Escribe la firma del método que entrega la única instancia de `ConfiguracionRestaurante` (sin la llave).",
+      rx: /^publicstaticConfiguracionRestaurante(get|dar|obtener)[A-Z]\w*\(\)\{?$/, model: "public static ConfiguracionRestaurante getInstancia()",
+      e: "Es `public` (todos llegan por ahí), `static` (se llama sin tener un objeto: `ConfiguracionRestaurante.getInstancia()`) y retorna la clase misma. Valen otros nombres como `darInstancia()`." }
+  ]
+};
+
+/* ---------- Render ---------- */
+document.querySelectorAll("[data-fig]").forEach((d) => { d.innerHTML = umlSvg(FIG[d.dataset.fig], false); });
+document.querySelectorAll("pre[data-code]").forEach((p) => { const c = CODE[p.dataset.code]; p.innerHTML = codeHTML(c.s, !!c.d); });
+document.querySelectorAll("pre[data-raw]").forEach((p) => { p.textContent = RAW[p.dataset.raw]; });
+/* ---------- Taller ---------- */
+function fmtT(s) { return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function timerEl(min, id) {
+  const w = el("div", "timer"), t = el("span", "mono tval", fmtT(min * 60)), b = el("button", "btn small", "Iniciar");
+  b.type = "button"; b.id = id; t.setAttribute("role", "timer");
+  let left = min * 60, iv = null;
+  b.addEventListener("click", () => {
+    if (w.classList.contains("over")) { w.classList.remove("over"); left = min * 60; t.textContent = fmtT(left); b.textContent = "Iniciar"; return; }
+    if (iv) { clearInterval(iv); iv = null; w.classList.remove("run"); b.textContent = "Seguir"; return; }
+    w.classList.add("run"); b.textContent = "Pausar";
+    iv = setInterval(() => {
+      left--; t.textContent = fmtT(Math.max(left, 0));
+      if (left <= 0) { clearInterval(iv); iv = null; w.classList.remove("run"); w.classList.add("over"); t.textContent = "Tiempo"; b.textContent = "Reiniciar"; }
+    }, 1000);
+  });
+  w.appendChild(el("span", "eyebrow", "Meta " + min + " min")); w.appendChild(t); w.appendChild(b);
+  return w;
+}
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(timerEl(p.min, "timer-" + p.n));
+    if (p.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[p.fig], false); a.appendChild(fg); }
+    const tx = el("div", "prob-txt"); p.txt.forEach((t) => tx.appendChild(rich(el("p"), t)));
+    if (p.list) { const ul = el("ul"); p.list.forEach((t) => ul.appendChild(rich(el("li"), t))); tx.appendChild(ul); }
+    a.appendChild(tx); if (p.code) { const pc = el("pre", "code sm"); pc.innerHTML = codeHTML(p.code, false); a.appendChild(pc); }
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", (ck.label || "Chequeo rápido") + " · " + ck.q)); if (ck.code) { const cp = el("pre", "code sm"); cp.innerHTML = codeHTML(ck.code, false); c.appendChild(cp); }
+      const opts = el("div", "opts"), fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.o.forEach((o, oi) => {
+        const b = rich(el("button", "opt"), o); b.type = "button"; b.id = "ck-" + p.n + "-" + ci + "-" + oi;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Compara tu código con la solución."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(rich(el("p"), ht)); d.appendChild(b); rv.appendChild(d); });
+    const dr = el("details", "rev"); dr.appendChild(el("summary", "", p.rubTitle || "Rúbrica tipo profe"));
+    const rb = el("div", "rev-body"); const ul = el("ul", "rub"); p.rub.forEach((r) => ul.appendChild(rich(el("li"), r))); rb.appendChild(ul);
+    if (p.rubNote) rb.appendChild(el("p", "muted", p.rubNote));
+    dr.appendChild(rb); rv.appendChild(dr);
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body");
+    p.sol.forEach((s) => { sb.appendChild(rich(el("p"), s.p)); if (s.fig) { const sf = el("div", "fig"); sf.innerHTML = umlSvg(FIG[s.fig], false); sb.appendChild(sf); } if (s.c) { const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(s.c, false); sb.appendChild(pre); } });
+    ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+
+/* ---------- Quiz ---------- */
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); rich(lt, it.q); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[it.fig], false); fs.appendChild(fg); }
+    if (it.code) { const pre = el("pre", "code"); pre.innerHTML = codeHTML(it.code, false); fs.appendChild(pre); }
+    if (it.t === "mc") {
+      const ops = el("div", "qopts");
+      it.o.forEach((o, oi) => {
+        const lab = el("label", "qopt"), r = el("input"); r.type = "radio"; r.name = key + "-q" + i; r.id = key + "-q" + i + "-o" + oi; r.value = String(oi);
+        lab.appendChild(r); lab.appendChild(rich(el("span", "", String.fromCharCode(65 + oi) + ") "), o)); ops.appendChild(lab);
+      });
+      fs.appendChild(ops);
+    } else if (it.t === "fill") {
+      const pre = el("pre", "code qfill"); let b = 0;
+      it.tpl.split("\n").forEach((line) => {
+        const cl = el("span", "cl"); const segs = line.split("___");
+        segs.forEach((sg, j) => {
+          if (j > 0) {
+            const sel = el("select"); sel.id = key + "-q" + i + "-b" + b; sel.setAttribute("aria-label", "Espacio " + (b + 1));
+            const o0 = el("option", "", "—"); o0.value = ""; sel.appendChild(o0);
+            it.blanks[b].o.forEach((o, oi) => { const op = el("option", "", o); op.value = String(oi); sel.appendChild(op); });
+            cl.appendChild(sel); b++;
+          }
+          if (sg) { const sp = el("span"); sp.innerHTML = hl(sg); cl.appendChild(sp); }
+        });
+        if (!line) cl.appendChild(document.createTextNode(" "));
+        pre.appendChild(cl);
+      });
+      fs.appendChild(pre);
+    } else {
+      const inp = el("input", "qwrite"); inp.type = "text"; inp.id = key + "-q" + i + "-w"; inp.autocomplete = "off"; inp.spellcheck = false;
+      inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off"); inp.setAttribute("aria-label", "Tu respuesta"); inp.placeholder = "Escribe aquí tu línea de Java";
+      fs.appendChild(inp);
+    }
+    const ex = el("div", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+function readAnswer(key, it, i) {
+  if (it.t === "mc") { const c = document.querySelector('input[name="' + key + "-q" + i + '"]:checked'); return c ? Number(c.value) : null; }
+  if (it.t === "fill") { const v = it.blanks.map((_, b) => $("#" + key + "-q" + i + "-b" + b).value); return v.some((x) => x === "") ? null : v.map(Number); }
+  const v = $("#" + key + "-q" + i + "-w").value.trim(); return v ? v : null;
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase()), items = QUIZ[key];
+  const answers = items.map((it, i) => readAnswer(key, it, i));
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : "Te faltan " + missing + " preguntas por responder."; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0; const saved = [];
+  items.forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i], ex = fs.querySelector(".qexp"), ans = answers[i];
+    let ok = false; ex.textContent = "";
+    if (it.t === "mc") {
+      ok = ans === it.a;
+      fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === ans) lab.classList.add("wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + "Por qué cada opción:"));
+      const ul = el("ul");
+      it.oe.forEach((t, oi) => { const li = el("li"); li.appendChild(el("span", "mk " + (oi === it.a ? "y" : "n"), String.fromCharCode(65 + oi) + (oi === it.a ? " ✓" : " ✗"))); li.appendChild(rich(el("span"), t)); ul.appendChild(li); });
+      ex.appendChild(ul);
+      saved.push(String.fromCharCode(65 + ans));
+    } else if (it.t === "fill") {
+      ok = it.blanks.every((bl, b) => ans[b] === bl.a);
+      it.blanks.forEach((bl, b) => { const s = $("#" + key + "-q" + i + "-b" + b); s.classList.add(ans[b] === bl.a ? "right" : "wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** Así va: " + it.blanks.map((bl) => "`" + bl.o[bl.a] + "`").join(", ") + ". ") + it.e));
+      saved.push(it.blanks.map((bl, b) => bl.o[ans[b]]).join(" | "));
+    } else {
+      ok = it.rx.test(ans.replace(/\s+/g, ""));
+      $("#" + key + "-q" + i + "-w").classList.add(ok ? "right" : "wrong");
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** ") + "Respuesta modelo: `" + it.model + "`. " + it.e));
+      saved.push(ans.slice(0, 200));
+    }
+    if (ok) score++;
+    ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    fs.querySelectorAll("input, select").forEach((x) => (x.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT_MSG : "Todavía no. Lee por qué fallaste cada una, repasa esa idea de la teoría y haz el Quiz B."));
+  const note = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(note);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: saved, fecha: new Date().toISOString() });
+      note.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { note.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

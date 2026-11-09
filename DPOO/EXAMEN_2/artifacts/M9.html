@@ -1,0 +1,869 @@
+<title>M9 Mini-simulacro DPOO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+/* ---- Propio de M9: cronómetro, rúbrica y entrega ---- */
+.timer{position:fixed; right:16px; bottom:16px; z-index:6; font-family:var(--f-mono); font-weight:600; font-size:1.05rem; padding:8px 14px; border-radius:10px; background:var(--ink); color:var(--paper); font-variant-numeric:tabular-nums; box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.timer.over{background:var(--red); color:#fff}
+.rules{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:10px}
+.rules h3{margin:0}
+.steps{margin:0; padding-left:1.2rem; display:grid; gap:6px; font-size:.95rem}
+.chip-hot{font-family:var(--f-mono); font-size:.8rem; font-weight:600; background:var(--ink); color:var(--paper); padding:2px 9px; border-radius:99px}
+.enun{background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--ink); border-radius:0 var(--r) var(--r) 0; padding:12px 16px; font-size:.95rem; display:grid; gap:8px; min-width:0}
+.enun ul{margin:0; padding-left:1.2rem; display:grid; gap:4px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px 16px; display:grid; gap:10px; min-width:0; margin:0}
+.sol{display:grid; gap:8px; min-width:0}
+.rubbox{display:grid; gap:6px; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.rub-i{display:grid; grid-template-columns:1.4rem minmax(0,1fr); gap:6px; align-items:start; font-size:.92rem; cursor:pointer}
+.rub-i input{margin-top:4px; accent-color:var(--accent)}
+.rub-sum{font-weight:600}
+textarea.paste{width:100%; min-height:12rem; font:.82rem/1.5 var(--f-mono); padding:10px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink); resize:vertical}
+.sheet td:first-child{font-weight:600}
+</style>
+
+<nav class="nav" aria-label="Secciones del simulacro"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#inicio">Instrucciones</a>
+  <a href="#parte-a"><span>A</span>30 pts</a>
+  <a href="#parte-b"><span>B</span>70 pts</a>
+  <a href="#resultado">Resultado</a>
+</div></nav>
+<div class="timer" id="timer" role="timer" aria-label="Tiempo restante" hidden>40:00</div>
+
+<div class="wrap">
+  <header class="head" id="inicio">
+    <p class="eyebrow">DPOO · Examen 2 · Módulo 9 de 9</p>
+    <h1>Mini-simulacro</h1>
+    <div class="meta"><span class="chip-hot">40 minutos · en tu IDE</span><span>Lunes 9 o martes 10 temprano</span><span>100 puntos · meta: 80 o más</span></div>
+    <p class="lede">Medio examen nuevo, con la estructura del Parcial 1: <b>4 de selección múltiple con caso</b> (7,5 pts cada una, 30 en total) y <b>una práctica</b> (70 pts): implementar en Java un UML con herencia, una interfaz, una lista y dos excepciones propias, más sus pruebas con JUnit. Es la mitad del tamaño del examen real, en la mitad del tiempo.</p>
+    <div class="rules">
+      <h3>Antes de empezar</h3>
+      <ol class="steps">
+        <li><b>Abre tu IDE</b> con un proyecto vacío que ya tenga JUnit 5 (lo montaste en M6). Sin internet y sin mirar los módulos.</li>
+        <li><b>Reparte el tiempo:</b> unos 8 minutos para la selección múltiple y 32 para la práctica. Haz primero lo que no depende de nada (excepciones, interfaz), luego el padre y las hijas, después Parqueadero y al final las pruebas. Compila seguido.</li>
+        <li><b>Si se acaba el tiempo,</b> para y anota cuánto te pasaste. En el examen, a las 12:20 se entrega lo que haya.</li>
+        <li><b>Al terminar</b> ves las respuestas de la selección múltiple con su explicación, te calificas la práctica con la rúbrica tipo profe y pegas tu código para que yo también lo corrija.</li>
+      </ol>
+      <div class="qrow"><button type="button" class="btn" id="start">Empezar simulacro (40:00)</button><span class="muted" id="start-msg"></span></div>
+    </div>
+  </header>
+
+  <div id="exam" hidden>
+    <section id="parte-a" aria-labelledby="pa-h">
+      <div class="sec-title"><span class="sec-num">A</span><h2 id="pa-h">Selección múltiple</h2><p>7,5 pts cada una. Todas usan el caso del parqueadero de la parte B.</p></div>
+      <div class="quiz" id="sm-list"></div>
+    </section>
+
+    <section id="parte-b" aria-labelledby="pb-h">
+      <div class="sec-title"><span class="sec-num">B</span><h2 id="pb-h">Práctica · El parqueadero</h2><p>70 pts. Implementa el diagrama en Java y escribe las pruebas.</p></div>
+      <div class="enun">
+        <p>«Un parqueadero recibe carros y motos, identificados por su placa. Tiene una capacidad máxima. Cada vehículo sabe cuánto cobrar por las horas que estuvo: el carro cobra 4000 por hora y la moto 2000 por hora.»</p>
+      </div>
+      <div class="fig" data-fig="parq"></div>
+      <div class="fig" data-fig="exc"></div>
+      <div class="enun">
+        <p><b>Lo que debe hacer cada método:</b></p>
+        <ul>
+          <li><code>calcularTarifa(horas)</code> en Carro y en Moto: su <code>TARIFA_HORA</code> por las horas.</li>
+          <li><code>ingresar(v)</code>: si el parqueadero ya tiene tantos vehículos como su capacidad, lanza <code>ParqueaderoLlenoException</code> con el mensaje «No hay cupo para » más la placa. Si no, lo agrega.</li>
+          <li><code>retirar(placa, horas)</code>: busca el vehículo con esa placa. Si no está, lanza <code>VehiculoNoEncontradoException</code> con «No está el vehículo » más la placa. Si está, lo saca de la lista y retorna lo que cobra por esas horas.</li>
+          <li><code>contarVehiculos()</code>: cuántos vehículos hay adentro.</li>
+          <li>Las dos excepciones son checked y reciben su mensaje en el constructor.</li>
+        </ul>
+        <p><b>Pruebas:</b> escribe <code>ParqueaderoTest</code> con un escenario (un parqueadero de capacidad 2 con el carro <code>ABC123</code> y la moto <code>XYZ45D</code>) y estas dos pruebas: (1) retirar el carro después de 3 horas cobra 12000 y deja 1 vehículo; (2) ingresar un tercer vehículo lanza <code>ParqueaderoLlenoException</code>.</p>
+      </div>
+    </section>
+
+    <section id="resultado" aria-labelledby="r-h">
+      <div class="sec-title"><span class="sec-num">✓</span><h2 id="r-h">Terminar y calificar</h2><p>Primero se califica la selección múltiple. Después marcas en la rúbrica lo que sí está en tu código y lo pegas.</p></div>
+      <div class="qrow"><button type="button" class="btn" id="finish">Terminé: calificar</button><span class="muted" id="finish-msg"></span></div>
+      <div id="grading" hidden>
+        <div class="rubbox">
+          <h3>Califica tu práctica con la rúbrica</h3>
+          <p class="muted">Marca solo lo que está escrito y compila en tu código, no lo que «sabías».</p>
+          <div id="rub-list"></div>
+          <p class="rub-sum" id="rub-sum"></p>
+        </div>
+        <details class="rev"><summary>Ver una solución completa (compila y sus 4 pruebas pasan)</summary><div class="rev-body" id="sol-code"></div></details>
+        <div class="rubbox">
+          <h3>Pega tu código para que Claude lo corrija</h3>
+          <p class="muted">Todas las clases, una tras otra. Queda guardado con tu nota y lo corrijo con la misma rúbrica, como el profe.</p>
+          <textarea class="paste" id="paste" aria-label="Tu código" spellcheck="false"></textarea>
+        </div>
+        <div class="result" id="score-card" aria-live="polite"></div>
+        <div class="qrow"><button type="button" class="btn" id="save">Guardar mi nota y mi código</button><button type="button" class="btn ghost" id="reset">Volver a empezar</button><span class="muted" id="save-msg"></span></div>
+      </div>
+    </section>
+  </div>
+
+  <section id="hoja" aria-labelledby="h-h" hidden>
+    <div class="sec-title"><span class="sec-num">∑</span><h2 id="h-h">Tu hoja de plantillas</h2><p>Lo que tienes que escribir sin pensar. Repásala en los 30 minutos antes del examen.</p></div>
+    <div class="tw"><table class="vocab sheet">
+      <colgroup><col style="width:22%"><col style="width:78%"></colgroup>
+      <thead><tr><th>Tema</th><th>Lo que tienes que saber</th></tr></thead>
+      <tbody>
+        <tr><td>UML → Java (M1)</td><td><code>0..*</code> → <code>ArrayList</code> creada en el constructor. Triángulo continuo → <code>extends</code> y <code>super(...)</code> en la primera línea. Triángulo punteado → <code>implements</code>. Cursiva → <code>abstract</code>. Subrayado → <code>static</code>. <code>equals</code> para comparar <code>String</code>.</td></tr>
+        <tr><td>Excepciones (M2)</td><td><code>class XException extends Exception</code> con <code>super(mensaje)</code>. El método: <code>throws X</code> en la firma y <code>throw new X("qué pasó " + dato)</code> adentro. Quien llama: <code>try/catch</code> o <code>throws</code>. El <code>finally</code> corre siempre.</td></tr>
+        <tr><td>Diseño (M4–M5)</td><td>La responsabilidad va a quien tiene la información. Cadena de getters = cálculo en el lugar equivocado. Centralizado (uno decide todo) contra delegado (cada uno decide lo suyo). Estereotipos: contenedor, estructurador, proveedor de servicios, coordinador, controlador e interfaz.</td></tr>
+        <tr><td>JUnit (M6)</td><td><code>@BeforeEach</code> para el escenario (con <code>throws</code> si llama métodos con <code>throws</code>). <code>assertEquals(esperado, obtenido, 0.01)</code> con <code>double</code>. <code>assertTrue</code>/<code>assertFalse</code>. <code>assertThrows(X.class, () -> codigo)</code>. Casos normal, límite y error.</td></tr>
+        <tr><td>SOLID (M7)</td><td>S: una razón para cambiar. O: un <code>if</code> por tipo que crece. L: la hija lanza excepción o deja vacío lo heredado. I: métodos que no se usan. D: <code>new</code> de una clase concreta adentro.</td></tr>
+        <tr><td>Patrones (M8)</td><td>Singleton: <code>private static</code> instancia, constructor <code>private</code>, <code>public static getInstancia()</code>. Strategy: varias formas de lo mismo detrás de una interfaz. Adapter: implementa tu interfaz y llama a la ajena. Facade: un método para muchos pasos.</td></tr>
+        <tr><td>M3</td><td>Librería: tú la llamas. Framework: te llama a ti (JUnit, Swing). API: el contrato público.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="att-h">
+    <div class="block">
+      <h3 id="att-h">Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has guardado un simulacro. Tu nota queda guardada para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Caso nuevo, escrito con la estructura del Parcial 1 de DPOO. La solución compila en Java 21 y sus pruebas pasan con JUnit 5.10.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- Utilidades ---------- */
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const f1 = (n) => Math.round(n * 10) / 10;
+/* Texto con `código` y **negrita** → nodos, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { parent.appendChild(el("code", "", part)); return; }
+    part.split("**").forEach((p2, j) => { if (p2) parent.appendChild(j % 2 ? el("b", "", p2) : document.createTextNode(p2)); });
+  });
+  return parent;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Resaltado de Java ---------- */
+const RX = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@[A-Za-z]+)|\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|super|static|final|void|if|else|for|while|throw|throws|try|catch|finally|null|true|false|import|package|boolean|int|double|char|long)\b|\b([A-Z][A-Za-z0-9_]*)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(line) {
+  let out = "", last = 0;
+  line.replace(RX, (m, com, str, ann, kw, ty, num, idx) => {
+    out += esc(line.slice(last, idx));
+    const cls = com ? "c-com" : str ? "c-str" : ann ? "c-ann" : kw ? "c-kw" : ty ? "c-ty" : "c-num";
+    out += '<span class="' + cls + '">' + esc(m) + "</span>";
+    last = idx + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+/* diff: cada línea empieza con "+ " (nueva), "- " (se borra) o "  " (igual). */
+function codeHTML(src, diff) {
+  const lines = src.replace(/^\n/, "").replace(/\n\s*$/, "").split("\n");
+  return lines.map((raw) => {
+    let mk = "  ", line = raw;
+    if (diff) {
+      if (raw === "+" || raw === "-") { mk = raw + " "; line = ""; }
+      else if (raw.length < 2) { mk = "  "; line = raw.trim(); }
+      else { mk = raw.slice(0, 2); line = raw.slice(2); }
+    }
+    const add = diff && mk === "+ ", del = diff && mk === "- ";
+    const gut = diff ? '<span class="gut" aria-hidden="true">' + (add ? "+" : del ? "−" : " ") + "</span>" : "";
+    const sr = add ? '<span class="sr">Línea nueva: </span>' : del ? '<span class="sr">Línea que se borra: </span>' : "";
+    const body = hl(line) || " ";
+    return '<span class="cl' + (add ? " add" : "") + (del ? " del" : "") + '">' + gut + sr + (del ? "<s>" + body + "</s>" : body) + "</span>";
+  }).join("");
+}
+
+/* ---------- Diagramas UML en SVG ---------- */
+const LH = 16;
+const memW = (t) => t.length * 6.3 + 16;
+const nameW = (t) => t.length * 7.4 + 24;
+function wrapK(k, inner, inter, label) {
+  if (inter && k) return '<g class="hit" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return "<g" + (k ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>";
+}
+function memSvg(m, x, yy, w, inter) {
+  const cls = "u-m" + (m.s ? " st" : "") + (m.a ? " abs" : "");
+  const inner = '<rect class="hl" x="' + (x + 1) + '" y="' + yy + '" width="' + (w - 2) + '" height="' + LH + '"/><text class="' + cls + '" x="' + (x + 8) + '" y="' + (yy + 11.8) + '">' + esc(m.t) + "</text>";
+  return wrapK(m.k || "", inner, inter, m.t);
+}
+function umlBox(c, inter, G) {
+  const name = c.name || c.id, attrs = c.attrs || [], ops = c.ops || [];
+  const w = c.w || Math.ceil(Math.max(c.minW || 110, nameW(name), c.stereo ? (c.stereo.length + 2) * 6 + 16 : 0, ...attrs.map((m) => memW(m.t)), ...ops.map((m) => memW(m.t))));
+  const x = typeof c.x === "function" ? Math.round(c.x(G, w)) : c.x, y = c.y;
+  const headH = c.stereo ? 36 : 24, aH = c.simple ? 0 : (attrs.length ? attrs.length * LH + 8 : 8), oH = c.simple ? 0 : (ops.length ? ops.length * LH + 8 : 8), h = headH + aH + oH;
+  let s = '<rect class="u-bg' + (c.tone ? " t-" + c.tone : "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2"/>';
+  let hd = '<rect class="hl" x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (w - 2) + '" height="' + (headH - 1) + '"/>';
+  if (c.stereo) hd += '<text class="u-st" x="' + (x + w / 2) + '" y="' + (y + 14) + '" text-anchor="middle">«' + esc(c.stereo) + "»</text>";
+  hd += '<text class="u-nm' + (c.abs ? " abs" : "") + '" x="' + (x + w / 2) + '" y="' + (y + (c.stereo ? 29 : 16.5)) + '" text-anchor="middle">' + esc(name) + "</text>";
+  s += wrapK(c.k || "", hd, inter, "Clase " + name);
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH) + '" x2="' + (x + w) + '" y2="' + (y + headH) + '"/>';
+  attrs.forEach((m, i) => { s += memSvg(m, x, y + headH + 4 + i * LH, w, inter); });
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH + aH) + '" x2="' + (x + w) + '" y2="' + (y + headH + aH) + '"/>';
+  ops.forEach((m, i) => { s += memSvg(m, x, y + headH + aH + 4 + i * LH, w, inter); });
+  return { svg: "<g>" + s + "</g>", x, y, w, h };
+}
+const REL_NAME = { assoc: "Asociación", inherit: "Herencia", realize: "Realización", dep: "Dependencia", aggr: "Agregación", comp: "Composición" };
+function relSvg(r, inter) {
+  const P = r.pts.map((p) => p.slice()), n = P.length;
+  const [ax, ay] = P[n - 2], [bx, by] = P[n - 1];
+  const L = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L, uy = (by - ay) / L;
+  const tri = r.type === "inherit" || r.type === "realize";
+  const dash = r.type === "realize" || r.type === "dep" ? ' stroke-dasharray="5 4"' : "";
+  const pts = P.map((p) => p.slice());
+  if (tri) pts[n - 1] = [bx - ux * 12, by - uy * 12];
+  let dia = "";
+  if (r.type === "aggr" || r.type === "comp") {
+    const [sx, sy] = P[0], [tx, ty] = P[1], L2 = Math.hypot(tx - sx, ty - sy) || 1, vx = (tx - sx) / L2, vy = (ty - sy) / L2, nx = -vy, ny = vx;
+    const d = [[sx, sy], [sx + vx * 9 + nx * 5.5, sy + vy * 9 + ny * 5.5], [sx + vx * 18, sy + vy * 18], [sx + vx * 9 - nx * 5.5, sy + vy * 9 - ny * 5.5]];
+    dia = '<path class="u-dia' + (r.type === "comp" ? " full" : "") + '" d="M' + d.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") + ' Z"/>';
+    pts[0] = [sx + vx * 18, sy + vy * 18];
+  }
+  const dstr = "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L");
+  let head = "";
+  if (tri) {
+    const nx = -uy, ny = ux;
+    head = '<path class="u-tri" d="M' + f1(bx) + " " + f1(by) + " L" + f1(bx - ux * 12 + nx * 7) + " " + f1(by - uy * 12 + ny * 7) + " L" + f1(bx - ux * 12 - nx * 7) + " " + f1(by - uy * 12 - ny * 7) + ' Z"/>';
+  } else {
+    const c = Math.cos(0.45), s = Math.sin(0.45), len = 11;
+    head = '<path class="u-arr" d="M' + f1(bx - len * (ux * c - uy * s)) + " " + f1(by - len * (uy * c + ux * s)) + " L" + f1(bx) + " " + f1(by) + " L" + f1(bx - len * (ux * c + uy * s)) + " " + f1(by - len * (uy * c - ux * s)) + '"/>';
+  }
+  let lb = "";
+  (r.labels || []).forEach((t) => { lb += '<text class="u-lb" x="' + f1(t.x) + '" y="' + f1(t.y) + '" text-anchor="' + (t.a || "start") + '">' + esc(t.t) + "</text>"; });
+  const label = REL_NAME[r.type] + (r.labels && r.labels.length ? " " + r.labels.map((t) => t.t).join(" ") : "");
+  const inner = '<path class="u-hit" d="' + dstr + '"/><path class="u-rl"' + dash + ' d="' + dstr + '"/>' + dia + head + lb;
+  if (inter && r.k) return '<g class="rel hit" data-k="' + r.k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return '<g class="rel">' + inner + "</g>";
+}
+function umlSvg(spec, inter) {
+  const G = {}; let boxes = "";
+  spec.cls.forEach((c) => { const b = umlBox(c, inter, G); G[c.id] = b; boxes += b.svg; });
+  const A = (id, side, t = 0.5) => { const g = G[id]; if (side === "t") return [g.x + g.w * t, g.y]; if (side === "b") return [g.x + g.w * t, g.y + g.h]; if (side === "l") return [g.x, g.y + g.h * t]; return [g.x + g.w, g.y + g.h * t]; };
+  const RL = spec.rels ? spec.rels(A, G) : []; let rs = ""; RL.forEach((r) => { rs += relSvg(r, inter); });
+  let W = 0, H = 0; Object.values(G).forEach((g) => { W = Math.max(W, g.x + g.w); H = Math.max(H, g.y + g.h); });
+  RL.forEach((r) => { r.pts.forEach((p) => { W = Math.max(W, p[0]); H = Math.max(H, p[1]); }); (r.labels || []).forEach((t) => { W = Math.max(W, t.a === "end" ? t.x : t.x + t.t.length * 6.3); H = Math.max(H, t.y + 4); }); });
+  W = Math.ceil(W + 10); H = Math.ceil(H + 10);
+  return '<svg class="uml" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="--w:' + W + 'px" role="' + (inter ? "group" : "img") + '" aria-label="' + esc(spec.aria || "Diagrama de clases") + '">' + boxes + rs + "</svg>";
+}
+const centerOn = (id) => (G, w) => G[id].x + G[id].w / 2 - w / 2;
+/* Dos cajas en fila con una relación: para el diccionario de flechas. */
+function pairSpec(a, b, type, o) {
+  o = o || {};
+  const gap = type === "inherit" || type === "realize" ? 62 : 96;
+  const wa = Math.ceil(Math.max(96, nameW(a))), wb = Math.ceil(Math.max(96, nameW(b)));
+  return {
+    aria: o.aria,
+    cls: [{ id: "A", name: a, x: 10, y: 14, w: wa }, { id: "B", name: b, x: 10 + wa + gap, y: 14, w: wb, stereo: o.stereo }],
+    rels: (A, G) => {
+      const y = 34, r = { type, pts: [[G.A.x + G.A.w, y], [G.B.x, y]] };
+      if (o.rol) r.labels = [{ x: G.B.x - 14, y: y - 6, t: o.rol, a: "end" }, { x: G.B.x - 14, y: y + 15, t: o.mult, a: "end" }];
+      return [r];
+    }
+  };
+}
+
+
+
+/* ---------- Figuras ---------- */
+const FIG = {
+  parq: {
+    aria: "Diagrama del parqueadero: Parqueadero tiene de cero a muchos Vehiculo; Vehiculo es abstracta e implementa la interfaz Cobrable; Carro y Moto heredan de Vehiculo",
+    cls: [
+      { id: "Cobrable", x: 369, y: 10, stereo: "interface", ops: [{ t: "+ calcularTarifa(horas: int): double" }] },
+      { id: "Parqueadero", x: 10, y: 120, attrs: [{ t: "- capacidad: int" }], ops: [{ t: "+ Parqueadero(capacidad: int)" }, { t: "+ ingresar(v: Vehiculo): void" }, { t: "+ retirar(placa: String, horas: int): double" }, { t: "+ contarVehiculos(): int" }] },
+      { id: "Vehiculo", x: 400, y: 120, abs: 1, attrs: [{ t: "- placa: String" }], ops: [{ t: "+ Vehiculo(placa: String)" }, { t: "+ getPlaca(): String" }] },
+      { id: "Carro", x: 240, y: 280, attrs: [{ t: "+ TARIFA_HORA: double = 4000", s: 1 }], ops: [{ t: "+ Carro(placa: String)" }, { t: "+ calcularTarifa(horas: int): double" }] },
+      { id: "Moto", x: 500, y: 280, attrs: [{ t: "+ TARIFA_HORA: double = 2000", s: 1 }], ops: [{ t: "+ Moto(placa: String)" }, { t: "+ calcularTarifa(horas: int): double" }] }
+    ],
+    rels: (A, G) => {
+      const C = G.Cobrable, P = G.Parqueadero, V = G.Vehiculo, Ca = G.Carro, M = G.Moto, vx = V.x + V.w / 2, my = 250;
+      return [
+        { type: "realize", pts: [[vx, V.y], [vx, C.y + C.h]] },
+        { type: "assoc", pts: [[P.x + P.w, 150], [V.x, 150]], labels: [{ x: V.x - 12, y: 144, t: "-vehiculos", a: "end" }, { x: V.x - 12, y: 165, t: "0..*", a: "end" }] },
+        { type: "inherit", pts: [[Ca.x + Ca.w / 2, Ca.y], [Ca.x + Ca.w / 2, my], [vx, my], [vx, V.y + V.h]] },
+        { type: "inherit", pts: [[M.x + M.w / 2, M.y], [M.x + M.w / 2, my], [vx, my], [vx, V.y + V.h]] }
+      ];
+    }
+  },
+  exc: {
+    aria: "Las dos excepciones propias heredan de Exception: ParqueaderoLlenoException y VehiculoNoEncontradoException",
+    cls: [
+      { id: "Exception", x: 200, y: 10, simple: 1 },
+      { id: "ParqueaderoLlenoException", x: 10, y: 90, simple: 1 },
+      { id: "VehiculoNoEncontradoException", x: 270, y: 90, simple: 1 }
+    ],
+    rels: (A, G) => {
+      const E = G.Exception, ex = E.x + E.w / 2;
+      return [
+        { type: "inherit", pts: [[G.ParqueaderoLlenoException.x + G.ParqueaderoLlenoException.w / 2, 90], [ex - 20, E.y + E.h]] },
+        { type: "inherit", pts: [[G.VehiculoNoEncontradoException.x + G.VehiculoNoEncontradoException.w / 2, 90], [ex + 20, E.y + E.h]] }
+      ];
+    }
+  }
+};
+
+/* ---------- Parte A ---------- */
+const SM = [
+  { id: "s1", k: "M2 · Excepciones", q: "El parqueadero `p` tiene capacidad 1 y ya tiene un carro adentro. ¿Qué imprime este código?", code: `
+try {
+    p.ingresar(new Carro("AAA111"));
+    System.out.println("Entró");
+} catch (ParqueaderoLlenoException e) {
+    System.out.println("Lleno");
+} finally {
+    System.out.println("Fin");
+}
+System.out.println("Sigue");`,
+    o: ["Entró, Fin, Sigue", "Lleno, Fin, Sigue", "Lleno, Sigue", "Lleno, Fin (y el programa se detiene)"], a: 1,
+    oe: ["`ingresar` lanza la excepción antes de que se imprima «Entró»: el resto del `try` se salta.",
+      "La excepción salta al `catch` (Lleno), el `finally` corre siempre (Fin) y, como la excepción ya se atrapó, el programa sigue (Sigue). Lo corrí: imprime eso.",
+      "Falta «Fin»: el `finally` corre en los dos caminos.",
+      "La excepción se atrapó en el `catch`, así que el programa no se detiene: sigue después del `try`."] },
+  { id: "s2", k: "M5 · Responsabilidades", q: "¿Dónde debería ir el cálculo de lo que cobra cada vehículo?",
+    o: ["En Parqueadero, con un `if` que pregunte si el vehículo es carro o moto", "En Carro y en Moto, cada uno con su `calcularTarifa`, porque cada uno conoce su tarifa", "En Vehiculo, con un atributo `tipo` de tipo `String`", "En una clase ConsolaParqueadero, que es la que muestra el cobro"], a: 1,
+    oe: ["Eso centraliza: Parqueadero decidiría con datos de otros, y cada tipo nuevo de vehículo lo obligaría a modificarse (viola abierto/cerrado).",
+      "Cada clase concreta tiene su tarifa: la responsabilidad va a quien tiene la información. Parqueadero solo llama `v.calcularTarifa(horas)` y el polimorfismo escoge el método correcto.",
+      "Un `String` con el tipo lleva otra vez a un `if` por tipo. La herencia ya distingue carro de moto.",
+      "La consola es la interfaz: muestra el resultado, no lo calcula."] },
+  { id: "s3", k: "M6 · Pruebas", q: "`ParqueaderoTest` solo tiene estas dos pruebas: ingresar un carro a un parqueadero vacío de capacidad 2, y retirarlo después de 3 horas (12000.0). ¿Qué caso es el más importante que falta?",
+    o: ["Retirar el carro después de 5 horas", "Ingresar un vehículo cuando ya hay tantos como la capacidad, que debe lanzar `ParqueaderoLlenoException`", "Ingresar una moto a un parqueadero vacío", "Crear un parqueadero de capacidad 100"], a: 1,
+    oe: ["Es otro caso normal del mismo tipo: no prueba nada nuevo.",
+      "Es el límite y a la vez el caso de error: justo donde cambia la regla. Ahí se esconde un `>` en vez de `>=`, y se prueba con `assertThrows`.",
+      "Es otro caso normal: prueba la tarifa de la moto, pero no la regla de la capacidad.",
+      "Crear un objeto grande no verifica ninguna regla."] },
+  { id: "s4", k: "M7–M8 · Principios y patrones", q: "El parqueadero quiere cobrar distinto según el momento: tarifa normal, tarifa nocturna con 30 % de descuento y tarifa plana de domingo. Quieren agregar tarifas nuevas sin modificar Carro ni Moto. ¿Qué patrón usas?",
+    o: ["Singleton", "Strategy", "Adapter", "Facade"], a: 1,
+    oe: ["Singleton garantiza un solo objeto; no sirve para escoger entre varias formas de cobrar.",
+      "Varias formas de calcular lo mismo, intercambiables: una interfaz `PoliticaTarifa` con una clase por tarifa. Agregar una tarifa es una clase nueva (abierto/cerrado).",
+      "Adapter hace encajar una clase ajena con otra interfaz. Aquí no hay ninguna clase ajena.",
+      "Facade simplifica muchos pasos sobre muchas clases. Aquí el problema es escoger un algoritmo."] }
+];
+
+/* ---------- Rúbrica de la práctica (70 pts) ---------- */
+const RUB = [
+  { l: "la interfaz", pts: 5, t: "`Cobrable` es una interfaz con `double calcularTarifa(int horas);`." },
+  { l: "Vehiculo", pts: 10, t: "`Vehiculo` es `abstract`, `implements Cobrable`, tiene `placa` privada, su constructor y `getPlaca()`. No escribe `calcularTarifa`." },
+  { l: "Carro y Moto", pts: 10, t: "`Carro` y `Moto`: `extends Vehiculo`, `super(placa)` en la primera línea, la constante `static final` y `calcularTarifa` con `@Override` que retorna tarifa × horas." },
+  { l: "Parqueadero", pts: 8, t: "`Parqueadero`: `capacidad` y `ArrayList<Vehiculo>` privados, la lista creada en el constructor, y `contarVehiculos()`." },
+  { l: "ingresar", pts: 10, t: "`ingresar`: `throws ParqueaderoLlenoException` en la firma; lanza con «No hay cupo para » + placa cuando `size() >= capacidad`; si no, agrega." },
+  { l: "retirar", pts: 12, t: "`retirar`: busca con `equals` (no `==`), saca el vehículo de la lista, retorna `calcularTarifa(horas)`; si no lo encuentra, lanza `VehiculoNoEncontradoException` (con `throws` en la firma)." },
+  { l: "las excepciones", pts: 5, t: "Las dos excepciones: `extends Exception` y un constructor que recibe el mensaje y llama `super(mensaje)`." },
+  { l: "las pruebas", pts: 10, t: "`ParqueaderoTest`: escenario con `@BeforeEach` (con `throws`), la prueba del retiro con `assertEquals(12000.0, ..., 0.01)` y el conteo, y la del lleno con `assertThrows`." }
+];
+const SOL = [
+  { n: "Cobrable.java", s: `
+public interface Cobrable {
+    double calcularTarifa(int horas);
+}` },
+  { n: "Vehiculo.java", s: `
+public abstract class Vehiculo implements Cobrable {
+    private String placa;
+
+    public Vehiculo(String placa) {
+        this.placa = placa;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+}` },
+  { n: "Carro.java (Moto es igual, con 2000)", s: `
+public class Carro extends Vehiculo {
+    public static final double TARIFA_HORA = 4000;
+
+    public Carro(String placa) {
+        super(placa);
+    }
+
+    @Override
+    public double calcularTarifa(int horas) {
+        return TARIFA_HORA * horas;
+    }
+}` },
+  { n: "ParqueaderoLlenoException.java (la otra es igual)", s: `
+public class ParqueaderoLlenoException extends Exception {
+    public ParqueaderoLlenoException(String mensaje) {
+        super(mensaje);
+    }
+}` },
+  { n: "Parqueadero.java", s: `
+import java.util.ArrayList;
+
+public class Parqueadero {
+    private int capacidad;
+    private ArrayList<Vehiculo> vehiculos;
+
+    public Parqueadero(int capacidad) {
+        this.capacidad = capacidad;
+        this.vehiculos = new ArrayList<>();
+    }
+
+    public void ingresar(Vehiculo v) throws ParqueaderoLlenoException {
+        if (vehiculos.size() >= capacidad) {
+            throw new ParqueaderoLlenoException("No hay cupo para " + v.getPlaca());
+        }
+        vehiculos.add(v);
+    }
+
+    public double retirar(String placa, int horas) throws VehiculoNoEncontradoException {
+        for (Vehiculo v : vehiculos) {
+            if (v.getPlaca().equals(placa)) {
+                vehiculos.remove(v);
+                return v.calcularTarifa(horas);
+            }
+        }
+        throw new VehiculoNoEncontradoException("No está el vehículo " + placa);
+    }
+
+    public int contarVehiculos() {
+        return vehiculos.size();
+    }
+}` },
+  { n: "ParqueaderoTest.java", s: `
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class ParqueaderoTest {
+    private Parqueadero parqueadero;
+
+    @BeforeEach
+    public void setUp() throws ParqueaderoLlenoException {
+        parqueadero = new Parqueadero(2);
+        parqueadero.ingresar(new Carro("ABC123"));
+        parqueadero.ingresar(new Moto("XYZ45D"));
+    }
+
+    @Test
+    public void retirarCarroCobraPorHoras() throws VehiculoNoEncontradoException {
+        double cobro = parqueadero.retirar("ABC123", 3);
+        assertEquals(12000.0, cobro, 0.01);
+        assertEquals(1, parqueadero.contarVehiculos());
+    }
+
+    @Test
+    public void lleno() {
+        ParqueaderoLlenoException e = assertThrows(ParqueaderoLlenoException.class,
+                () -> parqueadero.ingresar(new Carro("DEF456")));
+        assertEquals("No hay cupo para DEF456", e.getMessage());
+    }
+}` }
+];
+
+/* ---------- Estado, cronómetro y calificación ---------- */
+const LIMIT = 40 * 60 * 1000, KEY = "dpoo-m9-sim-v1";
+const st = { start: null, end: null, sm: {}, rub: {}, code: "", finished: false };
+function load() { try { Object.assign(st, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {} }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+const mmss = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+function tick() {
+  if (!st.start) return;
+  const t = $("#timer"); t.hidden = false;
+  const used = (st.end || Date.now()) - st.start, left = LIMIT - used;
+  t.textContent = left >= 0 ? mmss(left) : "+" + mmss(-left);
+  t.classList.toggle("over", left < 0);
+  if (!st.end) setTimeout(tick, 500);
+}
+function renderExam() {
+  const box = $("#sm-list"); box.textContent = "";
+  SM.forEach((it, i) => {
+    const fs = el("fieldset", "q"); fs.id = it.id;
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k + " · 7,5 pts")); lt.appendChild(document.createElement("br")); rich(lt, it.q); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.code) { const pre = el("pre", "code"); pre.innerHTML = codeHTML(it.code, false); fs.appendChild(pre); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"), r = el("input"); r.type = "radio"; r.name = it.id; r.id = it.id + "-o" + oi; r.value = String(oi);
+      if (st.sm[it.id] === oi) r.checked = true;
+      r.addEventListener("change", () => { st.sm[it.id] = oi; save(); });
+      lab.appendChild(r); lab.appendChild(rich(el("span", "", String.fromCharCode(65 + oi) + ") "), o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const sol = el("div", "sol"); sol.hidden = true; fs.appendChild(sol);
+    box.appendChild(fs);
+  });
+  const rb = $("#rub-list"); rb.textContent = "";
+  RUB.forEach((r, i) => {
+    const lab = el("label", "rub-i"), c = el("input"); c.type = "checkbox"; c.id = "rub-" + i; c.checked = !!st.rub[i];
+    c.addEventListener("change", () => { st.rub[i] = c.checked; save(); score(); });
+    const sp = el("span"); sp.appendChild(el("b", "", r.pts + " pts · ")); rich(sp, r.t);
+    lab.appendChild(c); lab.appendChild(sp); rb.appendChild(lab);
+  });
+  const sc = $("#sol-code"); sc.textContent = "";
+  SOL.forEach((f) => { sc.appendChild(el("h4", "", f.n)); const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(f.s, false); sc.appendChild(pre); });
+  $("#paste").value = st.code || "";
+  $("#paste").addEventListener("input", (e) => { st.code = e.target.value; save(); });
+}
+function score() {
+  const smOk = SM.filter((it) => st.sm[it.id] === it.a).length, smPts = smOk * 7.5;
+  const prPts = RUB.reduce((s, r, i) => s + (st.rub[i] ? r.pts : 0), 0);
+  const total = smPts + prPts, pass = total >= 80;
+  const mins = st.start && st.end ? Math.round((st.end - st.start) / 60000) : null;
+  $("#rub-sum").textContent = "Llevas " + prPts + " de 70 pts en la práctica.";
+  const lost = [];
+  SM.forEach((it) => { if (st.sm[it.id] !== it.a) lost.push(it.k); });
+  RUB.forEach((r, i) => { if (!st.rub[i]) lost.push("práctica: " + r.l); });
+  const card = $("#score-card"); card.className = "result " + (pass ? "pass" : "fail"); card.textContent = "";
+  card.appendChild(el("span", "score", String(total).replace(".", ",") + "/100"));
+  card.appendChild(el("p", "", "Selección múltiple: " + String(smPts).replace(".", ",") + "/30 (" + smOk + " de 4). Práctica: " + prPts + "/70." + (mins != null ? " Tiempo: " + mins + " min." : "")));
+  card.appendChild(el("p", "", pass ? "Llegaste a la meta (80/100). Antes del examen: 30 minutos con tu hoja de plantillas, y a descansar." : "Todavía no llegas a 80/100. Mira las explicaciones de la selección múltiple y la solución; guarda tu código y lo repasamos juntos donde se fueron los puntos."));
+  if (lost.length) card.appendChild(el("p", "muted", "Para repasar: " + [...new Set(lost)].join(" · ") + "."));
+  return { smPts, prPts, total, pass, mins };
+}
+let finishArmed = false;
+function finish() {
+  const missing = SM.filter((it) => st.sm[it.id] == null).length;
+  if (missing && !finishArmed) { finishArmed = true; $("#finish-msg").textContent = (missing === 1 ? "Te falta 1 de selección múltiple." : "Te faltan " + missing + " de selección múltiple.") + " Oprime otra vez para calificar igual."; return; }
+  if (!st.end) st.end = Date.now();
+  st.finished = true; save(); showResults();
+}
+function showResults() {
+  SM.forEach((it) => {
+    const fs = $("#" + it.id);
+    fs.querySelectorAll("input").forEach((r) => { r.disabled = true; const lab = r.closest(".qopt"), v = Number(r.value); if (v === it.a) lab.classList.add("right"); else if (r.checked) lab.classList.add("wrong"); });
+    const sol = fs.querySelector(".sol"); sol.hidden = false; sol.textContent = "";
+    const ok = st.sm[it.id] === it.a;
+    const ex = el("div", "qexp " + (ok ? "ok" : "no"));
+    ex.appendChild(el("p", "", ok ? "Correcta: 7,5/7,5." : "Incorrecta: 0/7,5."));
+    const ul = el("ul");
+    it.oe.forEach((t, oi) => { const li = el("li"); li.appendChild(el("span", "mk " + (oi === it.a ? "y" : "n"), String.fromCharCode(65 + oi) + (oi === it.a ? " ✓" : " ✗"))); li.appendChild(rich(el("span"), t)); ul.appendChild(li); });
+    ex.appendChild(ul); sol.appendChild(ex);
+  });
+  $("#finish").disabled = true; $("#finish-msg").textContent = "Ya calificado. Debajo de cada pregunta está la explicación.";
+  $("#grading").hidden = false; $("#hoja").hidden = false;
+  score();
+}
+let db = null;
+async function saveAttempt() {
+  const r = score();
+  if (!db) { $("#save-msg").textContent = "No se pudo conectar con la base de datos. Mándame tu nota y tu código por el chat."; return; }
+  $("#save").disabled = true; $("#save-msg").textContent = "Guardando…";
+  try {
+    await db.collection("intentos").add({ modulo: "M9", quiz: "Simulacro", puntaje: r.total, total: 100, aprobado: r.pass, sm: SM.map((it) => (st.sm[it.id] == null ? "-" : String.fromCharCode(65 + st.sm[it.id]))), seleccion: r.smPts, practica: r.prPts, rubrica: RUB.map((_, i) => !!st.rub[i]), minutos: r.mins, codigo: (st.code || "").slice(0, 60000), fecha: new Date().toISOString() });
+    $("#save-msg").textContent = "Nota y código guardados. Cuando vuelvas al chat, Claude corrige tu código y actualiza tu plan.";
+  } catch (e) { $("#save").disabled = false; $("#save-msg").textContent = "No se pudo guardar. Intenta otra vez o mándame la nota por el chat."; }
+}
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has guardado un simulacro. Tu nota queda guardada para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Simulacro · " + String(d.puntaje).replace(".", ",") + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Meta cumplida" : "Debajo de la meta"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+}
+function begin() {
+  if (!st.start) { st.start = Date.now(); save(); }
+  $("#exam").hidden = false; $("#start").disabled = true; $("#start-msg").textContent = "En curso. El cronómetro está abajo a la derecha.";
+  tick();
+}
+document.querySelectorAll("[data-fig]").forEach((d) => { d.innerHTML = umlSvg(FIG[d.dataset.fig], false); });
+load();
+renderExam();
+$("#start").addEventListener("click", () => { begin(); $("#parte-a").scrollIntoView({ behavior: "smooth" }); });
+$("#finish").addEventListener("click", finish);
+$("#save").addEventListener("click", saveAttempt);
+$("#reset").addEventListener("click", () => { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); });
+if (st.start) begin();
+if (st.finished) showResults();
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
