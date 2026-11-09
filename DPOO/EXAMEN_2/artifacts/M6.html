@@ -389,6 +389,9 @@ details.rev{min-width:0}
         <tr><td>Patrón de cuatro fases</td><td><code>@BeforeEach</code> · prueba · asserts · <code>@AfterEach</code></td><td>Definir la estructura, ejecutar, chequear y destruir la estructura para volver al estado inicial.</td></tr>
         <tr><td>Particiones de equivalencia</td><td>«paga envío» · «no paga envío»</td><td>Grupos de entradas que el código trata igual. Se prueba un representante de cada grupo.</td></tr>
         <tr><td>Valores de borde (BVA)</td><td>39999 · 40000 · 40001</td><td>Los valores justo en la frontera entre dos particiones y a cada lado. Es lo que en la idea 4 llamamos «límite».</td></tr>
+        <tr><td>Tabla de decisión</td><td>Una tabla con todas las combinaciones de sí y no</td><td>Una prueba por cada combinación de varias condiciones.</td></tr>
+        <tr><td>Transición de estados</td><td>Estados unidos por flechas (intento 1 → 2 → 3 → bloqueada)</td><td>Pruebas que son secuencias de acciones sobre un objeto que tiene estados.</td></tr>
+        <tr><td>Cobertura</td><td>Verde, rojo y amarillo en Eclipse</td><td>Qué tanto del código ejecutaron las pruebas: instrucciones, ramas, condiciones o combinaciones de condiciones.</td></tr>
         <tr><td>Caja negra y caja blanca</td><td>Probar contra el enunciado · mirar la cobertura</td><td>Caja negra: pruebas sacadas de la especificación, sin mirar el código. Caja blanca: pruebas que miran la estructura interna, como qué líneas y ramas se ejecutaron.</td></tr>
         <tr><td>Pasa, falla y error</td><td>✔ · ✘ <code>expected… but was…</code> · ✘ <code>NullPointerException</code></td><td>Pasa: todos los asserts se cumplen. Falla: un assert no se cumplió. Error: saltó una excepción que nadie esperaba antes del assert.</td></tr>
       </tbody>
@@ -580,24 +583,92 @@ details.rev{min-width:0}
 
     <!-- Idea 7 -->
     <article class="idea" id="idea7">
-      <h3><span class="ix">Idea 7 · Del profe</span>Cómo escoger los casos: particiones, bordes y cobertura</h3>
+      <h3><span class="ix">Idea 7 · Del profe</span>Caja negra: diseñar los casos desde el enunciado</h3>
       <div class="prose">
-        <p>El profe ordena las técnicas para diseñar casos de prueba en tres familias:</p>
-        <ul>
-          <li><b>Basadas en la especificación (caja negra):</b> salen del enunciado, sin mirar el código. Son las <b>particiones de equivalencia</b>, el <b>análisis de valores de borde</b> (BVA), las <b>tablas de decisión</b> (combinaciones de condiciones) y los <b>diagramas de transición de estado</b> (por ejemplo, tres intentos de PIN y la cuenta se bloquea).</li>
-          <li><b>Basadas en la estructura (caja blanca):</b> miran el código por dentro. Es la <b>cobertura</b>: de instrucciones (cada línea se ejecuta al menos una vez), de condiciones (cada condición da <code>true</code> y <code>false</code>), de ramas (cada camino de un <code>if</code>) y de condiciones múltiples (todas las combinaciones).</li>
-          <li><b>Basadas en la experiencia:</b> explorar la aplicación sin guion y adivinar errores por lo que ya has visto fallar.</li>
-        </ul>
+        <p>La «caja» es tu código, y la diferencia está en si lo puedes ver al diseñar las pruebas. Piensa en una máquina de gaseosas. En la <b>caja negra</b> no ves lo de adentro: solo sabes lo que debería hacer («si meto 3000 y oprimo B3, sale una Coca-Cola») y pruebas metiendo cosas y mirando lo que sale. En la <b>caja blanca</b> (transparente) abres la máquina y revisas que cada engranaje se mueva al menos una vez.</p>
       </div>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:28%"><col style="width:36%"><col style="width:36%"></colgroup>
+        <thead><tr><th></th><th>Caja negra</th><th>Caja blanca</th></tr></thead>
+        <tbody>
+          <tr><td>De dónde salen las pruebas</td><td>Del <b>enunciado</b>: entradas y salidas esperadas</td><td>Del <b>código</b>: sus líneas, sus <code>if</code>, sus caminos</td></tr>
+          <tr><td>¿Hay que ver el código?</td><td>No: se pueden escribir antes de programar</td><td>Sí</td></tr>
+          <tr><td>Qué responde</td><td>¿Hace <b>lo que debe</b>?</td><td>¿Probé <b>todo lo que escribí</b>?</td></tr>
+          <tr><td>Técnicas del profe</td><td>Particiones de equivalencia, valores de borde, tabla de decisión, transición de estados</td><td>Cobertura de instrucciones, de ramas, de condiciones y de condiciones múltiples (idea 7b)</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose-p">El profe agrega una tercera familia, las <b>basadas en experiencia</b>: <b>explorar</b> la aplicación sin guion, probando cosas raras, y <b>adivinar errores</b>, probando lo que suele romper programas: lista vacía, <code>null</code>, cero, negativos, números enormes, elementos repetidos, texto vacío.</p>
       <div class="worked">
-        <p class="wk-t">Ejemplo resuelto 7 · El envío, con las palabras del profe</p>
+        <p class="wk-t">Ejemplo resuelto 7 · Las cuatro técnicas de caja negra con La Parrilla</p>
         <ol class="wsteps">
-          <li><p><b>Particiones de equivalencia:</b> la regla «envío si la suma es menor a 40000» parte las sumas en dos grupos que el código trata igual: <b>de 0 a 39999</b> (paga envío) y <b>de 40000 en adelante</b> (no paga). Escoges un representante de cada una, por ejemplo 20000 y 60000.</p><p><b>Por qué:</b> probar 20000, 21000 y 22000 es probar tres veces lo mismo; con uno por partición basta.</p></li>
-          <li><p><b>Valores de borde:</b> pruebas en la frontera entre las dos particiones y a cada lado: <b>39999, 40000 y 40001</b>. Es lo que la idea 4 llamaba «el límite»: el profe lo llama BVA (<i>boundary value analysis</i>).</p><p><b>Por qué:</b> los errores de <code>&lt;</code> contra <code>&lt;=</code> solo se ven en el borde.</p></li>
-          <li><p><b>Cobertura (caja blanca):</b> si solo tuvieras la prueba de 54000, la línea <code>total += COSTO_ENVIO;</code> nunca se ejecutaría. En Eclipse, «Coverage As» la pinta de rojo, y la rama verdadera del <code>if</code> queda sin cubrir. La prueba de 36000 la cubre.</p><p><b>Lo que dice el profe:</b> no todo el código tiene que quedar cubierto, pero todos los requerimientos sí.</p></li>
-          <li><p><b>Para varios valores de una partición</b>, JUnit tiene <code>@ParameterizedTest</code>: la misma prueba corre una vez por cada valor.</p><pre class="code sm" data-code="e7-param"></pre></li>
+          <li><p><b>Particiones de equivalencia.</b> El problema: hay infinitas sumas posibles. La idea: si el programa trata igual a 20000 y a 25000 (los dos pagan envío), probar los dos es probar lo mismo. «Equivalencia» quiere decir eso, que se tratan igual. Partes las entradas en grupos que el programa trata igual y pruebas <b>un representante de cada grupo</b>:</p>
+            <div class="tw"><table class="vocab">
+              <colgroup><col style="width:36%"><col style="width:30%"><col style="width:34%"></colgroup>
+              <thead><tr><th>Partición</th><th>Qué hace el programa</th><th>Representante</th></tr></thead>
+              <tbody>
+                <tr><td>Sumas de 0 a 39999</td><td>Cobra envío</td><td>20000 → espero 25000</td></tr>
+                <tr><td>Sumas de 40000 en adelante</td><td>No cobra envío</td><td>60000 → espero 60000</td></tr>
+              </tbody>
+            </table></div>
+            <p><b>El ejemplo del profe:</b> si se aceptan valores entre 1 y 10 y entre 20 y 30, las particiones son (−∞, 0], [1, 10], [11, 19], [20, 30] y [31, ∞), con representantes −2, 3, 15, 25 y 100. Ojo: las particiones de valores <b>rechazados</b> también se prueban.</p></li>
+          <li><p><b>Valores de borde (BVA).</b> El problema: las particiones no detectan un <code>&lt;=</code> donde iba <code>&lt;</code>, porque 20000 y 60000 siguen dando bien. La idea: los errores se esconden <b>justo donde una partición termina y empieza la otra</b>. Pruebas la frontera y un valor a cada lado:</p>
+            <div class="tw"><table class="vocab">
+              <colgroup><col style="width:22%"><col style="width:30%"><col style="width:48%"></colgroup>
+              <thead><tr><th>Suma</th><th>Espero</th><th>Por qué</th></tr></thead>
+              <tbody>
+                <tr><td>39999</td><td>44999 (paga)</td><td>El último que paga envío</td></tr>
+                <tr><td><b>40000</b></td><td><b>40000 (no paga)</b></td><td>La frontera: aquí se equivoca el <code>&lt;=</code></td></tr>
+                <tr><td>40001</td><td>40001 (no paga)</td><td>El primero después de la frontera</td></tr>
+              </tbody>
+            </table></div>
+            <p>BVA es la sigla en inglés de <i>boundary value analysis</i>, análisis de valores de borde. Es lo que en el lab mató al mutante del <code>&lt;=</code>. En el ejemplo del profe, para [1, 10] los bordes son 0, 1, 2 y 9, 10, 11.</p></li>
+          <li><p><b>Tabla de decisión.</b> Cuándo: el resultado depende de <b>varias condiciones a la vez</b>. En el caso Ñam, un pedido se puede confirmar si el restaurante está abierto <b>y</b> la dirección está cubierta. Con dos condiciones de sí o no hay 2 × 2 = 4 combinaciones, y cada columna es una prueba:</p>
+            <div class="tw"><table class="vocab">
+              <colgroup><col style="width:32%"><col style="width:17%"><col style="width:17%"><col style="width:17%"><col style="width:17%"></colgroup>
+              <thead><tr><th></th><th>Regla 1</th><th>Regla 2</th><th>Regla 3</th><th>Regla 4</th></tr></thead>
+              <tbody>
+                <tr><td>¿Restaurante abierto?</td><td>Sí</td><td>Sí</td><td>No</td><td>No</td></tr>
+                <tr><td>¿Dirección cubierta?</td><td>Sí</td><td>No</td><td>Sí</td><td>No</td></tr>
+                <tr><td><b>Resultado esperado</b></td><td>Confirma</td><td>No confirma</td><td>No confirma</td><td>No confirma</td></tr>
+              </tbody>
+            </table></div>
+            <p>Con tres condiciones serían 2 × 2 × 2 = 8 columnas, como la tabla del formulario (Name, Email, Message) de las diapositivas.</p></li>
+          <li><p><b>Diagrama de transición de estados.</b> Cuándo: el objeto tiene <b>estados</b>, y lo que pasa depende de lo que ocurrió antes. El ejemplo del profe es el PIN de un cajero: primer intento, segundo, tercero; un PIN correcto en cualquiera da acceso y tres incorrectos bloquean la cuenta. Cada prueba es una <b>secuencia</b>: correcto → acceso; incorrecto y correcto → acceso; tres incorrectos → bloqueada; y una negativa: ya bloqueada, el PIN correcto no la desbloquea. En Ñam, el Pedido va de CONFIRMADO a EN PREPARACIÓN, EN CAMINO y ENTREGADO, y se prueba que un salto prohibido (de CONFIRMADO directo a ENTREGADO) se rechace. El profe advierte que es para conjuntos pequeños de entradas.</p></li>
+          <li><p><b>Para probar varios representantes con una sola prueba</b>, JUnit tiene <code>@ParameterizedTest</code>: la misma prueba corre una vez por cada valor.</p><pre class="code sm" data-code="e7-param"></pre></li>
         </ol>
       </div>
+    </article>
+
+    <!-- Idea 7b -->
+    <article class="idea" id="idea7b">
+      <h3><span class="ix">Idea 7b · Del profe</span>Caja blanca: la cobertura</h3>
+      <div class="prose">
+        <p>La <b>cobertura</b> mide qué tanto de tu código ejecutaron tus pruebas. Hay cuatro, de la más fácil de cumplir a la más exigente: de <b>instrucciones</b>, de <b>ramas</b> (o decisiones), de <b>condiciones</b> y de <b>condiciones múltiples</b>.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 7b · La cobertura de calcularTotal</p>
+        <ol class="wsteps">
+          <li><p><b>El código,</b> con las líneas numeradas:</p><pre class="code sm" data-code="e7b"></pre></li>
+          <li><p><b>Cobertura de instrucciones:</b> cada línea debe ejecutarse al menos una vez. La fórmula del profe: líneas ejecutadas ÷ líneas totales × 100. Solo con la prueba de 54000, la línea 5 nunca corre (no se cobra envío): 5 de 6, más o menos 83 %. Al agregar la prueba de 36000, la línea 5 corre: 100 %.</p></li>
+          <li><p><b>Cobertura de ramas:</b> un <code>if</code> es un cruce con <b>dos ramas</b>, la verdadera y la falsa, y las dos se deben recorrer. La trampa: solo con la prueba de 36000 se ejecutan las 6 líneas (100 % de instrucciones), pero el <code>if</code> solo tomó el camino verdadero. Nunca se probó qué pasa cuando no se cobra envío: le falta una de sus dos ramas. Por eso la cobertura de ramas pide más que la de instrucciones.</p></li>
+          <li><p><b>Cobertura de condiciones:</b> aplica cuando un <code>if</code> une varias condiciones con <code>&amp;&amp;</code> o <code>||</code>, como <code>if (abierto &amp;&amp; enZona)</code>. Cada condición, por separado, debe dar <code>true</code> alguna vez y <code>false</code> alguna vez.</p></li>
+          <li><p><b>Cobertura de condiciones múltiples:</b> todas las combinaciones de las condiciones. Con dos condiciones son las 4 de la tabla de decisión de la idea 7. Es la más exigente.</p></li>
+          <li><p><b>En Eclipse:</b> clic derecho → <i>Coverage As</i> → <i>JUnit Test</i>. Las líneas se pintan de verde (ejecutadas), rojo (nunca ejecutadas) y amarillo (un <code>if</code> al que le faltó una rama). El reporte también muestra la <b>complejidad ciclomática</b>: cuántos caminos distintos hay que recorrer para cubrir todo. Lo que dice el profe: <b>no todo el código tiene que quedar cubierto, pero todos los requerimientos sí</b>.</p></li>
+        </ol>
+      </div>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:50%"><col style="width:50%"></colgroup>
+        <thead><tr><th>Si la pregunta dice…</th><th>Es…</th></tr></thead>
+        <tbody>
+          <tr><td>Grupos de entradas que se tratan igual, un representante de cada uno</td><td>Particiones de equivalencia (caja negra)</td></tr>
+          <tr><td>Probar justo en el límite y a cada lado</td><td>Valores de borde, BVA (caja negra)</td></tr>
+          <tr><td>Todas las combinaciones de varias condiciones</td><td>Tabla de decisión (caja negra)</td></tr>
+          <tr><td>Secuencias de acciones; el objeto tiene estados</td><td>Transición de estados (caja negra)</td></tr>
+          <tr><td>Qué líneas o qué ramas se ejecutaron</td><td>Cobertura (caja blanca)</td></tr>
+          <tr><td>Sin conocer el código, desde el enunciado</td><td>Caja negra</td></tr>
+          <tr><td>Mirando la estructura interna del código</td><td>Caja blanca</td></tr>
+        </tbody>
+      </table></div>
     </article>
 
     <!-- Idea 8 -->
@@ -1087,6 +1158,17 @@ public class ClubTest {
         assertEquals("No hay cupo para Eva", e.getMessage());
         assertEquals(2, club.getCantidadSocios());
     }
+}` },
+  "e7b": { s: `
+public double calcularTotal() {
+    double total = 0;                       // 1
+    for (LineaPedido l : lineas) {          // 2
+        total += l.calcularSubtotal();      // 3
+    }
+    if (total < MINIMO_SIN_ENVIO) {         // 4
+        total += COSTO_ENVIO;               // 5
+    }
+    return total;                           // 6
 }` },
   "e7-param": { s: `
 @ParameterizedTest
