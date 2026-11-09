@@ -242,7 +242,7 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | M3 Librerías, frameworks y APIs | ☐ | ☐ | ☐ | — | 🔒 |
 | M4 Análisis | ☐ | ☐ | ☐ | 4/5 (Quiz A; falló la firma con mayúscula: `Disponible()` en vez de `estaDisponible()`) | ✅ |
 | M5 Diseño: roles, responsabilidades y colaboraciones | ☐ | ☐ | ☐ | 4/5 (Quiz A, junto con M4) | ✅ |
-| M6 Pruebas con JUnit | ☐ | ☐ | ☐ | — | ⏳ |
+| M6 Pruebas con JUnit | ☐ | ☐ | ☐ | 4/5 (Quiz A, segundo intento; antes 3/5 en A y en B). Pendiente: escribir de memoria `assertEquals(41000.0, p.calcularTotal(), 0.01);` y `assertThrows(CupoLlenoException.class, () -> club.agregarSocio("Eva"));` | ✅ |
 | M7 Principios | ☐ | ☐ | ☐ | — | ⏳ |
 | M8 Patrones | ☐ | ☐ | ☐ | — | ⏳ |
 | M9 Simulacro | — | — | — | —/100 | ⏳ |
