@@ -234,6 +234,7 @@ footer{font-size:.82rem; color:var(--muted); max-width:72ch}
     <div class="rules">
       <p><b>Ajuste del 5 de noviembre:</b> el Proyecto 2 se llevó el miércoles y el jueves, así que M2 pasa al viernes. M4 y M5 van juntos en un solo módulo el sábado, con M6. M7 y M8 van juntos el domingo, y M3 queda en versión corta (quiz primero). El simulacro sigue el lunes.</p>
       <p><b>Ajuste del 8 de noviembre:</b> M2 tomó el viernes y el sábado. Hoy domingo van M4–M5 y M6; el lunes, M7–M8 en versión exprés (quiz primero, con lo esencial de M3 adentro) y un mini-simulacro de 40 minutos en vez del de 80.</p>
+      <p><b>Ajuste del 9 de noviembre:</b> M4–M5 quedó aprobado el domingo y M6 pasó al lunes. El lunes van M6, M7–M8 exprés y el mini-simulacro; si el simulacro no cabe, va el martes temprano, antes del examen.</p>
       <p><b>Si te vuelves a atrasar:</b> recorta primero los labs y los T4 del taller. Nunca recortes M4–M5, M6 ni el simulacro.</p>
       <p><b>Si vas adelantado:</b> en M4–M5 y M7–M8 haz el quiz primero; si sacas 4/5, ese tiempo va para el simulacro.</p>
     </div>
@@ -378,10 +379,10 @@ const DAYS = [
     note:"M2 se alargó: era el tema nuevo más difícil de la semana."},
   {d:"2026-11-07", n:"Sáb", f:"7 nov", load:4, what:"M2: taller, dudas y Quiz A", mods:["M2"], h:"—", tags:[],
     note:"Las dudas de throw, throws, checked y catch quedaron resueltas en el chat."},
-  {d:"2026-11-08", n:"Dom", f:"8 nov", load:4, what:"M2 aprobado (Quiz B 4/5) + M4–M5 Del análisis al diseño + M6 Pruebas con JUnit", mods:["M4","M6"], h:"4–5 h", tags:[],
-    note:"Ajuste del 8 de noviembre: M4–M5 en la tarde (~2,5 h) y M6 después. Si no alcanzas M6, pásalo al lunes temprano."},
-  {d:"2026-11-09", n:"Lun", f:"9 nov", load:2, what:"M7–M8 Principios y patrones, exprés + mini-simulacro de 40 min", mods:["M7","M9"], h:"~3 h", tags:[],
-    note:"En M7–M8 haz el quiz primero. El simulacro, en tu IDE, sin internet y con cronómetro. Después repasas tus plantillas."},
+  {d:"2026-11-08", n:"Dom", f:"8 nov", load:4, what:"M2 aprobado (Quiz B 4/5) + M4–M5 aprobado (Quiz A 4/5)", mods:["M4"], h:"4–5 h", tags:[],
+    note:"M4–M5 pasó al primer intento. M6 se movió al lunes."},
+  {d:"2026-11-09", n:"Lun", f:"9 nov", load:2, what:"M6 Pruebas con JUnit + M7–M8 exprés + mini-simulacro de 40 min", mods:["M6","M7","M9"], h:"~3,5 h", tags:[],
+    note:"Ajuste del 9 de noviembre: M6 primero (~1,5 h), después M7–M8 con el quiz primero (~1 h) y el simulacro al final del día. Si no alcanzas el simulacro, hazlo el martes a las 8:00."},
   {d:"2026-11-10", n:"Mar", f:"10 nov", load:0, what:"30 min con tus plantillas, y Examen 2", mods:[], h:"11:00 · Llega temprano", exam:true,
     note:"Repasa tus plantillas de memoria 30 minutos y llega temprano: a las 12:20 todos entregan."}
 ];
@@ -411,7 +412,7 @@ const MODS = [
     dominar:["Responsabilidades (saber, hacer, decidir) y a qué objeto asignarlas: al que tiene la información.","Los 6 estereotipos de rol de Wirfs-Brock y los estilos de control: centralizado, delegado y disperso.","De una historia de usuario a tarjetas CRC y a las colaboraciones entre objetos."],
     taller:["Nam – Núcleo de Pedidos, el caso de clase","Hoja de trabajo del procesador de imágenes","Competencia y Banco de Historias de Usuario","El diseño de tu Proyecto 2, revisado con el checklist"],
     trampas:["La clase que controla todo.","Asignar una responsabilidad a quien no tiene la información.","Confundir el estereotipo de una clase con su nombre."]},
-  {id:"M6", t:"Pruebas unitarias con JUnit", dayIso:"2026-11-08", day:"Dom 8", h:"~2 h", prio:"alta", deps:["M2"], extra:"Clases 20–21 + Taller 5",
+  {id:"M6", t:"Pruebas unitarias con JUnit", dayIso:"2026-11-09", day:"Lun 9", h:"~1,5 h", prio:"alta", deps:["M2"], extra:"Clases 20–21 + Taller 5",
     src:"07 Diseño de pruebas unitarias · 08 Diseño de pruebas 2 (carpeta 02) · 14 y 15 (carpeta 03) · Taller 5 · lectura [24]",
     dominar:["Diseñar los casos antes del código: el normal, los límites y los de error, en una tabla.","Escenarios con `@BeforeEach` y la estructura preparar → ejecutar → verificar.","Los asserts que más salen: `assertEquals`, `assertTrue`, `assertNull` y `assertThrows`."],
     taller:["Taller 5 (Hamburguesas) con su esqueleto, rehecho","Pruebas para la tienda de coleccionables, con las excepciones de M2","Encontrar el error que tus pruebas no detectan"],

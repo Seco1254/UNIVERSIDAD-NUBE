@@ -156,7 +156,9 @@ Aparte:           M3 Librerías, frameworks y APIs (+ Swing)                    
 - **Trampas:** la clase que controla todo; asignar una responsabilidad a quien no tiene la información; confundir el estereotipo de una clase con su nombre.
 
 ### M6 — Pruebas unitarias con JUnit
-*Sáb 7 · ~2 h · Clases 20–21 + Taller 5*
+> **Artifact:** [M6 · Pruebas con JUnit](https://claude.ai/artifact/9VZooz5anDDQJrHWQySwnC). Prueba el código delegado de La Parrilla y el club de M2 con JUnit 5. Lab de semáforo (predecir pasa, falla o error) y de mutantes. Todas las pruebas, también las que fallan a propósito, están corridas con JUnit 5.10 y Java 21, y los mensajes son los reales. El esqueleto del Taller 5 (Hamburguesas) entra cuando lo subas; mientras tanto, el T3 es una variante del mismo estilo.
+
+*Lun 9 (movido por el ajuste) · ~1,5 h · Clases 20–21 + Taller 5*
 *Material: 07 Diseño de pruebas unitarias · 08 Diseño de pruebas 2 (carpeta 02) · 14 y 15 (carpeta 03) · Taller 5 con su esqueleto · lectura [24] (Robillard, cap. 5)*
 
 - **Teoría:** qué es una prueba unitaria y qué la hace buena. Diseñar los casos antes del código: el normal, los límites y los de error, en una tabla. Escenarios con `@BeforeEach`. Cada prueba sigue preparar → ejecutar → verificar. Los asserts: `assertEquals(esperado, obtenido)`, `assertTrue`, `assertFalse`, `assertNull`, `assertNotNull`, `assertThrows`. *(La versión de JUnit se ajusta al esqueleto del Taller 5.)*
@@ -208,12 +210,14 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | 3 | Jue 5 nov | Liviana | Quiz B de **M1**: 4/5 ✅ | — | Clase 26 (Swing) · **entrega del Proyecto 2** |
 | 4 | Vie 6 nov | Suave | **M2** Manejo de errores: teoría y lab | ~2 h | |
 | 5 | Sáb 7 nov | Pesada | **M2**: taller, dudas en el chat y Quiz A (1/5) | — | |
-| 6 | Dom 8 nov | Pesada | **M2** ✅ (Quiz B 4/5) + **M4–M5** Del análisis al diseño + **M6** Pruebas | 4–5 h | Si no alcanza M6, pasa al lunes temprano |
-| 7 | Lun 9 nov | Suave | **M7–M8** exprés (quiz primero, con lo esencial de M3) + **M9** mini-simulacro de 40 min | ~3 h | |
+| 6 | Dom 8 nov | Pesada | **M2** ✅ (Quiz B 4/5) + **M4–M5** ✅ (Quiz A 4/5) | 4–5 h | M6 pasó al lunes |
+| 7 | Lun 9 nov | Suave | **M6** Pruebas + **M7–M8** exprés (quiz primero, con lo esencial de M3) + **M9** mini-simulacro de 40 min | ~3,5 h | Si no cabe el simulacro, va el martes a las 8:00 |
 | — | **Mar 10 nov** | — | 30 min con tus plantillas y **EXAMEN 2** (11:00) | — | Llega temprano |
 
 **Ajuste del 5 de noviembre:** el Proyecto 2 se llevó el miércoles y el jueves. M2 pasa al viernes; M4 y M5 se juntan en un solo artifact el sábado, con M6; M7 y M8 se juntan el domingo (progreso en los docs `M4`/`M5` y `M7`/`M8`, como M6–M7 en Física), y M3 queda en versión corta. El simulacro sigue el lunes.
 **Ajuste del 8 de noviembre:** M2 tomó el viernes y el sábado. El domingo van M4–M5 y M6; el lunes, M7–M8 en versión exprés y un mini-simulacro de 40 minutos en vez del de 80, como en Física.
+
+**Ajuste del 9 de noviembre:** M4–M5 quedó aprobado el domingo en la noche y M6 pasó al lunes, antes de M7–M8 y del simulacro. Si el simulacro no cabe el lunes, va el martes temprano.
 **Si te vuelves a atrasar:** recorta primero M3 y después los labs y los T4 del taller. **Nunca recortes M2, M4–M5, M6 ni el simulacro.**
 **Si vas adelantado:** en M4–M5 y M7–M8 haz el quiz primero; si sacas ≥ 4/5, ese tiempo va para el simulacro.
 
@@ -226,9 +230,9 @@ La carga sigue tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y vi
 | M1 De UML a Java | ☐ | ☐ | ☐ | 4/5 (Quiz B; el A fue 0/5) | ✅ |
 | M2 Manejo de errores | ☐ | ☐ | ☐ | 4/5 (Quiz B; el A fue 1/5) | ✅ |
 | M3 Librerías, frameworks y APIs | ☐ | ☐ | ☐ | — | 🔒 |
-| M4 Análisis | ☐ | ☐ | ☐ | — | ⏳ |
-| M5 Diseño: roles, responsabilidades y colaboraciones | ☐ | ☐ | ☐ | — | ⏳ |
-| M6 Pruebas con JUnit | ☐ | ☐ | ☐ | — | 🔒 |
+| M4 Análisis | ☐ | ☐ | ☐ | 4/5 (Quiz A; falló la firma con mayúscula: `Disponible()` en vez de `estaDisponible()`) | ✅ |
+| M5 Diseño: roles, responsabilidades y colaboraciones | ☐ | ☐ | ☐ | 4/5 (Quiz A, junto con M4) | ✅ |
+| M6 Pruebas con JUnit | ☐ | ☐ | ☐ | — | ⏳ |
 | M7 Principios | ☐ | ☐ | ☐ | — | 🔒 |
 | M8 Patrones | ☐ | ☐ | ☐ | — | 🔒 |
 | M9 Simulacro | — | — | — | —/100 | 🔒 |

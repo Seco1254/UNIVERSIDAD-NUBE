@@ -53,6 +53,7 @@ Cada rama se estudia distinto. En DPOO se mantienen las 4 secciones, pero así:
 | DPOO | M1 · De UML a Java (intentos en `intentos/`) | https://claude.ai/artifact/T8pydDxRpDQE4CxTnz7hiB | `DPOO/EXAMEN_2/artifacts/M1.html` |
 | DPOO | M2 · Manejo de errores (lab paso a paso de la pila de llamadas) | https://claude.ai/artifact/L8yPB3eYWLmFf69W1hy3nB | `DPOO/EXAMEN_2/artifacts/M2.html` |
 | DPOO | M4–M5 · Del análisis al diseño (un solo artifact; progreso en docs `M4` y `M5`) | https://claude.ai/artifact/Lhm7C1zAVUvpvLU2EDoxDb | `DPOO/EXAMEN_2/artifacts/M4-M5.html` |
+| DPOO | M6 · Pruebas con JUnit (lab de semáforo y mutantes) | https://claude.ai/artifact/9VZooz5anDDQJrHWQySwnC | `DPOO/EXAMEN_2/artifacts/M6.html` |
 
 ## Convenciones
 

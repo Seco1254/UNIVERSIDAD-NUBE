@@ -1,0 +1,1924 @@
+<title>M6 Pruebas con JUnit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+/* ---- Propio de M6: salida de JUnit, semáforo, mutantes y ciclo de vida ---- */
+:root{--term-bg:#1d1b26; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-ok:#8fe3b5}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--term-bg:#0b0a10; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-ok:#8fe3b5} }
+:root[data-theme="dark"]{--term-bg:#0b0a10; --term-fg:#ece9f7; --term-err:#ff9b9b; --term-ok:#8fe3b5}
+.console{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.6; background:var(--term-bg); color:var(--term-fg); border-radius:8px; padding:10px 12px; white-space:pre-wrap; overflow-wrap:anywhere}
+.console .e{color:var(--term-err)} .console .k{color:var(--term-ok)} .console .dim{opacity:.6}
+.enun{background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--ink); border-radius:0 var(--r) var(--r) 0; padding:12px 16px; font-size:.95rem; max-width:76ch}
+.side{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.side > div{display:grid; grid-template-columns:minmax(0,1fr); gap:6px; align-content:start; min-width:0}
+.svgfig{display:block; width:100%; max-width:560px; height:auto}
+.svgfig .fr{fill:var(--surface); stroke:var(--ink); stroke-width:1.5}
+.svgfig .fr.hot{fill:var(--accent-soft)}
+.svgfig .frt{font:600 12.5px var(--f-mono); fill:var(--ink)}
+.svgfig .sub{font:11px var(--f-body); fill:var(--muted)}
+.svgfig .hdr{font:700 13px var(--f-display); fill:var(--ink)}
+.svgfig .call{fill:none; stroke:var(--ink); stroke-width:1.3}
+.svgfig .sep{fill:none; stroke:var(--rule); stroke-width:1.5; stroke-dasharray:5 5}
+.svgfig .hd{fill:var(--ink)}
+.svgfig .lbl{font:600 12px var(--f-mono); fill:var(--green)}
+.assign{display:grid; grid-template-columns:minmax(0,1fr); border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.arow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,11rem); gap:6px 12px; padding:10px 12px; border-bottom:1px solid var(--rule); align-items:center}
+.arow:last-child{border-bottom:0}
+.arow label{font-family:var(--f-mono); font-size:.86rem; overflow-wrap:anywhere}
+.arow select{font:inherit; font-size:.9rem; padding:5px 8px; border:1.5px solid var(--rule); border-radius:7px; background:var(--paper); color:var(--ink); width:100%}
+.arow select.right{border-color:var(--green); background:var(--green-soft)} .arow select.wrong{border-color:var(--red); background:var(--red-soft)}
+.arow .why{grid-column:1 / -1; font-size:.86rem}
+.arow .why.ok{color:var(--green)} .arow .why.no{color:var(--red)}
+@media (max-width:560px){ .arow{grid-template-columns:minmax(0,1fr)} }
+.muts{display:grid; grid-template-columns:minmax(0,1fr); gap:12px}
+.mut{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; grid-template-columns:minmax(0,1fr); gap:8px; min-width:0}
+.mut h4{margin:0; font:700 1rem var(--f-display)}
+.mut h4 .ix{font-family:var(--f-mono); font-size:.72rem; font-weight:600; color:var(--accent); margin-right:6px; letter-spacing:.04em}
+.tchk{display:grid; grid-template-columns:minmax(0,1fr); gap:2px; font-family:var(--f-mono); font-size:.84rem}
+.tchk label{display:grid; grid-template-columns:1.4rem minmax(0,1fr); align-items:start; gap:6px; padding:3px 0; overflow-wrap:anywhere; cursor:pointer}
+.tchk input{margin:3px 0 0}
+.verdict{font-size:.9rem} .verdict.ok{color:var(--green)} .verdict.no{color:var(--red)}
+.meter{display:grid; gap:6px; font-size:.92rem}
+.meter-bar{height:14px; border-radius:99px; background:var(--rule); overflow:hidden}
+.meter-bar i{display:block; height:100%; width:0; background:var(--green); transition:width .3s}
+@media (prefers-reduced-motion: reduce){ .meter-bar i{transition:none} }
+.ide{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:10px}
+.ide > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; grid-template-columns:minmax(0,1fr); gap:6px; align-content:start; min-width:0; font-size:.92rem}
+.ide h4{margin:0; font:700 1rem var(--f-display)}
+.ide ol{margin:0; padding-left:1.2rem; display:grid; gap:4px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#vocab">Vocabulario</a>
+  <a href="#teoria"><span>1</span>Teoría</a>
+  <a href="#lab"><span>2</span>Lab</a>
+  <a href="#taller"><span>3</span>Taller</a>
+  <a href="#quiz"><span>4</span>Quiz</a>
+</div></nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">DPOO · Examen 2 · Módulo 6 de 9</p>
+    <h1>Pruebas con JUnit</h1>
+    <div class="meta"><span class="stereo">«preparar, ejecutar, verificar»</span><span>Lunes 9 de noviembre · ~1,5 h</span><span>Clases 20 y 21 + Taller 5</span></div>
+    <p class="lede">Una prueba unitaria es un método que llama a tu código con datos que tú escogiste y revisa que el resultado sea el que calculaste a mano. JUnit corre todas tus pruebas con un clic y te dice cuáles pasan y cuáles no. En el examen puede salir de dos formas: una pregunta de selección múltiple del tipo «¿qué verifica esta prueba?» o «¿qué caso falta?», o escribir pruebas en la práctica.</p>
+    <ul class="goals">
+      <li>Escribir una clase de prueba con escenario (<code>@BeforeEach</code>), <code>@Test</code> y los asserts básicos.</li>
+      <li>Escoger los casos: el normal, los límites y los de error, y probar excepciones con <code>assertThrows</code>.</li>
+      <li>Leer lo que dice JUnit cuando una prueba no pasa y saber si el error está en el código o en la prueba.</li>
+    </ul>
+    <div class="shortcut"><p><b>¿Ya lo dominas?</b> Haz el quiz primero. Con 4/5 te saltas el módulo.</p><a class="btn" href="#quiz">Ir al quiz</a></div>
+    <p class="note muted">No tengo las diapositivas 07 y 08 ni el esqueleto del Taller 5 (Hamburguesas). Todo aquí usa JUnit 5, que es el que trae <code>assertThrows</code>. Si el esqueleto del profe usa <code>@Before</code> y <code>@Test(expected = ...)</code>, es JUnit 4: avísame y te muestro las diferencias. Todas las pruebas de esta página las corrí con JUnit 5.10 y Java 21, y los mensajes que ves son los que salieron.</p>
+  </header>
+
+  <!-- ============ VOCABULARIO ============ -->
+  <section id="vocab" aria-labelledby="v-h">
+    <div class="sec-head">
+      <h2 id="v-h">Vocabulario de este módulo</h2>
+      <p class="note">En el orden en que lo vas a usar. Las excepciones de M2 y el caso La Parrilla de M4–M5 se dan por sabidos.</p>
+    </div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:20%"><col style="width:36%"><col style="width:44%"></colgroup>
+      <thead><tr><th>Término</th><th>Cómo se ve en Java</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td>Prueba unitaria</td><td>Un método con <code>@Test</code> dentro de <code>PedidoTest</code></td><td>Código que llama a un método con datos conocidos y revisa que el resultado sea el esperado. «Unitaria»: prueba una sola clase a la vez.</td></tr>
+        <tr><td>JUnit</td><td><code>import org.junit.jupiter.api.Test;</code></td><td>El framework de pruebas de Java (la versión 5 se llama Jupiter). No escribes <code>main</code>: JUnit busca tus pruebas y las corre.</td></tr>
+        <tr><td>Clase de prueba</td><td><code>public class PedidoTest</code></td><td>Una clase aparte con las pruebas de una clase del modelo. Por costumbre se llama igual, terminada en <code>Test</code>.</td></tr>
+        <tr><td><code>@Test</code></td><td><code>@Test public void totalConEnvio()</code></td><td>Marca un método como prueba. Es <code>public void</code> y no recibe parámetros.</td></tr>
+        <tr><td>Preparar, ejecutar, verificar</td><td>Tres bloques dentro de cada prueba</td><td>Creas los objetos, llamas el método que pruebas y revisas el resultado con un assert.</td></tr>
+        <tr><td>Assert</td><td><code>assertEquals(41000.0, total, 0.01);</code></td><td>Una verificación. Si no se cumple, la prueba se detiene ahí y sale en rojo.</td></tr>
+        <tr><td>Esperado y obtenido</td><td>El 1.º y el 2.º argumento de <code>assertEquals</code></td><td>Esperado: lo que debería dar, calculado por ti a mano. Obtenido: lo que dio el código.</td></tr>
+        <tr><td>Margen</td><td>El 3.º argumento cuando son <code>double</code></td><td>Cuánto pueden diferir dos <code>double</code> para darlos por iguales. Hace falta porque los <code>double</code> se redondean.</td></tr>
+        <tr><td>Escenario</td><td>Atributos de la clase de prueba + <code>setUp()</code></td><td>Los objetos ya armados con los que arranca cada prueba.</td></tr>
+        <tr><td><code>@BeforeEach</code></td><td><code>@BeforeEach public void setUp()</code></td><td>Marca el método que JUnit corre antes de cada prueba, para que todas arranquen con un escenario nuevo.</td></tr>
+        <tr><td>Caso normal, límite y de error</td><td>36000 · 40000 justo · nadie disponible</td><td>Los tres tipos de casos que hay que probar: uno típico, justo donde cambia la regla y uno que debe lanzar una excepción.</td></tr>
+        <tr><td>Lambda</td><td><code>() -> club.agregarSocio("Eva")</code></td><td>Un pedazo de código empacado sin ejecutar, que le pasas a otro método para que él lo ejecute cuando quiera.</td></tr>
+        <tr><td><code>assertThrows</code></td><td><code>assertThrows(CupoLlenoException.class, () -> ...)</code></td><td>Verifica que ese código lance esa excepción. Si no la lanza, la prueba falla.</td></tr>
+        <tr><td>Pasa, falla y error</td><td>✔ · ✘ <code>expected… but was…</code> · ✘ <code>NullPointerException</code></td><td>Pasa: todos los asserts se cumplen. Falla: un assert no se cumplió. Error: saltó una excepción que nadie esperaba antes del assert.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Seis ideas con su ejemplo resuelto, la receta para las preguntas de pruebas y tus plantillas. Probamos el código delegado de La Parrilla (M4–M5) y el club de M2.</p></div>
+
+    <div class="block">
+      <h3>El código que vamos a probar</h3>
+      <p class="prose-p">Es el diseño delegado de M4–M5. Ya lo conoces: no hay nada nuevo en el modelo, lo nuevo son las pruebas.</p>
+      <div class="side">
+        <div><h4>LineaPedido</h4><pre class="code sm" data-code="m-linea"></pre></div>
+        <div><h4>Pedido</h4><pre class="code sm" data-code="m-pedido"></pre></div>
+      </div>
+      <p class="prose-p muted">Producto tiene nombre, precio y sus getters. Domiciliario tiene <code>estaDisponible()</code> (menos de 3 pedidos) y <code>asignar(Pedido p)</code>.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <article class="idea" id="idea1">
+      <h3><span class="ix">Idea 1</span>Qué es una prueba y cómo se ve</h3>
+      <div class="prose">
+        <p>Probar a mano es correr el programa, mirar lo que imprime y decidir si está bien. Funciona una vez. Una <b>prueba unitaria</b> deja esa revisión escrita: un método que prepara unos objetos, llama al método que quieres probar y compara el resultado con el que tú calculaste. Cuando cambias algo, corres todas las pruebas con un clic y sabes al instante si dañaste algo.</p>
+        <p>Las pruebas van en una <b>clase de prueba</b> aparte. Esa clase no tiene <code>main</code>: <b>JUnit</b> busca los métodos marcados con <code>@Test</code> y los corre uno por uno. Tú no llamas a JUnit; JUnit te llama a ti. Por eso es un framework y no una librería (eso es de M3).</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 1 · La primera prueba: el subtotal de una línea</p>
+        <ol class="wsteps">
+          <li><p><b>Qué haces:</b> escoges el método y calculas a mano lo que debería dar. Tres hamburguesas de 18000: 3 × 18000 = 54000.</p><p><b>Por qué:</b> la prueba compara contra un valor que sacaste sin mirar el código. Si copias lo que el código imprime, la prueba no prueba nada.</p></li>
+          <li><p><b>Qué escribes:</b> la clase <code>LineaPedidoTest</code> con los imports.</p><p><b>Por qué:</b> <code>@Test</code> y <code>assertEquals</code> vienen de JUnit. El <code>import static</code> te deja escribir <code>assertEquals(...)</code> sin poner <code>Assertions.</code> delante.</p><pre class="code" data-code="e1-1"></pre></li>
+          <li><p><b>Qué escribes:</b> el método de prueba, con <code>@Test</code>, <code>public void</code>, sin parámetros y con un nombre que diga qué prueba.</p><p><b>Por qué:</b> JUnit solo corre los métodos con <code>@Test</code>. El nombre es lo que vas a leer cuando salga en rojo: <code>subtotalEsPrecioPorCantidad</code> dice más que <code>prueba1</code>.</p></li>
+          <li><p><b>Qué escribes:</b> las tres partes. <b>Preparar:</b> creas el producto y la línea. <b>Ejecutar:</b> llamas a <code>calcularSubtotal()</code>. <b>Verificar:</b> comparas con 54000.0.</p><p><b>Por qué:</b> separadas así, cualquiera lee qué se probó y con qué datos. El <code>0.01</code> del final es el margen, porque el resultado es <code>double</code> (idea 2).</p><pre class="code" data-code="e1-2"></pre></li>
+          <li><p><b>Qué pasa al correrla</b> (en Eclipse: clic derecho en la clase → Run As → JUnit Test): sale en verde.</p><pre class="console" data-junit="e1"></pre><p><b>Si el código estuviera mal,</b> saldría en rojo con lo que esperabas y lo que dio. Eso es la idea 6.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 2 -->
+    <article class="idea" id="idea2">
+      <h3><span class="ix">Idea 2</span>Los asserts: con qué verificas</h3>
+      <p class="prose-p">Un assert es la línea que decide si la prueba pasa. Estos son los que se usan casi siempre:</p>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:36%"><col style="width:26%"><col style="width:38%"></colgroup>
+        <thead><tr><th>Assert</th><th>Cuándo</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td><code>assertEquals(esperado, obtenido)</code></td><td><code>int</code>, <code>String</code></td><td><code>assertEquals("Luis", d.getNombre());</code></td></tr>
+          <tr><td><code>assertEquals(esperado, obtenido, margen)</code></td><td><code>double</code></td><td><code>assertEquals(41000.0, p.calcularTotal(), 0.01);</code></td></tr>
+          <tr><td><code>assertTrue(condición)</code></td><td>Un <code>boolean</code> que debe dar <code>true</code></td><td><code>assertTrue(ana.estaDisponible());</code></td></tr>
+          <tr><td><code>assertFalse(condición)</code></td><td>Un <code>boolean</code> que debe dar <code>false</code></td><td><code>assertFalse(ana.estaDisponible());</code></td></tr>
+          <tr><td><code>assertNull(x)</code> · <code>assertNotNull(x)</code></td><td>Algo que debe ser (o no ser) <code>null</code></td><td><code>assertNotNull(r.buscarPedido(7));</code></td></tr>
+          <tr><td><code>assertThrows(Tipo.class, () -> código)</code></td><td>Código que debe lanzar una excepción</td><td>La idea 5</td></tr>
+        </tbody>
+      </table></div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 2 · Probar un método que retorna boolean</p>
+        <ol class="wsteps">
+          <li><p><b>Qué pruebas:</b> <code>estaDisponible()</code> de Domiciliario. Retorna <code>boolean</code>, así que verificas con <code>assertTrue</code> o <code>assertFalse</code>.</p></li>
+          <li><p><b>Prueba 1:</b> un domiciliario nuevo, sin pedidos, está disponible: <code>assertTrue</code>. <b>Prueba 2:</b> con 3 pedidos ya no lo está: <code>assertFalse</code>.</p><pre class="code" data-code="e2"></pre></li>
+          <li><p><b>Por qué no <code>assertEquals(true, ana.estaDisponible())</code>:</b> también funciona, pero <code>assertTrue</code> se lee directo y es lo que se espera ver.</p></li>
+        </ol>
+      </div>
+      <div class="prose">
+        <p><b>Dos reglas que se revisan siempre:</b></p>
+        <ol>
+          <li><b>El esperado va primero.</b> <code>assertEquals(41000.0, total, 0.01)</code>, no al revés. Si los inviertes, la prueba igual falla cuando debe, pero el mensaje sale al revés y te confunde (lo ves en la idea 6).</li>
+          <li><b>Los <code>double</code> llevan margen.</b> Un <code>double</code> guarda una aproximación en binario, así que una suma puede quedar corrida por muy poco. Sin margen, JUnit los compara exactos:</li>
+        </ol>
+      </div>
+      <pre class="code sm" data-code="e2-double"></pre>
+      <pre class="console" data-junit="double"></pre>
+    </article>
+
+    <!-- Idea 3 -->
+    <article class="idea" id="idea3">
+      <h3><span class="ix">Idea 3</span>El escenario con <code>@BeforeEach</code></h3>
+      <div class="prose">
+        <p>Casi todas las pruebas de una clase arrancan creando los mismos objetos. En vez de repetirlos, los vuelves <b>atributos</b> de la clase de prueba y los creas en un método marcado con <code>@BeforeEach</code>. Ese método arma el <b>escenario</b>, y JUnit lo corre antes de cada prueba.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 3 · Sacar lo repetido a un escenario</p>
+        <ol class="wsteps">
+          <li><p><b>Qué ves:</b> dos pruebas de Pedido que empiezan con las mismas dos líneas.</p><pre class="code sm" data-code="e3-antes"></pre></li>
+          <li><p><b>Qué haces:</b> subes el producto y el pedido a atributos y los creas en <code>setUp()</code> con <code>@BeforeEach</code>. Las líneas repetidas se borran de cada prueba.</p><pre class="code sm" data-code="e3-despues"></pre></li>
+          <li><p><b>Qué hace JUnit:</b> para cada prueba crea un objeto <code>PedidoTest</code> nuevo, corre <code>setUp()</code> y después la prueba.</p>
+            <div class="fig"><svg class="svgfig" viewBox="0 0 560 250" role="img" aria-labelledby="lc-t">
+              <title id="lc-t">Ciclo de vida: para cada prueba JUnit crea un objeto de prueba nuevo, corre setUp con BeforeEach y luego el método con Test; cada prueba arranca con un pedido vacío</title>
+              <text class="hdr" x="135" y="18" text-anchor="middle">Prueba 1</text>
+              <text class="hdr" x="425" y="18" text-anchor="middle">Prueba 2</text>
+              <path class="sep" d="M280 8 V242"/>
+              <rect class="fr" x="20" y="30" width="230" height="44" rx="6"/>
+              <text class="frt" x="32" y="49">new PedidoTest()</text><text class="sub" x="32" y="65">JUnit crea un objeto de prueba nuevo</text>
+              <path class="call" d="M135 74 V92"/><path class="hd" d="M130 90 L140 90 L135 98 Z"/>
+              <rect class="fr hot" x="20" y="98" width="230" height="44" rx="6"/>
+              <text class="frt" x="32" y="117">setUp()  @BeforeEach</text><text class="sub" x="32" y="133">hamburguesa y pedido vacío</text>
+              <path class="call" d="M135 142 V160"/><path class="hd" d="M130 158 L140 158 L135 166 Z"/>
+              <rect class="fr" x="20" y="166" width="230" height="44" rx="6"/>
+              <text class="frt" x="32" y="185">totalConEnvio()  @Test</text><text class="sub" x="32" y="201">agrega 2 hamburguesas y verifica</text>
+              <text class="lbl" x="32" y="232">✔ 41000.0</text>
+              <rect class="fr" x="310" y="30" width="230" height="44" rx="6"/>
+              <text class="frt" x="322" y="49">new PedidoTest()</text><text class="sub" x="322" y="65">otro objeto: nada de la prueba 1</text>
+              <path class="call" d="M425 74 V92"/><path class="hd" d="M420 90 L430 90 L425 98 Z"/>
+              <rect class="fr hot" x="310" y="98" width="230" height="44" rx="6"/>
+              <text class="frt" x="322" y="117">setUp()  @BeforeEach</text><text class="sub" x="322" y="133">otra vez un pedido vacío</text>
+              <path class="call" d="M425 142 V160"/><path class="hd" d="M420 158 L430 158 L425 166 Z"/>
+              <rect class="fr" x="310" y="166" width="230" height="44" rx="6"/>
+              <text class="frt" x="322" y="185">totalSinEnvio()  @Test</text><text class="sub" x="322" y="201">agrega 3 hamburguesas y verifica</text>
+              <text class="lbl" x="322" y="232">✔ 54000.0</text>
+            </svg></div></li>
+          <li><p><b>Por qué importa:</b> cada prueba arranca de cero. Las 2 hamburguesas de la prueba 1 no aparecen en la prueba 2. Así las pruebas no dependen unas de otras, y eso es obligatorio: JUnit no promete en qué orden las corre.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 4 -->
+    <article class="idea" id="idea4">
+      <h3><span class="ix">Idea 4</span>Qué casos probar: normal, límite y error</h3>
+      <div class="prose">
+        <p>Una sola prueba del caso feliz no basta. Antes de escribir código de prueba, haz una <b>tabla de casos</b> con tres tipos:</p>
+        <ul>
+          <li><b>Normal:</b> un uso típico. Salen directo de los criterios de aceptación de M4–M5.</li>
+          <li><b>Límite:</b> justo donde cambia la regla, y al lado. Ahí se esconden los errores de <code>&lt;</code> contra <code>&lt;=</code>.</li>
+          <li><b>Error:</b> lo que debe lanzar una excepción (M2). Se prueba con <code>assertThrows</code> (idea 5).</li>
+        </ul>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 4 · La tabla de casos de calcularTotal</p>
+        <ol class="wsteps">
+          <li><p><b>Qué haces:</b> tomas los criterios de aceptación de M4–M5: «2 hamburguesas de 18000 cuestan 41000» y «un pedido de 54000 cuesta 54000». Cada uno es un caso normal.</p></li>
+          <li><p><b>Qué buscas:</b> el límite. La regla dice «envío si la suma es <b>menor</b> a 40000». La regla cambia en 40000: pruebas justo ahí (no paga envío) y un peso abajo (sí paga).</p>
+            <div class="tw"><table class="vocab">
+              <colgroup><col style="width:17%"><col style="width:33%"><col style="width:18%"><col style="width:32%"></colgroup>
+              <thead><tr><th>Caso</th><th>Escenario</th><th>Esperado</th><th>Por qué</th></tr></thead>
+              <tbody>
+                <tr><td>Normal</td><td>2 hamburguesas de 18000 (36000)</td><td>41000.0</td><td>Criterio 1: paga envío</td></tr>
+                <tr><td>Normal</td><td>3 hamburguesas (54000)</td><td>54000.0</td><td>Criterio 2: no paga envío</td></tr>
+                <tr><td>Límite</td><td>2 combos de 20000 (40000 justo)</td><td>40000.0</td><td>40000 no es menor a 40000</td></tr>
+                <tr><td>Límite</td><td>1 picada de 39999</td><td>44999.0</td><td>Un peso abajo sí paga</td></tr>
+                <tr><td>Error</td><td>Pedido no lanza excepciones; Restaurante sí, si nadie está disponible</td><td>Lanza la excepción</td><td>Es el taller T2</td></tr>
+              </tbody>
+            </table></div></li>
+          <li><p><b>Qué escribes:</b> una prueba por fila, con un nombre que diga el caso. Las dos normales son las de la idea 3; estas son las del límite:</p><pre class="code sm" data-code="e4"></pre></li>
+          <li><p><b>Por qué el límite:</b> si alguien escribe <code>&lt;=</code> en vez de <code>&lt;</code>, las pruebas de 36000 y 54000 siguen pasando. Solo la de 40000 se pone en rojo. Lo vas a ver en el lab.</p></li>
+          <li><p><b>Un caso raro que vale la pena preguntar:</b> un pedido vacío. Con este código cuesta 5000.0, solo el envío. ¿Debería dejar crear un pedido vacío? Esa pregunta es para el cliente, y una buena tabla de casos la hace salir.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 5 -->
+    <article class="idea" id="idea5">
+      <h3><span class="ix">Idea 5</span>Probar excepciones con <code>assertThrows</code></h3>
+      <div class="prose">
+        <p>En M2 el club lanza <code>CupoLlenoException</code> cuando ya no hay cupo. Una prueba de error verifica dos cosas: que <b>sí se lance</b> la excepción, y que el objeto <b>quede como estaba</b>.</p>
+        <p><code>assertThrows</code> recibe dos cosas: el <b>tipo</b> de la excepción que esperas (<code>CupoLlenoException.class</code>, la clase, sin <code>new</code>) y el <b>código</b> que debería lanzarla, empacado en una <b>lambda</b>: <code>() -> club.agregarSocio("Eva")</code>. La flecha se lee «sin parámetros, haz esto». El código no se ejecuta ahí mismo: <code>assertThrows</code> lo ejecuta adentro de su propio <code>try/catch</code>. Si sale esa excepción, la prueba pasa; si no sale nada, falla.</p>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 5 · El club lleno</p>
+        <ol class="wsteps">
+          <li><p><b>Qué agregas al modelo:</b> un getter para poder verificar cuántos socios hay. Es lo único nuevo en Club.</p><pre class="code sm" data-code="e5-club"></pre></li>
+          <li><p><b>Qué escribes:</b> el escenario, un club de capacidad 2 que ya tiene a Ana y a Luis. Ojo: <code>setUp()</code> llama a <code>agregarSocio</code>, que tiene <code>throws CupoLlenoException</code>. Es checked, así que sin el <code>throws</code> en <code>setUp()</code> no compila:</p><pre class="console" data-raw="nocompila"></pre><p><b>Por qué:</b> es la regla de M2: una excepción checked se atrapa o se avisa. En una prueba lo normal es avisarla con <code>throws</code>; si de verdad saliera, JUnit la muestra como un error.</p></li>
+          <li><p><b>Qué escribes:</b> la prueba. <code>assertThrows</code> además <b>retorna</b> la excepción que atrapó: la guardas y verificas su mensaje, y después que el club siga con 2 socios.</p><pre class="code" data-code="e5-test"></pre></li>
+          <li><p><b>Si el código no lanzara nada</b> (por ejemplo, con capacidad 5), JUnit diría:</p><pre class="console" data-junit="nada"></pre></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Idea 6 -->
+    <article class="idea" id="idea6">
+      <h3><span class="ix">Idea 6</span>Leer el resultado: pasa, falla o error</h3>
+      <div class="prose">
+        <p>Cada prueba sale ✔ o ✘. Hay dos formas de salir en rojo, y conviene distinguirlas (Eclipse las cuenta aparte, como <i>Failures</i> y <i>Errors</i>):</p>
+        <ul>
+          <li><b>Falla:</b> un assert no se cumplió. El mensaje dice <code>expected: &lt;lo que escribiste&gt; but was: &lt;lo que dio el código&gt;</code>.</li>
+          <li><b>Error:</b> saltó una excepción que nadie esperaba, casi siempre un <code>NullPointerException</code>. La prueba ni llegó al assert.</li>
+        </ul>
+      </div>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto 6 · Tres salidas en rojo</p>
+        <ol class="wsteps">
+          <li><p><b>Una falla.</b> Alguien borró la línea que suma el envío:</p><pre class="console" data-junit="olvida"></pre><p><b>Cómo se lee:</b> la prueba esperaba 41000.0 y el código dio 36000.0. La diferencia es 5000, justo el envío: el error está en el <code>if</code> de <code>calcularTotal</code>. Las otras dos pruebas pasan porque en esos casos no se cobra envío.</p></li>
+          <li><p><b>La misma falla, con los argumentos invertidos</b> (<code>assertEquals(pedido.calcularTotal(), 41000.0, 0.01)</code>):</p><pre class="console" data-junit="swap"></pre><p><b>Cómo se lee:</b> ahora parece que el código dio 41000 y que la prueba esperaba 36000. JUnit no sabe cuál es cuál: llama <i>expected</i> al primer argumento. Por eso el esperado va primero.</p></li>
+          <li><p><b>Un error.</b> El constructor de Pedido no crea la lista (la trampa de M1):</p><pre class="console" data-junit="npe"></pre><p><b>Cómo se lee:</b> no hay <i>expected</i>: es un <code>NullPointerException</code>. Si todas las pruebas de una clase se caen con el mismo error, mira el constructor o el <code>setUp()</code>.</p></li>
+          <li><p><b>Antes de tocar el código, revisa la prueba.</b> ¿El esperado está bien calculado? A veces la equivocada es la prueba. En el lab hay un caso así.</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="idea" id="receta">
+      <h3><span class="ix">Receta</span>Pruebas en el examen</h3>
+      <p class="prose-p"><b>Si te piden escribir pruebas:</b></p>
+      <ol class="recipe">
+        <li><b>Tabla de casos</b> por cada método: normal, límite y error, con el resultado esperado calculado a mano.</li>
+        <li><b>Escenario:</b> los objetos que se repiten van como atributos y se crean en <code>setUp()</code> con <code>@BeforeEach</code>. Si <code>setUp()</code> llama métodos con <code>throws</code>, ponle <code>throws</code>.</li>
+        <li><b>Una prueba por fila</b>, con <code>@Test</code>, <code>public void</code> y un nombre que diga el caso.</li>
+        <li><b>Preparar, ejecutar, verificar.</b> El esperado primero; los <code>double</code> con margen; los <code>boolean</code> con <code>assertTrue</code> o <code>assertFalse</code>.</li>
+        <li><b>Los casos de error</b> con <code>assertThrows(Tipo.class, () -> código)</code>, y si quieres, el mensaje y el estado después.</li>
+      </ol>
+      <p class="prose-p"><b>Si es de selección múltiple:</b></p>
+      <ol class="recipe">
+        <li><b>«¿Qué verifica esta prueba?»</b> Lee el assert, no el nombre del método. Lo que se verifica es lo que está en el assert.</li>
+        <li><b>«¿Qué caso falta?»</b> Busca dónde cambia la regla (el límite) y qué debería lanzar una excepción.</li>
+        <li><b>«¿Por qué sale en rojo?»</b> <code>expected… but was…</code> es una falla: compara los dos números. Una excepción sin <i>expected</i> es un error: busca qué quedó en <code>null</code>.</li>
+      </ol>
+    </article>
+
+    <div class="tpl-box">
+      <p class="eyebrow">Plantillas de memoria · M6</p>
+      <div class="tpl-grid">
+        <div><h4>Clase de prueba con escenario</h4><pre class="code sm" data-code="tpl-1"></pre></div>
+        <div><h4>Prueba de una excepción</h4><pre class="code sm" data-code="tpl-2"></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab de pruebas</h2><p>Primero predices qué sale en verde y qué en rojo. Después le metes errores al código y miras cuáles pruebas los detectan. Al final, el experimento en tu IDE.</p></div>
+    <div class="lab">
+      <h3>A · El semáforo</h3>
+      <p class="prose-p">Esta versión de Pedido tiene un error escondido, y la clase de prueba tiene sus propios problemas. Para cada prueba, predice si <b>pasa</b>, <b>falla</b> (un assert no se cumple) o da <b>error</b> (salta una excepción antes del assert).</p>
+      <div class="side">
+        <div><h4>Pedido (con un error)</h4><pre class="code sm" data-code="labA-pedido"></pre></div>
+        <div><h4>PedidoTest</h4><pre class="code sm" data-code="labA-test"></pre></div>
+      </div>
+      <div class="assign" id="lab-a"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-a-check">Correr las pruebas</button><button type="button" class="btn ghost" id="lab-a-reset">Empezar de nuevo</button><span class="muted" id="lab-a-msg"></span></div>
+      <div id="lab-a-res" hidden><p class="prose-p">Lo que dijo JUnit:</p><pre class="console" id="lab-a-out"></pre></div>
+    </div>
+    <div class="lab">
+      <h3>B · Caza mutantes</h3>
+      <p class="prose-p">Un <b>mutante</b> es una copia del código con un error metido a propósito. Una buena batería de pruebas «mata» al mutante: al menos una prueba se pone en rojo. Estas son las cuatro pruebas, y el código está bien:</p>
+      <pre class="code sm" data-code="labB-suite"></pre>
+      <p class="prose-p">Para cada mutante, marca las pruebas que crees que se ponen en rojo (puede ser ninguna) y córrelas.</p>
+      <div class="muts" id="muts"></div>
+      <div class="meter" id="mut-sum" hidden></div>
+    </div>
+    <div class="block">
+      <h3>C · Experimento en tu IDE</h3>
+      <p class="prose-p">Monta JUnit 5 en un proyecto, copia los cinco archivos y corre las pruebas: deben salir las 5 en verde. Después rompe el código a propósito, una cosa a la vez, y lee lo que dice JUnit. Si el profe te da un proyecto que ya trae JUnit (como el esqueleto del Taller 5), sáltate la preparación.</p>
+      <div class="ide">
+        <div><h4>Eclipse</h4><ol><li>Clic derecho en <code>Pedido.java</code> → New → JUnit Test Case.</li><li>Escoge <b>New JUnit Jupiter test</b> y dale Finish.</li><li>Si pregunta si agrega JUnit 5 al build path, di que sí.</li><li>Para correr: clic derecho en la clase de prueba → Run As → JUnit Test.</li></ol></div>
+        <div><h4>VS Code</h4><ol><li>Con el Extension Pack for Java instalado, abre la vista Testing (el ícono del matraz).</li><li>Toca <b>Enable Java Tests</b> y escoge JUnit Jupiter.</li><li>Corre con el ▶ que aparece junto a cada <code>@Test</code>.</li></ol></div>
+        <div><h4>IntelliJ</h4><ol><li>Escribe <code>@Test</code>; si sale en rojo, Alt+Enter → <b>Add JUnit 5 to classpath</b>.</li><li>Corre con el ▶ verde junto a la clase o al método.</li></ol></div>
+      </div>
+      <div class="files" id="files"></div>
+      <div class="reveals" id="exps"></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller en el IDE</h2><p>Cuatro ejercicios cronometrados. Cada uno empieza con la tabla de casos en papel y termina con las pruebas corriendo.</p></div>
+    <p class="prose-p">Pon el cronómetro y mándame el código (pegado o en ZIP) junto con lo que dijo JUnit. Si subes el esqueleto del Taller 5 del profe (Hamburguesas), lo rehacemos primero. El T3 es una variante del mismo estilo.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>3 de selección múltiple con un caso y 2 de código corto. Pasas M6 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title sub"><span class="sec-num">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Antes, relee las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M7–M8 · Principios y patrones, en versión exprés: acoplamiento, cohesión, SOLID y los patrones que más salen.</p>
+    <p>Todas las pruebas de esta página, también las que fallan a propósito, las corrí con JUnit 5.10 y Java 21; los mensajes son los que salieron.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- Utilidades ---------- */
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const f1 = (n) => Math.round(n * 10) / 10;
+/* Texto con `código` y **negrita** → nodos, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { parent.appendChild(el("code", "", part)); return; }
+    part.split("**").forEach((p2, j) => { if (p2) parent.appendChild(j % 2 ? el("b", "", p2) : document.createTextNode(p2)); });
+  });
+  return parent;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Resaltado de Java ---------- */
+const RX = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@[A-Za-z]+)|\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|super|static|final|void|if|else|for|while|throw|throws|try|catch|finally|null|true|false|import|package|boolean|int|double|char|long)\b|\b([A-Z][A-Za-z0-9_]*)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(line) {
+  let out = "", last = 0;
+  line.replace(RX, (m, com, str, ann, kw, ty, num, idx) => {
+    out += esc(line.slice(last, idx));
+    const cls = com ? "c-com" : str ? "c-str" : ann ? "c-ann" : kw ? "c-kw" : ty ? "c-ty" : "c-num";
+    out += '<span class="' + cls + '">' + esc(m) + "</span>";
+    last = idx + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+/* diff: cada línea empieza con "+ " (nueva), "- " (se borra) o "  " (igual). */
+function codeHTML(src, diff) {
+  const lines = src.replace(/^\n/, "").replace(/\n\s*$/, "").split("\n");
+  return lines.map((raw) => {
+    let mk = "  ", line = raw;
+    if (diff) {
+      if (raw === "+" || raw === "-") { mk = raw + " "; line = ""; }
+      else if (raw.length < 2) { mk = "  "; line = raw.trim(); }
+      else { mk = raw.slice(0, 2); line = raw.slice(2); }
+    }
+    const add = diff && mk === "+ ", del = diff && mk === "- ";
+    const gut = diff ? '<span class="gut" aria-hidden="true">' + (add ? "+" : del ? "−" : " ") + "</span>" : "";
+    const sr = add ? '<span class="sr">Línea nueva: </span>' : del ? '<span class="sr">Línea que se borra: </span>' : "";
+    const body = hl(line) || " ";
+    return '<span class="cl' + (add ? " add" : "") + (del ? " del" : "") + '">' + gut + sr + (del ? "<s>" + body + "</s>" : body) + "</span>";
+  }).join("");
+}
+
+/* ---------- Diagramas UML en SVG ---------- */
+const LH = 16;
+const memW = (t) => t.length * 6.3 + 16;
+const nameW = (t) => t.length * 7.4 + 24;
+function wrapK(k, inner, inter, label) {
+  if (inter && k) return '<g class="hit" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return "<g" + (k ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>";
+}
+function memSvg(m, x, yy, w, inter) {
+  const cls = "u-m" + (m.s ? " st" : "") + (m.a ? " abs" : "");
+  const inner = '<rect class="hl" x="' + (x + 1) + '" y="' + yy + '" width="' + (w - 2) + '" height="' + LH + '"/><text class="' + cls + '" x="' + (x + 8) + '" y="' + (yy + 11.8) + '">' + esc(m.t) + "</text>";
+  return wrapK(m.k || "", inner, inter, m.t);
+}
+function umlBox(c, inter, G) {
+  const name = c.name || c.id, attrs = c.attrs || [], ops = c.ops || [];
+  const w = c.w || Math.ceil(Math.max(c.minW || 110, nameW(name), c.stereo ? (c.stereo.length + 2) * 6 + 16 : 0, ...attrs.map((m) => memW(m.t)), ...ops.map((m) => memW(m.t))));
+  const x = typeof c.x === "function" ? Math.round(c.x(G, w)) : c.x, y = c.y;
+  const headH = c.stereo ? 36 : 24, aH = c.simple ? 0 : (attrs.length ? attrs.length * LH + 8 : 8), oH = c.simple ? 0 : (ops.length ? ops.length * LH + 8 : 8), h = headH + aH + oH;
+  let s = '<rect class="u-bg' + (c.tone ? " t-" + c.tone : "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2"/>';
+  let hd = '<rect class="hl" x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (w - 2) + '" height="' + (headH - 1) + '"/>';
+  if (c.stereo) hd += '<text class="u-st" x="' + (x + w / 2) + '" y="' + (y + 14) + '" text-anchor="middle">«' + esc(c.stereo) + "»</text>";
+  hd += '<text class="u-nm' + (c.abs ? " abs" : "") + '" x="' + (x + w / 2) + '" y="' + (y + (c.stereo ? 29 : 16.5)) + '" text-anchor="middle">' + esc(name) + "</text>";
+  s += wrapK(c.k || "", hd, inter, "Clase " + name);
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH) + '" x2="' + (x + w) + '" y2="' + (y + headH) + '"/>';
+  attrs.forEach((m, i) => { s += memSvg(m, x, y + headH + 4 + i * LH, w, inter); });
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH + aH) + '" x2="' + (x + w) + '" y2="' + (y + headH + aH) + '"/>';
+  ops.forEach((m, i) => { s += memSvg(m, x, y + headH + aH + 4 + i * LH, w, inter); });
+  return { svg: "<g>" + s + "</g>", x, y, w, h };
+}
+const REL_NAME = { assoc: "Asociación", inherit: "Herencia", realize: "Realización", dep: "Dependencia", aggr: "Agregación", comp: "Composición" };
+function relSvg(r, inter) {
+  const P = r.pts.map((p) => p.slice()), n = P.length;
+  const [ax, ay] = P[n - 2], [bx, by] = P[n - 1];
+  const L = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L, uy = (by - ay) / L;
+  const tri = r.type === "inherit" || r.type === "realize";
+  const dash = r.type === "realize" || r.type === "dep" ? ' stroke-dasharray="5 4"' : "";
+  const pts = P.map((p) => p.slice());
+  if (tri) pts[n - 1] = [bx - ux * 12, by - uy * 12];
+  let dia = "";
+  if (r.type === "aggr" || r.type === "comp") {
+    const [sx, sy] = P[0], [tx, ty] = P[1], L2 = Math.hypot(tx - sx, ty - sy) || 1, vx = (tx - sx) / L2, vy = (ty - sy) / L2, nx = -vy, ny = vx;
+    const d = [[sx, sy], [sx + vx * 9 + nx * 5.5, sy + vy * 9 + ny * 5.5], [sx + vx * 18, sy + vy * 18], [sx + vx * 9 - nx * 5.5, sy + vy * 9 - ny * 5.5]];
+    dia = '<path class="u-dia' + (r.type === "comp" ? " full" : "") + '" d="M' + d.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") + ' Z"/>';
+    pts[0] = [sx + vx * 18, sy + vy * 18];
+  }
+  const dstr = "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L");
+  let head = "";
+  if (tri) {
+    const nx = -uy, ny = ux;
+    head = '<path class="u-tri" d="M' + f1(bx) + " " + f1(by) + " L" + f1(bx - ux * 12 + nx * 7) + " " + f1(by - uy * 12 + ny * 7) + " L" + f1(bx - ux * 12 - nx * 7) + " " + f1(by - uy * 12 - ny * 7) + ' Z"/>';
+  } else {
+    const c = Math.cos(0.45), s = Math.sin(0.45), len = 11;
+    head = '<path class="u-arr" d="M' + f1(bx - len * (ux * c - uy * s)) + " " + f1(by - len * (uy * c + ux * s)) + " L" + f1(bx) + " " + f1(by) + " L" + f1(bx - len * (ux * c + uy * s)) + " " + f1(by - len * (uy * c - ux * s)) + '"/>';
+  }
+  let lb = "";
+  (r.labels || []).forEach((t) => { lb += '<text class="u-lb" x="' + f1(t.x) + '" y="' + f1(t.y) + '" text-anchor="' + (t.a || "start") + '">' + esc(t.t) + "</text>"; });
+  const label = REL_NAME[r.type] + (r.labels && r.labels.length ? " " + r.labels.map((t) => t.t).join(" ") : "");
+  const inner = '<path class="u-hit" d="' + dstr + '"/><path class="u-rl"' + dash + ' d="' + dstr + '"/>' + dia + head + lb;
+  if (inter && r.k) return '<g class="rel hit" data-k="' + r.k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return '<g class="rel">' + inner + "</g>";
+}
+function umlSvg(spec, inter) {
+  const G = {}; let boxes = "";
+  spec.cls.forEach((c) => { const b = umlBox(c, inter, G); G[c.id] = b; boxes += b.svg; });
+  const A = (id, side, t = 0.5) => { const g = G[id]; if (side === "t") return [g.x + g.w * t, g.y]; if (side === "b") return [g.x + g.w * t, g.y + g.h]; if (side === "l") return [g.x, g.y + g.h * t]; return [g.x + g.w, g.y + g.h * t]; };
+  const RL = spec.rels ? spec.rels(A, G) : []; let rs = ""; RL.forEach((r) => { rs += relSvg(r, inter); });
+  let W = 0, H = 0; Object.values(G).forEach((g) => { W = Math.max(W, g.x + g.w); H = Math.max(H, g.y + g.h); });
+  RL.forEach((r) => { r.pts.forEach((p) => { W = Math.max(W, p[0]); H = Math.max(H, p[1]); }); (r.labels || []).forEach((t) => { W = Math.max(W, t.a === "end" ? t.x : t.x + t.t.length * 6.3); H = Math.max(H, t.y + 4); }); });
+  W = Math.ceil(W + 10); H = Math.ceil(H + 10);
+  return '<svg class="uml" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="--w:' + W + 'px" role="' + (inter ? "group" : "img") + '" aria-label="' + esc(spec.aria || "Diagrama de clases") + '">' + boxes + rs + "</svg>";
+}
+const centerOn = (id) => (G, w) => G[id].x + G[id].w / 2 - w / 2;
+/* Dos cajas en fila con una relación: para el diccionario de flechas. */
+function pairSpec(a, b, type, o) {
+  o = o || {};
+  const gap = type === "inherit" || type === "realize" ? 62 : 96;
+  const wa = Math.ceil(Math.max(96, nameW(a))), wb = Math.ceil(Math.max(96, nameW(b)));
+  return {
+    aria: o.aria,
+    cls: [{ id: "A", name: a, x: 10, y: 14, w: wa }, { id: "B", name: b, x: 10 + wa + gap, y: 14, w: wb, stereo: o.stereo }],
+    rels: (A, G) => {
+      const y = 34, r = { type, pts: [[G.A.x + G.A.w, y], [G.B.x, y]] };
+      if (o.rol) r.labels = [{ x: G.B.x - 14, y: y - 6, t: o.rol, a: "end" }, { x: G.B.x - 14, y: y + 15, t: o.mult, a: "end" }];
+      return [r];
+    }
+  };
+}
+
+
+const MOD = "M6";
+const NEXT_MSG = "Aprobado. Pasas a M7–M8 · Principios y patrones.";
+const FIG = {};
+
+/* ---------- Código ---------- */
+const CODE = {
+  "m-linea": { s: `
+public class LineaPedido {
+    private Producto producto;
+    private int cantidad;
+
+    public LineaPedido(Producto producto, int cantidad) {
+        this.producto = producto;
+        this.cantidad = cantidad;
+    }
+
+    public double calcularSubtotal() {
+        return producto.getPrecio() * cantidad;
+    }
+}` },
+  "m-pedido": { s: `
+public class Pedido {
+    public static final double COSTO_ENVIO = 5000;
+    public static final double MINIMO_SIN_ENVIO = 40000;
+
+    private int numero;
+    private ArrayList<LineaPedido> lineas;
+
+    public Pedido(int numero) {
+        this.numero = numero;
+        this.lineas = new ArrayList<>();
+    }
+
+    public void agregarProducto(Producto producto, int cantidad) {
+        lineas.add(new LineaPedido(producto, cantidad));
+    }
+
+    public double calcularTotal() {
+        double total = 0;
+        for (LineaPedido l : lineas) {
+            total += l.calcularSubtotal();
+        }
+        if (total < MINIMO_SIN_ENVIO) {
+            total += COSTO_ENVIO;
+        }
+        return total;
+    }
+}` },
+  "e1-1": { s: `
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
+public class LineaPedidoTest {
+    // aquí van las pruebas
+}` },
+  "e1-2": { s: `
+public class LineaPedidoTest {
+
+    @Test
+    public void subtotalEsPrecioPorCantidad() {
+        // 1. Preparar
+        Producto hamburguesa = new Producto("Hamburguesa", 18000);
+        LineaPedido linea = new LineaPedido(hamburguesa, 3);
+        // 2. Ejecutar
+        double subtotal = linea.calcularSubtotal();
+        // 3. Verificar
+        assertEquals(54000.0, subtotal, 0.01);
+    }
+}` },
+  "e2": { s: `
+@Test
+public void nuevoEstaDisponible() {
+    Domiciliario ana = new Domiciliario("Ana");
+    assertTrue(ana.estaDisponible());
+}
+
+@Test
+public void conTresPedidosNoEstaDisponible() {
+    Domiciliario ana = new Domiciliario("Ana");
+    ana.asignar(new Pedido(1));
+    ana.asignar(new Pedido(2));
+    ana.asignar(new Pedido(3));
+    assertFalse(ana.estaDisponible());
+}` },
+  "e2-double": { s: `
+@Test
+public void sinMargen() {
+    assertEquals(0.3, 0.1 + 0.2);           // falla
+}
+
+@Test
+public void conMargen() {
+    assertEquals(0.3, 0.1 + 0.2, 0.0001);   // pasa
+}` },
+  "e3-antes": { s: `
+public class PedidoTest {
+
+    @Test
+    public void totalConEnvio() {
+        Producto hamburguesa = new Producto("Hamburguesa", 18000);
+        Pedido pedido = new Pedido(1);
+        pedido.agregarProducto(hamburguesa, 2);
+        assertEquals(41000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void totalSinEnvio() {
+        Producto hamburguesa = new Producto("Hamburguesa", 18000);
+        Pedido pedido = new Pedido(1);
+        pedido.agregarProducto(hamburguesa, 3);
+        assertEquals(54000.0, pedido.calcularTotal(), 0.01);
+    }
+}` },
+  "e3-despues": { d: 1, s: `
+  public class PedidoTest {
++     private Producto hamburguesa;
++     private Pedido pedido;
++
++     @BeforeEach
++     public void setUp() {
++         hamburguesa = new Producto("Hamburguesa", 18000);
++         pedido = new Pedido(1);
++     }
+
+      @Test
+      public void totalConEnvio() {
+-         Producto hamburguesa = new Producto("Hamburguesa", 18000);
+-         Pedido pedido = new Pedido(1);
+          pedido.agregarProducto(hamburguesa, 2);
+          assertEquals(41000.0, pedido.calcularTotal(), 0.01);
+      }
+
+      @Test
+      public void totalSinEnvio() {
+-         Producto hamburguesa = new Producto("Hamburguesa", 18000);
+-         Pedido pedido = new Pedido(1);
+          pedido.agregarProducto(hamburguesa, 3);
+          assertEquals(54000.0, pedido.calcularTotal(), 0.01);
+      }
+  }
+
+  // Y arriba, un import más:
++ import org.junit.jupiter.api.BeforeEach;` },
+  "e4": { s: `
+@Test
+public void totalJustoEnElMinimoNoPagaEnvio() {
+    pedido.agregarProducto(new Producto("Combo", 20000), 2);
+    assertEquals(40000.0, pedido.calcularTotal(), 0.01);
+}
+
+@Test
+public void totalJustoDebajoDelMinimoPagaEnvio() {
+    pedido.agregarProducto(new Producto("Picada", 39999), 1);
+    assertEquals(44999.0, pedido.calcularTotal(), 0.01);
+}` },
+  "e5-club": { d: 1, s: `
+  public class Club {
+      private int capacidad;
+      private ArrayList<String> socios;
+
+      // constructor y agregarSocio, iguales que en M2
+
++     public int getCantidadSocios() {
++         return socios.size();
++     }
+  }` },
+  "e5-test": { s: `
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class ClubTest {
+    private Club club;
+
+    @BeforeEach
+    public void setUp() throws CupoLlenoException {
+        club = new Club(2);
+        club.agregarSocio("Ana");
+        club.agregarSocio("Luis");
+    }
+
+    @Test
+    public void noHayCupoParaUnTercero() {
+        CupoLlenoException e = assertThrows(CupoLlenoException.class,
+                () -> club.agregarSocio("Eva"));
+        assertEquals("No hay cupo para Eva", e.getMessage());
+        assertEquals(2, club.getCantidadSocios());
+    }
+}` },
+  "tpl-1": { s: `
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class PedidoTest {
+    private Pedido pedido;
+
+    @BeforeEach
+    public void setUp() {
+        pedido = new Pedido(1);
+    }
+
+    @Test
+    public void totalConEnvio() {
+        // Preparar
+        pedido.agregarProducto(new Producto("Hamburguesa", 18000), 2);
+        // Ejecutar
+        double total = pedido.calcularTotal();
+        // Verificar: esperado, obtenido, margen
+        assertEquals(41000.0, total, 0.01);
+    }
+}` },
+  "tpl-2": { s: `
+// El escenario llama un método con throws: se avisa.
+@BeforeEach
+public void setUp() throws CupoLlenoException {
+    club = new Club(2);
+    club.agregarSocio("Ana");
+    club.agregarSocio("Luis");
+}
+
+@Test
+public void noHayCupoParaUnTercero() {
+    CupoLlenoException e = assertThrows(CupoLlenoException.class,
+            () -> club.agregarSocio("Eva"));
+    assertEquals("No hay cupo para Eva", e.getMessage());
+    assertEquals(2, club.getCantidadSocios());
+}` },
+  "labA-pedido": { s: `
+public double calcularTotal() {
+    double total = 0;
+    for (LineaPedido l : lineas) {
+        total += l.calcularSubtotal();
+    }
+    if (total <= MINIMO_SIN_ENVIO) {
+        total += COSTO_ENVIO;
+    }
+    return total;
+}
+// COSTO_ENVIO = 5000
+// MINIMO_SIN_ENVIO = 40000
+// El resto de la clase está bien.` },
+  "labA-test": { s: `
+public class PedidoTest {
+    private Producto hamburguesa;
+    private Pedido pedido;
+    private Domiciliario ana;
+
+    @BeforeEach
+    public void setUp() {
+        hamburguesa = new Producto("Hamburguesa", 18000);
+        pedido = new Pedido(1);
+    }
+
+    @Test
+    public void totalConEnvio() {
+        pedido.agregarProducto(hamburguesa, 2);
+        assertEquals(41000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void totalSinEnvio() {
+        pedido.agregarProducto(hamburguesa, 3);
+        assertEquals(54000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void totalJustoEnElMinimo() {
+        pedido.agregarProducto(new Producto("Combo", 20000), 2);
+        assertEquals(40000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void totalDeDosHamburguesas() {
+        pedido.agregarProducto(hamburguesa, 2);
+        assertEquals(36000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void anaRecibeElPedido() {
+        ana.asignar(pedido);
+        assertTrue(ana.estaDisponible());
+    }
+
+    @Test
+    public void pedidoVacioCuestaSoloElEnvio() {
+        assertEquals(5000.0, pedido.calcularTotal(), 0.01);
+    }
+}` },
+  "labB-suite": { s: `
+// En LineaPedidoTest
+@Test
+public void subtotalEsPrecioPorCantidad() {
+    LineaPedido linea = new LineaPedido(new Producto("Hamburguesa", 18000), 3);
+    assertEquals(54000.0, linea.calcularSubtotal(), 0.01);
+}
+
+// En PedidoTest (setUp crea la hamburguesa de 18000 y un pedido vacío)
+@Test
+public void totalConEnvio() {
+    pedido.agregarProducto(hamburguesa, 2);
+    assertEquals(41000.0, pedido.calcularTotal(), 0.01);
+}
+
+@Test
+public void totalSinEnvio() {
+    pedido.agregarProducto(hamburguesa, 3);
+    assertEquals(54000.0, pedido.calcularTotal(), 0.01);
+}
+
+@Test
+public void totalJustoEnElMinimoNoPagaEnvio() {
+    pedido.agregarProducto(new Producto("Combo", 20000), 2);
+    assertEquals(40000.0, pedido.calcularTotal(), 0.01);
+}` }
+};
+
+/* ---------- Salidas de JUnit (copiadas de las corridas reales) ---------- */
+const JOUT = {
+  e1: { c: "LineaPedidoTest", rows: [["subtotalEsPrecioPorCantidad()", null]] },
+  double: { c: "DoubleTest", rows: [["sinMargen()", "expected: <0.3> but was: <0.30000000000000004>"], ["conMargen()", null]] },
+  nada: { c: "ClubTest", rows: [["noHayCupoParaUnTercero()", "Expected CupoLlenoException to be thrown, but nothing was thrown."]] },
+  olvida: { c: "PedidoTest", rows: [["totalConEnvio()", "expected: <41000.0> but was: <36000.0>"], ["totalSinEnvio()", null], ["totalJustoEnElMinimoNoPagaEnvio()", null]] },
+  swap: { c: "PedidoTest", rows: [["totalConEnvio()", "expected: <36000.0> but was: <41000.0>"]] },
+  npe: { c: "PedidoTest", rows: [["totalConEnvio()", "NullPointerException: Cannot invoke \"java.util.ArrayList.add(Object)\" because \"this.lineas\" is null"], ["totalSinEnvio()", "NullPointerException: (el mismo)"], ["totalJustoEnElMinimoNoPagaEnvio()", "NullPointerException: (el mismo)"]] }
+};
+const RAW = {
+  nocompila: "ClubTest.java:12: error: unreported exception CupoLlenoException;\n  must be caught or declared to be thrown\n        club.agregarSocio(\"Ana\");\n                         ^\n(«excepción no reportada: debe atraparse o declararse con throws»)"
+};
+function junitHTML(o) {
+  const bad = o.rows.some((r) => r[1]);
+  let s = esc(o.c) + (bad ? ' <span class="e">✘</span>' : ' <span class="k">✔</span>') + "\n";
+  o.rows.forEach((r, i) => {
+    const br = i === o.rows.length - 1 ? "└─ " : "├─ ";
+    s += '<span class="dim">' + br + "</span>" + esc(r[0]) + (r[1] ? ' <span class="e">✘ ' + esc(r[1]) + "</span>" : ' <span class="k">✔</span>') + "\n";
+  });
+  return s.replace(/\n$/, "");
+}
+
+/* ---------- Lab A: el semáforo ---------- */
+const SEM = ["Pasa", "Falla", "Error"];
+const LAB_A = [
+  { r: "totalConEnvio()", a: "Pasa", out: null, e: "36000 es menor y también menor o igual a 40000: con `<` o con `<=` se cobra el envío. Da 41000.0." },
+  { r: "totalSinEnvio()", a: "Pasa", out: null, e: "54000 no es menor ni igual a 40000: no se cobra envío. Lejos del borde, el error no se nota." },
+  { r: "totalJustoEnElMinimo()", a: "Falla", out: "expected: <40000.0> but was: <45000.0>", e: "Aquí está el error de la clase: con `<=`, 40000 sí cobra envío y da 45000.0. Solo el caso límite lo destapa." },
+  { r: "totalDeDosHamburguesas()", a: "Falla", out: "expected: <36000.0> but was: <41000.0>", e: "En este caso la clase está bien (da 41000.0). La equivocada es la prueba: esperaba 36000.0 porque olvidó el envío. Antes de tocar el código, revisa el esperado." },
+  { r: "anaRecibeElPedido()", a: "Error", out: "NullPointerException: Cannot invoke \"Domiciliario.asignar(Pedido)\" because \"this.ana\" is null", e: "`setUp()` nunca crea a `ana`: es `null`. `ana.asignar(...)` lanza NullPointerException antes de llegar al assert. Es un error, no una falla." },
+  { r: "pedidoVacioCuestaSoloElEnvio()", a: "Pasa", out: null, e: "Sin líneas la suma es 0, menor (y menor o igual) a 40000: da 5000.0." }
+];
+function buildAssign(boxId, items, options, key) {
+  const box = $("#" + boxId); box.textContent = "";
+  items.forEach((it, i) => {
+    const row = el("div", "arow");
+    const lab = el("label", "", it.r); lab.htmlFor = key + "-" + i; row.appendChild(lab);
+    const sel = el("select"); sel.id = key + "-" + i;
+    const o0 = el("option", "", "Predice…"); o0.value = ""; sel.appendChild(o0);
+    options.forEach((o) => { const op = el("option", "", o); op.value = o; sel.appendChild(op); });
+    row.appendChild(sel);
+    const why = el("p", "why"); why.hidden = true; row.appendChild(why);
+    box.appendChild(row);
+  });
+}
+buildAssign("lab-a", LAB_A, SEM, "la");
+$("#lab-a-check").addEventListener("click", () => {
+  const sels = LAB_A.map((_, i) => $("#la-" + i));
+  const missing = sels.filter((s) => !s.value).length;
+  if (missing) { $("#lab-a-msg").textContent = missing === 1 ? "Te falta 1 por predecir." : "Te faltan " + missing + " por predecir."; return; }
+  let ok = 0;
+  LAB_A.forEach((it, i) => {
+    const s = sels[i], good = s.value === it.a, why = s.parentElement.querySelector(".why");
+    s.classList.remove("right", "wrong"); s.classList.add(good ? "right" : "wrong"); if (good) ok++;
+    why.hidden = false; why.className = "why " + (good ? "ok" : "no"); why.textContent = "";
+    rich(why, (good ? "✓ " : "✗ " + it.a + ". ") + it.e);
+  });
+  $("#lab-a-msg").textContent = "Acertaste " + ok + " de " + LAB_A.length + ".";
+  $("#lab-a-out").innerHTML = junitHTML({ c: "PedidoTest", rows: LAB_A.map((it) => [it.r, it.out]) });
+  $("#lab-a-res").hidden = false;
+});
+$("#lab-a-reset").addEventListener("click", () => { buildAssign("lab-a", LAB_A, SEM, "la"); $("#lab-a-res").hidden = true; $("#lab-a-msg").textContent = ""; });
+
+/* ---------- Lab B: mutantes ---------- */
+const SUITE = ["subtotalEsPrecioPorCantidad()", "totalConEnvio()", "totalSinEnvio()", "totalJustoEnElMinimoNoPagaEnvio()"];
+const MUTS = [
+  { t: "En calcularTotal, `<` pasa a `<=`", s: `
+- if (total < MINIMO_SIN_ENVIO) {
++ if (total <= MINIMO_SIN_ENVIO) {
+      total += COSTO_ENVIO;
+  }`, res: [null, null, null, "expected: <40000.0> but was: <45000.0>"],
+    e: "Solo la prueba del límite lo mata. Sin ella, este error pasaría todas las pruebas: por eso se prueban los límites." },
+  { t: "Se borra la línea que suma el envío", s: `
+  if (total < MINIMO_SIN_ENVIO) {
+-     total += COSTO_ENVIO;
+  }`, res: [null, "expected: <41000.0> but was: <36000.0>", null, null],
+    e: "Solo lo mata la prueba que sí paga envío. Las otras no cobran envío de todas formas, así que no notan que falta." },
+  { t: "En calcularSubtotal, `*` pasa a `+`", s: `
+  public double calcularSubtotal() {
+-     return producto.getPrecio() * cantidad;
++     return producto.getPrecio() + cantidad;
+  }`, res: ["expected: <54000.0> but was: <18003.0>", "expected: <41000.0> but was: <23002.0>", "expected: <54000.0> but was: <23003.0>", "expected: <40000.0> but was: <25002.0>"],
+    e: "Lo matan las cuatro, porque el subtotal entra en todos los totales. La de LineaPedido además señala dónde está: es la prueba más pequeña que falla." },
+  { t: "En calcularTotal, `<` pasa a `>`", s: `
+- if (total < MINIMO_SIN_ENVIO) {
++ if (total > MINIMO_SIN_ENVIO) {
+      total += COSTO_ENVIO;
+  }`, res: [null, "expected: <41000.0> but was: <36000.0>", "expected: <54000.0> but was: <59000.0>", null],
+    e: "Lo matan las dos normales. La del límite no: con 40000 justo, ni `<` ni `>` cobran envío, así que da 40000.0 igual." },
+  { t: "agregarProducto ignora la cantidad", s: `
+  public void agregarProducto(Producto producto, int cantidad) {
+-     lineas.add(new LineaPedido(producto, cantidad));
++     lineas.add(new LineaPedido(producto, 1));
+  }`, res: [null, "expected: <41000.0> but was: <23000.0>", "expected: <54000.0> but was: <23000.0>", "expected: <40000.0> but was: <25000.0>"],
+    e: "La de LineaPedido no lo mata: prueba LineaPedido sola y el error está en Pedido. Cada prueba solo vigila el código que ejecuta." }
+];
+const mutDone = {};
+(function renderMuts() {
+  const box = $("#muts");
+  MUTS.forEach((m, i) => {
+    const c = el("div", "mut");
+    const h = el("h4"); h.appendChild(el("span", "ix", "MUTANTE " + (i + 1))); rich(h, m.t); c.appendChild(h);
+    const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(m.s, true); c.appendChild(pre);
+    c.appendChild(el("p", "muted", "¿Cuáles se ponen en rojo?"));
+    const tc = el("div", "tchk");
+    SUITE.forEach((t, j) => {
+      const lab = el("label"), cb = el("input"); cb.type = "checkbox"; cb.id = "mut" + i + "-t" + j;
+      lab.appendChild(cb); lab.appendChild(el("span", "", t)); tc.appendChild(lab);
+    });
+    c.appendChild(tc);
+    const row = el("div", "qrow"); const b = el("button", "btn small", "Correr las pruebas"); b.type = "button"; b.id = "mut" + i + "-run"; row.appendChild(b); c.appendChild(row);
+    const ver = el("p", "verdict"); ver.hidden = true; c.appendChild(ver);
+    const out = el("pre", "console"); out.hidden = true; c.appendChild(out);
+    b.addEventListener("click", () => {
+      const pick = SUITE.map((_, j) => $("#mut" + i + "-t" + j).checked);
+      const real = m.res.map((r) => !!r);
+      const good = pick.every((p, j) => p === real[j]);
+      mutDone[i] = good;
+      ver.hidden = false; ver.className = "verdict " + (good ? "ok" : "no"); ver.textContent = "";
+      rich(ver, (good ? "✓ Bien predicho. " : "✗ No era así. ") + m.e);
+      out.hidden = false; out.innerHTML = junitHTML({ c: "Pruebas", rows: SUITE.map((t, j) => [t, m.res[j]]) });
+      updateMutSum();
+    });
+    box.appendChild(c);
+  });
+})();
+function updateMutSum() {
+  const n = Object.keys(mutDone).length; if (n < MUTS.length) return;
+  const ok = Object.values(mutDone).filter(Boolean).length, s = $("#mut-sum"); s.hidden = false; s.textContent = "";
+  s.appendChild(el("p", "", "Predijiste bien " + ok + " de " + MUTS.length + " mutantes. Las cuatro pruebas los matan a todos, pero el mutante 1 solo cae con la prueba del límite."));
+  const bar = el("div", "meter-bar"), fill = el("i"); bar.appendChild(fill); s.appendChild(bar);
+  setTimeout(() => { fill.style.width = (ok / MUTS.length * 100) + "%"; }, 30);
+}
+
+/* Archivos para el experimento */
+const FILES = [
+  { name: "Producto.java", src: `
+public class Producto {
+    private String nombre;
+    private double precio;
+
+    public Producto(String nombre, double precio) {
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+}` },
+  { name: "LineaPedido.java", src: CODE["m-linea"].s },
+  { name: "Pedido.java", src: "\nimport java.util.ArrayList;\n" + CODE["m-pedido"].s },
+  { name: "LineaPedidoTest.java", src: `
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
+public class LineaPedidoTest {
+
+    @Test
+    public void subtotalEsPrecioPorCantidad() {
+        Producto hamburguesa = new Producto("Hamburguesa", 18000);
+        LineaPedido linea = new LineaPedido(hamburguesa, 3);
+        double subtotal = linea.calcularSubtotal();
+        assertEquals(54000.0, subtotal, 0.01);
+    }
+}` },
+  { name: "PedidoTest.java", src: `
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class PedidoTest {
+    private Producto hamburguesa;
+    private Pedido pedido;
+
+    @BeforeEach
+    public void setUp() {
+        hamburguesa = new Producto("Hamburguesa", 18000);
+        pedido = new Pedido(1);
+    }
+
+    @Test
+    public void totalConEnvio() {
+        pedido.agregarProducto(hamburguesa, 2);
+        assertEquals(41000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void totalSinEnvio() {
+        pedido.agregarProducto(hamburguesa, 3);
+        assertEquals(54000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void totalJustoEnElMinimoNoPagaEnvio() {
+        pedido.agregarProducto(new Producto("Combo", 20000), 2);
+        assertEquals(40000.0, pedido.calcularTotal(), 0.01);
+    }
+
+    @Test
+    public void totalJustoDebajoDelMinimoPagaEnvio() {
+        pedido.agregarProducto(new Producto("Picada", 39999), 1);
+        assertEquals(44999.0, pedido.calcularTotal(), 0.01);
+    }
+}` }
+].map((f) => ({ name: f.name, lines: f.src.replace(/^\n/, "").split("\n") }));
+const EXPS = [
+  { t: "En `calcularTotal`, cambia `<` por `<=` y corre las pruebas", r: "Solo `totalJustoEnElMinimoNoPagaEnvio` sale en rojo: `expected: <40000.0> but was: <45000.0>`. Las otras cuatro siguen en verde. Devuelve el `<` antes de seguir." },
+  { t: "Borra la línea `total += COSTO_ENVIO;`", r: "Salen en rojo `totalConEnvio` (`expected: <41000.0> but was: <36000.0>`) y `totalJustoDebajoDelMinimoPagaEnvio` (`expected: <44999.0> but was: <39999.0>`): las dos que pagan envío." },
+  { t: "En `totalConEnvio`, invierte los argumentos y deja la línea del envío borrada", r: "Sale `expected: <36000.0> but was: <41000.0>`: el mensaje queda al revés y parece que el código dio 41000. Por eso el esperado va primero." },
+  { t: "Borra `this.lineas = new ArrayList<>();` del constructor de Pedido", r: "Las cuatro de PedidoTest salen en rojo con `NullPointerException: Cannot invoke \"java.util.ArrayList.add(Object)\" because \"this.lineas\" is null`. Es un error, no una falla: no hay expected. La de LineaPedido sigue en verde porque no usa Pedido." },
+  { t: "Quita la anotación `@BeforeEach` de `setUp()`", r: "Las cuatro de PedidoTest dan `NullPointerException: ... because \"this.pedido\" is null`. Sin la anotación, JUnit no sabe que tiene que correr `setUp()`, y nadie crea el pedido." },
+  { t: "Quita el margen `, 0.01` de los `assertEquals` de PedidoTest", r: "¡Todavía pasan! Estos totales son números enteros, que un `double` guarda exactos. El margen importa cuando hay decimales (0.1 + 0.2, porcentajes, IVA). Ponlo siempre con `double` y no tienes que pensarlo." }
+];
+/* Archivos para copiar y experimentos */
+(function renderFiles() {
+  const box = $("#files");
+  FILES.forEach((f) => {
+    const d = el("details", "rev");
+    d.appendChild(el("summary", "", f.name));
+    const body = el("div", "rev-body");
+    const src = f.lines.join("\n").replace(/\n+$/, "");
+    const row = el("div", "copyrow"); const b = el("button", "btn small ghost", "Copiar " + f.name); b.type = "button"; const msg = el("span", "copymsg"); msg.setAttribute("aria-live", "polite");
+    const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(src, false);
+    b.addEventListener("click", () => {
+      const fallback = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = "Quedó seleccionado: cópialo con Ctrl+C."; };
+      try { navigator.clipboard.writeText(src).then(() => { msg.textContent = "Copiado."; }, fallback); } catch (e) { fallback(); }
+    });
+    row.appendChild(b); row.appendChild(msg); body.appendChild(row); body.appendChild(pre);
+    d.appendChild(body); box.appendChild(d);
+  });
+  const ex = $("#exps");
+  EXPS.forEach((x, i) => {
+    const d = el("details", "rev");
+    const s = el("summary"); s.appendChild(el("span", "", "Experimento " + (i + 1) + " · ")); rich(s, x.t); d.appendChild(s);
+    const body = el("div", "rev-body"); body.appendChild(rich(el("p"), "**Qué pasa y por qué:** " + x.r)); d.appendChild(body);
+    ex.appendChild(d);
+  });
+})();
+
+
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "Pruebas de Domiciliario", min: 15, src: "En el IDE · caso del módulo",
+    txt: ["Haz la tabla de casos de `estaDisponible()` (puede tener a lo sumo 3 pedidos) y escribe `DomiciliarioTest` con un escenario: una Ana nueva creada en `setUp()`. Tienen que estar el caso normal y los dos lados del límite."],
+    checks: [
+      { q: "¿Cuáles son los dos lados del límite?", o: ["Sin pedidos y con 1", "Con 2 pedidos (todavía disponible) y con 3 (ya no)", "Con 3 y con 10", "Con un pedido null"], a: 1 },
+      { q: "¿Qué assert usas para «con 3 pedidos no está disponible»?", o: ["`assertEquals(3, ana.estaDisponible())`", "`assertFalse(ana.estaDisponible())`", "`assertNull(ana.estaDisponible())`", "`assertThrows(...)`"], a: 1 }],
+    hints: ["La regla cambia entre 2 y 3 pedidos: con 2 puede recibir otro, con 3 no.", "Ana va como atributo y se crea en `setUp()` con `@BeforeEach`. Cada prueba le asigna los pedidos que necesite."],
+    sol: [
+      { p: "**Tabla:** nueva (0 pedidos) → disponible · con 2 → disponible (límite por abajo) · con 3 → no disponible (límite).", c: `
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class DomiciliarioTest {
+    private Domiciliario ana;
+
+    @BeforeEach
+    public void setUp() {
+        ana = new Domiciliario("Ana");
+    }
+
+    @Test
+    public void nuevoEstaDisponible() {
+        assertTrue(ana.estaDisponible());
+    }
+
+    @Test
+    public void conDosPedidosSigueDisponible() {
+        ana.asignar(new Pedido(1));
+        ana.asignar(new Pedido(2));
+        assertTrue(ana.estaDisponible());
+    }
+
+    @Test
+    public void conTresPedidosNoEstaDisponible() {
+        ana.asignar(new Pedido(1));
+        ana.asignar(new Pedido(2));
+        ana.asignar(new Pedido(3));
+        assertFalse(ana.estaDisponible());
+    }
+}` },
+      { p: "Corrida: las 3 en verde." }],
+    rub: ["La tabla tiene el caso normal y los dos lados del límite (2 y 3 pedidos).", "Escenario con `@BeforeEach`; Ana es atributo.", "`assertTrue` y `assertFalse` en vez de `assertEquals(true, ...)`.", "Nombres que dicen el caso.", "Las pruebas no dependen unas de otras."] },
+  { n: "T2", t: "Pruebas de Restaurante, con la excepción", min: 20, src: "En el IDE · caso del módulo",
+    txt: ["Escribe `RestauranteTest` para `asignarPedido(Pedido p)`, que lanza `SinDomiciliarioException` si nadie está disponible. Escenario: un restaurante con Ana y Luis, en ese orden. Casos: (1) con los dos libres, el pedido va a Ana; (2) con Ana llena, va a Luis; (3) con los dos llenos, lanza la excepción con el mensaje «No hay domiciliario disponible para el pedido 7»."],
+    code: `
+public Domiciliario asignarPedido(Pedido p) throws SinDomiciliarioException {
+    for (Domiciliario d : domiciliarios) {
+        if (d.estaDisponible()) {
+            d.asignar(p);
+            return d;
+        }
+    }
+    throw new SinDomiciliarioException(p.getNumero());
+}`,
+    checks: [
+      { q: "La prueba del caso 1 llama a `asignarPedido`. ¿Qué le falta a su firma para compilar?", o: ["Nada: las pruebas no necesitan eso", "`throws SinDomiciliarioException`, porque es checked", "`@BeforeEach`", "`static`"], a: 1 },
+      { q: "¿Cómo verificas el mensaje de la excepción?", o: ["Con un `System.out.println`", "Guardando lo que retorna `assertThrows` y comparando `e.getMessage()` con `assertEquals`", "No se puede verificar", "Con `assertTrue(e)`"], a: 1 }],
+    hints: ["Para llenar a un domiciliario le asignas 3 pedidos. Un método de ayuda sin `@Test` (por ejemplo, `llenar(Domiciliario d)`) te ahorra repetirlo.", "Para saber a quién le tocó, compara el nombre del domiciliario que retorna `asignarPedido`."],
+    sol: [
+      { p: "Una solución. El método `llenar` no tiene `@Test`: JUnit no lo corre como prueba, es solo una ayuda.", c: `
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class RestauranteTest {
+    private Restaurante restaurante;
+    private Domiciliario ana;
+    private Domiciliario luis;
+
+    @BeforeEach
+    public void setUp() {
+        restaurante = new Restaurante();
+        ana = new Domiciliario("Ana");
+        luis = new Domiciliario("Luis");
+        restaurante.agregarDomiciliario(ana);
+        restaurante.agregarDomiciliario(luis);
+    }
+
+    private void llenar(Domiciliario d) {
+        d.asignar(new Pedido(1));
+        d.asignar(new Pedido(2));
+        d.asignar(new Pedido(3));
+    }
+
+    @Test
+    public void asignaAlPrimeroDisponible() throws SinDomiciliarioException {
+        Domiciliario elegido = restaurante.asignarPedido(new Pedido(7));
+        assertEquals("Ana", elegido.getNombre());
+    }
+
+    @Test
+    public void saltaAlQueEstaLleno() throws SinDomiciliarioException {
+        llenar(ana);
+        Domiciliario elegido = restaurante.asignarPedido(new Pedido(7));
+        assertEquals("Luis", elegido.getNombre());
+    }
+
+    @Test
+    public void sinDisponiblesLanzaExcepcion() {
+        llenar(ana);
+        llenar(luis);
+        SinDomiciliarioException e = assertThrows(SinDomiciliarioException.class,
+                () -> restaurante.asignarPedido(new Pedido(7)));
+        assertEquals("No hay domiciliario disponible para el pedido 7", e.getMessage());
+    }
+}` },
+      { p: "Corrida: las 3 en verde. Fíjate que la prueba de la excepción no necesita `throws`: la llamada está dentro de la lambda, y `assertThrows` la atrapa." }],
+    rub: ["Escenario con `@BeforeEach` y los dos domiciliarios en orden.", "Las pruebas que llaman a `asignarPedido` fuera de una lambda tienen `throws SinDomiciliarioException`.", "El caso de error usa `assertThrows` con `SinDomiciliarioException.class` y una lambda.", "Verifica el mensaje con `e.getMessage()`.", "Los tres casos: normal, el que salta al lleno y el de error."] },
+  { n: "T3", t: "Variante tipo Taller 5: el combo con descuento", min: 25, src: "En el IDE · variante nueva",
+    txt: ["Un combo junta varios productos y cobra la suma con un descuento (0.1 es 10 %). El constructor lanza `DescuentoInvalidoException` si el descuento es negativo o de 1 (100 %) en adelante. Copia las dos clases, haz la tabla de casos y escribe `ComboTest`: un caso normal, el límite sin descuento, un combo vacío y los dos casos de error."],
+    code: `
+public class DescuentoInvalidoException extends Exception {
+    public DescuentoInvalidoException(double descuento) {
+        super("Descuento inválido: " + descuento);
+    }
+}
+
+public class Combo {
+    private String nombre;
+    private double descuento;
+    private ArrayList<Producto> items;
+
+    public Combo(String nombre, double descuento) throws DescuentoInvalidoException {
+        if (descuento < 0 || descuento >= 1) {
+            throw new DescuentoInvalidoException(descuento);
+        }
+        this.nombre = nombre;
+        this.descuento = descuento;
+        this.items = new ArrayList<>();
+    }
+
+    public void agregarItem(Producto p) {
+        items.add(p);
+    }
+
+    public double getPrecio() {
+        double suma = 0;
+        for (Producto p : items) {
+            suma += p.getPrecio();
+        }
+        return suma * (1 - descuento);
+    }
+}`,
+    checks: [
+      { q: "Hamburguesa de 18000, papas de 6000 y gaseosa de 4000, con 10 % de descuento. ¿Cuánto cuesta el combo?", o: ["28000.0", "25200.0", "27990.0", "2800.0"], a: 1 },
+      { q: "¿Cómo pruebas que `new Combo(\"Gratis\", 1)` no se puede crear?", o: ["`assertThrows(DescuentoInvalidoException.class, () -> new Combo(\"Gratis\", 1));`", "`assertEquals(0.0, new Combo(\"Gratis\", 1).getPrecio(), 0.01);`", "`assertNull(new Combo(\"Gratis\", 1));`", "`assertFalse(new Combo(\"Gratis\", 1));`"], a: 0 }],
+    hints: ["28000 × (1 − 0.1) = 28000 × 0.9 = 25200. Con descuento 0, el precio es la suma.", "Las pruebas que crean un combo válido llaman a un constructor con `throws`: ponles `throws DescuentoInvalidoException`. Las de error no lo necesitan, porque el `new` va dentro de la lambda."],
+    sol: [
+      { p: "**Tabla:** combo de 28000 con 10 % → 25200.0 · descuento 0 → 28000.0 (límite) · combo vacío → 0.0 · descuento −0.1 → excepción · descuento 1 → excepción (límite: 1 ya no vale).", c: `
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class ComboTest {
+    private Producto hamburguesa;
+    private Producto papas;
+    private Producto gaseosa;
+
+    @BeforeEach
+    public void setUp() {
+        hamburguesa = new Producto("Hamburguesa", 18000);
+        papas = new Producto("Papas", 6000);
+        gaseosa = new Producto("Gaseosa", 4000);
+    }
+
+    @Test
+    public void precioConDescuento() throws DescuentoInvalidoException {
+        Combo combo = new Combo("Corral", 0.1);
+        combo.agregarItem(hamburguesa);
+        combo.agregarItem(papas);
+        combo.agregarItem(gaseosa);
+        assertEquals(25200.0, combo.getPrecio(), 0.01);
+    }
+
+    @Test
+    public void sinDescuentoEsLaSuma() throws DescuentoInvalidoException {
+        Combo combo = new Combo("Normal", 0);
+        combo.agregarItem(hamburguesa);
+        combo.agregarItem(papas);
+        combo.agregarItem(gaseosa);
+        assertEquals(28000.0, combo.getPrecio(), 0.01);
+    }
+
+    @Test
+    public void comboVacioCuestaCero() throws DescuentoInvalidoException {
+        Combo combo = new Combo("Vacío", 0.1);
+        assertEquals(0.0, combo.getPrecio(), 0.01);
+    }
+
+    @Test
+    public void descuentoNegativoLanzaExcepcion() {
+        assertThrows(DescuentoInvalidoException.class, () -> new Combo("Raro", -0.1));
+    }
+
+    @Test
+    public void descuentoDeCienPorCientoLanzaExcepcion() {
+        DescuentoInvalidoException e = assertThrows(DescuentoInvalidoException.class,
+                () -> new Combo("Gratis", 1));
+        assertEquals("Descuento inválido: 1.0", e.getMessage());
+    }
+}` },
+      { p: "Corrida: las 5 en verde. Ojo con el mensaje: el `1` entra como `double`, así que se imprime `1.0`." }],
+    rub: ["Tabla con normal, límite (0 y 1), vacío y error.", "Esperados calculados a mano (25200.0, 28000.0, 0.0).", "Margen en todos los `assertEquals` con `double`.", "`throws DescuentoInvalidoException` en las pruebas que crean combos válidos.", "Los dos casos de error con `assertThrows`."] },
+  { n: "T4", t: "La prueba que falta", min: 15, src: "En el IDE · caso del módulo",
+    txt: ["Este Pedido tiene un error, y sus dos pruebas salen en verde. Escribe la prueba que lo destapa, mírala salir en rojo, arregla el código y vuelve a correr todo hasta que salga en verde. Mándame la prueba nueva y los dos resultados de JUnit (el rojo y el verde)."],
+    code: `
+public double calcularTotal() {
+    double total = 0;
+    for (LineaPedido l : lineas) {
+        total += l.calcularSubtotal();
+    }
+    if (total <= MINIMO_SIN_ENVIO) {
+        total += COSTO_ENVIO;
+    }
+    return total;
+}
+
+// Las pruebas que hay, las dos en verde:
+@Test
+public void totalConEnvio() {
+    pedido.agregarProducto(hamburguesa, 2);
+    assertEquals(41000.0, pedido.calcularTotal(), 0.01);
+}
+
+@Test
+public void totalSinEnvio() {
+    pedido.agregarProducto(hamburguesa, 3);
+    assertEquals(54000.0, pedido.calcularTotal(), 0.01);
+}`,
+    checks: [{ q: "¿Con qué suma se nota el error?", o: ["36000", "54000", "40000 exactos", "0"], a: 2 }],
+    hints: ["Lee la regla: el envío se cobra si la suma es menor a 40000. Compara con lo que dice el `if`."],
+    sol: [
+      { p: "**La prueba nueva** es la del límite. Con el código malo sale `totalJustoEnElMinimoNoPagaEnvio() ✘ expected: <40000.0> but was: <45000.0>`.", c: `
+@Test
+public void totalJustoEnElMinimoNoPagaEnvio() {
+    pedido.agregarProducto(new Producto("Combo", 20000), 2);
+    assertEquals(40000.0, pedido.calcularTotal(), 0.01);
+}` },
+      { p: "**El arreglo:** el envío es para sumas menores a 40000, así que es `<`. Con eso salen las tres en verde.", c: `
+if (total < MINIMO_SIN_ENVIO) {
+    total += COSTO_ENVIO;
+}` }],
+    rub: ["La prueba nueva usa una suma de exactamente 40000.", "Salió en rojo antes del arreglo y en verde después.", "El arreglo cambia solo el operador, sin tocar las pruebas.", "El esperado (40000.0) está calculado desde la regla, no desde lo que da el código."] }
+];
+
+/* ---------- Quiz ---------- */
+const QUIZ = {
+  A: [
+    { t: "mc", k: "Selección múltiple con caso", code: `
+@Test
+public void noAceptaUnCuartoPedido() {
+    Domiciliario ana = new Domiciliario("Ana");
+    ana.asignar(new Pedido(1));
+    ana.asignar(new Pedido(2));
+    ana.asignar(new Pedido(3));
+    assertFalse(ana.estaDisponible());
+}`, q: "¿Qué verifica exactamente esta prueba?",
+      o: ["Que un domiciliario con 3 pedidos ya no está disponible", "Que asignar un cuarto pedido lanza una excepción", "Que un domiciliario nuevo está disponible", "Que `asignar` retorna false cuando ya hay 3 pedidos"], a: 0,
+      oe: ["Prepara a Ana con 3 pedidos y verifica con `assertFalse` que `estaDisponible()` dé false. Lo que se verifica es lo que está en el assert.",
+        "Nunca se asigna un cuarto pedido ni hay `assertThrows`. El nombre del método habla de un cuarto pedido, pero lo que cuenta es el assert.",
+        "Cuando se verifica, Ana ya tiene 3 pedidos: no es nueva.",
+        "`asignar` es `void` y no retorna nada. Lo que da false es `estaDisponible()`."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `
+@Test
+public void totalConEnvio() {
+    pedido.agregarProducto(hamburguesa, 2);    // 36000
+    assertEquals(41000.0, pedido.calcularTotal(), 0.01);
+}
+
+@Test
+public void totalSinEnvio() {
+    pedido.agregarProducto(hamburguesa, 3);    // 54000
+    assertEquals(54000.0, pedido.calcularTotal(), 0.01);
+}`, q: "El envío de 5000 se cobra si la suma es menor a 40000. Estas son las únicas pruebas de `calcularTotal`. ¿Qué caso falta, y por qué?",
+      o: ["Uno de 72000, para probar un pedido más grande", "Uno que sume exactamente 40000, porque ahí cambia la regla y es donde se esconde un `<=` en vez de `<`", "Otro de 36000 con otro producto, para confirmar", "Ninguno: ya se probó un pedido con envío y uno sin envío"], a: 1,
+      oe: ["72000 cae del mismo lado que 54000 (sin envío): no prueba nada nuevo.",
+        "Es el caso límite. Con `<=` en vez de `<`, las dos pruebas que hay siguen pasando; solo una de 40000 lo destapa (debe dar 40000.0, no 45000.0).",
+        "Cae del mismo lado que la de 41000: no prueba nada nuevo.",
+        "Un caso de cada lado no basta: los errores se esconden justo en el borde."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `assertEquals(41000.0, pedido.calcularTotal(), 0.01);`,
+      q: "Esta línea de la prueba `totalConEnvio` sale en rojo con «expected: <41000.0> but was: <36000.0>». ¿Qué significa?",
+      o: ["La prueba esperaba 41000.0 y el código dio 36000.0: a `calcularTotal` le falta sumar el envío", "El código esperaba 41000.0 y la prueba le dio 36000.0", "La prueba no compila", "Saltó una excepción inesperada (un error, no una falla)"], a: 0,
+      oe: ["El primer valor es el esperado (el que escribiste en la prueba) y el segundo el obtenido (lo que retornó el código). 36000 es justo la suma sin los 5000 del envío.",
+        "Al revés. El código no espera nada: la prueba es la que espera. `expected` es el primer argumento que escribiste.",
+        "Si no compilara, no habría resultado: el IDE marca el error antes de correr.",
+        "Con una excepción el mensaje sería del tipo `NullPointerException: ...`. «expected… but was…» es un assert que no se cumplió: una falla."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa la prueba: el club tiene capacidad 2 y ya tiene a Ana y a Luis, así que inscribir a Eva debe lanzar `CupoLlenoException`.",
+      tpl: `___
+public void noHayCupoParaEva() {
+    assertThrows(___, () -> club.agregarSocio("Eva"));
+}`,
+      blanks: [{ o: ["@Test", "@BeforeEach", "@Override", "@Throws"], a: 0 }, { o: ["CupoLlenoException.class", "new CupoLlenoException()", "CupoLlenoException", "\"CupoLlenoException\""], a: 0 }],
+      e: "Sin `@Test`, JUnit no la corre (`@BeforeEach` es para el escenario). Y `assertThrows` recibe el tipo de la excepción con `.class`: no se crea una excepción con `new`, se dice cuál se espera." },
+    { t: "write", k: "Código corto · escribir", q: "`p` es un pedido de 2 hamburguesas de 18000. Escribe la línea del assert que verifica que `p.calcularTotal()` dé 41000.0 (es un `double`).",
+      rx: /^(Assertions\.)?assertEquals\(41000(\.0*)?[dD]?,p\.calcularTotal\(\),(\d*\.\d+|\d+(\.\d+)?[eE]-\d+)\);?$/, model: "assertEquals(41000.0, p.calcularTotal(), 0.01);",
+      e: "Primero el esperado (41000.0, que calculas a mano: 36000 + 5000), después lo que da el código y al final el margen, porque es `double`. Al revés, la prueba igual falla cuando debe, pero el mensaje sale invertido." }
+  ],
+  B: [
+    { t: "mc", k: "Selección múltiple con caso", code: `
+private Domiciliario ana;
+
+@BeforeEach
+public void setUp() {
+    ana = new Domiciliario("Ana");
+}
+
+@Test
+public void lleno() {
+    ana.asignar(new Pedido(1));
+    ana.asignar(new Pedido(2));
+    ana.asignar(new Pedido(3));
+    assertFalse(ana.estaDisponible());
+}
+
+@Test
+public void nuevoDisponible() {
+    assertTrue(ana.estaDisponible());
+}`, q: "JUnit corre primero `lleno()` y después `nuevoDisponible()`. ¿Qué pasa con `nuevoDisponible()`?",
+      o: ["Falla, porque Ana quedó con 3 pedidos de la prueba anterior", "Pasa, porque `@BeforeEach` crea una Ana nueva, sin pedidos, antes de cada prueba", "Depende del orden en que JUnit corra las pruebas", "No compila, porque `ana` se usa en dos pruebas"], a: 1,
+      oe: ["Eso pasaría si Ana se creara una sola vez para todas. Con `@BeforeEach`, cada prueba arranca con su propia Ana.",
+        "`setUp()` corre antes de cada prueba (y JUnit además crea un objeto de prueba nuevo para cada una). Por eso las pruebas no dependen unas de otras.",
+        "Justamente por `@BeforeEach` el orden no importa. Lo comprobé forzando ese orden: las dos pasan.",
+        "Un atributo de la clase de prueba se puede usar en todas sus pruebas: para eso está."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `assertEquals(pedido.calcularTotal(), 41000.0, 0.01);`,
+      q: "Alguien escribió el assert con los argumentos invertidos. El código tiene un error y `calcularTotal()` retorna 36000.0. ¿Qué dice JUnit?",
+      o: ["expected: <41000.0> but was: <36000.0>", "expected: <36000.0> but was: <41000.0>", "Nada: la prueba pasa, porque el orden no importa", "No compila: el esperado tiene que ser un número escrito"], a: 1,
+      oe: ["Eso diría con el orden correcto. JUnit no sabe cuál es cuál: llama «expected» al primer argumento, sea lo que sea.",
+        "El primer argumento (36000.0, lo que dio el código) sale como «expected». El mensaje engaña: parece que el código dio 41000. Por eso el esperado va primero.",
+        "Los valores son distintos, así que falla con cualquier orden. Lo único que cambia es el mensaje.",
+        "Compila: los dos argumentos son `double`. El compilador no sabe cuál es el esperado."] },
+    { t: "mc", k: "Selección múltiple con caso", code: `assertEquals(0.3, 0.1 + 0.2);`,
+      q: "Esta prueba falla con «expected: <0.3> but was: <0.30000000000000004>». ¿Por qué?",
+      o: ["Porque un `double` no guarda 0.1 exacto, y sin margen JUnit compara exacto", "Porque `assertEquals` no acepta `double`", "Porque el esperado y el obtenido están invertidos", "No falla: 0.1 + 0.2 da 0.3 exacto"], a: 0,
+      oe: ["Un `double` guarda una aproximación en binario, y la suma queda en 0.30000000000000004. Con margen, `assertEquals(0.3, 0.1 + 0.2, 0.0001)`, pasa.",
+        "Sí los acepta: por eso compila y corre. Lo que pasa es que sin margen los compara exactos.",
+        "El orden está bien: 0.3 es lo esperado.",
+        "La corrí: falla con ese mensaje exacto."] },
+    { t: "fill", k: "Código corto · completar", q: "Completa las dos pruebas. El envío se cobra si la suma es menor a 40000, y un domiciliario recibe a lo sumo 3 pedidos.",
+      tpl: `@Test
+public void totalJustoEnElMinimoNoPagaEnvio() {
+    pedido.agregarProducto(new Producto("Combo", 20000), 2);
+    assertEquals(___, pedido.calcularTotal(), 0.01);
+}
+
+@Test
+public void conTresPedidosNoEstaDisponible() {
+    ana.asignar(new Pedido(1));
+    ana.asignar(new Pedido(2));
+    ana.asignar(new Pedido(3));
+    ___(ana.estaDisponible());
+}`,
+      blanks: [{ o: ["40000.0", "45000.0", "35000.0", "20000.0"], a: 0 }, { o: ["assertTrue", "assertFalse", "assertNull", "assertThrows"], a: 1 }],
+      e: "Dos combos de 20000 suman 40000 justo; el envío se cobra solo si la suma es **menor** a 40000, así que no se cobra: 40000.0. Y con 3 pedidos `estaDisponible()` debe dar false: `assertFalse`." },
+    { t: "write", k: "Código corto · escribir", q: "`club` tiene capacidad 2 y ya tiene a Ana y a Luis. Escribe la línea que verifica que `club.agregarSocio(\"Eva\")` lance `CupoLlenoException`.",
+      rx: /^((CupoLlenoException|var)[a-zA-Z_]\w*=)?(Assertions\.)?assertThrows\(CupoLlenoException\.class,\(\)->(club\.agregarSocio\("Eva"\)|\{club\.agregarSocio\("Eva"\);\})\);?$/, model: "assertThrows(CupoLlenoException.class, () -> club.agregarSocio(\"Eva\"));",
+      e: "Primero el tipo de la excepción con `.class`; después una lambda `() -> ...` con el código que debe lanzarla. `assertThrows` ejecuta la lambda dentro de su propio try/catch: si sale esa excepción, pasa; si no sale nada, falla con «Expected CupoLlenoException to be thrown, but nothing was thrown.»" }
+  ]
+};
+
+/* ---------- Render ---------- */
+document.querySelectorAll("pre[data-code]").forEach((p) => { const c = CODE[p.dataset.code]; p.innerHTML = codeHTML(c.s, !!c.d); });
+document.querySelectorAll("pre[data-junit]").forEach((p) => { p.innerHTML = junitHTML(JOUT[p.dataset.junit]); });
+document.querySelectorAll("pre[data-raw]").forEach((p) => { p.textContent = RAW[p.dataset.raw]; });
+/* ---------- Taller ---------- */
+function fmtT(s) { return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function timerEl(min, id) {
+  const w = el("div", "timer"), t = el("span", "mono tval", fmtT(min * 60)), b = el("button", "btn small", "Iniciar");
+  b.type = "button"; b.id = id; t.setAttribute("role", "timer");
+  let left = min * 60, iv = null;
+  b.addEventListener("click", () => {
+    if (w.classList.contains("over")) { w.classList.remove("over"); left = min * 60; t.textContent = fmtT(left); b.textContent = "Iniciar"; return; }
+    if (iv) { clearInterval(iv); iv = null; w.classList.remove("run"); b.textContent = "Seguir"; return; }
+    w.classList.add("run"); b.textContent = "Pausar";
+    iv = setInterval(() => {
+      left--; t.textContent = fmtT(Math.max(left, 0));
+      if (left <= 0) { clearInterval(iv); iv = null; w.classList.remove("run"); w.classList.add("over"); t.textContent = "Tiempo"; b.textContent = "Reiniciar"; }
+    }, 1000);
+  });
+  w.appendChild(el("span", "eyebrow", "Meta " + min + " min")); w.appendChild(t); w.appendChild(b);
+  return w;
+}
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(timerEl(p.min, "timer-" + p.n));
+    if (p.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[p.fig], false); a.appendChild(fg); }
+    const tx = el("div", "prob-txt"); p.txt.forEach((t) => tx.appendChild(rich(el("p"), t)));
+    if (p.list) { const ul = el("ul"); p.list.forEach((t) => ul.appendChild(rich(el("li"), t))); tx.appendChild(ul); }
+    a.appendChild(tx); if (p.code) { const pc = el("pre", "code sm"); pc.innerHTML = codeHTML(p.code, false); a.appendChild(pc); }
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(el("p", "", (ck.label || "Chequeo rápido") + " · " + ck.q)); if (ck.code) { const cp = el("pre", "code sm"); cp.innerHTML = codeHTML(ck.code, false); c.appendChild(cp); }
+      const opts = el("div", "opts"), fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.o.forEach((o, oi) => {
+        const b = rich(el("button", "opt"), o); b.type = "button"; b.id = "ck-" + p.n + "-" + ci + "-" + oi;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Compara tu código con la solución."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(rich(el("p"), ht)); d.appendChild(b); rv.appendChild(d); });
+    const dr = el("details", "rev"); dr.appendChild(el("summary", "", p.rubTitle || "Rúbrica tipo profe"));
+    const rb = el("div", "rev-body"); const ul = el("ul", "rub"); p.rub.forEach((r) => ul.appendChild(rich(el("li"), r))); rb.appendChild(ul);
+    if (p.rubNote) rb.appendChild(el("p", "muted", p.rubNote));
+    dr.appendChild(rb); rv.appendChild(dr);
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body");
+    p.sol.forEach((s) => { sb.appendChild(rich(el("p"), s.p)); if (s.fig) { const sf = el("div", "fig"); sf.innerHTML = umlSvg(FIG[s.fig], false); sb.appendChild(sf); } if (s.c) { const pre = el("pre", "code sm"); pre.innerHTML = codeHTML(s.c, false); sb.appendChild(pre); } });
+    ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+
+/* ---------- Quiz ---------- */
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); rich(lt, it.q); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "fig"); fg.innerHTML = umlSvg(FIG[it.fig], false); fs.appendChild(fg); }
+    if (it.code) { const pre = el("pre", "code"); pre.innerHTML = codeHTML(it.code, false); fs.appendChild(pre); }
+    if (it.t === "mc") {
+      const ops = el("div", "qopts");
+      it.o.forEach((o, oi) => {
+        const lab = el("label", "qopt"), r = el("input"); r.type = "radio"; r.name = key + "-q" + i; r.id = key + "-q" + i + "-o" + oi; r.value = String(oi);
+        lab.appendChild(r); lab.appendChild(rich(el("span", "", String.fromCharCode(65 + oi) + ") "), o)); ops.appendChild(lab);
+      });
+      fs.appendChild(ops);
+    } else if (it.t === "fill") {
+      const pre = el("pre", "code qfill"); let b = 0;
+      it.tpl.split("\n").forEach((line) => {
+        const cl = el("span", "cl"); const segs = line.split("___");
+        segs.forEach((sg, j) => {
+          if (j > 0) {
+            const sel = el("select"); sel.id = key + "-q" + i + "-b" + b; sel.setAttribute("aria-label", "Espacio " + (b + 1));
+            const o0 = el("option", "", "—"); o0.value = ""; sel.appendChild(o0);
+            it.blanks[b].o.forEach((o, oi) => { const op = el("option", "", o); op.value = String(oi); sel.appendChild(op); });
+            cl.appendChild(sel); b++;
+          }
+          if (sg) { const sp = el("span"); sp.innerHTML = hl(sg); cl.appendChild(sp); }
+        });
+        if (!line) cl.appendChild(document.createTextNode(" "));
+        pre.appendChild(cl);
+      });
+      fs.appendChild(pre);
+    } else {
+      const inp = el("input", "qwrite"); inp.type = "text"; inp.id = key + "-q" + i + "-w"; inp.autocomplete = "off"; inp.spellcheck = false;
+      inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocorrect", "off"); inp.setAttribute("aria-label", "Tu respuesta"); inp.placeholder = "Escribe aquí tu línea de Java";
+      fs.appendChild(inp);
+    }
+    const ex = el("div", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+function readAnswer(key, it, i) {
+  if (it.t === "mc") { const c = document.querySelector('input[name="' + key + "-q" + i + '"]:checked'); return c ? Number(c.value) : null; }
+  if (it.t === "fill") { const v = it.blanks.map((_, b) => $("#" + key + "-q" + i + "-b" + b).value); return v.some((x) => x === "") ? null : v.map(Number); }
+  const v = $("#" + key + "-q" + i + "-w").value.trim(); return v ? v : null;
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase()), items = QUIZ[key];
+  const answers = items.map((it, i) => readAnswer(key, it, i));
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : "Te faltan " + missing + " preguntas por responder."; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0; const saved = [];
+  items.forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i], ex = fs.querySelector(".qexp"), ans = answers[i];
+    let ok = false; ex.textContent = "";
+    if (it.t === "mc") {
+      ok = ans === it.a;
+      fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === ans) lab.classList.add("wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + "Por qué cada opción:"));
+      const ul = el("ul");
+      it.oe.forEach((t, oi) => { const li = el("li"); li.appendChild(el("span", "mk " + (oi === it.a ? "y" : "n"), String.fromCharCode(65 + oi) + (oi === it.a ? " ✓" : " ✗"))); li.appendChild(rich(el("span"), t)); ul.appendChild(li); });
+      ex.appendChild(ul);
+      saved.push(String.fromCharCode(65 + ans));
+    } else if (it.t === "fill") {
+      ok = it.blanks.every((bl, b) => ans[b] === bl.a);
+      it.blanks.forEach((bl, b) => { const s = $("#" + key + "-q" + i + "-b" + b); s.classList.add(ans[b] === bl.a ? "right" : "wrong"); });
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** Así va: " + it.blanks.map((bl) => "`" + bl.o[bl.a] + "`").join(", ") + ". ") + it.e));
+      saved.push(it.blanks.map((bl, b) => bl.o[ans[b]]).join(" | "));
+    } else {
+      ok = it.rx.test(ans.replace(/\s+/g, ""));
+      $("#" + key + "-q" + i + "-w").classList.add(ok ? "right" : "wrong");
+      ex.appendChild(rich(el("p"), (ok ? "**Correcta.** " : "**Incorrecta.** ") + "Respuesta modelo: `" + it.model + "`. " + it.e));
+      saved.push(ans.slice(0, 200));
+    }
+    if (ok) score++;
+    ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    fs.querySelectorAll("input, select").forEach((x) => (x.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT_MSG : "Todavía no. Lee por qué fallaste cada una, repasa esa idea de la teoría y haz el Quiz B."));
+  const note = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(note);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: saved, fecha: new Date().toISOString() });
+      note.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { note.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
