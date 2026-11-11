@@ -400,7 +400,26 @@ svg text{fill:var(--ink)}
     <div class="block">
       <h3>2. Impulso: lo que una fuerza le cambia al momento</h3>
       <p class="prose">El profe escribe la segunda ley de Newton en términos del momento. La fuerza neta es lo rápido que cambia el momento:</p>
-      <div class="eq"><span><b>F<sub>neta</sub> = Δp / Δt</b></span><span>Si la masa no cambia, Δp = M·Δv y esto es lo mismo que F = M·a.</span></div>
+      <div class="eq"><span><b>F<sub>neta</sub> = Δp / Δt</b></span><span>Si la masa no cambia, es lo mismo que F = M·a. Abajo está de dónde sale, paso a paso.</span></div>
+      <article class="wx" aria-labelledby="wxd-h">
+        <div class="wx-head" style="grid-template-columns:1fr">
+          <div class="wx-q">
+            <span class="tag">De dónde sale</span>
+            <h4 id="wxd-h">De F = M·a a F = Δp / Δt</h4>
+            <p>Partes de la segunda ley que ya conoces y llegas a la forma con momento. La masa M no cambia durante el movimiento.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Arranca de la segunda ley de Newton.</p><p class="why">Es la forma que ya conoces: la fuerza neta es la masa por la aceleración.</p><div class="mx">F<sub>neta</sub> = M·a</div></li>
+          <li><p class="what">Escribe la aceleración como lo que es.</p><p class="why">La aceleración es cuánto cambia la velocidad por cada unidad de tiempo: el cambio de velocidad dividido por el tiempo que tarda.</p><div class="mx">a = Δv / Δt<br>F<sub>neta</sub> = M·Δv / Δt</div></li>
+          <li><p class="what">Abre el Δv.</p><p class="why">«Delta» siempre es final menos inicial. Ahí adentro ya están las dos velocidades: v<sub>f</sub>, la del final, y v<sub>i</sub>, la del inicio.</p><div class="mx">M·Δv = M·(v<sub>f</sub> − v<sub>i</sub>)</div></li>
+          <li><p class="what">Reparte la M.</p><p class="why">Aquí se usa que la masa no cambia: la M del final y la del inicio son la misma, así que multiplica a las dos velocidades. Si la masa cambiara (un cohete que quema combustible), no podrías sacar una sola M.</p><div class="mx">M·(v<sub>f</sub> − v<sub>i</sub>) = M·v<sub>f</sub> − M·v<sub>i</sub></div></li>
+          <li><p class="what">Reconoce los momentos.</p><p class="why">M·v es la definición de momento: M·v<sub>f</sub> es el momento final y M·v<sub>i</sub>, el inicial.</p><div class="mx">M·v<sub>f</sub> − M·v<sub>i</sub> = p<sub>f</sub> − p<sub>i</sub> = Δp</div></li>
+          <li><p class="what">Vuelve a la fórmula del paso 2.</p><p class="why">Cambia M·Δv por Δp.</p><div class="mx">F<sub>neta</sub> = Δp / Δt</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> F<sub>neta</sub> = Δp / Δt. La fuerza neta es cuánto cambia el momento por cada unidad de tiempo.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si la masa no cambia, es la misma F = M·a escrita con p. Que la masa sea constante no la vuelve 1: solo deja meterla dentro del cambio, porque es la misma al principio y al final.</p>
+      </article>
       <p class="prose">Si multiplicas por el tiempo que dura el empujón, sale el <b>impulso</b>: el cambio de momento que produce una fuerza.</p>
       <div class="eq"><span><b>J = F<sub>prom</sub> · Δt = Δp = p<sub>f</sub> − p<sub>i</sub></b></span><span>F<sub>prom</sub> es la fuerza promedio durante el golpe. En un choque, la fuerza es muy grande pero dura muy poco.</span></div>
       <article class="wx" aria-labelledby="wx2-h">
