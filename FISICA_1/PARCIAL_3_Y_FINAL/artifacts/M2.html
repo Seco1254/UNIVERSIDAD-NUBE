@@ -346,6 +346,10 @@ svg text{fill:var(--ink)}
       <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M3.</p>
       <a class="btn" href="#quiz">Ir al quiz</a>
     </div>
+    <div class="callout">
+      <h3>Lo que pregunta el profe de este tema en el Parcial 3</h3>
+      <p>En los 4 parciales 3 anteriores, el centro de masa salió una vez (2025-2), como selección múltiple de 10 puntos: un objeto que explota en lo más alto de un tiro parabólico. Es el T1 del taller. Pesa menos que M1, pero no te lo saltes: el cálculo es corto.</p>
+    </div>
   </header>
 
   <!-- ============ 1. TEORÍA ============ -->
@@ -529,7 +533,7 @@ svg text{fill:var(--ink)}
 
   <!-- ============ 3. TALLER ============ -->
   <section id="taller" aria-labelledby="w-h">
-    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Los ejercicios 1 y 2 de la Tarea 9, la canoa de la semana 12, el niño en la barca del profe y dos variantes.</p></div>
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero el problema del Parcial 3 de 2025-2; después los ejercicios 1 y 2 de la Tarea 9, la canoa de la semana 12, el niño en la barca del profe y dos variantes.</p></div>
     <p class="prose">En cada problema: escoge el origen, escribe cada posición y usa el promedio ponderado. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
     <div id="problems" class="block"></div>
   </section>
@@ -730,15 +734,32 @@ function tortugaSvg() {
   g += dimH(60, bx, yw + 22, "1 m") + dimH(bx, bx + L, yw + 22, "3 m");
   return `<svg viewBox="0 0 320 160" role="img" aria-label="Una tortuga a 1 metro del extremo de una barca de 3 metros; el niño está en el extremo opuesto">${g}</svg>`;
 }
+function tresPedazosSvg() {
+  const ox = 26, fy = 150, Rp = 110, H = 84;
+  const X = (x) => ox + x * Rp, Y = (y) => fy - y * H * 4;
+  let d = ""; for (let i = 0; i <= 40; i++) { const x = i / 40; d += (i ? " L " : "M ") + f1(X(x)) + " " + f1(Y(x * (1 - x))); }
+  let g = floorLine(fy, 10, 312) + `<path d="${d}" class="sv-dash"/>`;
+  g += `<circle cx="${X(0)}" cy="${fy}" r="3" class="sv-axle"/>`;
+  g += `<polygon points="${X(0.5) - 9},${Y(0.25) - 2} ${X(0.5) - 3},${Y(0.25) - 10} ${X(0.5) + 3},${Y(0.25) - 2} ${X(0.5) + 9},${Y(0.25) - 11} ${X(0.5) + 6},${Y(0.25) + 3} ${X(0.5) - 6},${Y(0.25) + 4}" class="sv-burst"/>`;
+  g += T(X(0.5), Y(0.25) - 16, "3M explota", "sv-tl", "middle");
+  g += `<line x1="${X(0.5)}" y1="${Y(0.25) + 10}" x2="${X(0.5)}" y2="${fy - 8}" class="sv-path1"/>` + `<circle cx="${X(0.5)}" cy="${fy - 7}" r="6" class="sv-mass"/>` + T(X(0.5) + 9, fy - 14, "1", "sv-t");
+  let d2 = ""; for (let i = 0; i <= 30; i++) { const t = i / 30; d2 += (i ? " L " : "M ") + f1(X(0.5 - 0.5 * t)) + " " + f1(Y(0.25 * (1 - t * t))); }
+  g += `<path d="${d2}" class="sv-path2"/>` + `<circle cx="${X(0) + 7}" cy="${fy - 7}" r="6" class="sv-mass"/>` + T(X(0) + 16, fy - 14, "2", "sv-t");
+  const x3 = 2.2;
+  let d3 = ""; for (let i = 0; i <= 30; i++) { const t = i / 30; d3 += (i ? " L " : "M ") + f1(X(0.5 + (x3 - 0.5) * t)) + " " + f1(Y(0.25 * (1 - t * t))); }
+  g += `<path d="${d3}" class="sv-path2"/>` + `<circle cx="${f1(X(x3))}" cy="${fy - 7}" r="6" class="sv-mass"/>` + T(X(x3) - 9, fy - 14, "3", "sv-t", "end");
+  g += `<line x1="${X(1)}" y1="${fy - 4}" x2="${X(1)}" y2="${fy + 4}" class="sv-line"/>` + T(X(1), fy + 16, "R", "sv-t", "middle") + T(X(0.5), fy + 16, "R/2", "sv-tl", "middle") + T(X(0), fy + 16, "0", "sv-tl", "middle") + T(X(x3), fy + 16, "x = ?", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 170" role="img" aria-label="Un objeto de masa 3M lanzado en tiro parabólico explota en lo más alto en tres pedazos iguales: uno cae verticalmente, otro vuelve al punto de lanzamiento y se pregunta dónde cae el tercero">${g}</svg>`;
+}
 function granadaSvg(o = {}) {
   let g = T(80, 16, "en la explosión", "sv-tag", "middle") + T(240, 16, "un tiempo t después", "sv-tag", "middle");
   g += `<line x1="160" y1="22" x2="160" y2="186" class="sv-thin"/>`;
   const ax = (cx) => `<line x1="${cx - 66}" y1="96" x2="${cx + 66}" y2="96" class="sv-dash"/><line x1="${cx}" y1="30" x2="${cx}" y2="180" class="sv-dash"/>` + T(cx + 66, 108, "x", "sv-tl", "end") + T(cx + 6, 38, "y", "sv-tl");
   g += ax(80) + ax(240);
-  g += `<path d="M 66 90 q 6 -16 22 -8 q 12 8 2 16 q -12 8 -24 -8 z" class="sv-mass"/>` + T(60, 84, o.m || "m", "sv-t", "end") + arrowSvg(96, 96, 140, 96, "a-v") + T(118, 88, "v", "sv-t t-v", "middle");
+  g += `<path d="M 66 90 q 6 -16 22 -8 q 12 8 2 16 q -12 8 -24 -8 z" class="sv-mass"/>` + T(60, 84, o.m || "M", "sv-t", "end") + arrowSvg(96, 96, 140, 96, "a-v") + T(118, 88, "v", "sv-t t-v", "middle");
   g += arrowSvg(36, 120, 36, 150, "a-peso") + T(42, 140, "g", "sv-t t-peso");
-  g += `<path d="M 270 46 q 10 -6 16 4 q -2 12 -14 8 z" class="sv-mass"/>` + T(292, 46, o.m1 || "m/3", "sv-tl") + T(262, 66, sb("(x", "1", ", y") + `<tspan dy="3" font-size="9">1</tspan><tspan dy="-3">)</tspan>`, "sv-t", "end");
-  g += `<path d="M 262 150 q 12 -10 20 2 q -4 14 -18 10 z" class="sv-mass"/>` + T(290, 168, o.m2 || "2m/3", "sv-tl") + T(256, 144, sb("(x", "2", ", y") + `<tspan dy="3" font-size="9">2</tspan><tspan dy="-3">) = ?</tspan>`, "sv-t", "end");
+  g += `<path d="M 270 46 q 10 -6 16 4 q -2 12 -14 8 z" class="sv-mass"/>` + T(292, 46, o.m1 || "M/3", "sv-tl") + T(262, 66, sb("(x", "1", ", y") + `<tspan dy="3" font-size="9">1</tspan><tspan dy="-3">)</tspan>`, "sv-t", "end");
+  g += `<path d="M 262 150 q 12 -10 20 2 q -4 14 -18 10 z" class="sv-mass"/>` + T(290, 168, o.m2 || "2M/3", "sv-tl") + T(256, 144, sb("(x", "2", ", y") + `<tspan dy="3" font-size="9">2</tspan><tspan dy="-3">) = ?</tspan>`, "sv-t", "end");
   return `<svg viewBox="0 0 320 190" role="img" aria-label="Una granada que va con velocidad v en lo más alto explota en dos fragmentos; un tiempo después uno está en x1, y1 y se pregunta dónde está el otro">${g}</svg>`;
 }
 function dosMasasSvg(o = {}) {
@@ -817,43 +838,56 @@ eReset();
 
 /* ---------- Taller ---------- */
 const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const tch = (t) => `<span class="cx">${t}</span>`;
 const PROBS = [
-  { n: "T1", t: "Cuatro masas en un cuadrado", src: "Variante del ejemplo del profe (clase 17)",
+  { n: "T1", t: "El objeto que se parte en tres en lo más alto", src: "Parcial 3 2025-2 · selección múltiple 3 · 10 puntos",
+    fig: () => tresPedazosSvg(),
+    txt: "Se lanza un objeto de masa 3M en tiro parabólico, y su alcance horizontal es R. En el punto más alto de la trayectoria se parte en tres pedazos de igual masa. El primer pedazo cae verticalmente y el segundo vuelve a caer en el punto de lanzamiento. ¿A qué distancia horizontal del punto de lanzamiento cae el tercero? Opciones del parcial: A) 0,5R · B) 1,5R · C) 2,5R · D) 3R · E) Ninguna de las anteriores. (En el parcial la masa sale como 3m.)",
+    hints: ["La explosión es una fuerza interna: el centro de masa sigue la parábola original y cae donde habría caído el objeto entero, en R.", "Los tres pedazos caen al mismo tiempo, así que M·x₁ + M·x₂ + M·x₃ = 3M·R. ¿Dónde caen el 1 y el 2?"],
+    sol: [{ w: "Dónde explota.", y: "La parábola es simétrica: lo más alto queda en la mitad del alcance.", m: `x<sub>explosión</sub> = ${fr("R", "2")}` },
+      { w: "Dónde cae el centro de masa.", y: "Las fuerzas de la explosión son internas: no cambian el movimiento del centro de masa, que sigue la parábola original. Si el objeto no se hubiera partido, habría caído en R.", m: `X<sub>CM</sub> al caer = R` },
+      { w: "Por qué los tres caen al mismo tiempo.", y: "Como en la solución del profe: justo después de la explosión ningún pedazo tiene velocidad vertical, así que los tres caen desde la misma altura y llegan al piso juntos. En ese instante, el centro de masa es el promedio de los tres puntos de caída, pesado con las masas.", m: `X<sub>CM</sub> = ${fr("M·x₁ + M·x₂ + M·x₃", "3M")} = R` },
+      { w: "Pon dónde caen los dos que conoces.", y: "El 1 cae verticalmente desde la cima: x₁ = R/2. El 2 vuelve al punto de lanzamiento: x₂ = 0.", m: `M·${fr("R", "2")} + M·0 + M·x₃ = 3M·R` },
+      { w: "Cancela M y despeja x₃.", y: "M está en todos los términos.", m: `${tch("M")}·${fr("R", "2")} + ${tch("M")}·x₃ = 3·${tch("M")}·R<span class="ar">→</span>x₃ = 3R − ${fr("R", "2")} = ${fr("5R", "2")}` },
+      { w: "Compruébalo con el momento (opcional).", y: "En la cima la velocidad es horizontal, v<sub>x</sub>. El 1 sale con 0 y el 2 con −v<sub>x</sub> (recorre R/2 hacia atrás en el mismo tiempo que el objeto tardaría en recorrer R/2 hacia adelante). En x: 3M·v<sub>x</sub> = M·0 + M·(−v<sub>x</sub>) + M·v₃, así que v₃ = 4·v<sub>x</sub>. En el tiempo de caída, v<sub>x</sub>·t = R/2.", m: `x₃ = ${fr("R", "2")} + 4·v<sub>x</sub>·t = ${fr("R", "2")} + 4·${fr("R", "2")} = ${fr("5R", "2")}` }],
+    res: "El tercero cae a 2,5R del punto de lanzamiento (opción C).",
+    checks: [{ q: "¿Dónde cae el tercer pedazo?", opts: ["1,5R", "2R", "2,5R", "3R"], a: 2 }] },
+  { n: "T2", t: "Cuatro masas en un cuadrado", src: "Variante del ejemplo del profe (clase 17)",
     fig: () => cuatroMasasSvg(),
     txt: "Cuatro masas están en las esquinas de un cuadrado de lado a: M en (0, 0), 2M en (a, 0), 3M en (a, a) y 4M en (0, a). ¿Dónde está el centro de masa?",
     hints: ["M<sub>total</sub> = 10M. En x solo aportan las que están en x = a.", "En y solo aportan las que están en y = a."],
     sol: [{ w: "Masa total.", m: "M<sub>total</sub> = M + 2M + 3M + 4M = 10M" }, { w: "Coordenada x.", m: `X<sub>CM</sub> = ${fr("2M·a + 3M·a", "10M")} = ${fr("a", "2")}` }, { w: "Coordenada y.", m: `Y<sub>CM</sub> = ${fr("3M·a + 4M·a", "10M")} = ${fr("7a", "10")}` }],
     res: "R<sub>CM</sub> = (a/2, 7a/10).",
     checks: [{ q: "¿Cuánto vale Y<sub>CM</sub>?", opts: ["a/2", "3a/5", "7a/10", "a"], a: 2 }] },
-  { n: "T2", t: "La lámina en forma de L", src: "Tarea 9, ejercicio 2",
+  { n: "T3", t: "La lámina en forma de L", src: "Tarea 9, ejercicio 2",
     fig: () => laminaLSvg(),
     txt: "Una lámina plana uniforme, de masa total M, tiene la forma de la figura: alto a a la izquierda, ancho total b y, a la derecha, una parte más baja de ancho d y alto c. Determina la posición de su centro de masa con un sistema de referencia conveniente.",
     hints: ["Origen en la esquina de abajo a la izquierda. Divide en dos rectángulos: uno de (b − d) por a a la izquierda y otro de d por c a la derecha.", "Centros: ((b − d)/2, a/2) y (b − d/2, c/2). Áreas: a·(b − d) y c·d."],
     sol: [{ w: "Divide en dos rectángulos.", y: "Origen en la esquina de abajo a la izquierda.", m: `A₁ = a·(b − d), centro (${fr("b − d", "2")}, ${fr("a", "2")})<span class="ar">y</span>A₂ = c·d, centro (b − ${fr("d", "2")}, ${fr("c", "2")})` }, { w: "Coordenada x: promedio ponderado por las áreas.", m: `X<sub>CM</sub> = ${fr("a·(b − d)·(b − d)/2 + c·d·(b − d/2)", "a·(b − d) + c·d")}` }, { w: "Coordenada y.", m: `Y<sub>CM</sub> = ${fr("a·(b − d)·a/2 + c·d·c/2", "a·(b − d) + c·d")} = ${fr("a²·(b − d) + c²·d", "2·[a·(b − d) + c·d]")}` }],
     res: "X<sub>CM</sub> = [a(b − d)²/2 + c·d·(b − d/2)] / [a(b − d) + c·d] y Y<sub>CM</sub> = [a²(b − d) + c²·d] / (2[a(b − d) + c·d]).",
     checks: [{ q: "¿Cuál es Y<sub>CM</sub>?", opts: ["(a + c)/2", "[a²(b − d) + c²·d] / (2[a(b − d) + c·d])", "a/2", "[a(b − d) + c·d] / (a + c)"], a: 1 }] },
-  { n: "T3", t: "La mujer que camina en la canoa", src: "Ejercicios en clase de la semana 12",
+  { n: "T4", t: "La mujer que camina en la canoa", src: "Ejercicios en clase de la semana 12",
     fig: () => canoaSvg(),
     txt: "Una mujer de 45,0 kg está de pie en una canoa de 60,0 kg y 5,00 m de largo. Camina desde un punto a 1,00 m de un extremo hasta un punto a 1,00 m del otro. Si no hay resistencia del agua, ¿cuánto se mueve la canoa? Resuélvelo con letras y al final reemplaza.",
     hints: ["Respecto a la canoa, la mujer camina 5,00 − 1,00 − 1,00 = 3,00 m. Llámalo D.", "Como en el ejemplo resuelto 3: la canoa se mueve D·M<sub>mujer</sub>/(M<sub>mujer</sub> + M<sub>canoa</sub>) hacia el lado contrario."],
     sol: [{ w: "El CM no se mueve.", y: "No hay fuerza externa horizontal y todo empezó quieto." }, { w: "Distancia que camina respecto a la canoa.", m: "D = 5,00 − 1,00 − 1,00 = 3,00 m" }, { w: "Iguala el CM antes y después (como en el ejemplo 3).", y: "Si la canoa se mueve x, la mujer se mueve D + x respecto al agua; los dos desplazamientos pesados por la masa se cancelan.", m: `M<sub>mujer</sub>·(D + x) + M<sub>canoa</sub>·x = 0<span class="ar">→</span>x = −${fr("M<sub>mujer</sub>·D", "M<sub>mujer</sub> + M<sub>canoa</sub>")}` }, { w: "Números.", m: `|x| = ${fr("45,0 · 3,00", "105")} ≈ 1,29 m` }],
     res: "La canoa se mueve 1,29 m hacia el lado contrario al que camina la mujer.",
     checks: [{ q: "¿Cuánto se mueve la canoa?", opts: ["0,75 m", "1,29 m", "1,71 m", "3,00 m"], a: 1 }] },
-  { n: "T4", t: "¿Alcanza el niño a la tortuga?", src: "Ejemplo del profe (clase 17)",
+  { n: "T5", t: "¿Alcanza el niño a la tortuga?", src: "Ejemplo del profe (clase 17)",
     fig: () => tortugaSvg(),
     txt: "Un niño de 25 kg está en el extremo de una barca de 100 kg y 3 m de largo, quieta sobre un lago congelado (sin fricción). Una tortuga está a 1 m del otro extremo de la barca. El niño camina hasta ese otro extremo para alcanzarla. ¿A qué distancia de la tortuga queda el niño?",
     hints: ["Origen en la tortuga. Al principio: niño en 4 m y centro de la barca en 2,5 m.", "Al final: niño en x y centro de la barca en x + 1,5 m. Iguala el CM."],
     sol: [{ w: "CM al principio (origen en la tortuga).", m: `X<sub>CM</sub> = ${fr("25·4 + 100·2,5", "125")}` }, { w: "CM al final.", y: "El niño llegó al extremo cercano a la tortuga: está en x y el centro de la barca en x + 1,5.", m: `X<sub>CM</sub> = ${fr("25·x + 100·(x + 1,5)", "125")}` }, { w: "Iguala y despeja.", m: "100 + 250 = 125·x + 150<span class=\"ar\">→</span>x = 1,6 m" }],
     res: "Queda a 1,6 m de la tortuga: la barca retrocedió 0,6 m y no la alcanza.",
     checks: [{ q: "¿A qué distancia de la tortuga queda?", opts: ["0 m", "1,0 m", "1,6 m", "2,4 m"], a: 2 }] },
-  { n: "T5", t: "La granada que explota en lo más alto", src: "Tarea 9, ejercicio 1",
+  { n: "T6", t: "La granada que explota en lo más alto", src: "Tarea 9, ejercicio 1",
     fig: () => granadaSvg(),
-    txt: "Se lanza una granada de masa m. En el punto más alto de su trayectoria, que se toma como origen (0, 0), va con velocidad v horizontal y explota en dos fragmentos. Un tiempo t después, el fragmento de masa m/3 está en (x₁, y₁). ¿Dónde está el otro fragmento? Desprecia la resistencia del aire.",
-    hints: ["El CM sigue la parábola: desde la cima, X<sub>CM</sub> = v·t y Y<sub>CM</sub> = −½·g·t².", "(m/3)·x₁ + (2m/3)·x₂ = m·X<sub>CM</sub>. Lo mismo en y."],
+    txt: "Se lanza una granada de masa M. En el punto más alto de su trayectoria, que se toma como origen (0, 0), va con velocidad v horizontal y explota en dos fragmentos. Un tiempo t después, el fragmento de masa M/3 está en (x₁, y₁). ¿Dónde está el otro fragmento? Desprecia la resistencia del aire.",
+    hints: ["El CM sigue la parábola: desde la cima, X<sub>CM</sub> = v·t y Y<sub>CM</sub> = −½·g·t².", "(M/3)·x₁ + (2M/3)·x₂ = M·X<sub>CM</sub>. Lo mismo en y."],
     sol: [{ w: "Dónde está el CM en el tiempo t.", y: "En la cima la velocidad es horizontal (v) y la vertical es cero. El CM sigue como si no hubiera explotado.", m: `X<sub>CM</sub> = v·t<span class="ar">y</span>Y<sub>CM</sub> = −½·g·t²` }, { w: "CM de los dos fragmentos en x.", m: `${fr("1", "3")}·x₁ + ${fr("2", "3")}·x₂ = v·t<span class="ar">→</span>x₂ = ${fr("3·v·t − x₁", "2")}` }, { w: "En y.", m: `${fr("1", "3")}·y₁ + ${fr("2", "3")}·y₂ = −½·g·t²<span class="ar">→</span>y₂ = −${fr("3", "4")}·g·t² − ${fr("y₁", "2")}` }],
     res: "(x₂, y₂) = ((3vt − x₁)/2, −(3/4)g·t² − y₁/2), mientras ningún fragmento haya tocado el piso.",
     checks: [{ q: "¿Cuánto vale x₂?", opts: ["v·t − x₁", "(3·v·t − x₁)/2", "3·v·t − 2·x₁", "(v·t − x₁)/2"], a: 1 }] },
-  { n: "T6", t: "La esfera que se parte en pedazos desiguales", src: "Variante del ejemplo del profe (clase 17)",
+  { n: "T7", t: "La esfera que se parte en pedazos desiguales", src: "Variante del ejemplo del profe (clase 17)",
     fig: () => explosionSvg({ p1: "M/3", p2: "2M/3", x2: 1.25 }),
     txt: "Una esfera que caería a una distancia R se parte en lo más alto en dos pedazos: uno de masa M/3 que cae verticalmente y otro de masa 2M/3. ¿A qué distancia del punto de lanzamiento cae el pedazo grande?",
     hints: ["El CM cae en R y el pedazo chico cae en R/2.", "R = [(M/3)·(R/2) + (2M/3)·x] / M."],

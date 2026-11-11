@@ -166,6 +166,11 @@ details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size
 .prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
 .prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
 .prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-group{display:grid; gap:4px; margin:10px 0 2px; padding-top:10px; border-top:2px solid var(--ink)}
+.prob-group h3{font-family:var(--f-display); font-size:1.12rem}
+.prob-group p{margin:0; color:var(--muted); font-size:.95rem}
+.chip-opt{font-family:var(--f-mono); font-size:.72rem; color:var(--muted); border:1px dashed var(--muted); padding:1px 6px; border-radius:4px}
+.callout ul{padding-left:20px; display:grid; gap:4px}
 .prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
 @media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
 .prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
@@ -331,6 +336,16 @@ svg text{fill:var(--ink)}
     <div class="shortcut">
       <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas al M2.</p>
       <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+    <div class="callout">
+      <h3>Lo que pregunta el profe de este tema en el Parcial 3</h3>
+      <p>Revisé los 4 parciales 3 anteriores (2024-2, 2025-1, 2025-2 y 2026-1). Este módulo sale de dos formas:</p>
+      <ul>
+        <li><b>En los 4 parciales:</b> un problema abierto por etapas, energía → choque en el que salen pegados → fricción, resorte, plano inclinado o loop. Vale 20 puntos.</li>
+        <li><b>En 3 de los 4:</b> la selección múltiple «¿qué fracción de la energía se disipa en el choque?». Vale 10 puntos.</li>
+        <li><b>En ninguno:</b> los choques elásticos, el impulso y los choques en 2D. Entiéndelos, pero no te demores ahí: en el taller quedaron como opcionales.</li>
+      </ul>
+      <p>Por eso el taller empieza con los problemas de esos parciales.</p>
     </div>
   </header>
 
@@ -584,6 +599,7 @@ svg text{fill:var(--ink)}
     <!-- 7 -->
     <div class="block">
       <h3>7. Choques en dos dimensiones</h3>
+      <p class="callout"><span><b>Prioridad baja:</b> los choques en 2D no salieron en ninguno de los 4 parciales 3 anteriores. Entiende la idea (cada eje se trabaja por separado) y sigue.</span></p>
       <p class="prose">Si los cuerpos no se mueven sobre una misma línea, el momento se conserva <b>en cada dirección por separado</b>: una ecuación para x y otra para y. Cada velocidad se descompone como en M1 del Parcial 2: la parte en x lleva cos y la parte en y lleva sen (con el ángulo medido desde el eje x).</p>
       <div class="eq"><span><b>p<sub>x, antes</sub> = p<sub>x, después</sub><span class="ar">y</span>p<sub>y, antes</sub> = p<sub>y, después</sub></b></span></div>
       <article class="wx" aria-labelledby="wx7-h">
@@ -666,14 +682,14 @@ svg text{fill:var(--ink)}
 
   <!-- ============ 3. TALLER ============ -->
   <section id="taller" aria-labelledby="w-h">
-    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero los ejemplos que el profe resolvió en clase y después la Tarea 8 de la complementaria.</p></div>
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero los problemas de los parciales 3 anteriores del profe y después más práctica con sus ejemplos de clase y la Tarea 8.</p></div>
     <p class="prose">En cada problema: parte en etapas, escribe el momento con signos y decide si el choque es elástico. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
     <div id="problems" class="block"></div>
   </section>
 
   <!-- ============ 4. QUIZ ============ -->
   <section id="quiz" aria-labelledby="q-h">
-    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Pasas al M2 con 4/5 o más. Usa g para la gravedad.</p></div>
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas y 2 tipo parcial. Pasas al M2 con 4/5 o más. Usa g para la gravedad.</p></div>
     <form id="quiz-a" class="quiz" novalidate></form>
     <div id="res-a" hidden></div>
     <div id="quizb-wrap" hidden>
@@ -931,6 +947,55 @@ function rampaChoqueSvg() {
   g += T(66, 124, "todo sin fricción", "sv-tl");
   return `<svg viewBox="0 0 320 186" role="img" aria-label="Un bloque M baja por una rampa sin fricción desde la altura H, choca con otro bloque M quieto, salen pegados y suben por el otro lado">${g}</svg>`;
 }
+/* ---------- Figuras de los parciales 3 anteriores ---------- */
+function fraccionSvg(l1 = "M", l2 = "3M") {
+  const fy = 150;
+  let g = floorLine(fy, 100, 310);
+  g += `<path d="M 30 30 Q 44 ${fy} 112 ${fy}" class="sv-track"/>`;
+  g += `<rect x="24" y="14" width="20" height="15" class="sv-block"/>` + T(34, 9, l1, "sv-t", "middle");
+  g += `<line x1="12" y1="30" x2="12" y2="${fy}" class="sv-dim"/>` + T(8, 94, "H", "sv-t", "end");
+  g += block(186, fy, 44, 30, l2) + T(186, fy - 38, "quieto", "sv-tl", "middle");
+  g += T(306, 60, "sin fricción", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 166" role="img" aria-label="Un bloque ${l1} baja desde la altura H por un riel sin fricción y choca con un bloque ${l2} quieto">${g}</svg>`;
+}
+function rielGrisSvg() {
+  const fy = 160;
+  let g = `<line x1="104" y1="${fy}" x2="262" y2="${fy}" class="sv-line"/>`;
+  g += `<path d="M 26 36 Q 40 ${fy} 110 ${fy}" class="sv-track"/>` + `<path d="M 256 ${fy} Q 300 ${fy} 314 60" class="sv-track"/>`;
+  g += `<rect x="21" y="20" width="18" height="14" class="sv-block"/>` + T(30, 14, "M", "sv-t", "middle");
+  g += `<line x1="12" y1="36" x2="12" y2="${fy}" class="sv-dim"/>` + T(8, 102, "H", "sv-t", "end");
+  g += `<line x1="128" y1="${fy}" x2="240" y2="${fy}" class="sv-rough"/>` + T(204, fy - 10, "µₖ = 1/3", "sv-tl", "middle");
+  g += block(141, fy - 2, 26, 22, "M") + T(141, fy - 30, "quieto", "sv-tl", "middle");
+  g += `<line x1="128" y1="${fy + 14}" x2="240" y2="${fy + 14}" class="sv-dim"/><line x1="128" y1="${fy + 9}" x2="128" y2="${fy + 19}" class="sv-dim"/><line x1="240" y1="${fy + 9}" x2="240" y2="${fy + 19}" class="sv-dim"/>` + T(184, fy + 30, "H", "sv-t", "middle");
+  g += T(62, 110, "sin fricción", "sv-tl") + T(314, fy + 17, "sin fricción", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 198" role="img" aria-label="Riel: un bloque M baja desde la altura H y choca con otro bloque M quieto en el borde izquierdo de una región con fricción de largo H">${g}</svg>`;
+}
+function resorteSvg() {
+  const fy = 160;
+  let g = `<line x1="104" y1="${fy}" x2="300" y2="${fy}" class="sv-line"/>`;
+  g += `<path d="M 26 36 Q 40 ${fy} 110 ${fy}" class="sv-track"/>`;
+  g += `<rect x="21" y="20" width="18" height="14" class="sv-block"/>` + T(30, 14, "M", "sv-t", "middle");
+  g += `<line x1="12" y1="36" x2="12" y2="${fy}" class="sv-dim"/>` + T(8, 102, "H", "sv-t", "end");
+  g += block(134, fy, 32, 24, "2M") + T(134, fy - 30, "quieto", "sv-tl", "middle");
+  g += `<line x1="166" y1="${fy}" x2="222" y2="${fy}" class="sv-rough"/>` + T(194, fy - 10, "µₖ = 1/3", "sv-tl", "middle");
+  g += `<line x1="166" y1="${fy + 14}" x2="222" y2="${fy + 14}" class="sv-dim"/><line x1="166" y1="${fy + 9}" x2="166" y2="${fy + 19}" class="sv-dim"/><line x1="222" y1="${fy + 9}" x2="222" y2="${fy + 19}" class="sv-dim"/>` + T(194, fy + 30, "H/6", "sv-t", "middle");
+  let d = `M 238 ${fy - 12}`; for (let i = 1; i <= 8; i++) d += ` L ${238 + i * 6} ${fy - 12 + (i % 2 ? -7 : 7)}`; d += ` L 296 ${fy - 12}`;
+  g += `<path d="${d}" class="sv-line"/>` + T(266, fy - 26, "k", "sv-t", "middle");
+  g += `<rect x="296" y="${fy - 46}" width="10" height="46" class="sv-ground"/>`;
+  g += T(62, 110, "sin fricción", "sv-tl");
+  return `<svg viewBox="0 0 320 198" role="img" aria-label="Un bloque M baja desde la altura H, choca con un bloque 2M quieto, pasan por una región con fricción de largo H sobre 6 y comprimen un resorte de constante k">${g}</svg>`;
+}
+function loopSvg() {
+  const fy = 166, cx = 236, R = 56;
+  let g = `<line x1="10" y1="${fy}" x2="${cx}" y2="${fy}" class="sv-track"/>`;
+  g += `<path d="M ${cx} ${fy} A ${R} ${R} 0 0 0 ${cx} ${fy - 2 * R}" class="sv-track"/>`;
+  g += `<circle cx="${cx}" cy="${fy - R}" r="2.5" class="sv-axle"/><line x1="${cx}" y1="${fy - R}" x2="${cx + R}" y2="${fy - R}" class="sv-dash"/>` + T(cx + R / 2, fy - R - 6, "R", "sv-t", "middle");
+  g += `<circle cx="${cx}" cy="${fy - 2 * R}" r="3.5" class="sv-axle"/>` + T(cx - 9, fy - 2 * R - 6, "P", "sv-t", "end");
+  g += block(58, fy - 2, 34, 26, "M") + vArrow(58 + 21, fy - 15, 1, 34, "v₀");
+  g += block(160, fy - 2, 34, 26, "M") + T(160, fy - 36, "quieto", "sv-tl", "middle");
+  g += T(14, 40, "sin fricción", "sv-tl");
+  return `<svg viewBox="0 0 320 186" role="img" aria-label="Un bloque M con rapidez v0 va hacia otro bloque M quieto; el riel termina en un semicírculo de radio R con el punto P arriba">${g}</svg>`;
+}
 function patinSvg(o = {}) {
   const big = o.big || "2M", small = o.small || "M";
   return carts([
@@ -1033,57 +1098,99 @@ cReset();
 /* ---------- Taller ---------- */
 const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
 const rt = (x) => `√<span class="rad">${x}</span>`;
+const tch = (t) => `<span class="cx">${t}</span>`;
 const PROBS = [
-  { n: "T1", t: "M contra 3M: salen pegados", src: "Variante del ejemplo del profe (clase 16)",
-    fig: () => carts([{ tag: "antes", items: [{ x: 78, w: 34, h: 26, lab: "M", v: "v₀", dir: 1 }, { x: 214, w: 52, h: 38, lab: "3M", note: "quieto" }] }, { tag: "después", items: [{ x: 168, w: 82, h: 38, lab: "M + 3M", v: "V = ?", dir: 1, len: 40 }] }], "Un bloque M con v0 choca con un bloque 3M quieto y salen pegados"),
-    txt: "Un bloque de masa M se mueve con rapidez v₀ sobre un piso sin fricción y choca con un bloque quieto de masa 3M. Salen pegados. ¿Con qué velocidad salen? ¿Qué fracción de la energía cinética se pierde?",
-    hints: ["Es el ejemplo resuelto 4 con 3M en vez de 2M. Después del choque la masa que se mueve es 4M.", "K<sub>f</sub>/K<sub>i</sub> = [½·4M·V²] / [½·M·v₀²]. Reemplaza V y simplifica."],
-    sol: [{ w: "Momento en x (sin fricción).", m: `M·v₀ = 4M·V<span class="ar">→</span>V = ${fr("v₀", "4")}` }, { w: "Energía cinética antes y después.", m: `K<sub>i</sub> = ½·M·v₀²<span class="ar">y</span>K<sub>f</sub> = ½·4M·${fr("v₀²", "16")} = ${fr("1", "8")}·M·v₀²` }, { w: "Fracción que queda y fracción que se pierde.", m: `${fr("K<sub>f</sub>", "K<sub>i</sub>")} = ${fr("1/8", "1/2")} = ${fr("1", "4")}<span class="ar">→</span>se pierden ${fr("3", "4")}` }],
-    res: "V = v₀/4 y se pierden 3/4 de la energía cinética.",
-    checks: [{ q: "¿Qué fracción de K se pierde?", opts: ["1/4", "1/2", "2/3", "3/4"], a: 3 }] },
-  { n: "T2", t: "Pelota que rebota a H/4: el impulso", src: "Variante del ejemplo del profe (clase 16)",
-    fig: () => pelotaSvg({ hB: "H/4" }),
-    txt: "Se suelta una pelota de masa M desde una altura H. Rebota en el piso y sube solo hasta H/4. ¿Qué impulso le hizo el piso?",
-    hints: ["Rapidez antes: √(2gH) hacia abajo. Rapidez después: la que alcanza para subir H/4.", "J = p<sub>f</sub> − p<sub>i</sub> con hacia arriba positivo. Restar un negativo es sumar."],
-    sol: [{ w: "Rapidez justo antes y justo después.", m: `v<sub>i</sub> = ${rt("2·g·H")} (abajo)<span class="ar">y</span>½·M·v<sub>f</sub>² = M·g·${fr("H", "4")}<span class="ar">→</span>v<sub>f</sub> = ${rt(fr("g·H", "2"))} (arriba)` }, { w: "Impulso, con arriba positivo.", m: `J = M·${rt(fr("g·H", "2"))} − (−M·${rt("2·g·H")}) = M·${rt(fr("g·H", "2"))}·(1 + 2)` }, { w: "Simplifica.", y: `${rt("2·g·H")} = 2·${rt(fr("g·H", "2"))}, por eso los dos términos se suman en 1 + 2.`, m: `J = 3·M·${rt(fr("g·H", "2"))}, hacia arriba` }],
-    res: "J = 3·M·√(g·H/2), hacia arriba.",
-    checks: [{ q: "¿Cuánto vale J?", opts: ["M·√(g·H/2)", "3·M·√(g·H/2)", "M·√(2·g·H)", "2·M·√(2·g·H)"], a: 1 }] },
-  { n: "T3", t: "Riel rugoso + choque con un bloque igual", src: "Variante del ejemplo del profe (clase 16)",
-    fig: () => rielSvg({ dLab: "H, µₖ = 1/4", m2: "M" }),
-    txt: "El riel de la figura solo tiene fricción en el tramo horizontal, de largo H, con µₖ = 1/4. Se suelta un bloque de masa M desde la altura H; después del tramo rugoso choca con un bloque quieto de masa M y salen pegados por el otro lado, que no tiene fricción. ¿Hasta qué altura suben?",
-    hints: ["Etapa 1: M·g·H − µₖ·M·g·H = ½·M·v².", "Etapa 2: M·v = 2M·V. Etapa 3: ½·2M·V² = 2M·g·H<sub>f</sub>."],
-    sol: [{ w: "Etapa 1, energía con fricción.", m: `M·g·H − ${fr("1", "4")}·M·g·H = ½·M·v²<span class="ar">→</span>v² = ${fr("3", "2")}·g·H` }, { w: "Etapa 2, choque (se pegan): solo momento.", m: `M·v = 2M·V<span class="ar">→</span>V = ${fr("v", "2")}<span class="ar">→</span>V² = ${fr("3", "8")}·g·H` }, { w: "Etapa 3, energía sin fricción.", m: `H<sub>f</sub> = ${fr("V²", "2·g")} = ${fr("3·H", "16")}` }],
-    res: "H<sub>f</sub> = 3H/16.",
-    checks: [{ q: "¿Cuánto vale H<sub>f</sub>?", opts: ["3H/4", "3H/8", "3H/16", "H/4"], a: 2 }] },
-  { n: "T4", t: "El tazón: dos masas que se pegan", src: "Tarea 8, ejercicio 3 · evaluación de la semana 12",
-    fig: () => tazonSvg({ l1: "M", l2: "M" }),
-    txt: "Dos masas idénticas se sueltan desde el reposo en un tazón hemisférico liso de radio R: una desde el borde y la otra desde el fondo (figura). Si se pegan cuando chocan, ¿qué altura sobre el fondo alcanzan? Variante de la evaluación de la semana 12: la del fondo tiene el doble de masa (2M).",
-    hints: ["Etapa 1: la del borde baja R. Energía: v = √(2gR).", "Etapa 2: M·v = 2M·V (o M·v = 3M·V en la variante). Etapa 3: h = V²/(2g)."],
-    sol: [{ w: "Etapa 1, energía: la del borde baja R.", m: `M·g·R = ½·M·v²<span class="ar">→</span>v² = 2·g·R` }, { w: "Etapa 2, choque (se pegan).", m: `M·v = 2M·V<span class="ar">→</span>V = ${fr("v", "2")}<span class="ar">→</span>V² = ${fr("g·R", "2")}` }, { w: "Etapa 3, suben juntas.", m: `h = ${fr("V²", "2·g")} = ${fr("R", "4")}` }, { w: "Variante con 2M en el fondo.", m: `M·v = 3M·V<span class="ar">→</span>V² = ${fr("2·g·R", "9")}<span class="ar">→</span>h = ${fr("R", "9")}` }],
-    res: "h = R/4 con masas iguales; h = R/9 si la del fondo es 2M.",
-    checks: [{ q: "Masas iguales: ¿cuánto vale h?", opts: ["R/2", "R/3", "R/4", "R/9"], a: 2 }, { q: "Variante (2M en el fondo): ¿cuánto vale h?", opts: ["R/3", "R/4", "R/6", "R/9"], a: 3 }] },
-  { n: "T5", t: "La flecha que se incrusta y el plano con fricción", src: "Tarea 8, ejercicio 2",
+  { group: "Parciales 3 anteriores · empieza por aquí", note: "Salieron en los parciales 3 de 2024-2, 2025-1 y 2025-2. El de 2026-1 queda guardado para el simulacro M8, así que no lo busques todavía." },
+  { n: "T1", t: "¿Qué fracción de la energía se disipa? (M contra 3M)", src: "Parcial 3 2025-2 · selección múltiple 1 · 10 puntos",
+    fig: () => fraccionSvg("M", "3M"),
+    txt: "Un bloque de masa M se suelta desde una altura H sobre un riel sin fricción. En la parte más baja del riel choca con un segundo bloque de masa 3M que está quieto, y salen pegados. ¿Qué fracción de la energía mecánica se disipa en la colisión? Opciones del parcial: A) 1/2 · B) 1/3 · C) 1/4 · D) 2/3 · E) 3/4. (En el parcial las masas salen como m y 3m.)",
+    hints: ["Etapa 1, la bajada: energía. Etapa 2, el choque: momento, M·v = 4M·V.", "Compara la energía cinética justo antes del choque con la de justo después. La fracción que se disipa es (antes − después)/antes."],
+    sol: [{ w: "Etapa 1: la bajada, con energía.", y: "No hay fricción: toda la energía potencial se vuelve cinética.", m: `M·g·H = ½·M·v²<span class="ar">→</span>v² = 2·g·H` },
+      { w: "Etapa 2: el choque, con momento.", y: "Salen pegados: después se mueve una sola masa, M + 3M = 4M.", m: `M·v = 4M·V<span class="ar">→</span>V = ${fr("v", "4")}` },
+      { w: "Energía cinética justo antes y justo después del choque.", y: "Reemplazas V = v/4. El 4 queda al cuadrado: 16. Y 4/16 = 1/4.", m: `K<sub>antes</sub> = ½·M·v²<br>K<sub>después</sub> = ½·4M·${fr("v²", "16")} = ${fr("1", "4")}·(½·M·v²) = ${fr("K<sub>antes</sub>", "4")}` },
+      { w: "La fracción que se disipa.", y: "Queda 1/4 de la energía, así que se disipan los otros 3/4. La H se cancela: la respuesta no depende de la altura.", m: `${fr("K<sub>antes</sub> − K<sub>después</sub>", "K<sub>antes</sub>")} = 1 − ${fr("1", "4")} = ${fr("3", "4")}` },
+      { w: "El atajo para el parcial, y de dónde sale.", y: "Haz lo mismo con letras: M₁ baja y choca con M₂, que está quieto; salen pegados. La fracción que queda es M₁/(M₁ + M₂). La que se disipa es M₂/(M₁ + M₂): la masa del que estaba quieto sobre la masa total.", m: `V = ${fr("M₁·v", "M₁ + M₂")}<br>${fr("K<sub>después</sub>", "K<sub>antes</sub>")} = ${fr("½·(M₁ + M₂)·V²", "½·M₁·v²")} = ${fr("(M₁ + M₂)·M₁²·v²", "(M₁ + M₂)²·M₁·v²")} = ${fr("M₁", "M₁ + M₂")}<br>se disipa: 1 − ${fr("M₁", "M₁ + M₂")} = ${fr("M₂", "M₁ + M₂")} = ${fr("3M", "4M")} = ${fr("3", "4")}` }],
+    res: "Se disipan 3/4 de la energía (opción E). En 2025-1 salió con 2M en vez de 3M: se disipan 2/3, como en el ejemplo resuelto 4.",
+    checks: [{ q: "¿Qué fracción se disipa?", opts: ["1/4", "2/3", "3/4", "1/2"], a: 2 }] },
+  { n: "T2", t: "Riel con una región de fricción: ¿dónde se detienen?", src: "Parcial 3 2024-2 · selección múltiple 4 · 10 puntos",
+    fig: () => rielGrisSvg(),
+    txt: "El riel de la figura solo tiene fricción (µₖ = 1/3) en una región de la parte horizontal, de largo H, marcada en naranja. Se suelta un bloque de masa M desde el reposo y desde la altura H. Abajo choca con un bloque de masa M que está quieto en el borde izquierdo de la región con fricción, y salen pegados. ¿A qué distancia del borde izquierdo de esa región se detienen? Opciones del parcial: A) H/2 · B) H/3 · C) 2H/3 · D) 3H/4 · E) 4H/5.",
+    hints: ["Etapa 1: energía sin fricción, v² = 2gH. Etapa 2: choque, M·v = 2M·V.", "Etapa 3: la fricción se come toda la energía cinética: ½·2M·V² = µₖ·2M·g·d. Al final revisa que d salga menor que H."],
+    sol: [{ w: "Etapa 1: la bajada, con energía.", y: "Antes del choque no hay fricción.", m: `M·g·H = ½·M·v²<span class="ar">→</span>v² = 2·g·H` },
+      { w: "Etapa 2: el choque, con momento.", y: "Salen pegados: después se mueve 2M.", m: `M·v = 2M·V<span class="ar">→</span>V = ${fr("v", "2")}<span class="ar">→</span>V² = ${fr("2·g·H", "4")} = ${fr("g·H", "2")}` },
+      { w: "Etapa 3: la fricción frena a los dos.", y: "Sobre los dos juntos, N = 2M·g, así que la fricción vale µₖ·2M·g. Su trabajo a lo largo de una distancia d se come toda la energía cinética.", m: `½·2M·V² = µₖ·2M·g·d` },
+      { w: "Cancela 2M y despeja d.", y: "Reemplazas V² = g·H/2 y µₖ = 1/3.", m: `½·${tch("2M")}·V² = µₖ·${tch("2M")}·g·d<br>½·${fr("g·H", "2")} = ${fr("1", "3")}·g·d<span class="ar">→</span>${fr("g·H", "4")} = ${fr("g·d", "3")}<span class="ar">→</span>d = ${fr("3·H", "4")}` },
+      { w: "Revisa que se detienen dentro de la región.", y: "d = 3H/4 es menor que H: se detienen en la primera pasada y no alcanzan a subir por la derecha.", m: `${fr("3·H", "4")} < H` }],
+    res: "Se detienen a 3H/4 del borde izquierdo (opción D).",
+    checks: [{ q: "¿A qué distancia se detienen?", opts: ["H/2", "2H/3", "3H/4", "4H/5"], a: 2 }] },
+  { n: "T3", t: "La flecha que se incrusta y el plano con fricción", src: "Parcial 3 2024-2 · problema abierto 2 · 20 puntos (es igual a la Tarea 8, ejercicio 2)",
     fig: () => flechaSvg(),
     txt: "Un bloque de masa 3M está quieto sobre una superficie horizontal, a una distancia H de la base de un plano inclinado de ángulo α. La superficie y el plano tienen µₖ = 1/3. Una flecha de masa M se incrusta en el bloque y los dos se mueven juntos: recorren la distancia H y suben por el plano hasta una altura máxima H/2. Halla la rapidez inicial de la flecha en términos de H, g y α.",
     hints: ["Ve al revés: primero energía con fricción desde justo después del choque hasta la altura H/2, para hallar V. Después el choque: M·v = 4M·V.", "En el plano: N = 4M·g·cos α y la distancia es d = (H/2)/sen α. En el piso: N = 4M·g y la distancia es H."],
     sol: [{ w: "Tabla de energía desde justo después del choque hasta arriba.", y: "Masa 4M. Referencia: el piso.", m: `½·4M·V² − µₖ·4M·g·H − µₖ·4M·g·cos α·${fr("H/2", "sen α")} = 4M·g·${fr("H", "2")}` }, { w: "Cancela 4M y pon µₖ = 1/3.", y: "cos α / sen α = cot α.", m: `½·V² = ${fr("g·H", "2")} + ${fr("g·H", "3")} + ${fr("g·H", "6")}·cot α<span class="ar">→</span>V² = ${fr("g·H", "3")}·(5 + cot α)` }, { w: "El choque (se incrusta): solo momento.", m: `M·v = 4M·V<span class="ar">→</span>v = 4·V = 4·${rt(fr("g·H·(5 + cot α)", "3"))}` }],
     res: "v = 4·√(g·H·(5 + cot α)/3).",
     checks: [{ q: "¿Cuánto vale v?", opts: ["√(g·H·(5 + cot α)/3)", "4·√(g·H·(5 + cot α)/3)", "4·√(g·H·(1 + cot α))", "4·√(2·g·H)"], a: 1 }] },
-  { n: "T6", t: "La pelota de tenis sobre el balón", src: "Tarea 8, ejercicio 4",
+  { n: "T4", t: "Choque, región con fricción y resorte", src: "Parcial 3 2025-1 · problema abierto 2 · 20 puntos",
+    fig: () => resorteSvg(),
+    txt: "Un bloque de masa M se suelta desde el reposo, desde una altura H, sobre una superficie sin fricción. Abajo choca con un bloque de masa 2M en una colisión perfectamente inelástica. Luego los bloques pasan por una región con fricción de largo H/6 (µₖ = 1/3) y después comprimen un resorte de constante k. Halla la máxima compresión del resorte en términos de M, k, g y H. (El enunciado del parcial dice «región sin fricción», pero la figura muestra que es con fricción: créele a la figura.)",
+    hints: ["Etapa 1: energía, v² = 2gH. Etapa 2: choque, M·v = 3M·V.", "Etapa 3: tabla de energía desde justo después del choque hasta la máxima compresión, donde los bloques quedan quietos un instante. La fricción quita µₖ·3M·g·(H/6)."],
+    sol: [{ w: "Etapa 1: la bajada, con energía.", y: "Sin fricción.", m: `M·g·H = ½·M·v²<span class="ar">→</span>v² = 2·g·H` },
+      { w: "Etapa 2: el choque, con momento.", y: "Salen pegados: después se mueve 3M.", m: `M·v = 3M·V<span class="ar">→</span>V = ${fr("v", "3")}<span class="ar">→</span>V² = ${fr("2·g·H", "9")}` },
+      { w: "Etapa 3: tabla de energía de los dos bloques.", y: "Inicio: justo después del choque. Final: la máxima compresión, donde están quietos un instante. Todo pasa en el piso, así que la energía potencial gravitacional no cambia y no la pongo.", m: `<div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K</td><td>½·3M·V²</td><td>0</td></tr><tr><td>U del resorte</td><td>0</td><td>½·k·x²</td></tr><tr class="tot"><td>Total</td><td>½·3M·V²</td><td>½·k·x²</td></tr></tbody></table></div>` },
+      { w: "Lo que quita la fricción.", y: "Sobre los dos juntos, N = 3M·g. La región mide H/6.", m: `W<sub>fr</sub> = µₖ·3M·g·${fr("H", "6")} = ${fr("1", "3")}·3M·g·${fr("H", "6")} = ${fr("M·g·H", "6")}` },
+      { w: "Balance: final = inicio − lo que quitó la fricción.", y: "Reemplazas V² = 2gH/9 en ½·3M·V²: da M·g·H/3.", m: `½·k·x² = ½·3M·${fr("2·g·H", "9")} − ${fr("M·g·H", "6")} = ${fr("M·g·H", "3")} − ${fr("M·g·H", "6")} = ${fr("M·g·H", "6")}` },
+      { w: "Despeja x.", y: "Multiplicas por 2 y divides entre k.", m: `x² = ${fr("M·g·H", "3·k")}<span class="ar">→</span>x = ${rt(fr("M·g·H", "3·k"))}` }],
+    res: "x = √(M·g·H/(3·k)).",
+    checks: [{ q: "¿Cuánto vale x?", opts: ["√(M·g·H/k)", "√(M·g·H/(3·k))", "√(2·M·g·H/(3·k))", "√(M·g·H/(6·k))"], a: 1 }] },
+  { n: "T5", t: "Choque y después el loop", src: "Parcial 3 2025-2 · problema abierto 1 · 20 puntos",
+    fig: () => loopSvg(),
+    txt: "Un bloque de masa M se mueve con rapidez v₀ sobre un riel sin fricción que termina en una parte semicircular de radio R (figura). Choca con un segundo bloque idéntico que está quieto, y quedan pegados. A) (6 puntos) Halla la velocidad con la que salen después del choque, en términos de v₀. B) (6 puntos) Halla la rapidez mínima que deben tener en el punto P, lo más alto del semicírculo, si justo llegan ahí y se desprenden del riel. C) (8 puntos) Con conservación de la energía, halla la mínima v₀ para que, después del choque, los bloques lleguen al punto más alto.",
+    hints: ["A) Choque: M·v₀ = 2M·V. B) En P, el peso y la normal apuntan los dos hacia el centro, que está abajo. «Justo se desprenden» quiere decir N = 0.", "C) Energía desde justo después del choque (abajo) hasta P, que está a una altura 2R: ½·2M·V² = ½·2M·v<sub>P</sub>² + 2M·g·2R."],
+    sol: [{ w: "A) El choque, con momento.", y: "Quedan pegados: después se mueve 2M.", m: `M·v₀ = 2M·V<span class="ar">→</span>V = ${fr("v₀", "2")}` },
+      { w: "B) Newton en P, hacia el centro.", y: "En lo más alto, el centro del semicírculo queda abajo. El peso 2M·g y la normal N del riel apuntan los dos hacia abajo, hacia el centro, y juntos hacen la fuerza centrípeta, como en M5 del Parcial 2.", m: `N + 2M·g = 2M·${fr("v<sub>P</sub>²", "R")}` },
+      { w: "B) «Justo se desprenden» quiere decir N = 0.", y: "El riel deja de empujar: solo el peso hace de fuerza centrípeta.", m: `${tch("2M")}·g = ${tch("2M")}·${fr("v<sub>P</sub>²", "R")}<span class="ar">→</span>v<sub>P</sub> = ${rt("g·R")}` },
+      { w: "C) Tabla de energía desde justo después del choque hasta P.", y: "Referencia de altura: el riel de abajo. P está a una altura 2R, el diámetro. No hay fricción, así que el total se conserva.", m: `<div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K</td><td>½·2M·V²</td><td>½·2M·v<sub>P</sub>²</td></tr><tr><td>U = (2M)·g·altura</td><td>0</td><td>2M·g·2R</td></tr><tr class="tot"><td>Total</td><td>½·2M·V²</td><td>½·2M·v<sub>P</sub>² + 2M·g·2R</td></tr></tbody></table></div>` },
+      { w: "C) Iguala inicio y final, cancela 2M y despeja V².", y: "Al cancelar 2M queda ½·V² = ½·v<sub>P</sub>² + g·2R. Multiplicas todo por 2 y reemplazas v<sub>P</sub>² = g·R, lo que encontraste en B.", m: `½·${tch("2M")}·V² = ½·${tch("2M")}·v<sub>P</sub>² + ${tch("2M")}·g·2R<br>V² = v<sub>P</sub>² + 4·g·R = g·R + 4·g·R = 5·g·R` },
+      { w: "C) Vuelve al choque: v₀ = 2·V.", m: `v₀ = 2·${rt("5·g·R")} = ${rt("20·g·R")}` }],
+    res: "A) V = v₀/2. B) v<sub>P</sub> = √(g·R). C) v₀ = 2·√(5·g·R).",
+    checks: [{ q: "B) ¿Cuánto vale v<sub>P</sub> mínima?", opts: ["0", "√(g·R)", "√(2·g·R)", "√(5·g·R)"], a: 1 }, { q: "C) ¿Cuánto vale v₀ mínima?", opts: ["√(5·g·R)", "2·√(5·g·R)", "2·√(g·R)", "√(10·g·R)"], a: 1 }] },
+  { group: "Más práctica", note: "Si te sobra tiempo. Los marcados como opcionales son de temas que no salieron en ningún parcial 3 anterior." },
+  { n: "T6", t: "Riel rugoso + choque con un bloque igual", src: "Variante del ejemplo del profe (clase 16)",
+    fig: () => rielSvg({ dLab: "H, µₖ = 1/4", m2: "M" }),
+    txt: "El riel de la figura solo tiene fricción en el tramo horizontal, de largo H, con µₖ = 1/4. Se suelta un bloque de masa M desde la altura H; después del tramo rugoso choca con un bloque quieto de masa M y salen pegados por el otro lado, que no tiene fricción. ¿Hasta qué altura suben?",
+    hints: ["Etapa 1: M·g·H − µₖ·M·g·H = ½·M·v².", "Etapa 2: M·v = 2M·V. Etapa 3: ½·2M·V² = 2M·g·H<sub>f</sub>."],
+    sol: [{ w: "Etapa 1, energía con fricción.", m: `M·g·H − ${fr("1", "4")}·M·g·H = ½·M·v²<span class="ar">→</span>v² = ${fr("3", "2")}·g·H` }, { w: "Etapa 2, choque (se pegan): solo momento.", m: `M·v = 2M·V<span class="ar">→</span>V = ${fr("v", "2")}<span class="ar">→</span>V² = ${fr("3", "8")}·g·H` }, { w: "Etapa 3, energía sin fricción.", m: `H<sub>f</sub> = ${fr("V²", "2·g")} = ${fr("3·H", "16")}` }],
+    res: "H<sub>f</sub> = 3H/16.",
+    checks: [{ q: "¿Cuánto vale H<sub>f</sub>?", opts: ["3H/4", "3H/8", "3H/16", "H/4"], a: 2 }] },
+  { n: "T7", t: "El tazón: dos masas que se pegan", src: "Tarea 8, ejercicio 3 · evaluación de la semana 12",
+    fig: () => tazonSvg({ l1: "M", l2: "M" }),
+    txt: "Dos masas idénticas se sueltan desde el reposo en un tazón hemisférico liso de radio R: una desde el borde y la otra desde el fondo (figura). Si se pegan cuando chocan, ¿qué altura sobre el fondo alcanzan? Variante de la evaluación de la semana 12: la del fondo tiene el doble de masa (2M).",
+    hints: ["Etapa 1: la del borde baja R. Energía: v = √(2gR).", "Etapa 2: M·v = 2M·V (o M·v = 3M·V en la variante). Etapa 3: h = V²/(2g)."],
+    sol: [{ w: "Etapa 1, energía: la del borde baja R.", m: `M·g·R = ½·M·v²<span class="ar">→</span>v² = 2·g·R` }, { w: "Etapa 2, choque (se pegan).", m: `M·v = 2M·V<span class="ar">→</span>V = ${fr("v", "2")}<span class="ar">→</span>V² = ${fr("g·R", "2")}` }, { w: "Etapa 3, suben juntas.", m: `h = ${fr("V²", "2·g")} = ${fr("R", "4")}` }, { w: "Variante con 2M en el fondo.", m: `M·v = 3M·V<span class="ar">→</span>V² = ${fr("2·g·R", "9")}<span class="ar">→</span>h = ${fr("R", "9")}` }],
+    res: "h = R/4 con masas iguales; h = R/9 si la del fondo es 2M.",
+    checks: [{ q: "Masas iguales: ¿cuánto vale h?", opts: ["R/2", "R/3", "R/4", "R/9"], a: 2 }, { q: "Variante (2M en el fondo): ¿cuánto vale h?", opts: ["R/3", "R/4", "R/6", "R/9"], a: 3 }] },
+  { n: "T8", opt: "Opcional: el impulso no salió en los parciales 3", t: "Pelota que rebota a H/4: el impulso", src: "Variante del ejemplo del profe (clase 16)",
+    fig: () => pelotaSvg({ hB: "H/4" }),
+    txt: "Se suelta una pelota de masa M desde una altura H. Rebota en el piso y sube solo hasta H/4. ¿Qué impulso le hizo el piso?",
+    hints: ["Rapidez antes: √(2gH) hacia abajo. Rapidez después: la que alcanza para subir H/4.", "J = p<sub>f</sub> − p<sub>i</sub> con hacia arriba positivo. Restar un negativo es sumar."],
+    sol: [{ w: "Rapidez justo antes y justo después.", m: `v<sub>i</sub> = ${rt("2·g·H")} (abajo)<span class="ar">y</span>½·M·v<sub>f</sub>² = M·g·${fr("H", "4")}<span class="ar">→</span>v<sub>f</sub> = ${rt(fr("g·H", "2"))} (arriba)` }, { w: "Impulso, con arriba positivo.", m: `J = M·${rt(fr("g·H", "2"))} − (−M·${rt("2·g·H")}) = M·${rt(fr("g·H", "2"))}·(1 + 2)` }, { w: "Simplifica.", y: `${rt("2·g·H")} = 2·${rt(fr("g·H", "2"))}, por eso los dos términos se suman en 1 + 2.`, m: `J = 3·M·${rt(fr("g·H", "2"))}, hacia arriba` }],
+    res: "J = 3·M·√(g·H/2), hacia arriba.",
+    checks: [{ q: "¿Cuánto vale J?", opts: ["M·√(g·H/2)", "3·M·√(g·H/2)", "M·√(2·g·H)", "2·M·√(2·g·H)"], a: 1 }] },
+  { n: "T9", opt: "Opcional: los choques elásticos no salieron en los parciales 3", t: "La pelota de tenis sobre el balón", src: "Tarea 8, ejercicio 4",
     fig: () => tenisSvg(),
     txt: "Una pelota de tenis de masa M₁ = 57,0 g se sostiene justo encima de un balón de baloncesto de masa M₂ = 590 g. Se sueltan juntos desde el reposo y caen una altura h = 1,20 m. El balón rebota elásticamente en el suelo (su velocidad se invierte) mientras la pelota todavía baja, y luego chocan elásticamente entre sí. (a) ¿Con qué rapidez llega el balón al suelo? (b) ¿Hasta qué altura sube la pelota de tenis? Resuélvelo con letras y al final reemplaza los números.",
     hints: ["Justo antes del choque entre ellos: el balón sube con +v y la pelota baja con −v, con v = √(2gh).", "Choque elástico: la rapidez con que se acercan es la misma con que se alejan: v<sub>1f</sub> − v<sub>2f</sub> = 2v. Junta eso con el momento."],
     sol: [{ w: "(a) Caída libre por energía.", m: `v = ${rt("2·g·h")} = ${rt("2 · 9,8 · 1,20")} ≈ 4,85 m/s` }, { w: "(b) Momento en el choque entre las dos (arriba positivo).", m: `M₁·(−v) + M₂·(+v) = M₁·v<sub>1f</sub> + M₂·v<sub>2f</sub>` }, { w: "Elástico: se alejan con la misma rapidez con la que se acercaban.", y: "Se acercaban con v − (−v) = 2v.", m: `v<sub>1f</sub> − v<sub>2f</sub> = 2v<span class="ar">→</span>v<sub>2f</sub> = v<sub>1f</sub> − 2v` }, { w: "Reemplaza y despeja v<sub>1f</sub>.", m: `(M₂ − M₁)·v + 2·M₂·v = (M₁ + M₂)·v<sub>1f</sub><span class="ar">→</span>v<sub>1f</sub> = ${fr("3·M₂ − M₁", "M₁ + M₂")}·v` }, { w: "Altura con energía y números.", m: `h' = ${fr("v<sub>1f</sub>²", "2·g")} = h·(${fr("3·M₂ − M₁", "M₁ + M₂")})² = 1,20 · (${fr("1713", "647")})² ≈ 8,41 m` }],
     res: "(a) v ≈ 4,85 m/s. (b) h' = h·((3M₂ − M₁)/(M₁ + M₂))² ≈ 8,41 m.",
     checks: [{ q: "(b) ¿Hasta qué altura sube la pelota de tenis?", opts: ["1,20 m", "4,85 m", "8,41 m", "10,8 m"], a: 2 }] },
-  { n: "T7", t: "Choque elástico en 2D: ¿cuánto vale M₂?", src: "Ejemplo del profe (clase 16)",
+  { n: "T10", opt: "Opcional: los choques en 2D no salieron en los parciales 3", t: "Choque elástico en 2D: ¿cuánto vale M₂?", src: "Ejemplo del profe (clase 16)",
     fig: () => choque2DSvg(),
     txt: "Sobre una mesa sin fricción, una partícula de masa M₁ con rapidez v₀ choca con otra de masa M₂ que viene en sentido contrario con una rapidez v₂ᵢ desconocida. Después, M₁ sale a −90° (hacia abajo) con rapidez v₀/2 y M₂ sale a 45°. ¿Cuánto debe valer M₂ para que el choque sea elástico?",
     hints: ["Dos ecuaciones de momento (x y y) y una de energía. Con la de y sacas M₂·v₂f; como cos 45° = sen 45°, la de x te da M₂·v₂ᵢ.", "Ecuación de energía: ½M₁v₀² + ½M₂v₂ᵢ² = ½M₁(v₀/2)² + ½M₂v₂f². Reemplaza v₂ᵢ y v₂f y despeja M₂."],
     sol: [{ w: "Momento en y.", m: `0 = −M₁·${fr("v₀", "2")} + M₂·v<sub>2f</sub>·sen 45°<span class="ar">→</span>M₂·v<sub>2f</sub>·sen 45° = ${fr("M₁·v₀", "2")}` }, { w: "Momento en x (cos 45° = sen 45°).", m: `M₁·v₀ − M₂·v<sub>2i</sub> = M₂·v<sub>2f</sub>·cos 45° = ${fr("M₁·v₀", "2")}<span class="ar">→</span>M₂·v<sub>2i</sub> = ${fr("M₁·v₀", "2")}` }, { w: "Energía (elástico), multiplicada por 2.", m: `M₁·v₀² + M₂·v<sub>2i</sub>² = M₁·${fr("v₀²", "4")} + M₂·v<sub>2f</sub>²` }, { w: "Reemplaza v<sub>2i</sub> = M₁v₀/(2M₂) y v<sub>2f</sub> = M₁v₀/(√2·M₂); divide entre M₁·v₀².", m: `1 + ${fr("M₁", "4·M₂")} = ${fr("1", "4")} + ${fr("M₁", "2·M₂")}<span class="ar">→</span>${fr("3", "4")} = ${fr("M₁", "4·M₂")}<span class="ar">→</span>M₂ = ${fr("M₁", "3")}` }],
     res: "M₂ = M₁/3.",
     checks: [{ q: "¿Cuánto vale M₂?", opts: ["M₁/3", "M₁/2", "M₁", "3·M₁"], a: 0 }] },
-  { n: "T8", t: "Los asteroides que chocan en 2D", src: "Tarea 8, ejercicio 5",
+  { n: "T11", opt: "Opcional: los choques en 2D no salieron en los parciales 3", t: "Los asteroides que chocan en 2D", src: "Tarea 8, ejercicio 5",
     fig: () => asteroidesSvg(),
     txt: "Dos asteroides de igual masa chocan. El A viajaba a v₀ = 40,0 m/s y después se desvía 30,0° de su dirección original; el B, que estaba quieto, sale a 45,0° del otro lado. (a) Calcula la rapidez de cada uno después del choque. (b) ¿Qué fracción de la energía cinética original se disipa? Con letras primero y números al final.",
     hints: ["Momento en y: 0 = M·v<sub>A</sub>·sen 30° − M·v<sub>B</sub>·sen 45° → v<sub>A</sub> = √2·v<sub>B</sub>.", "Momento en x: v₀ = v<sub>A</sub>·cos 30° + v<sub>B</sub>·cos 45°. Reemplaza v<sub>A</sub>."],
@@ -1095,8 +1202,9 @@ function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li
 (function renderProblems() {
   const box = $("#problems");
   PROBS.forEach((p) => {
+    if (p.group) { const gr = el("div", "prob-group"); gr.appendChild(el("h3", "", p.group)); if (p.note) gr.appendChild(el("p", "", p.note)); box.appendChild(gr); return; }
     const a = el("article", "prob"); a.id = "prob-" + p.n;
-    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); if (p.opt) h.appendChild(el("span", "chip-opt", p.opt)); a.appendChild(h);
     const body = el("div", "prob-body");
     const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
     body.appendChild(el("p", "", p.txt)); a.appendChild(body);
@@ -1134,9 +1242,9 @@ const QUIZ = {
       q: "Un carro de masa M va hacia la derecha con rapidez 2v y otro de masa 2M va hacia la izquierda con rapidez v. Con la derecha positiva, ¿cuánto vale el momento total?",
       o: ["4·M·v", "2·M·v", "0", "−2·M·v"], a: 2,
       e: "p = M·(2v) + 2M·(−v) = 2Mv − 2Mv = 0. Los signos importan: sumar los tamaños daría 4Mv, y está mal." },
-    { k: "Conceptual", fig: () => paredSvg(), q: "Una pelota de masa M choca de frente contra una pared con rapidez v y rebota con la misma rapidez. ¿Qué impulso le hace la pared?",
-      o: ["0, porque la rapidez no cambió", "M·v, alejándose de la pared", "2·M·v, alejándose de la pared", "2·M·v, hacia la pared"], a: 2,
-      e: "Con «alejándose de la pared» positivo: p_i = −M·v y p_f = +M·v. J = p_f − p_i = 2·M·v, alejándose de la pared. La rapidez es la misma, pero la velocidad cambió de sentido." },
+    { k: "Corta · como en los parciales 3", fig: () => fraccionSvg("M", "4M"), q: "Un bloque de masa M se suelta desde una altura H sobre un riel sin fricción. En la parte más baja choca con un bloque de masa 4M que está quieto, y salen pegados. ¿Qué fracción de la energía mecánica se disipa en el choque?",
+      o: ["1/5", "4/5", "3/4", "1/2"], a: 1,
+      e: "Choque: M·v = 5M·V, así que V = v/5. Después queda ½·5M·(v/5)² = (1/5)·½·M·v²: queda 1/5 y se disipan 4/5. Atajo: se disipa M₂/(M₁ + M₂) = 4M/5M." },
     { k: "Tipo parcial", fig: () => tazonSvg({ l1: "M", l2: "3M" }), q: "En el tazón liso de radio R, un bloque de masa M se suelta desde el borde y choca con un bloque de masa 3M que está quieto en el fondo. Salen pegados. ¿Hasta qué altura sobre el fondo suben?",
       o: ["R/4", "R/9", "R/16", "R/3"], a: 2,
       e: "Energía: v² = 2gR. Choque: M·v = 4M·V, así que V = v/4 y V² = 2gR/16. Altura: h = V²/(2g) = R/16." },
@@ -1151,9 +1259,9 @@ const QUIZ = {
     { k: "Conceptual", fig: () => patinSvg({ big: "3M", vBig: "v", vSmall: "?" }), q: "Dos patinadores quietos sobre hielo sin fricción, de masas 3M y M, se empujan. Si el de 3M sale hacia la izquierda con rapidez v, ¿qué hace el de M?",
       o: ["Sale hacia la derecha con v/3", "Sale hacia la derecha con v", "Sale hacia la derecha con 3v", "Se queda quieto"], a: 2,
       e: "Antes, p = 0. Después: 3M·(−v) + M·u = 0, así que u = 3v hacia la derecha." },
-    { k: "Conceptual", fig: () => plastSvg(), q: "Una bola de plastilina de masa M llega al piso con rapidez v y se queda pegada. ¿Qué impulso le hace el piso?",
-      o: ["M·v, hacia arriba", "2·M·v, hacia arriba", "M·v, hacia abajo", "0"], a: 0,
-      e: "Con arriba positivo: p_i = −M·v y p_f = 0. J = 0 − (−M·v) = M·v hacia arriba. Es la mitad del impulso que si rebotara con la misma rapidez." },
+    { k: "Corta · como en los parciales 3", fig: () => fraccionSvg("2M", "M"), q: "Un bloque de masa 2M se suelta desde una altura H sobre un riel sin fricción. En la parte más baja choca con un bloque de masa M que está quieto, y salen pegados. ¿Qué fracción de la energía mecánica se disipa en el choque?",
+      o: ["2/3", "1/3", "1/2", "1/9"], a: 1,
+      e: "Choque: 2M·v = 3M·V, así que V = 2v/3. Después queda ½·3M·(4v²/9) = (2/3)·½·2M·v²: queda 2/3 y se disipa 1/3. Atajo: se disipa M₂/(M₁ + M₂), donde M₂ es el que estaba quieto: M/3M = 1/3." },
     { k: "Tipo parcial", fig: () => carts([{ tag: "antes", items: [{ x: 78, w: 36, h: 28, lab: "M", v: "v₀", dir: 1 }, { x: 214, w: 36, h: 28, lab: "M", note: "quieto" }] }], "Un bloque M con v0 va hacia otro bloque M quieto"),
       q: "Un bloque de masa M con velocidad v₀ choca elásticamente y de frente con otro bloque de masa M que está quieto. ¿Qué pasa después?",
       o: ["Salen pegados con v₀/2", "El primero rebota con −v₀ y el segundo se queda quieto", "El primero se queda quieto y el segundo sale con v₀", "Los dos salen con v₀/2 en sentidos opuestos"], a: 2,

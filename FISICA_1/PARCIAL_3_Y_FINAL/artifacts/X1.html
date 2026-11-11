@@ -334,7 +334,7 @@ svg text{fill:var(--ink)}
       <span>Opcional · ~45 min</span>
       <span>Libro: 9.5, 9.6 y 10.1 · Diapositivas 19 del profe</span>
     </div>
-    <p class="prose">Es una versión corta del momento de inercia y el torque, con los ejercicios 3 y 4 de la Tarea 9 (el momento de inercia de dos anillos y el torque sobre una placa). Ya no es obligatoria: la versión completa, con lab, viene en <b>M4</b> (inercia) y <b>M5</b> (torque). Úsala solo si quieres una entrada rápida antes de esos módulos.</p>
+    <p class="prose">Es una versión corta del momento de inercia y el torque, con los ejercicios 3 y 4 de la Tarea 9 (el momento de inercia de dos anillos y el torque sobre una placa). Ya no es obligatoria: la versión completa, con lab, viene en <b>M3</b> (inercia) y <b>M5</b> (torque). Úsala solo si quieres una entrada rápida antes de esos módulos.</p>
   </header>
 
   <!-- ============ 1. TEORÍA ============ -->
@@ -726,7 +726,7 @@ const PROBS = [
     sol: [{ w: "Distancias al eje en 3M.", m: "r<sub>M</sub> = a, r<sub>2M</sub> = √2·a, r<sub>3M</sub> = 0" }, { w: "Suma M·r².", m: "I = M·a² + 2M·(√2·a)² + 0 = M·a² + 4M·a² = 5M·a²" }],
     res: "I = 5M·a².",
     checks: [{ q: "¿Cuánto vale I?", opts: ["3M·a²", "5M·a²", "7M·a²", "9M·a²"], a: 1 }] },
-  { n: "T2", t: "Dos anillos unidos por el borde", src: "Tarea 9, ejercicio 3",
+  { n: "T2", t: "Dos anillos unidos por el borde", src: "Tarea 9, ejercicio 3 · salió igual en el Parcial 3 2025-1 (selección múltiple 1)",
     fig: () => anillosSvg(),
     txt: "Dos anillos delgados idénticos, de masa M y radio R, están unidos rígidamente por un punto de sus bordes. El sistema gira alrededor de un eje perpendicular al plano de los anillos que pasa por el borde de uno de ellos (figura). Halla el momento de inercia total respecto a ese eje.",
     hints: ["Cada anillo respecto a su centro: M·R². Usa ejes paralelos para cada uno por separado y suma.", "El centro del anillo de la izquierda está a R del eje; el del otro, a 3R."],
