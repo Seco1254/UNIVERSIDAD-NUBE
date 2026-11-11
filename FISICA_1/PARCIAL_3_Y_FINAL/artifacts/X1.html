@@ -328,14 +328,13 @@ svg text{fill:var(--ink)}
 
 <div class="wrap">
   <header class="head">
-    <p class="eyebrow">Física 1 · Parcial 3 · Exprés para la Tarea 9</p>
+    <p class="eyebrow">Física 1 · Parcial 3 · Exprés opcional</p>
     <h1>Momento de inercia y torque</h1>
     <div class="meta">
-      <span class="chip-hot">Evaluación de la Tarea 9: miércoles 4</span>
-      <span>~45 min</span>
+      <span>Opcional · ~45 min</span>
       <span>Libro: 9.5, 9.6 y 10.1 · Diapositivas 19 del profe</span>
     </div>
-    <p class="prose">Es una versión corta para que llegues listo a la evaluación de mañana, que pregunta por el momento de inercia de dos anillos y por el torque sobre una placa. Aquí está lo justo para resolver esos ejercicios. La versión completa, con lab, viene en <b>M4</b> (inercia) y <b>M5</b> (torque).</p>
+    <p class="prose">Es una versión corta del momento de inercia y el torque, con los ejercicios 3 y 4 de la Tarea 9 (el momento de inercia de dos anillos y el torque sobre una placa). Ya no es obligatoria: la versión completa, con lab, viene en <b>M4</b> (inercia) y <b>M5</b> (torque). Úsala solo si quieres una entrada rápida antes de esos módulos.</p>
   </header>
 
   <!-- ============ 1. TEORÍA ============ -->
@@ -512,7 +511,7 @@ svg text{fill:var(--ink)}
 
   <!-- ============ 3. QUIZ ============ -->
   <section id="quiz" aria-labelledby="q-h">
-    <div class="sec-title"><span class="sec-num">3</span><h2 id="q-h">Quiz exprés</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Si sacas 4/5 o más, vas listo para la Tarea 9.</p></div>
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="q-h">Quiz exprés</h2><p>5 preguntas: 3 conceptuales y 2 tipo parcial. Si sacas 4/5 o más, llegas con ventaja a M4 y M5.</p></div>
     <form id="quiz-a" class="quiz" novalidate></form>
     <div id="res-a" hidden></div>
     <div id="quizb-wrap" hidden>
@@ -782,7 +781,7 @@ function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li
 })();
 
 /* ---------- Quiz ---------- */
-const MOD = "X1", NEXT = "Aprobado. Vas listo para la Tarea 9. Después sigue M3 · Cinemática rotacional.";
+const MOD = "X1", NEXT = "Aprobado. Llegas con ventaja a M4 y M5.";
 const QUIZ = {
   A: [
     { k: "Conceptual", fig: () => anilloDiscoSvg(), q: "Un anillo y un disco tienen la misma masa M y el mismo radio R. Respecto a un eje perpendicular por su centro, ¿cuál tiene mayor momento de inercia?",

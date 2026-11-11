@@ -29,12 +29,10 @@
 
 | Fecha | Qué | Qué hacer |
 |---|---|---|
-| **Mié 4 nov, 17:00** | Quiz 4 de la complementaria + evaluación de la Tarea 9 | Llegar con M1 (choques), M2 (centro de masa) y el exprés de inercia y torque |
-| Hasta el vie 6 nov | Periodo 1 del bono PRISMA | Reservar una tutoría (prisma.bookeau.com): +0,05 en la complementaria |
-| Del 7 al 23 nov | Periodo 2 del bono PRISMA | Otra tutoría: +0,05 más |
 | Mar 17 nov (probable) | Quiz bono del Parcial 3 | Vale 5 de los 105 pts del parcial |
 | **Mié 18 nov** | Quiz 5 de la complementaria | |
 | **Jue 19 nov, 12:30** | **Parcial 3** | |
+| Hasta el lun 23 nov | Último periodo del bono PRISMA | Reservar una tutoría (prisma.bookeau.com): +0,05 en la complementaria |
 | **Lun 30 nov, 15:00** | **Examen final (3 h)** | Es el mismo para todas las secciones; salón: confirmar con el profe |
 
 ## 3. Metodología (la misma del Parcial 2)
@@ -56,7 +54,7 @@ Reglas que siguen igual: la masa va con **M** mayúscula, los ángulos de circul
 |---|---|---|---|
 | **M1 · Momento lineal, impulso y choques** | 8.1–8.4 | p = M·v; impulso = Δp; cuándo se conserva p; choques elásticos, inelásticos y perfectamente inelásticos; problemas por etapas (energía → choque → energía); choques en 2D | Ejemplos del profe (M contra 2M, K_f/K_i = 1/3; riel rugoso + choque, H/12; pelota que rebota; choque elástico 2D, m₂ = m₁/3) y Tarea 8 (flecha + bloque + plano, tazón, tenis sobre balón, asteroides) |
 | **M2 · Centro de masa y explosiones** | 8.5 | CM de masas puntuales y de láminas; el CM se mueve como una partícula; si no hay fuerza externa, el CM no se mueve; explosiones | Ejemplos del profe (3 masas, triángulo, esfera que se parte en el aire, niño en la barca) y Tarea 9 (granada, lámina), canoa de la semana 12 |
-| **Exprés · Inercia y torque para la Tarea 9** | 9.5–9.6, 10.1 | I = Σ M·r², tabla de momentos de inercia, ejes paralelos, torque como r × F | Tarea 9, ejercicios 3 (dos anillos) y 4 (torque sobre una placa) |
+| **X1 · Exprés opcional: inercia y torque** | 9.5–9.6, 10.1 | I = Σ M·r², tabla de momentos de inercia, ejes paralelos, torque como r × F | Tarea 9, ejercicios 3 (dos anillos) y 4 (torque sobre una placa) |
 | **M3 · Cinemática rotacional** | 9.1–9.3 | θ, ω y α; ecuaciones con α constante; v = R·ω, a_t = R·α, a_c = R·ω² | Ruedas que frenan, poleas y correas, problemas del libro |
 | **M4 · Momento de inercia y energía rotacional** | 9.4–9.6 | K = ½·I·ω²; I de sistemas y de cuerpos (barra, anillo, disco, esfera); ejes paralelos; energía con rotación | Ejemplos del profe (3 masas con alambres, barra), Tarea 9 ejercicio 3, bloque colgado de una polea con masa, barra que cae girando |
 | **M5 · Torque y dinámica rotacional** | 10.1–10.3 | τ = r × F; Στ = I·α; polea con masa; rodar sin deslizar (v = R·ω); objetos que ruedan por un plano | Tarea 9 ejercicio 4, polea + bloque, Atwood con polea pesada, carrera de objetos que ruedan |
@@ -81,24 +79,18 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 
 ### Fase 1 · Parcial 3
 
+> **Ajuste del 11 de noviembre.** El plan original arrancaba el martes 3; como empiezas M1 el miércoles 11, la fase 1 quedó en 8 días: un módulo completo por día, M4 y M5 el fin de semana, la gravitación el lunes festivo y el simulacro el miércoles antes del Quiz 5. El exprés X1 pasa a ser opcional: la inercia y el torque se ven completos en M4 y M5. La fase 2 no cambia.
+
 | Día | Carga | Qué |
 |---|---|---|
-| Mar 3 nov | Liviana · 1,5 h | **M1** teoría y lab |
-| Mié 4 nov | Media · 2,5–3 h (antes de las 17:00) | **M1** taller y quiz · **M2** completo · **Exprés** de inercia y torque → Quiz 4 + evaluación de la Tarea 9 |
-| Jue 5 nov | Liviana · 1,5 h | **M3** cinemática rotacional |
-| Vie 6 nov | Suave · 2 h | **M4** teoría y lab |
-| Sáb 7 nov | Pesada · 4–5 h | **M4** taller y quiz · **M5** teoría y lab |
-| Dom 8 nov | Pesada · 4–5 h | **M5** taller y quiz · **M6** teoría |
-| Lun 9 nov | Suave · 2 h | **M6** lab y taller |
-| Mar 10 nov | Liviana · 1–1,5 h | **M6** quiz |
-| Mié 11 nov | Media · 2,5–3 h | **M7** teoría, lab y taller |
-| Jue 12 nov | Liviana · 1–1,5 h | **M7** quiz |
-| Vie 13 nov | Suave · 2 h | Quiz B de los módulos flojos + hoja de fórmulas del Parcial 3 |
-| Sáb 14 nov | Pesada · 4–5 h | **M8 simulacro** (80 min) + corrección con rúbrica + repaso de lo que falló |
-| Dom 15 nov | Pesada · 4 h | Repaso dirigido de los errores del simulacro + tareas 8 y 9 |
-| Lun 16 nov (festivo) | Suave · 2 h | Mini-simulacro de 40 min + hoja de fórmulas |
-| Mar 17 nov | Liviana · 1 h | Repaso ligero (probable quiz bono en clase) |
-| Mié 18 nov | Media · 1,5 h | Hoja de fórmulas → Quiz 5 de la complementaria |
+| Mié 11 nov | Media · 2,5–3 h | **M1** completo: teoría, lab, taller y quiz |
+| Jue 12 nov | Liviana · 1–1,5 h | **M2** completo |
+| Vie 13 nov | Suave · ~2 h | **M3** cinemática rotacional, completo |
+| Sáb 14 nov | Pesada · 4–5 h | **M4** completo · **M5** teoría y lab |
+| Dom 15 nov | Pesada · 4–5 h | **M5** taller y quiz · **M6** completo |
+| Lun 16 nov (festivo) | Pesada · ~4 h | **M7** gravitación, completo + hoja de fórmulas del Parcial 3 |
+| Mar 17 nov | Liviana · 1 h | Quiz B de los módulos flojos (probable quiz bono en clase) |
+| Mié 18 nov | Media · 2,5 h (antes de las 17:00) | **M8 simulacro** (80 min) + corrección → Quiz 5 de la complementaria |
 | **Jue 19 nov** | — | 30 min con la hoja de fórmulas y **PARCIAL 3 (12:30)** |
 
 ### Fase 2 · Examen final
@@ -117,7 +109,7 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 | Dom 29 nov | Pesada · 4 h | Repaso dirigido de lo que falló en el simulacro |
 | **Lun 30 nov** | — | 1 h con la hoja de fórmulas en la mañana y **EXAMEN FINAL (15:00)** |
 
-**Si te atrasas:** recorta primero el lab de M3 y los repasos del bloque 1 del P2; nunca recortes los simulacros. Al final de cada sesión, mándame tu nota del quiz y ajusto el plan.
+**Si te atrasas otra vez:** recorta primero los labs de M3 y M6 y, en la fase 2, los repasos del bloque 1 del P2. Nunca recortes la teoría ni los simulacros. Al final de cada sesión, mándame tu nota del quiz y ajusto el plan.
 
 ## 6. Tu progreso
 
@@ -125,6 +117,7 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 |---|---|---|---|---|---|
 | M1 Momento lineal y choques | ☐ | ☐ | ☐ | — | ⏳ |
 | M2 Centro de masa | ☐ | ☐ | ☐ | — | 🔒 |
+| X1 Exprés inercia y torque (opcional) | ☐ | — | ☐ | — | opcional |
 | M3 Cinemática rotacional | ☐ | ☐ | ☐ | — | 🔒 |
 | M4 Inercia y energía rotacional | ☐ | ☐ | ☐ | — | 🔒 |
 | M5 Torque y dinámica rotacional | ☐ | ☐ | ☐ | — | 🔒 |
