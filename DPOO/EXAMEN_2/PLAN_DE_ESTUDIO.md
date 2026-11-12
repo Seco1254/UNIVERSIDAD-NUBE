@@ -43,6 +43,15 @@ En el paquete no hay exámenes 2 anteriores. Todo lo de esta sección sale del P
 5. **Antes del Parcial 1 publicó dos UML de semestres anteriores** (2025-20 y 2026-10). Revisa Bloque Neón esta semana: si publica algo, entra al taller.
 6. **Usa sus propios casos:** Club Deportivo Séneca, Nam – Núcleo de Pedidos, procesador de imágenes, SpotiAlpes, Cines, Hamburguesas y la tienda de coleccionables.
 
+### Lo que dijo el profe del examen (clase anterior al jueves 12 de noviembre)
+
+- **No hay que escribir código.** Preguntas de leer y entender código, y de revisar si un patrón está mal implementado.
+- Diseños que cuentan una historia, para analizar.
+- Un texto de contexto sobre una empresa, del que hay que sacar, por ejemplo, tres requerimientos no funcionales y tres restricciones.
+- Pruebas: caja blanca o negra (ejemplo del profe: el equipo propio, caja blanca porque se tiene el código; un tercero que hace la pasarela de pagos, caja negra), niveles y tipos de pruebas, las cuatro fases y given-when-then.
+- Historias de usuario.
+- El examen es el día siguiente (el estudiante dijo el jueves 12 que «hoy es el día anterior»). Para eso se hizo el [repaso final](https://claude.ai/artifact/Bf7fGMW6CKviursPEFgyJV).
+
 ### Por confirmar con el profe (hoy en clase o el jueves)
 
 - ¿El examen es el martes 10 de noviembre a las 11:00, en la sala Turing?

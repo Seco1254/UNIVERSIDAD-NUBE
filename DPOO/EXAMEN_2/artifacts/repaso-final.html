@@ -1,0 +1,1144 @@
+<title>Repaso final DPOO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+/* ---- Propio del repaso ---- */
+.enun{background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--ink); border-radius:0 var(--r) var(--r) 0; padding:12px 16px; font-size:.95rem; max-width:80ch}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px 16px; display:grid; gap:10px; min-width:0; margin:0}
+.qopt.locked{cursor:default}
+.qopt.locked:hover{border-color:var(--rule)}
+.qopt.right.locked:hover{border-color:var(--green)} .qopt.wrong.locked:hover{border-color:var(--red)}
+.assign{display:grid; grid-template-columns:minmax(0,1fr); border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.arow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,13rem); gap:6px 12px; padding:10px 12px; border-bottom:1px solid var(--rule); align-items:center}
+.arow:last-child{border-bottom:0}
+.arow select{font:inherit; font-size:.9rem; padding:5px 8px; border:1.5px solid var(--rule); border-radius:7px; background:var(--paper); color:var(--ink); width:100%}
+.arow select.right{border-color:var(--green); background:var(--green-soft)} .arow select.wrong{border-color:var(--red); background:var(--red-soft)}
+.arow .why{grid-column:1 / -1; font-size:.86rem}
+.arow .why.ok{color:var(--green)} .arow .why.no{color:var(--red)}
+@media (max-width:560px){ .arow{grid-template-columns:minmax(0,1fr)} }
+.scorebar{position:fixed; right:16px; bottom:16px; z-index:6; font-family:var(--f-mono); font-weight:600; font-size:.95rem; padding:8px 14px; border-radius:10px; background:var(--ink); color:var(--paper); font-variant-numeric:tabular-nums; box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.plan-list{display:grid; gap:6px; padding-left:1.2rem; margin:0; font-size:.95rem}
+.secscore{font-family:var(--f-mono); font-size:.85rem; color:var(--muted)}
+.sheet td:first-child{font-weight:600}
+</style>
+
+<nav class="nav" aria-label="Secciones del repaso"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#pruebas"><span>1</span>Pruebas</a>
+  <a href="#contexto"><span>2</span>Contexto</a>
+  <a href="#historias"><span>3</span>Historias</a>
+  <a href="#disenos"><span>4</span>Diseños</a>
+  <a href="#patrones"><span>5</span>Patrones</a>
+  <a href="#codigo"><span>6</span>Código</a>
+  <a href="#hoja">Hoja final</a>
+</div></nav>
+<div class="scorebar" id="scorebar" aria-live="polite">0/0</div>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">DPOO · Examen 2 · Repaso del día anterior</p>
+    <h1>Repaso final</h1>
+    <div class="meta"><span class="stereo">«sin escribir código»</span><span>Jueves 12 de noviembre · 1–1,5 h</span><span>Lo que dijo el profe que entra</span></div>
+    <p class="lede">Según lo que les contó el profe, no van a escribir código: van a leerlo y entenderlo, revisar si un patrón está mal, analizar diseños que cuentan una historia, sacar requerimientos y restricciones de un texto sobre una empresa, y responder preguntas de pruebas (caja blanca o negra, niveles, técnicas, las cuatro fases, given-when-then) y de historias de usuario. Este repaso va en ese orden, con la teoría justa y muchas preguntas tipo examen. Cada pregunta se corrige apenas la respondes y explica todas las opciones.</p>
+    <div class="block">
+      <h3>Orden sugerido</h3>
+      <ol class="plan-list">
+        <li><a href="#pruebas"><b>Pruebas</b></a>: lo que más quieres estudiar. ~35 min.</li>
+        <li><a href="#contexto"><b>Leer el contexto de una empresa</b></a>: funcionales, no funcionales, reglas del dominio y restricciones. ~15 min.</li>
+        <li><a href="#historias"><b>Historias de usuario</b></a>. ~10 min.</li>
+        <li><a href="#disenos"><b>Revisar diseños</b></a> y <a href="#patrones"><b>patrones</b></a>. ~20 min.</li>
+        <li><a href="#codigo"><b>Leer código</b></a>. ~5 min.</li>
+        <li><a href="#hoja"><b>Hoja final</b></a>: para los 30 minutos antes del examen.</li>
+      </ol>
+    </div>
+    <p class="note muted">Todo usa el vocabulario de las diapositivas del profe que me pasaste. Los fragmentos de código de las preguntas los corrí en Java 21: lo que dicen que imprimen o que no compila es lo que salió.</p>
+  </header>
+
+  <!-- ============ 1. PRUEBAS ============ -->
+  <section id="pruebas" aria-labelledby="p-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="p-h">Pruebas</h2><p>Primero el mapa, para no confundir niveles con tipos de prueba. Después cada parte y 13 preguntas.</p></div>
+
+    <article class="idea">
+      <h3><span class="ix">El mapa</span>Cinco preguntas distintas que te pueden hacer</h3>
+      <p class="prose-p">«Niveles» y «tipos» de pruebas no son lo mismo: cada uno responde una pregunta distinta. Si identificas qué te están preguntando, ya sabes de qué lista escoger.</p>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:30%"><col style="width:18%"><col style="width:52%"></colgroup>
+        <thead><tr><th>La pregunta</th><th>Se llama</th><th>Las opciones</th></tr></thead>
+        <tbody>
+          <tr><td>¿Qué tan grande es lo que se prueba?</td><td><b>Nivel</b></td><td>Unitarias → de integración → de sistema → de aceptación</td></tr>
+          <tr><td>¿Se mira el código por dentro?</td><td><b>Forma</b> (la caja)</td><td>Caja blanca (sí) · caja negra (no)</td></tr>
+          <tr><td>¿Cómo escojo los casos?</td><td><b>Técnica</b></td><td>De especificación: particiones, bordes, tabla de decisión, transición de estados · De estructura: cobertura · De experiencia: exploración, adivinar errores</td></tr>
+          <tr><td>¿Cómo se escribe una prueba?</td><td><b>Given-when-then</b> y <b>cuatro fases</b></td><td>Dado / cuando / entonces · definir la estructura, ejecutar, chequear, destruir la estructura</td></tr>
+          <tr><td>¿Cuándo se vuelve a probar?</td><td><b>Regresión</b></td><td>Reset all · test selection · prioritization</td></tr>
+        </tbody>
+      </table></div>
+    </article>
+
+    <article class="idea">
+      <h3><span class="ix">Forma</span>Caja blanca o caja negra</h3>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
+        <thead><tr><th></th><th>Caja blanca</th><th>Caja negra</th></tr></thead>
+        <tbody>
+          <tr><td>Qué prueba</td><td>La <b>estructura interna</b> del código (verificación)</td><td>Las <b>funcionalidades</b>: el qué, no el cómo (validación)</td></tr>
+          <tr><td>¿Hay que tener el código?</td><td><b>Sí</b>: conocimiento total del código</td><td><b>No</b>: solo lo que promete (entradas y salidas)</td></tr>
+          <tr><td>Quién la hace</td><td>Normalmente el desarrollador</td><td>Normalmente el tester (QA), o quien no tiene el código</td></tr>
+          <tr><td>Técnicas, según el profe</td><td>Cobertura del código, pruebas de API, inyección de fallos, pruebas de mutación, pruebas estáticas</td><td>Tablas de decisión, pares (parejas dos a dos), casos de uso e historias de usuario; y particiones y bordes</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose-p"><b>La regla para decidir: ¿tienes acceso al código?</b> Si sí, puedes hacer caja blanca. Si solo conoces lo que hace, solo puedes hacer caja negra. El profe insiste en que las dos son complementarias: a tu propio código también le puedes hacer caja negra.</p>
+      <div class="worked">
+        <p class="wk-t">Ejemplo resuelto · El caso de Juan</p>
+        <div class="enun">«Juan dirige un equipo que construye una app. Para la pasarela de pagos contrataron a un tercero. ¿Qué pruebas les aplica Juan a su equipo y cuáles al tercero?»</div>
+        <ol class="wsteps">
+          <li><p><b>A su equipo: caja blanca.</b> Tiene el código, así que puede ver la estructura interna: pruebas unitarias, y medir cuántas líneas y ramas ejecutan las pruebas (cobertura).</p></li>
+          <li><p><b>Al tercero: caja negra.</b> No tiene su código, solo sabe lo que promete: «con una tarjeta válida, aprueba el cobro; con una vencida, lo rechaza». Prueba entradas contra salidas esperadas, con particiones y bordes (un monto de 0, el monto máximo, una tarjeta vencida).</p></li>
+          <li><p><b>Y donde se unen las dos partes:</b> pruebas de integración, que verifican que la app y la pasarela se hablan bien. Además, en las regiones de confianza de M2, un objeto de otra empresa es el de menos confianza: más esfuerzo en probarlo y en manejar sus errores.</p></li>
+          <li><p><b>Respuesta corta para el examen:</b> «A mi equipo, caja blanca, porque tengo acceso al código. Al tercero, caja negra, porque solo conozco su comportamiento: lo que entra y lo que sale».</p></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="idea">
+      <h3><span class="ix">Nivel</span>Los cuatro niveles</h3>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:17%"><col style="width:33%"><col style="width:25%"><col style="width:25%"></colgroup>
+        <thead><tr><th>Nivel</th><th>Qué prueba</th><th>Variantes que menciona el profe</th><th>Con Juan</th></tr></thead>
+        <tbody>
+          <tr><td><b>Unitarias</b></td><td>Una unidad pequeña (método, clase o interfaz) <b>aislada</b> del resto. Se aísla con <b>stubs</b> (devuelven datos predefinidos) o <b>mocks</b> (además verifican cómo los llamaron). Encuentran errores temprano. Son las que se programan en el curso.</td><td>Ideales para TDD</td><td><code>Carrito.calcularTotal()</code> con una pasarela falsa</td></tr>
+          <tr><td><b>De integración</b></td><td>Varias unidades juntas: las <b>interfaces e interacciones</b> entre módulos.</td><td>Bottom-up (ascendente), top-down (descendente), big-bang (todo de una)</td><td>La app cobrando con la pasarela del tercero</td></tr>
+          <tr><td><b>De sistema</b></td><td>El <b>sistema entero</b> contra sus requerimientos y las expectativas del usuario.</td><td>Destructivas (carga extrema), no destructivas (uso normal), inyección de fallos (<i>chaos monkeys</i>)</td><td>5000 pedidos a la vez a la hora del almuerzo</td></tr>
+          <tr><td><b>De aceptación</b></td><td>Si el <b>cliente o el usuario acepta</b> el sistema.</td><td>De usuario, operacional (listo para producción), contractual (contra un contrato), alfa y beta</td><td>El cliente usa la app una semana antes de recibirla</td></tr>
+        </tbody>
+      </table></div>
+    </article>
+
+    <article class="idea">
+      <h3><span class="ix">Técnica</span>Cómo se escogen los casos</h3>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:22%"><col style="width:26%"><col style="width:52%"></colgroup>
+        <thead><tr><th>Familia</th><th>Técnica</th><th>En una frase, con ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="4">Especificación (caja negra)</td><td>Particiones de equivalencia</td><td>Grupos de entradas que el programa trata igual; un representante de cada uno. Envío: 0–39999 paga (prueba 20000), 40000+ no paga (prueba 60000).</td></tr>
+          <tr><td>Valores de borde (BVA)</td><td>La frontera entre particiones y un valor a cada lado: 39999, 40000, 40001. Ahí se esconde el <code>&lt;=</code> en vez de <code>&lt;</code>.</td></tr>
+          <tr><td>Tabla de decisión</td><td>Todas las combinaciones de varias condiciones; cada columna es una prueba. Abierto y cubierto: 2 × 2 = 4 casos.</td></tr>
+          <tr><td>Transición de estados</td><td>Secuencias de acciones sobre algo que tiene estados. PIN: tres intentos fallidos bloquean la cuenta.</td></tr>
+          <tr><td>Estructura (caja blanca)</td><td>Cobertura</td><td>Qué tanto del código ejecutaron las pruebas: instrucciones (cada línea), ramas (cada lado de cada <code>if</code>), condiciones (cada condición true y false) y condiciones múltiples (todas las combinaciones). En Eclipse: verde, rojo y amarillo.</td></tr>
+          <tr><td>Experiencia</td><td>Exploración · adivinar errores</td><td>Usar la app sin guion · probar lo que suele romper: lista vacía, <code>null</code>, cero, negativos.</td></tr>
+        </tbody>
+      </table></div>
+    </article>
+
+    <article class="idea">
+      <h3><span class="ix">Escritura</span>Given-when-then y las cuatro fases</h3>
+      <div class="prose">
+        <p><b>Given-when-then</b> son las tres palabras en inglés: <b>given</b> (dado), <b>when</b> (cuando), <b>then</b> (entonces). Dividen un escenario de prueba en tres partes:</p>
+        <ul>
+          <li><b>Given:</b> cómo está el mundo antes, las precondiciones.</li>
+          <li><b>When:</b> lo que se ejecuta, el comportamiento.</li>
+          <li><b>Then:</b> lo que debe haber cambiado, la poscondición.</li>
+        </ul>
+        <p>El ejemplo del profe: <i>dado</i> que tengo 100 acciones de MSFT y 150 de APPL, y es antes del cierre de la bolsa; <i>cuando</i> pido vender 20 de MSFT; <i>entonces</i> debo tener 80 de MSFT, seguir con 150 de APPL y debe ejecutarse una orden de venta de 20.</p>
+        <p>El <b>patrón de cuatro fases</b> es el más común en pruebas unitarias, y se relaciona con given-when-then. Es lo de «borrar al final» que te dijo el profe:</p>
+      </div>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:26%"><col style="width:40%"><col style="width:34%"></colgroup>
+        <thead><tr><th>Fase</th><th>Qué se hace</th><th>En JUnit · given-when-then</th></tr></thead>
+        <tbody>
+          <tr><td>1. Definir la estructura</td><td>Armar el escenario que la prueba necesita</td><td><code>@BeforeEach setUp()</code> · given</td></tr>
+          <tr><td>2. Ejecutar</td><td>Interactuar con el sistema bajo prueba</td><td>Llamar el método · when</td></tr>
+          <tr><td>3. Chequear</td><td>Ver si se obtuvo el resultado esperado</td><td>Los <code>assert</code> · then</td></tr>
+          <tr><td>4. Destruir la estructura</td><td>Reversar lo que se hizo, para volver al estado inicial</td><td><code>@AfterEach tearDown()</code> · después del then</td></tr>
+        </tbody>
+      </table></div>
+      <div class="prose">
+        <p><b>Por qué existe la fase 4:</b> son las tres preocupaciones del diseño de pruebas del profe.</p>
+        <ul>
+          <li><b>Estado inicial:</b> definir qué supone cada prueba.</li>
+          <li><b>No cambiar el estado del sistema:</b> si una prueba crea algo, lo deshace. Algunas cosas no se pueden deshacer, como mandar un correo; por eso se prefieren funciones sin efectos de borde.</li>
+          <li><b>Reducir el acoplamiento entre pruebas:</b> si una prueba crea al usuario «bob» y no lo borra, la siguiente que intente crear a «bob» falla por culpa de la anterior. Piensa como si todas corrieran al mismo tiempo.</li>
+        </ul>
+        <p class="muted">Esto también está en M6, idea 8.</p>
+      </div>
+    </article>
+
+    <article class="idea">
+      <h3><span class="ix">Lo demás</span>Otros conceptos que pueden salir</h3>
+      <div class="tw"><table class="vocab">
+        <colgroup><col style="width:26%"><col style="width:74%"></colgroup>
+        <tbody>
+          <tr><td><b>Regresión</b></td><td>Volver a correr pruebas después de un cambio, para verificar que no se dañó lo que funcionaba. <b>Reset all</b>: todas (la más costosa). <b>Test selection</b>: solo algunas, separando reutilizables de obsoletas. <b>Prioritization</b>: por impacto, criticidad y frecuencia de cambio. Conviene incluir las que fallan seguido, las de funcionalidades visibles o principales, las de cambios recientes, las de integración, las complejas, las de frontera, las exitosas y un subconjunto de las que fallan.</td></tr>
+          <tr><td><b>TDD</b></td><td>Escribir las pruebas → correrlas (fallan) → implementar → todas pasan → refactorizar. «¡Probar primero, implementar después!»</td></tr>
+          <tr><td><b>Falla, error y éxito</b></td><td>Falla: el resultado no es el esperado (<code>expected… but was…</code>). Error: la operación lanzó una excepción. Éxito: llegó al resultado esperado.</td></tr>
+          <tr><td><b>Suposiciones</b></td><td><code>assumeTrue</code>/<code>assumeFalse</code>: si no se cumplen, la prueba se <b>aborta</b> (no falla), porque no tiene sentido seguir.</td></tr>
+          <tr><td><b>Principios de las pruebas</b></td><td>Pequeñas (una prueba, una responsabilidad); independientes (sin depender del orden ni de operaciones externas, sin efectos de borde); no quemar valores; asserts de alto nivel.</td></tr>
+          <tr><td><b>Las pruebas deben…</b></td><td>Cubrir los escenarios de negocio, incluir todos los requerimientos críticos y ser consistentes y reproducibles. «No todo el código tiene que estar cubierto, pero todos los requerimientos sí».</td></tr>
+          <tr><td><b>JUnit</b></td><td>Un framework: él corre tus métodos <code>@Test</code>. Lo escribió Erich Gamma, uno de los autores del libro de patrones.</td></tr>
+        </tbody>
+      </table></div>
+    </article>
+
+    <div class="block">
+      <h3>Práctica de pruebas <span class="secscore" id="score-pruebas"></span></h3>
+      <div class="quiz" id="q-pruebas"></div>
+    </div>
+  </section>
+
+  <!-- ============ 2. CONTEXTO ============ -->
+  <section id="contexto" aria-labelledby="c-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="c-h">Leer el contexto de una empresa</h2><p>El profe da un texto y pide sacar, por ejemplo, tres no funcionales y tres restricciones. Son las «entradas del diseño» del caso Ñam.</p></div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:20%"><col style="width:30%"><col style="width:50%"></colgroup>
+      <thead><tr><th>Tipo</th><th>Pregunta para reconocerlo</th><th>Ejemplos (Ñam y otros)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Requerimiento funcional</b></td><td>¿Es algo que el sistema <b>hace</b>?</td><td>Agregar un plato al carrito, cobrar, asignar un repartidor, avisar cada cambio de estado.</td></tr>
+        <tr><td><b>Requerimiento no funcional</b></td><td>¿Dice <b>qué tan bien</b> lo hace? (rendimiento, carga, disponibilidad, seguridad, usabilidad, plataformas)</td><td>El menú carga en menos de 1 s; el 40 % de los pedidos llega entre 11:30 y 13:30; un pedido cobrado no se pierde aunque algo se caiga; 1 repartidor = 1 pedido activo.</td></tr>
+        <tr><td><b>Regla del dominio</b></td><td>¿Es una <b>regla del negocio</b>?</td><td>Validar horario y zona; total = platos + envío + propina; sin pago exitoso no hay pedido; un pedido es de un solo restaurante.</td></tr>
+        <tr><td><b>Restricción</b></td><td>¿Es un <b>límite del proyecto</b> sobre cómo se puede construir?</td><td>Presupuesto (minimizar consultas a una API que cobra); legado (la base de datos ya existe y no se puede modificar); equipo (4 desarrolladores, Java). También: el plazo o una tecnología impuesta.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <p><b>Trampas:</b></p>
+      <ul>
+        <li>«Debe ser rápido» o «fácil de usar» son no funcionales <b>mal escritos</b>: no se pueden verificar. Bien escrito: «en menos de 2 segundos».</li>
+        <li>«En Java» o «con la base de datos que ya existe» no dicen qué tan bien funciona el sistema: son <b>restricciones</b>, decisiones impuestas al proyecto.</li>
+        <li>«Máximo 1 préstamo por persona» no es una restricción en el vocabulario del profe: es una <b>regla del dominio</b>.</li>
+      </ul>
+    </div>
+    <div class="lab">
+      <h3>Ejercicio · BiciAndes</h3>
+      <div class="enun">«La Universidad quiere BiciAndes, una app para prestar bicicletas en el campus. Un estudiante reserva una bicicleta en una estación y la devuelve en cualquier otra. Cada préstamo dura máximo 2 horas; si se pasa, se le cobra una multa de 2000 pesos por cada media hora adicional. Un estudiante no puede tener más de un préstamo activo. La app debe mostrar la disponibilidad de cada estación en menos de 2 segundos y aguantar 3000 usuarios al mismo tiempo en el cambio de clase, y debe seguir funcionando aunque se caiga el internet de una estación. Los datos de los estudiantes se leen del sistema de Registro, que ya existe y no se puede modificar. El proyecto tiene un presupuesto de 40 millones, debe estar listo en 4 meses y lo hará un equipo de 3 monitores en Java.»</div>
+      <p class="prose-p">Clasifica cada frase. Al final deberías tener tres no funcionales y cuatro restricciones.</p>
+      <div class="assign" id="lab-ctx"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-ctx-check">Revisar</button><button type="button" class="btn ghost" id="lab-ctx-reset">Empezar de nuevo</button><span class="muted" id="lab-ctx-msg"></span></div>
+    </div>
+    <div class="block">
+      <h3>Práctica <span class="secscore" id="score-contexto"></span></h3>
+      <div class="quiz" id="q-contexto"></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. HISTORIAS ============ -->
+  <section id="historias" aria-labelledby="h-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="h-h">Historias de usuario</h2><p>Revisar si están bien escritas y de dónde salen sus pruebas.</p></div>
+    <div class="prose">
+      <p><b>Formato:</b> <code>Como [rol] quiero [acción] para [beneficio]</code>. Tiene que estar escrita desde quien la usa, y las tres partes son obligatorias.</p>
+      <p><b>Criterios de aceptación:</b> condiciones concretas y verificables, que alguien puede revisar y decir «se cumple» o «no se cumple». Se escriben muy bien con given-when-then: «<i>Dado</i> que tengo un préstamo activo, <i>cuando</i> intento reservar otra bicicleta, <i>entonces</i> la app no me deja y me dice que ya tengo uno».</p>
+      <p><b>De la historia a la prueba:</b> cada criterio de aceptación se vuelve una prueba. El given es el escenario (fase 1), el when es lo que se ejecuta (fase 2) y el then es el assert (fase 3). Así la historia termina en pruebas de aceptación y, a veces, en unitarias.</p>
+      <p><b>Lo que la daña:</b></p>
+      <ul>
+        <li><b>Es una tarea técnica:</b> «Crear la tabla Préstamos», «Programar la clase Préstamo». Eso no lo pide un usuario.</li>
+        <li><b>Le falta el beneficio:</b> «Como estudiante quiero devolver la bicicleta», sin el «para…».</li>
+        <li><b>No se puede verificar:</b> «Como usuario quiero que la app funcione bien». ¿Bien cómo?</li>
+      </ul>
+    </div>
+    <div class="lab">
+      <h3>Ejercicio · ¿Está bien escrita?</h3>
+      <div class="assign" id="lab-hu"></div>
+      <div class="qrow"><button type="button" class="btn" id="lab-hu-check">Revisar</button><button type="button" class="btn ghost" id="lab-hu-reset">Empezar de nuevo</button><span class="muted" id="lab-hu-msg"></span></div>
+    </div>
+    <div class="block">
+      <h3>Práctica <span class="secscore" id="score-historias"></span></h3>
+      <div class="quiz" id="q-historias"></div>
+    </div>
+  </section>
+
+  <!-- ============ 4. DISEÑOS ============ -->
+  <section id="disenos" aria-labelledby="d-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="d-h">Revisar diseños</h2><p>Los diseños que «cuentan una historia»: quién hace qué y quién decide.</p></div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:28%"><col style="width:72%"></colgroup>
+      <tbody>
+        <tr><td><b>¿A quién le toca?</b></td><td>A la clase que tiene la información. Una cadena de getters (<code>p.getLineas()… l.getProducto().getPrecio()</code>) es la pista de que el cálculo está en la clase equivocada.</td></tr>
+        <tr><td><b>Estereotipos</b></td><td>Contenedor de información (sabe datos) · estructurador (mantiene colecciones y busca) · proveedor de servicios (hace un trabajo para otros, pasivo) · coordinador (reparte el trabajo, decide poco) · controlador (decide y dirige) · interfaz (habla con el exterior). En Ñam: Pedido controlador, Despachador coordinador, Catálogo estructurador, Conector DB proveedor, Pasarela interfaz.</td></tr>
+        <tr><td><b>Estilos de control</b></td><td>Centralizado: pocos controladores deciden todo y los demás son get/set; fácil hallar los puntos críticos, pero lógica compleja (una <code>AlgoService</code> gigante). Delegado: coordinadores y cada uno decide lo suyo; menos acoplamiento. Disperso: no hay un centro claro y cualquier cambio afecta a muchos.</td></tr>
+        <tr><td><b>Problemas de colaboración</b> (Ñam)</td><td>Muchas conexiones desde fuera del vecindario · muchos mensajes de bajo nivel (se arregla con un mensaje grueso) · muchas alternativas y caminos condicionales.</td></tr>
+        <tr><td><b>4 recomendaciones</b></td><td>Reducir la complejidad · pensar en los cambios · reducir el acoplamiento · preferir la inyección de dependencias (por constructor o por setter).</td></tr>
+        <tr><td><b>SOLID, en una línea</b></td><td>S: una sola razón para cambiar · O: agregar sin modificar · L: la hija cumple lo del padre · I: interfaces pequeñas · D: depender de interfaces.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="block">
+      <h3>Práctica <span class="secscore" id="score-disenos"></span></h3>
+      <div class="quiz" id="q-disenos"></div>
+    </div>
+  </section>
+
+  <!-- ============ 5. PATRONES ============ -->
+  <section id="patrones" aria-labelledby="pt-h">
+    <div class="sec-title"><span class="sec-num">5</span><h2 id="pt-h">Revisar patrones: ¿está bien o está mal?</h2><p>Para cada patrón, lo que tiene que cumplirse. Si falta algo de la lista, está mal.</p></div>
+    <div class="tw"><table class="vocab">
+      <colgroup><col style="width:18%"><col style="width:18%"><col style="width:64%"></colgroup>
+      <thead><tr><th>Patrón</th><th>Familia</th><th>Lo que tiene que cumplirse</th></tr></thead>
+      <tbody>
+        <tr><td><b>Singleton</b></td><td>Creacional</td><td>(1) atributo <code>private static</code> con la instancia; (2) constructor <code>private</code>; (3) método <code>public static getInstancia()</code>; (4) crea el objeto solo si <code>instancia == null</code>.</td></tr>
+        <tr><td><b>Proxy</b> (el del profe)</td><td>Estructural</td><td>(1) el proxy implementa <b>la misma interfaz</b> que el objeto real; (2) el cliente conoce <b>solo la interfaz</b>; (3) el proxy tiene al real y es el único que le habla; (4) controla el acceso (remoto, costoso, protegido…).</td></tr>
+        <tr><td><b>Adapter</b></td><td>Estructural</td><td>(1) implementa <b>la interfaz que tu sistema espera</b>; (2) tiene un atributo de la clase ajena; (3) <b>traduce</b> cada llamada a la clase ajena, que no se modifica.</td></tr>
+        <tr><td><b>Facade</b></td><td>Estructural</td><td>(1) un método simple que hace muchos pasos en orden; (2) los clientes conocen la fachada, no los subsistemas.</td></tr>
+        <tr><td><b>Strategy</b></td><td>De comportamiento</td><td>(1) una interfaz para el algoritmo que cambia; (2) una clase por variante; (3) el contexto guarda una referencia a la interfaz y le delega, <b>sin <code>if</code> por tipo</b>.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="block">
+      <h3>Práctica <span class="secscore" id="score-patrones"></span></h3>
+      <div class="quiz" id="q-patrones"></div>
+    </div>
+  </section>
+
+  <!-- ============ 6. CÓDIGO ============ -->
+  <section id="codigo" aria-labelledby="co-h">
+    <div class="sec-title"><span class="sec-num">6</span><h2 id="co-h">Leer código</h2><p>Excepciones, una prueba y las estrategias de errores del profe.</p></div>
+    <div class="block">
+      <h3>Práctica <span class="secscore" id="score-codigo"></span></h3>
+      <div class="quiz" id="q-codigo"></div>
+    </div>
+  </section>
+
+  <!-- ============ HOJA ============ -->
+  <section id="hoja" aria-labelledby="hf-h">
+    <div class="sec-title"><span class="sec-num">∑</span><h2 id="hf-h">Hoja final</h2><p>Para los 30 minutos antes del examen.</p></div>
+    <div class="tw"><table class="vocab sheet">
+      <colgroup><col style="width:22%"><col style="width:78%"></colgroup>
+      <tbody>
+        <tr><td>Caja blanca / negra</td><td>¿Tengo el código? Sí → blanca (estructura, cobertura, desarrollador). No → negra (funcionalidad, entradas y salidas, tester). Mi equipo: blanca. Un tercero: negra.</td></tr>
+        <tr><td>Niveles</td><td>Unitarias (una unidad aislada, stubs o mocks) → integración (interacciones; bottom-up, top-down, big-bang) → sistema (todo; destructivas, no destructivas, inyección de fallos) → aceptación (el cliente; usuario, operacional, contractual, alfa/beta).</td></tr>
+        <tr><td>Técnicas</td><td>Particiones (un representante por grupo) · bordes (frontera ± 1) · tabla de decisión (combinaciones) · transición de estados (secuencias) · cobertura (instrucciones, ramas, condiciones, múltiples) · exploración · adivinar errores.</td></tr>
+        <tr><td>Escribir una prueba</td><td>Given (dado) – when (cuando) – then (entonces). Cuatro fases: definir la estructura (<code>@BeforeEach</code>) – ejecutar – chequear (assert) – destruir la estructura (<code>@AfterEach</code>). Estado inicial, no cambiar el estado, pruebas independientes.</td></tr>
+        <tr><td>Más de pruebas</td><td>Regresión: reset all, test selection, prioritization. TDD: probar primero. Falla (assert) / error (excepción) / éxito. Assume aborta.</td></tr>
+        <tr><td>Contexto</td><td>Funcional (qué hace) · no funcional (qué tan bien, medible) · regla del dominio (regla del negocio) · restricción (presupuesto, legado, equipo, plazo, tecnología).</td></tr>
+        <tr><td>Historias</td><td>Como [rol] quiero [acción] para [beneficio] + criterios verificables (en given-when-then). No: tareas técnicas, sin beneficio, vagas.</td></tr>
+        <tr><td>Diseño</td><td>Responsabilidad a quien tiene la información. Centralizado / delegado / disperso. Inyección de dependencias. SOLID.</td></tr>
+        <tr><td>Patrones</td><td>Singleton (private static + constructor private + public static getInstancia + if null). Proxy (misma interfaz, controla el acceso). Adapter (tu interfaz, traduce a la ajena). Facade (un método, muchos pasos). Strategy (interfaz, sin if por tipo).</td></tr>
+        <tr><td>Errores</td><td>El <code>finally</code> corre siempre; una checked se atrapa o se declara con <code>throws</code>. 9 estrategias: prevenir, inacción, balk, suspensión temporal, acciones provisionales, alternativa, apelar a una autoridad superior, rollback, reintentar.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="block">
+      <h3>Tu resultado</h3>
+      <div class="result" id="final-card"><p class="muted">Responde las preguntas y aquí ves tu resultado por sección.</p></div>
+      <div class="qrow"><button type="button" class="btn" id="save">Guardar mi resultado</button><button type="button" class="btn ghost" id="reset-all">Borrar mis respuestas</button><span class="muted" id="save-msg"></span></div>
+      <p class="note muted">Al guardarlo, Claude ve qué preguntas fallaste y te repasa solo eso.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Hecho con las diapositivas del profe: Diseño de pruebas unitarias, Diseño de pruebas 2, la lectura 15, Aspectos metodológicos, Patrones de diseño, Estrategias para el manejo de errores y el caso Ñam.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- Utilidades ---------- */
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const f1 = (n) => Math.round(n * 10) / 10;
+/* Texto con `código` y **negrita** → nodos, sin innerHTML. */
+function rich(parent, text) {
+  String(text).split("`").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { parent.appendChild(el("code", "", part)); return; }
+    part.split("**").forEach((p2, j) => { if (p2) parent.appendChild(j % 2 ? el("b", "", p2) : document.createTextNode(p2)); });
+  });
+  return parent;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Resaltado de Java ---------- */
+const RX = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@[A-Za-z]+)|\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|super|static|final|void|if|else|for|while|throw|throws|try|catch|finally|null|true|false|import|package|boolean|int|double|char|long)\b|\b([A-Z][A-Za-z0-9_]*)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(line) {
+  let out = "", last = 0;
+  line.replace(RX, (m, com, str, ann, kw, ty, num, idx) => {
+    out += esc(line.slice(last, idx));
+    const cls = com ? "c-com" : str ? "c-str" : ann ? "c-ann" : kw ? "c-kw" : ty ? "c-ty" : "c-num";
+    out += '<span class="' + cls + '">' + esc(m) + "</span>";
+    last = idx + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+/* diff: cada línea empieza con "+ " (nueva), "- " (se borra) o "  " (igual). */
+function codeHTML(src, diff) {
+  const lines = src.replace(/^\n/, "").replace(/\n\s*$/, "").split("\n");
+  return lines.map((raw) => {
+    let mk = "  ", line = raw;
+    if (diff) {
+      if (raw === "+" || raw === "-") { mk = raw + " "; line = ""; }
+      else if (raw.length < 2) { mk = "  "; line = raw.trim(); }
+      else { mk = raw.slice(0, 2); line = raw.slice(2); }
+    }
+    const add = diff && mk === "+ ", del = diff && mk === "- ";
+    const gut = diff ? '<span class="gut" aria-hidden="true">' + (add ? "+" : del ? "−" : " ") + "</span>" : "";
+    const sr = add ? '<span class="sr">Línea nueva: </span>' : del ? '<span class="sr">Línea que se borra: </span>' : "";
+    const body = hl(line) || " ";
+    return '<span class="cl' + (add ? " add" : "") + (del ? " del" : "") + '">' + gut + sr + (del ? "<s>" + body + "</s>" : body) + "</span>";
+  }).join("");
+}
+
+/* ---------- Diagramas UML en SVG ---------- */
+const LH = 16;
+const memW = (t) => t.length * 6.3 + 16;
+const nameW = (t) => t.length * 7.4 + 24;
+function wrapK(k, inner, inter, label) {
+  if (inter && k) return '<g class="hit" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return "<g" + (k ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>";
+}
+function memSvg(m, x, yy, w, inter) {
+  const cls = "u-m" + (m.s ? " st" : "") + (m.a ? " abs" : "");
+  const inner = '<rect class="hl" x="' + (x + 1) + '" y="' + yy + '" width="' + (w - 2) + '" height="' + LH + '"/><text class="' + cls + '" x="' + (x + 8) + '" y="' + (yy + 11.8) + '">' + esc(m.t) + "</text>";
+  return wrapK(m.k || "", inner, inter, m.t);
+}
+function umlBox(c, inter, G) {
+  const name = c.name || c.id, attrs = c.attrs || [], ops = c.ops || [];
+  const w = c.w || Math.ceil(Math.max(c.minW || 110, nameW(name), c.stereo ? (c.stereo.length + 2) * 6 + 16 : 0, ...attrs.map((m) => memW(m.t)), ...ops.map((m) => memW(m.t))));
+  const x = typeof c.x === "function" ? Math.round(c.x(G, w)) : c.x, y = c.y;
+  const headH = c.stereo ? 36 : 24, aH = c.simple ? 0 : (attrs.length ? attrs.length * LH + 8 : 8), oH = c.simple ? 0 : (ops.length ? ops.length * LH + 8 : 8), h = headH + aH + oH;
+  let s = '<rect class="u-bg' + (c.tone ? " t-" + c.tone : "") + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2"/>';
+  let hd = '<rect class="hl" x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (w - 2) + '" height="' + (headH - 1) + '"/>';
+  if (c.stereo) hd += '<text class="u-st" x="' + (x + w / 2) + '" y="' + (y + 14) + '" text-anchor="middle">«' + esc(c.stereo) + "»</text>";
+  hd += '<text class="u-nm' + (c.abs ? " abs" : "") + '" x="' + (x + w / 2) + '" y="' + (y + (c.stereo ? 29 : 16.5)) + '" text-anchor="middle">' + esc(name) + "</text>";
+  s += wrapK(c.k || "", hd, inter, "Clase " + name);
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH) + '" x2="' + (x + w) + '" y2="' + (y + headH) + '"/>';
+  attrs.forEach((m, i) => { s += memSvg(m, x, y + headH + 4 + i * LH, w, inter); });
+  if (!c.simple) s += '<line class="u-ln" x1="' + x + '" y1="' + (y + headH + aH) + '" x2="' + (x + w) + '" y2="' + (y + headH + aH) + '"/>';
+  ops.forEach((m, i) => { s += memSvg(m, x, y + headH + aH + 4 + i * LH, w, inter); });
+  return { svg: "<g>" + s + "</g>", x, y, w, h };
+}
+const REL_NAME = { assoc: "Asociación", inherit: "Herencia", realize: "Realización", dep: "Dependencia", aggr: "Agregación", comp: "Composición" };
+function relSvg(r, inter) {
+  const P = r.pts.map((p) => p.slice()), n = P.length;
+  const [ax, ay] = P[n - 2], [bx, by] = P[n - 1];
+  const L = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L, uy = (by - ay) / L;
+  const tri = r.type === "inherit" || r.type === "realize";
+  const dash = r.type === "realize" || r.type === "dep" ? ' stroke-dasharray="5 4"' : "";
+  const pts = P.map((p) => p.slice());
+  if (tri) pts[n - 1] = [bx - ux * 12, by - uy * 12];
+  let dia = "";
+  if (r.type === "aggr" || r.type === "comp") {
+    const [sx, sy] = P[0], [tx, ty] = P[1], L2 = Math.hypot(tx - sx, ty - sy) || 1, vx = (tx - sx) / L2, vy = (ty - sy) / L2, nx = -vy, ny = vx;
+    const d = [[sx, sy], [sx + vx * 9 + nx * 5.5, sy + vy * 9 + ny * 5.5], [sx + vx * 18, sy + vy * 18], [sx + vx * 9 - nx * 5.5, sy + vy * 9 - ny * 5.5]];
+    dia = '<path class="u-dia' + (r.type === "comp" ? " full" : "") + '" d="M' + d.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") + ' Z"/>';
+    pts[0] = [sx + vx * 18, sy + vy * 18];
+  }
+  const dstr = "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L");
+  let head = "";
+  if (tri) {
+    const nx = -uy, ny = ux;
+    head = '<path class="u-tri" d="M' + f1(bx) + " " + f1(by) + " L" + f1(bx - ux * 12 + nx * 7) + " " + f1(by - uy * 12 + ny * 7) + " L" + f1(bx - ux * 12 - nx * 7) + " " + f1(by - uy * 12 - ny * 7) + ' Z"/>';
+  } else {
+    const c = Math.cos(0.45), s = Math.sin(0.45), len = 11;
+    head = '<path class="u-arr" d="M' + f1(bx - len * (ux * c - uy * s)) + " " + f1(by - len * (uy * c + ux * s)) + " L" + f1(bx) + " " + f1(by) + " L" + f1(bx - len * (ux * c + uy * s)) + " " + f1(by - len * (uy * c - ux * s)) + '"/>';
+  }
+  let lb = "";
+  (r.labels || []).forEach((t) => { lb += '<text class="u-lb" x="' + f1(t.x) + '" y="' + f1(t.y) + '" text-anchor="' + (t.a || "start") + '">' + esc(t.t) + "</text>"; });
+  const label = REL_NAME[r.type] + (r.labels && r.labels.length ? " " + r.labels.map((t) => t.t).join(" ") : "");
+  const inner = '<path class="u-hit" d="' + dstr + '"/><path class="u-rl"' + dash + ' d="' + dstr + '"/>' + dia + head + lb;
+  if (inter && r.k) return '<g class="rel hit" data-k="' + r.k + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner + "</g>";
+  return '<g class="rel">' + inner + "</g>";
+}
+function umlSvg(spec, inter) {
+  const G = {}; let boxes = "";
+  spec.cls.forEach((c) => { const b = umlBox(c, inter, G); G[c.id] = b; boxes += b.svg; });
+  const A = (id, side, t = 0.5) => { const g = G[id]; if (side === "t") return [g.x + g.w * t, g.y]; if (side === "b") return [g.x + g.w * t, g.y + g.h]; if (side === "l") return [g.x, g.y + g.h * t]; return [g.x + g.w, g.y + g.h * t]; };
+  const RL = spec.rels ? spec.rels(A, G) : []; let rs = ""; RL.forEach((r) => { rs += relSvg(r, inter); });
+  let W = 0, H = 0; Object.values(G).forEach((g) => { W = Math.max(W, g.x + g.w); H = Math.max(H, g.y + g.h); });
+  RL.forEach((r) => { r.pts.forEach((p) => { W = Math.max(W, p[0]); H = Math.max(H, p[1]); }); (r.labels || []).forEach((t) => { W = Math.max(W, t.a === "end" ? t.x : t.x + t.t.length * 6.3); H = Math.max(H, t.y + 4); }); });
+  W = Math.ceil(W + 10); H = Math.ceil(H + 10);
+  return '<svg class="uml" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" style="--w:' + W + 'px" role="' + (inter ? "group" : "img") + '" aria-label="' + esc(spec.aria || "Diagrama de clases") + '">' + boxes + rs + "</svg>";
+}
+const centerOn = (id) => (G, w) => G[id].x + G[id].w / 2 - w / 2;
+/* Dos cajas en fila con una relación: para el diccionario de flechas. */
+function pairSpec(a, b, type, o) {
+  o = o || {};
+  const gap = type === "inherit" || type === "realize" ? 62 : 96;
+  const wa = Math.ceil(Math.max(96, nameW(a))), wb = Math.ceil(Math.max(96, nameW(b)));
+  return {
+    aria: o.aria,
+    cls: [{ id: "A", name: a, x: 10, y: 14, w: wa }, { id: "B", name: b, x: 10 + wa + gap, y: 14, w: wb, stereo: o.stereo }],
+    rels: (A, G) => {
+      const y = 34, r = { type, pts: [[G.A.x + G.A.w, y], [G.B.x, y]] };
+      if (o.rol) r.labels = [{ x: G.B.x - 14, y: y - 6, t: o.rol, a: "end" }, { x: G.B.x - 14, y: y + 15, t: o.mult, a: "end" }];
+      return [r];
+    }
+  };
+}
+
+
+
+/* ---------- Preguntas ---------- */
+const SECS = {
+  pruebas: [
+    { id: "p1", k: "Caja blanca o negra", q: "Juan contrató a otra empresa para la pasarela de pagos. No tiene su código: solo la documentación de qué recibe y qué responde. ¿Qué pruebas le aplica a la pasarela?",
+      o: ["Caja negra: entradas y salidas esperadas según lo que promete la pasarela", "Caja blanca: medir la cobertura de instrucciones y de ramas de la pasarela", "Ninguna: si es de otra empresa, no le toca a Juan", "Pruebas unitarias de las clases internas de la pasarela"], a: 0,
+      oe: ["Sin el código, solo puede probar el comportamiento: lo que entra y lo que sale. Eso es caja negra.", "Para medir cobertura hay que ejecutar y ver el código por dentro, y Juan no lo tiene.", "Al revés: es de otra empresa, la región de menos confianza. Hay que probarla más, no menos.", "Para probar las clases internas hay que tener el código, y esas unidades no son de Juan."] },
+    { id: "p2", k: "Caja blanca o negra", q: "¿Y qué le puede aplicar Juan al código de su propio equipo que no le puede aplicar a la pasarela?",
+      o: ["Caja blanca, porque tiene acceso al código y puede ver qué líneas y ramas ejecutan las pruebas", "Solo pruebas de aceptación", "Caja negra, porque es la única que existe para el código propio", "Nada distinto: las dos partes se prueban igual"], a: 0,
+      oe: ["Con el código en la mano puede probar la estructura interna. A su código también le puede hacer caja negra: son complementarias.", "La aceptación la decide el cliente; a su equipo le sirven sobre todo las unitarias con cobertura.", "La caja negra sirve para cualquiera; lo que solo puede hacerle a su propio código es caja blanca.", "La diferencia es justamente el acceso al código."] },
+    { id: "p3", k: "Nivel", q: "El equipo quiere comprobar que, al confirmar un pedido, la app y la pasarela de pagos se comunican bien. ¿Qué nivel de prueba es?",
+      o: ["Unitaria", "De integración", "De aceptación", "De regresión"], a: 1,
+      oe: ["Una unitaria prueba una sola unidad aislada (con stubs o mocks), no dos módulos hablando.", "Prueba las interfaces e interacciones entre módulos: la app y la pasarela juntas.", "La aceptación la decide el cliente, sobre el sistema completo.", "Regresión no es un nivel: es volver a correr pruebas después de un cambio."] },
+    { id: "p4", k: "Nivel", q: "Antes de lanzar, simulan 5000 pedidos al mismo tiempo para ver si el sistema aguanta la hora del almuerzo. ¿Qué es?",
+      o: ["Una prueba unitaria", "Una prueba de sistema destructiva (carga extrema)", "Una prueba de aceptación contractual", "Una prueba de caja blanca de cobertura"], a: 1,
+      oe: ["No es una unidad aislada: es todo el sistema bajo carga.", "Prueba el sistema entero llevándolo al extremo: el profe la llama destructiva (carga extrema).", "La contractual verifica un contrato con el cliente; aquí se mide cuánto aguanta.", "No se está mirando qué líneas se ejecutaron."] },
+    { id: "p5", k: "Nivel", q: "El cliente usa la app una semana con usuarios reales antes de recibirla y pagar el contrato. ¿Qué nivel es?",
+      o: ["De integración", "De sistema", "De aceptación", "Unitaria"], a: 2,
+      oe: ["No se están probando dos módulos juntos.", "La de sistema la hace el equipo contra los requerimientos; aquí decide el cliente.", "El cliente o el usuario decide si acepta el sistema: de usuario o contractual.", "No es una unidad aislada."] },
+    { id: "p6", k: "Nivel", q: "Para probar `Carrito.calcularTotal()` sin depender de la base de datos, le pasan un objeto falso que siempre devuelve los mismos precios. ¿Cómo se llama ese objeto y qué nivel de prueba es?",
+      o: ["Un stub; prueba unitaria", "Un proxy; prueba de integración", "Un mock; prueba de aceptación", "Un adapter; prueba de sistema"], a: 0,
+      oe: ["El stub devuelve datos predefinidos y aísla la unidad: así se hace una prueba unitaria.", "Proxy es un patrón de diseño, y aquí no se integra nada.", "Un mock además verifica cómo lo llamaron, y la aceptación es del cliente.", "Adapter es un patrón, y esto no es el sistema completo."] },
+    { id: "p7", k: "Técnica", q: "Un descuento aplica a clientes entre 18 y 25 años. Pruebas con 17, 18, 25 y 26. ¿Qué técnica usas?",
+      o: ["Particiones de equivalencia", "Análisis de valores de borde", "Tabla de decisión", "Cobertura de ramas"], a: 1,
+      oe: ["Las particiones toman un representante de cada grupo, como 21. Aquí estás justo en las fronteras.", "Valores en la frontera (18 y 25) y a cada lado (17 y 26).", "La tabla de decisión combina varias condiciones; aquí hay una sola.", "La cobertura mira el código; esto sale del enunciado (caja negra)."] },
+    { id: "p8", k: "Técnica", q: "Después de correr las pruebas, revisan en Eclipse que cada `if` se haya ejecutado por su lado verdadero y por su lado falso. ¿Qué es?",
+      o: ["Caja negra: transición de estados", "Caja blanca: cobertura de ramas", "Caja blanca: cobertura de instrucciones", "Una prueba de exploración"], a: 1,
+      oe: ["La transición de estados prueba secuencias de acciones y no mira el código.", "Cada lado de cada `if`: cobertura de ramas (o de decisiones).", "La de instrucciones solo pide que cada línea corra una vez: un `if` puede quedar con una rama sin probar.", "La exploración es usar la app sin guion, por experiencia."] },
+    { id: "p9", k: "Cuatro fases", code: `
+@BeforeEach
+public void setUp() {
+    archivo = new File("pedidos-prueba.txt");   // (1)
+}
+
+@Test
+public void guardarPedido() throws IOException {
+    repositorio.guardar(pedido, archivo);      // (2)
+    assertTrue(archivo.exists());               // (3)
+}
+
+@AfterEach
+public void tearDown() {
+    archivo.delete();                           // (4)
+}`, q: "Según el patrón de cuatro fases, ¿qué hace la línea (4) y por qué existe?",
+      o: ["Destruye la estructura de la prueba: deja el sistema en su estado inicial para que la siguiente prueba no dependa de esta", "Chequea el resultado de la prueba", "Define la estructura antes de cada prueba", "Es opcional: solo ahorra espacio en disco"], a: 0,
+      oe: ["Fase 4: reversa lo que hizo la prueba. Así se cumple «no cambiar el estado del sistema» y se reduce el acoplamiento entre pruebas.", "Chequear es la fase 3, el assert de la línea (3).", "Definir la estructura es la fase 1, el `setUp` de la línea (1).", "No es por espacio: si el archivo se queda, la siguiente prueba arranca con un estado distinto."] },
+    { id: "p10", k: "Given-when-then", q: "Un criterio dice: «Dado un carrito con 2 hamburguesas de 18000, cuando el usuario confirma el pedido, entonces se le cobran 41000». ¿Cuál es el *when*?",
+      o: ["Un carrito con 2 hamburguesas de 18000", "El usuario confirma el pedido", "Se le cobran 41000", "El precio de 18000"], a: 1,
+      oe: ["Ese es el given: cómo está el mundo antes.", "El when es lo que se ejecuta: la acción.", "Ese es el then: lo que se espera después.", "Es un dato del given."] },
+    { id: "p11", k: "Regresión", q: "Arreglaron un error en el cálculo del envío. Antes de publicar, vuelven a correr las pruebas que ya existían, para comprobar que nada más se dañó. Si corren absolutamente todas, ¿qué es?",
+      o: ["Prueba de regresión con la estrategia reset all, la más costosa", "Prueba de aceptación con test selection", "TDD con prioritization", "Prueba de exploración"], a: 0,
+      oe: ["Verificar que un cambio no rompió lo que ya funcionaba es regresión, y correr todas es reset all.", "No decide el cliente, y no se escogió un subconjunto.", "TDD es escribir las pruebas antes del código.", "La exploración es sin guion; aquí se corren pruebas que ya existían."] },
+    { id: "p12", k: "Resultados", q: "Una prueba sale en rojo con `NullPointerException` antes de llegar al assert. Según el profe, ¿qué resultado es?",
+      o: ["Una falla", "Un error", "Un éxito", "Una prueba abortada"], a: 1,
+      oe: ["Una falla es un assert que no se cumple (`expected… but was…`).", "La operación lanzó una excepción: es un error.", "Salió en rojo.", "Abortada es cuando no se cumple una suposición (`assume`)."] },
+    { id: "p13", k: "TDD", q: "En TDD, ¿cuál es el orden?",
+      o: ["Implementar, escribir las pruebas, correrlas, refactorizar", "Escribir las pruebas, correrlas (fallan), implementar hasta que todas pasen, refactorizar", "Escribir pruebas solo de lo que falló en producción", "Refactorizar, implementar, probar"], a: 1,
+      oe: ["Ese es el orden de siempre, no TDD.", "«¡Probar primero, implementar después!», y al final se refactoriza.", "Eso se parece a escoger pruebas de regresión, no a TDD.", "El orden está al revés."] }
+  ],
+  contexto: [
+    { id: "c1", k: "Entradas del diseño", q: "En BiciAndes, ¿cuál de estas es una restricción?",
+      o: ["La disponibilidad debe aparecer en menos de 2 segundos", "Un estudiante no puede tener más de un préstamo activo", "Los datos vienen del sistema de Registro, que ya existe y no se puede modificar", "El estudiante puede devolver la bicicleta en cualquier estación"], a: 2,
+      oe: ["Dice qué tan bien funciona (rendimiento): no funcional.", "Es una regla del negocio: regla del dominio.", "Un sistema legado que no se puede cambiar limita cómo se construye: restricción.", "Es algo que el sistema hace: funcional."] },
+    { id: "c2", k: "Entradas del diseño", q: "«La app debe ser rápida». ¿Qué tiene de malo como requerimiento?",
+      o: ["Nada: es un requerimiento funcional bien escrito", "Es no funcional, pero no se puede verificar: hay que decir cuánto, por ejemplo «en menos de 2 segundos»", "Es una restricción de presupuesto", "Es una regla del dominio"], a: 1,
+      oe: ["No dice algo que el sistema haga, sino qué tan bien.", "Es no funcional (rendimiento), pero sin una medida nadie puede decir si se cumple.", "No habla de plata ni de límites del proyecto.", "No es una regla del negocio."] }
+  ],
+  historias: [
+    { id: "h1", k: "Criterios de aceptación", q: "Para «Como estudiante quiero reservar una bicicleta desde la app para no llegar a una estación vacía», ¿cuál es un buen criterio de aceptación?",
+      o: ["La reserva debe funcionar bien", "Dado que tengo un préstamo activo, cuando intento reservar otra bicicleta, entonces la app no me deja y me dice que ya tengo uno", "Usar una ArrayList para guardar las reservas", "La app debe ser bonita"], a: 1,
+      oe: ["No se puede verificar: ¿bien cómo?", "Es concreto y verificable, y está en given-when-then.", "Es una decisión de implementación, no algo que verifique el usuario.", "No se puede verificar."] },
+    { id: "h2", k: "De la historia a la prueba", q: "¿Qué relación hay entre los criterios de aceptación y las pruebas?",
+      o: ["Ninguna: los criterios son para el cliente y las pruebas para el código", "Cada criterio se puede volver una prueba: el given es el escenario, el when lo que se ejecuta y el then el assert", "Los criterios reemplazan a las pruebas", "Solo sirven para pruebas de caja blanca"], a: 1,
+      oe: ["Al revés: los criterios son justo lo que las pruebas verifican.", "Cada criterio verificable es una prueba lista para escribir, y las historias son una técnica de caja negra.", "Los criterios dicen qué verificar; las pruebas lo verifican.", "Salen del enunciado, sin mirar el código: son caja negra."] }
+  ],
+  disenos: [
+    { id: "d1", k: "Responsabilidades", code: `
+public class Restaurante {
+    public double calcularTotal(Pedido p) {
+        double total = 0;
+        for (LineaPedido l : p.getLineas()) {
+            total += l.getProducto().getPrecio() * l.getCantidad();
+        }
+        return total;
+    }
+}`, q: "¿Qué problema de diseño tiene?",
+      o: ["La responsabilidad está en la clase equivocada: el total debería calcularlo Pedido, y el subtotal LineaPedido, que tienen la información", "Ninguno: Restaurante es el que manda", "Viola la sustitución de Liskov", "Le falta un Singleton"], a: 0,
+      oe: ["La cadena de getters muestra que Restaurante calcula con datos que no son suyos: centraliza.", "Que una clase mande no justifica que haga el trabajo de las demás.", "Aquí no hay herencia.", "Un Singleton no arregla dónde está la responsabilidad."] },
+    { id: "d2", k: "Estilos de control", q: "Una clase `PedidoService` de 1800 líneas valida, cobra, asigna y notifica; las demás clases solo tienen get y set. ¿Qué estilo de control es y qué problema trae?",
+      o: ["Delegado: cada clase hace lo suyo", "Centralizado: cualquier cambio toca el mismo archivo, es difícil de entender y dos personas no pueden trabajar a la vez", "Disperso: no hay un centro de control", "Ninguno: es la forma recomendada"], a: 1,
+      oe: ["Al revés: una sola clase hace todo.", "Es el ejemplo del profe: el resultado más común cuando no se diseña.", "Sí hay un centro, y demasiado claro.", "El profe lo pone como el ejemplo a evitar."] },
+    { id: "d3", k: "Estereotipos", q: "En Ñam, el Despachador escoge el repartidor, pero les delega a otros el trabajo pesado, como calcular los tiempos. ¿Qué estereotipo le asignó el profe?",
+      o: ["Controlador", "Coordinador", "Estructurador", "Contenedor de información"], a: 1,
+      oe: ["El único controlador del caso es el Pedido.", "Reparte el trabajo con lógica simple: coordinador.", "Un estructurador mantiene colecciones; no reparte trabajo.", "No solo guarda datos."] },
+    { id: "d4", k: "Recomendaciones", code: `
+public class Pedido {
+    private PasarelaPagos pasarela = new PasarelaNequi();
+    ...
+}`, q: "Quieren aceptar tarjeta y probar Pedido con JUnit sin cobrar plata de verdad. ¿Qué recomendación del profe no se está siguiendo, y cómo se arregla?",
+      o: ["«Prefiera la inyección de dependencias»: que la pasarela llegue por el constructor o por un setter", "«Reduzca la complejidad»: borrar la pasarela", "Ninguna: está bien que Pedido cree lo que necesita", "Volver PasarelaNequi un Singleton"], a: 0,
+      oe: ["Si Pedido recibe una `PasarelaPagos` desde afuera, le pueden pasar Nequi, tarjeta o una falsa en las pruebas.", "Sin pasarela no hay cobro.", "Al crearla adentro, Pedido queda pegado a Nequi.", "Seguiría pegado a Nequi."] },
+    { id: "d5", k: "Colaboraciones", q: "El Despachador le pregunta al servicio de mapas, repartidor por repartidor, cuánto se demora: diez mensajes pequeños entre los mismos dos objetos. ¿Qué problema típico es y cómo lo resolvió el profe en Ñam?",
+      o: ["Muchos mensajes de bajo nivel; con un solo mensaje grueso que pide todos los tiempos de una vez", "Muchas conexiones desde fuera del vecindario; con un Singleton", "Muchos caminos condicionales; con más `if`", "Ninguno: así se hace"], a: 0,
+      oe: ["Además, la API de mapas cobra por consulta: la restricción de costo se volvió una decisión de diseño.", "Son los mismos dos objetos hablando, no muchos de afuera.", "No hay caminos alternativos aquí.", "Diez mensajes pagados para una sola pregunta es justo el problema."] }
+  ],
+  patrones: [
+    { id: "e1", k: "Singleton", code: `
+public class Configuracion {
+    private static Configuracion instancia;
+
+    public Configuracion() { }
+
+    public static Configuracion getInstancia() {
+        if (instancia == null) {
+            instancia = new Configuracion();
+        }
+        return instancia;
+    }
+}`, q: "¿Qué está mal en este Singleton?",
+      o: ["El constructor es público: cualquiera puede hacer `new Configuracion()` y deja de haber un solo objeto", "La instancia no debería ser `static`", "Le falta un setter", "Nada: está bien"], a: 0,
+      oe: ["Falla el punto 2 de la lista: el constructor debe ser `private`.", "Tiene que ser `static`: es de la clase y la usa el método estático.", "Un setter no tiene nada que ver con el patrón.", "Compila, pero no garantiza un solo objeto."] },
+    { id: "e2", k: "Singleton", code: `
+public class Configuracion {
+    private static Configuracion instancia;
+
+    private Configuracion() { }
+
+    public Configuracion getInstancia() {
+        if (instancia == null) {
+            instancia = new Configuracion();
+        }
+        return instancia;
+    }
+}
+
+// En otra clase:
+Configuracion c = Configuracion.getInstancia();`, q: "¿Qué pasa con la última línea?",
+      o: ["Compila y retorna la única instancia", "No compila: `getInstancia()` no es `static`, así que no se puede llamar con el nombre de la clase, y como el constructor es privado nadie puede crear el primer objeto", "Compila, pero crea un objeto nuevo cada vez", "Lanza NullPointerException"], a: 1,
+      oe: ["Lo corrí: no compila.", "El compilador dice «non-static method getInstancia() cannot be referenced from a static context». Falla el punto 3 de la lista.", "Ni siquiera compila.", "No llega a ejecutarse."] },
+    { id: "e3", k: "Singleton", code: `
+public static Configuracion getInstancia() {
+    instancia = new Configuracion();
+    return instancia;
+}
+
+// En otra clase:
+Configuracion a = Configuracion.getInstancia();
+Configuracion b = Configuracion.getInstancia();
+System.out.println(a == b);`, q: "¿Qué imprime?",
+      o: ["true", "false: cada llamada crea un objeto nuevo, porque falta el `if (instancia == null)`", "No compila", "null"], a: 1,
+      oe: ["Lo corrí: imprime false.", "Falla el punto 4 de la lista: cada llamada reemplaza la instancia por una nueva.", "Compila sin problema.", "`a == b` es un boolean."] },
+    { id: "e4", k: "Proxy", code: `
+public class ProxyMapas {                  // no implementa ServicioMapas
+    private MapasRemoto remoto;
+    public int minutosEntre(String origen, String destino) { ... }
+}
+
+public class Despachador {
+    private MapasRemoto mapas;             // conoce la clase concreta
+    ...
+}`, q: "Querían un Proxy para controlar el acceso al servicio de mapas, que cobra por consulta. ¿Qué está mal?",
+      o: ["El proxy no implementa la misma interfaz que el real, y el Despachador depende de la clase concreta: no se puede poner el proxy en medio sin cambiar al cliente", "El proxy no debería tener un atributo MapasRemoto", "ProxyMapas debería heredar de Despachador", "Nada: así es el patrón"], a: 0,
+      oe: ["Fallan los puntos 1 y 2: misma interfaz para los dos, y el cliente solo conoce la interfaz.", "Sí debe tenerlo: el proxy es el único que le habla al real.", "Un proxy no es un cliente.", "Sin la interfaz común, no es un Proxy."] },
+    { id: "e5", k: "Strategy", code: `
+public double calcularTotal() {
+    double subtotal = calcularSubtotal();
+    if (envio instanceof EnvioExpress) {
+        return subtotal + 9000;
+    } else if (envio instanceof RecogerEnTienda) {
+        return subtotal;
+    }
+    return subtotal + envio.calcularCosto(subtotal);
+}`, q: "Pedido tiene un atributo `PoliticaEnvio envio` (Strategy). ¿Qué está mal en este método?",
+      o: ["Pregunta por el tipo concreto: volvió el `if` por tipo, y cada envío nuevo obliga a modificar Pedido (viola abierto/cerrado). Debería ser solo `return subtotal + envio.calcularCosto(subtotal);`", "Nada: `instanceof` es la forma correcta de usar Strategy", "Debería ser un Singleton", "Le falta un try/catch"], a: 0,
+      oe: ["El contexto debe delegar sin saber qué estrategia tiene: falla el punto 3 de la lista.", "Al revés: el patrón existe para no tener que preguntar el tipo.", "No tiene nada que ver.", "Aquí no hay excepciones que atrapar."] },
+    { id: "e6", k: "Adapter", code: `
+public class PasarelaXYZAdapter implements MedioPago {
+    private PasarelaXYZ pasarela;
+
+    @Override
+    public boolean pagar(double monto) {
+        long centavos = Math.round(monto * 100);
+        int codigo = pasarela.realizarCobro(cuenta, centavos);
+        return codigo == 200;
+    }
+}`, q: "`MedioPago` es la interfaz que usa tu sistema y `PasarelaXYZ` es una librería que no puedes cambiar. ¿Qué patrón es y está bien implementado?",
+      o: ["Adapter, bien implementado: implementa la interfaz que el sistema espera y traduce la llamada a la clase ajena", "Proxy: tiene la misma interfaz que la pasarela", "Facade: simplifica varias clases", "Adapter, pero mal: debería heredar de PasarelaXYZ"], a: 0,
+      oe: ["Cumple los tres puntos de la lista.", "La interfaz no es la misma de la pasarela: el adaptador la cambia. Eso es Adapter, no Proxy.", "Envuelve una sola clase y le cambia la interfaz.", "Existe una variante que hereda, pero con un atributo (composición) también es correcto, y es lo que recomienda el libro: preferir la composición a la herencia."] },
+    { id: "e7", k: "¿Qué patrón es?", q: "Una clase ofrece `inscribirSocio(...)`, y por dentro llama en orden a validar el documento, crear el socio, cobrar la matrícula y enviar la bienvenida. Las pantallas solo conocen esa clase. ¿Qué patrón es?",
+      o: ["Facade", "Adapter", "Proxy", "Strategy"], a: 0,
+      oe: ["Un método simple para muchos pasos sobre muchas clases.", "No hay ninguna interfaz ajena que traducir.", "No controla el acceso a un solo objeto con su misma interfaz.", "No hay algoritmos intercambiables."] },
+    { id: "e8", k: "Proxy o Adapter", q: "¿Qué distingue a un Proxy de un Adapter?",
+      o: ["El Proxy tiene la misma interfaz que el objeto real y controla el acceso a él; el Adapter cambia una interfaz para que encaje", "Son lo mismo con otro nombre", "El Proxy siempre es un Singleton", "El Adapter controla el acceso y el Proxy traduce"], a: 0,
+      oe: ["Proxy: misma interfaz, controla. Adapter: otra interfaz, traduce.", "Resuelven problemas distintos.", "No tienen nada que ver.", "Está al revés."] },
+    { id: "e9", k: "Familias", q: "¿A qué familia del catálogo del Gang of Four pertenece cada uno: Singleton, Proxy y Strategy?",
+      o: ["Creacional, estructural y de comportamiento", "Estructural, creacional y de comportamiento", "Los tres son estructurales", "De comportamiento, estructural y creacional"], a: 0,
+      oe: ["Singleton trata de cómo se crean los objetos; Proxy, de cómo se componen las clases; y Strategy, de cómo se reparte un algoritmo.", "Singleton no compone clases: controla la creación.", "Solo Proxy es estructural.", "Está al revés en Singleton y en Strategy."] }
+  ],
+  codigo: [
+    { id: "f1", k: "Excepciones", code: `
+Club club = new Club(1);       // capacidad 1
+try {
+    club.agregarSocio("Ana");
+    System.out.println("A");
+    club.agregarSocio("Luis");     // lanza CupoLlenoException
+    System.out.println("B");
+} catch (CupoLlenoException e) {
+    System.out.println("C");
+} finally {
+    System.out.println("D");
+}
+System.out.println("E");`, q: "¿Qué imprime?",
+      o: ["A, C, D, E", "A, B, D, E", "A, C, E", "A, C, D"], a: 0,
+      oe: ["Ana entra (A); Luis lanza y salta al catch (C); el finally corre siempre (D); y como se atrapó, el programa sigue (E). Lo corrí.", "B nunca se imprime: la excepción salta antes.", "Falta D: el finally corre siempre.", "Falta E: la excepción se atrapó, así que el programa sigue."] },
+    { id: "f2", k: "Excepciones", code: `
+// CupoLlenoException extends Exception
+// agregarSocio(String nombre) throws CupoLlenoException
+
+public class Consola {
+    private Club club = new Club(30);
+
+    public void inscribir(String nombre) {
+        club.agregarSocio(nombre);
+        System.out.println("Inscrito");
+    }
+}`, q: "¿Qué pasa al compilar Consola?",
+      o: ["Compila y, si el club está lleno, el programa se detiene", "No compila: la excepción es checked, así que hay que atraparla con try/catch o declararla con `throws`", "Compila, porque la excepción la lanza Club y no Consola", "Compila con una advertencia"], a: 1,
+      oe: ["Ni siquiera compila.", "El compilador dice «unreported exception CupoLlenoException; must be caught or declared to be thrown». Lo corrí.", "Quien llama a un método con `throws` de una checked también tiene que hacerse cargo.", "Es un error, no una advertencia."] },
+    { id: "f3", k: "Leer una prueba", code: `
+@Test
+public void noHayCupo() throws CupoLlenoException {
+    club.agregarSocio("Ana");          // el club tiene capacidad 1
+    CupoLlenoException e = assertThrows(CupoLlenoException.class,
+            () -> club.agregarSocio("Luis"));
+    assertEquals("No hay cupo para Luis", e.getMessage());
+}`, q: "¿Qué verifica esta prueba?",
+      o: ["Que con el club lleno, inscribir a Luis lanza CupoLlenoException con el mensaje «No hay cupo para Luis»", "Que Ana no se puede inscribir", "Que el club tiene capacidad 1", "Que agregarSocio retorna false"], a: 0,
+      oe: ["Lo que se verifica es lo que está en los asserts: que se lance la excepción y su mensaje.", "Ana sí entra: es el escenario (given).", "La capacidad es parte del escenario, no se verifica.", "`agregarSocio` es void y no retorna nada."] },
+    { id: "f4", k: "Estrategias de errores", q: "Si la pasarela no responde, la app espera un minuto y vuelve a intentar el cobro. Y si la tarjeta es rechazada, le muestra al usuario «Pago rechazado, intenta con otro medio». ¿Qué estrategias son, en ese orden?",
+      o: ["Reintentar; balk", "Rollback; inacción", "Alternativa; prevenir", "Suspensión temporal; apelar a una autoridad superior"], a: 0,
+      oe: ["Volver a intentar, y no de inmediato, es reintentar. Avisarle a quien pidió para que él lo maneje es balk.", "No se deshace nada ni se deja de hacer algo.", "No se hace otra actividad distinta ni se evita el error.", "No se detiene todo el sistema; y aunque se le avisa al usuario, el error es de su propia petición: eso es balk."] }
+  ]
+};
+
+/* ---------- Ejercicios de clasificar ---------- */
+const TCTX = ["Funcional", "No funcional", "Regla del dominio", "Restricción"];
+const LAB_CTX = [
+  { r: "Un estudiante reserva una bicicleta en una estación.", a: TCTX[0], e: "Algo que el sistema hace." },
+  { r: "La devuelve en cualquier otra estación.", a: TCTX[0], e: "Algo que el sistema hace." },
+  { r: "Cada préstamo dura máximo 2 horas.", a: TCTX[2], e: "Una regla del negocio." },
+  { r: "Multa de 2000 pesos por cada media hora adicional.", a: TCTX[2], e: "Una regla del negocio." },
+  { r: "Un estudiante no puede tener más de un préstamo activo.", a: TCTX[2], e: "Una regla del negocio." },
+  { r: "Mostrar la disponibilidad de cada estación en menos de 2 segundos.", a: TCTX[1], e: "Qué tan bien: rendimiento, y medible." },
+  { r: "Aguantar 3000 usuarios al mismo tiempo en el cambio de clase.", a: TCTX[1], e: "Qué tan bien: carga." },
+  { r: "Seguir funcionando aunque se caiga el internet de una estación.", a: TCTX[1], e: "Qué tan bien: disponibilidad (resiliencia)." },
+  { r: "Los datos de los estudiantes vienen del sistema de Registro, que ya existe y no se puede modificar.", a: TCTX[3], e: "Un sistema legado: límite del proyecto." },
+  { r: "Presupuesto de 40 millones.", a: TCTX[3], e: "Presupuesto: límite del proyecto." },
+  { r: "Debe estar listo en 4 meses.", a: TCTX[3], e: "Plazo: límite del proyecto." },
+  { r: "Lo hará un equipo de 3 monitores en Java.", a: TCTX[3], e: "Equipo y tecnología: límite del proyecto." }
+];
+const THU = ["Bien escrita", "Es una tarea técnica", "Le falta el beneficio", "No se puede verificar"];
+const LAB_HU = [
+  { r: "Como estudiante quiero reservar una bicicleta desde la app para no llegar a una estación vacía.", a: THU[0], e: "Rol, acción y beneficio, y se le pueden escribir criterios." },
+  { r: "Crear la tabla Prestamos en la base de datos.", a: THU[1], e: "Es trabajo de programación, no algo que pida un usuario." },
+  { r: "Como estudiante quiero devolver la bicicleta.", a: THU[2], e: "Falta el «para…»." },
+  { r: "Como usuario quiero que la app funcione bien para estar contento.", a: THU[3], e: "«Funcione bien» no se puede comprobar." },
+  { r: "Como administrador quiero ver qué estaciones están vacías para llevarles bicicletas.", a: THU[0], e: "Rol, acción y beneficio concretos." },
+  { r: "Programar la clase Prestamo con sus getters.", a: THU[1], e: "Es una tarea técnica." }
+];
+
+/* ---------- Estado ---------- */
+const KEY = "dpoo-repaso-final-v1";
+let st = { ans: {}, labs: {} };
+try { const raw = localStorage.getItem(KEY); if (raw) st = Object.assign(st, JSON.parse(raw)); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+
+/* ---------- Render de preguntas ---------- */
+function showAnswer(fs, it, pick) {
+  fs.querySelectorAll("input").forEach((r) => {
+    r.disabled = true;
+    const lab = r.closest(".qopt"), v = Number(r.value);
+    lab.classList.add("locked");
+    if (v === it.a) lab.classList.add("right"); else if (v === pick) lab.classList.add("wrong");
+    if (v === pick) r.checked = true;
+  });
+  const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.textContent = "";
+  const ok = pick === it.a;
+  ex.className = "qexp " + (ok ? "ok" : "no");
+  ex.appendChild(el("p", "", ok ? "Correcta." : "Incorrecta. La correcta es la " + String.fromCharCode(65 + it.a) + "."));
+  const ul = el("ul");
+  it.oe.forEach((t, oi) => { const li = el("li"); li.appendChild(el("span", "mk " + (oi === it.a ? "y" : "n"), String.fromCharCode(65 + oi) + (oi === it.a ? " ✓" : " ✗"))); li.appendChild(rich(el("span"), t)); ul.appendChild(li); });
+  ex.appendChild(ul);
+}
+function renderSec(key) {
+  const box = $("#q-" + key); box.textContent = "";
+  SECS[key].forEach((it, i) => {
+    const fs = el("fieldset", "q"); fs.id = it.id;
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); rich(lt, it.q); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.code) { const pre = el("pre", "code"); pre.innerHTML = codeHTML(it.code, false); fs.appendChild(pre); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"), r = el("input"); r.type = "radio"; r.name = it.id; r.id = it.id + "-o" + oi; r.value = String(oi);
+      r.addEventListener("change", () => { st.ans[it.id] = oi; save(); showAnswer(fs, it, oi); updateScores(); });
+      lab.appendChild(r); lab.appendChild(rich(el("span", "", String.fromCharCode(65 + oi) + ") "), o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("div", "qexp"); ex.hidden = true; ex.setAttribute("aria-live", "polite"); fs.appendChild(ex);
+    box.appendChild(fs);
+    if (st.ans[it.id] != null) showAnswer(fs, it, st.ans[it.id]);
+  });
+}
+function secStats(key) {
+  const qs = SECS[key], done = qs.filter((q) => st.ans[q.id] != null), ok = done.filter((q) => st.ans[q.id] === q.a);
+  return { n: qs.length, done: done.length, ok: ok.length };
+}
+const NOMBRES = { pruebas: "Pruebas", contexto: "Contexto", historias: "Historias", disenos: "Diseños", patrones: "Patrones", codigo: "Código" };
+function updateScores() {
+  let n = 0, done = 0, ok = 0;
+  Object.keys(SECS).forEach((k) => {
+    const s = secStats(k); n += s.n; done += s.done; ok += s.ok;
+    const e = $("#score-" + k); if (e) e.textContent = s.done ? "· " + s.ok + " de " + s.done + " bien (" + s.n + " en total)" : "· " + s.n + " preguntas";
+  });
+  $("#scorebar").textContent = ok + "/" + n;
+  const card = $("#final-card"); card.textContent = "";
+  if (!done) { card.appendChild(el("p", "muted", "Responde las preguntas y aquí ves tu resultado por sección.")); card.className = "result"; return; }
+  card.className = "result " + (ok / Math.max(done, 1) >= 0.8 ? "pass" : "fail");
+  card.appendChild(el("span", "score", ok + "/" + n));
+  const parts = Object.keys(SECS).map((k) => { const s = secStats(k); return NOMBRES[k] + " " + s.ok + "/" + s.n; });
+  card.appendChild(el("p", "", parts.join(" · ")));
+  const labs = [];
+  if (st.labs.ctx != null) labs.push("Contexto: " + st.labs.ctx + "/" + LAB_CTX.length);
+  if (st.labs.hu != null) labs.push("Historias: " + st.labs.hu + "/" + LAB_HU.length);
+  if (labs.length) card.appendChild(el("p", "", "Ejercicios de clasificar: " + labs.join(" · ")));
+  const bad = []; Object.keys(SECS).forEach((k) => SECS[k].forEach((q) => { if (st.ans[q.id] != null && st.ans[q.id] !== q.a) bad.push(NOMBRES[k] + " " + (SECS[k].indexOf(q) + 1)); }));
+  if (bad.length) card.appendChild(el("p", "muted", "Para repasar: " + bad.join(", ") + "."));
+}
+
+/* ---------- Ejercicios de clasificar ---------- */
+function buildAssign(boxId, items, options, key) {
+  const box = $("#" + boxId); box.textContent = "";
+  items.forEach((it, i) => {
+    const row = el("div", "arow");
+    const lab = rich(el("label"), it.r); lab.htmlFor = key + "-" + i; row.appendChild(lab);
+    const sel = el("select"); sel.id = key + "-" + i;
+    const o0 = el("option", "", "Escoge…"); o0.value = ""; sel.appendChild(o0);
+    options.forEach((o) => { const op = el("option", "", o); op.value = o; sel.appendChild(op); });
+    row.appendChild(sel);
+    const why = el("p", "why"); why.hidden = true; row.appendChild(why);
+    box.appendChild(row);
+  });
+}
+function checkAssign(items, key, msgId, stKey) {
+  const sels = items.map((_, i) => $("#" + key + "-" + i));
+  const missing = sels.filter((s) => !s.value).length;
+  if (missing) { $("#" + msgId).textContent = missing === 1 ? "Te falta 1 por escoger." : "Te faltan " + missing + " por escoger."; return; }
+  let ok = 0;
+  items.forEach((it, i) => {
+    const s = sels[i], good = s.value === it.a, why = s.parentElement.querySelector(".why");
+    s.classList.remove("right", "wrong"); s.classList.add(good ? "right" : "wrong"); if (good) ok++;
+    why.hidden = false; why.className = "why " + (good ? "ok" : "no"); why.textContent = "";
+    rich(why, (good ? "✓ " : "✗ Es " + it.a + ". ") + it.e);
+  });
+  $("#" + msgId).textContent = "Acertaste " + ok + " de " + items.length + ".";
+  st.labs[stKey] = ok; save(); updateScores();
+}
+[["lab-ctx", LAB_CTX, TCTX, "lc", "ctx"], ["lab-hu", LAB_HU, THU, "lh", "hu"]].forEach(([id, items, opts, key, sk]) => {
+  buildAssign(id, items, opts, key);
+  $("#" + id + "-check").addEventListener("click", () => checkAssign(items, key, id + "-msg", sk));
+  $("#" + id + "-reset").addEventListener("click", () => { buildAssign(id, items, opts, key); $("#" + id + "-msg").textContent = ""; });
+});
+
+Object.keys(SECS).forEach(renderSec);
+updateScores();
+
+/* ---------- Guardar ---------- */
+let db = null;
+$("#save").addEventListener("click", async () => {
+  if (!db) { $("#save-msg").textContent = "No se pudo conectar con la base de datos. Cuéntale a Claude tu resultado en el chat."; return; }
+  let n = 0, ok = 0; const porSeccion = {}, falladas = [];
+  Object.keys(SECS).forEach((k) => { const s = secStats(k); n += s.n; ok += s.ok; porSeccion[k] = s.ok + "/" + s.n; SECS[k].forEach((q) => { if (st.ans[q.id] != null && st.ans[q.id] !== q.a) falladas.push(q.id); if (st.ans[q.id] == null) falladas.push(q.id + "(sin responder)"); }); });
+  $("#save").disabled = true; $("#save-msg").textContent = "Guardando…";
+  try {
+    await db.collection("intentos").add({ modulo: "Repaso", puntaje: ok, total: n, porSeccion: porSeccion, falladas: falladas, contexto: st.labs.ctx == null ? null : st.labs.ctx, historias: st.labs.hu == null ? null : st.labs.hu, fecha: new Date().toISOString() });
+    $("#save-msg").textContent = "Guardado. Cuando vuelvas al chat, Claude repasa contigo lo que fallaste.";
+  } catch (e) { $("#save").disabled = false; $("#save-msg").textContent = "No se pudo guardar. Intenta otra vez o cuéntale a Claude en el chat."; }
+});
+$("#reset-all").addEventListener("click", () => { st = { ans: {}, labs: {} }; save(); Object.keys(SECS).forEach(renderSec); updateScores(); $("#save").disabled = false; $("#save-msg").textContent = ""; });
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+})();
+</script>

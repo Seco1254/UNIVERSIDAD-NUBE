@@ -56,6 +56,7 @@ Cada rama se estudia distinto. En DPOO se mantienen las 4 secciones, pero así:
 | DPOO | M6 · Pruebas con JUnit (lab de semáforo y mutantes) | https://claude.ai/artifact/9VZooz5anDDQJrHWQySwnC | `DPOO/EXAMEN_2/artifacts/M6.html` |
 | DPOO | M7–M8 · Principios y patrones, exprés con lo esencial de M3 (un solo artifact; progreso en docs `M7`, `M8` y `M3`) | https://claude.ai/artifact/Uq2PJGHFJ8n55FcY1T9ajk | `DPOO/EXAMEN_2/artifacts/M7-M8.html` |
 | DPOO | M9 · Mini-simulacro de 40 min (intentos con el código pegado en `intentos`, nota sobre 100) | https://claude.ai/artifact/3AQBd7wjFgjh1dGM6HzDUK | `DPOO/EXAMEN_2/artifacts/M9.html` |
+| DPOO | Repaso final del día anterior al examen (35 preguntas tipo examen; resultado en `intentos`) | https://claude.ai/artifact/Bf7fGMW6CKviursPEFgyJV | `DPOO/EXAMEN_2/artifacts/repaso-final.html` |
 
 ## Convenciones
 
