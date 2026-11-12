@@ -50,6 +50,7 @@ En el paquete no hay exámenes 2 anteriores. Todo lo de esta sección sale del P
 - Un texto de contexto sobre una empresa, del que hay que sacar, por ejemplo, tres requerimientos no funcionales y tres restricciones.
 - Pruebas: caja blanca o negra (ejemplo del profe: el equipo propio, caja blanca porque se tiene el código; un tercero que hace la pasarela de pagos, caja negra), niveles y tipos de pruebas, las cuatro fases y given-when-then.
 - Historias de usuario.
+- Se permite una **hoja de ayuda tamaño carta, escrita a mano**. Plantilla para copiar: [hoja de ayuda](https://claude.ai/artifact/5T8ibGrX5oSZHkhdb3CxvB).
 - El examen es el día siguiente (el estudiante dijo el jueves 12 que «hoy es el día anterior»). Para eso se hizo el [repaso final](https://claude.ai/artifact/Bf7fGMW6CKviursPEFgyJV).
 
 ### Por confirmar con el profe (hoy en clase o el jueves)

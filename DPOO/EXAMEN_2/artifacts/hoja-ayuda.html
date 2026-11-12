@@ -1,0 +1,496 @@
+<title>Hoja de ayuda DPOO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap">
+<style>
+/* Layout: el cuaderno del plan de DPOO, sobre un lienzo de puntos de editor UML. Columna de lectura ≤ 880px con barra de secciones fija; los diagramas, el código y el lab son las piezas que se salen de la columna, cada una con su propio scroll. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#17151f; --muted:#5c5a6b; --rule:#dcdae5; --dot:rgba(23,21,31,.12);
+  --accent:#5636c9; --accent-ink:#ffffff; --accent-soft:#ebe6fb;
+  --code-bg:#fbfaff; --chip-bg:#ebe8f5;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --syn-kw:#5636c9; --syn-ty:#0b6e7a; --syn-str:#1f7d53; --syn-com:#7b7890; --syn-ann:#b8680c; --syn-num:#b8680c;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+    --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+    --code-bg:#13111a; --chip-bg:#2a2737;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f16; --surface:#191722; --ink:#e9e7f2; --muted:#a09db2; --rule:#2e2b3b; --dot:rgba(233,231,242,.09);
+  --accent:#ab9bff; --accent-ink:#120f1f; --accent-soft:#2a2350;
+  --code-bg:#13111a; --chip-bg:#2a2737;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --syn-kw:#b9a9ff; --syn-ty:#5fc9d6; --syn-str:#62d49e; --syn-com:#8e8aa3; --syn-ann:#f2a955; --syn-num:#f2a955;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--paper)}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2.2rem,7vw,3.4rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.15rem; font-weight:750}
+h4{font-size:1rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--chip-bg); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.prose{display:grid; gap:10px; max-width:70ch}
+.prose ul,.prose ol{padding-left:20px; display:grid; gap:6px}
+.prose-p{max-width:70ch}
+section{display:grid; gap:24px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+.sec-head{display:grid; gap:6px}
+.note{font-size:.95rem; max-width:70ch}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+.wrap{max-width:880px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:56px}
+
+/* Encabezado */
+.head{display:grid; gap:14px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.stereo{font-family:var(--f-mono); font-size:.8rem}
+.lede{font-size:1.08rem; max-width:64ch}
+.goals{padding-left:20px; display:grid; gap:4px; max-width:70ch}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn.small{font-size:.85rem; padding:6px 11px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Títulos de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.sec-title.sub{border-top-width:1px}
+.sec-title.sub .sec-num{font-size:1.8rem}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+table.vocab{table-layout:fixed}
+
+/* Figuras UML */
+.fig{overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:10px}
+.fig figcaption{font-size:.84rem; color:var(--muted); margin-top:6px}
+.uml{display:block; max-width:none; overflow:visible}
+@media (min-width:720px){ .uml{width:100%; max-width:var(--w); height:auto} }
+.uml .u-bg{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-ln{stroke:var(--ink); stroke-width:1}
+.uml .hl{fill:transparent}
+.uml .u-nm{font:600 12px var(--f-body); fill:var(--ink)}
+.uml .u-nm.abs,.uml .u-m.abs{font-style:italic}
+.uml .u-st{font:10px var(--f-mono); fill:var(--muted)}
+.uml .u-m{font:10.5px var(--f-mono); fill:var(--ink)}
+.uml .u-m.st{text-decoration:underline}
+.uml .u-rl{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-hit{fill:none; stroke:transparent; stroke-width:14}
+.uml .u-tri,.uml .u-dia{fill:var(--surface); stroke:var(--ink); stroke-width:1.2}
+.uml .u-dia.full{fill:var(--ink)}
+.uml .u-arr{fill:none; stroke:var(--ink); stroke-width:1.2}
+.uml .u-lb{font:10.5px var(--f-mono); fill:var(--muted)}
+.uml .hit{cursor:pointer}
+.uml g.hit:hover .hl{fill:var(--accent-soft)}
+.uml g.hit,.uml g.hit:focus,.uml g.hit:focus-visible{outline:none}
+.uml g.hit:focus-visible .hl{fill:var(--accent-soft); stroke:var(--accent)}
+.uml .on .hl{fill:var(--accent-soft)}
+.uml .on .u-m,.uml .on .u-nm{fill:var(--accent)}
+.uml .rel.hit:hover .u-rl,.uml .rel.hit:focus-visible .u-rl{stroke:var(--accent)}
+.uml .rel.on .u-rl,.uml .rel.on .u-arr,.uml .rel.on .u-tri,.uml .rel.on .u-dia{stroke:var(--accent); stroke-width:2.4}
+.uml .rel.on .u-lb{fill:var(--accent)}
+.uml .good .hl{fill:var(--green-soft)} .uml .good .u-m,.uml .good .u-nm,.uml .rel.good .u-lb{fill:var(--green)}
+.uml .rel.good .u-rl,.uml .rel.good .u-arr,.uml .rel.good .u-tri{stroke:var(--green); stroke-width:2.4}
+.uml .bad .hl{fill:var(--red-soft)} .uml .bad .u-m,.uml .bad .u-nm,.uml .rel.bad .u-lb{fill:var(--red)}
+.uml .rel.bad .u-rl,.uml .rel.bad .u-arr,.uml .rel.bad .u-tri{stroke:var(--red); stroke-width:2.4}
+
+/* Código */
+.code{margin:0; font-family:var(--f-mono); font-size:.8rem; line-height:1.65; background:var(--code-bg); border:1px solid var(--rule); border-radius:8px; padding:8px 0; overflow-x:auto; color:var(--ink); tab-size:4}
+.code .cl{display:block; white-space:pre; padding:0 12px; min-width:max-content}
+.code .gut{display:inline-block; width:1.4em; color:var(--muted); user-select:none}
+.code .add{background:var(--green-soft)} .code .add .gut{color:var(--green); font-weight:600}
+.code .del{background:var(--red-soft); color:var(--red)} .code .del .gut{color:var(--red); font-weight:600}
+.code .del s{text-decoration-thickness:1.5px}
+.code .del [class^="c-"]{color:inherit}
+.code.sm{font-size:.76rem}
+.c-kw{color:var(--syn-kw); font-weight:500} .c-ty{color:var(--syn-ty)} .c-str{color:var(--syn-str)} .c-com{color:var(--syn-com); font-style:italic} .c-ann{color:var(--syn-ann)} .c-num{color:var(--syn-num)}
+
+/* Teoría */
+.idea{display:grid; gap:16px; min-width:0}
+.idea > h3{font-size:1.3rem}
+.ix{display:block; font-family:var(--f-mono); font-size:.74rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.flip{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.flip > div{display:grid; gap:6px; min-width:0}
+.flip code{justify-self:start}
+.flip .arrow{font-size:1.4rem; color:var(--accent); font-weight:700}
+@media (max-width:620px){ .flip{grid-template-columns:1fr} .flip .arrow{transform:rotate(90deg); justify-self:start} }
+.worked{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:12px; min-width:0}
+.wk-t{font-family:var(--f-display); font-weight:800; font-size:1.05rem}
+.wsteps{list-style:none; padding:0; display:grid; gap:16px; counter-reset:w}
+.wsteps > li{display:grid; grid-template-columns:2rem minmax(0,1fr); gap:4px 10px; counter-increment:w}
+.wsteps > li::before{content:counter(w); grid-row:1 / span 3; font-family:var(--f-display); font-weight:900; font-size:1.25rem; color:var(--accent); line-height:1.4}
+.wsteps > li > *{grid-column:2; min-width:0}
+.wsteps > li > p + p{margin-top:2px}
+.wk-end{font-weight:600}
+.callout{background:var(--orange-soft); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; font-size:.93rem}
+.callout b{color:var(--orange)}
+.rules3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px}
+.rules3 > div{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; font-size:.93rem}
+.rules3 b{font-family:var(--f-display); font-size:1rem}
+.dict{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:12px}
+.dcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:8px; align-content:start; min-width:0}
+.dcard .fig{border:0; padding:0}
+.dcard .lee{font-size:.9rem}
+.dcard .nota{font-size:.86rem; color:var(--muted)}
+.timeline{display:flex; height:30px; border-radius:6px; overflow:hidden; border:1.5px solid var(--ink)}
+.timeline i{display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--f-mono); font-size:.72rem; color:var(--ink); border-right:1px solid var(--ink); white-space:nowrap; overflow:hidden; min-width:0}
+.timeline i:last-child{border-right:0}
+.tl-key{list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:4px 16px; font-size:.88rem}
+.tl-key li{display:flex; gap:8px; align-items:baseline}
+.sw{display:inline-block; width:11px; height:11px; border-radius:2px; border:1px solid var(--ink); flex:none; transform:translateY(1px)}
+.recipe{padding-left:22px; display:grid; gap:8px; max-width:72ch}
+.tpl-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:16px; display:grid; gap:12px; box-shadow:4px 4px 0 var(--ink)}
+.tpl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:12px}
+.tpl-grid > div{display:grid; gap:6px; align-content:start; min-width:0}
+
+/* Lab */
+.lab{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:14px; display:grid; gap:12px; min-width:0}
+.lab-bar{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:space-between}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg button{font:inherit; font-size:.88rem; font-weight:600; padding:6px 14px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.lab-status{font-size:.82rem; color:var(--muted)}
+.lab-fig{background:var(--paper)}
+.lab-ask{border:1.5px dashed var(--accent); border-radius:8px; padding:10px 12px; display:grid; gap:6px}
+.lab-exp{min-height:3.2em; font-size:.93rem; display:grid; gap:6px; border-left:3px solid var(--accent); padding-left:12px}
+.lab-exp .lx-t{font-family:var(--f-mono); font-size:.8rem; color:var(--accent); font-weight:600}
+.lab-exp.ok{border-color:var(--green)} .lab-exp.no{border-color:var(--red)}
+.lab-code{max-height:380px; overflow:auto; position:relative}
+.lab-code .cl.k{cursor:pointer}
+.lab-code .cl.k:hover{background:var(--accent-soft)}
+.lab-code .cl.on{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent)}
+.lab-code .cl.ask{background:var(--hi); color:var(--hi-ink)}
+.lab-code .cl.file{color:var(--muted); font-weight:600; border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.lab-code .cl.file:first-child{border-top:0; margin-top:0; padding-top:0}
+.files{display:grid; gap:6px}
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px 9px 32px; font-weight:600; font-size:.92rem; list-style:none; position:relative}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); position:absolute; left:13px; top:9px}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.94rem; min-width:0}
+.reveals{display:grid; gap:8px}
+.copyrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.copymsg{font-size:.84rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob.pending{border-style:dashed; background:transparent}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; justify-content:space-between}
+.prob-head h3{font-size:1.12rem}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob .fig{background:var(--paper)}
+.prob-txt{display:grid; gap:8px; max-width:72ch}
+.prob-txt ul{padding-left:20px; display:grid; gap:4px}
+.timer{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--rule); border-radius:8px; padding:4px 6px 4px 12px}
+.timer .tval{font-size:1.05rem; font-weight:600; min-width:4.2ch}
+.timer.run{border-color:var(--accent)}
+.timer.over{border-color:var(--red); background:var(--red-soft)}
+.timer.over .tval{color:var(--red)}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check > p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.rub{padding-left:0; list-style:none; display:grid; gap:4px; font-size:.92rem}
+.rub li{position:relative; padding-left:24px; min-width:0}
+.rub li::before{content:"☐"; color:var(--accent); position:absolute; left:2px; top:0}
+
+/* Quiz */
+.quiz{display:grid; gap:18px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); padding:14px; margin:0; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; float:left; width:100%}
+.q legend + *{clear:both}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.2rem; line-height:1.3}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; min-width:0}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent); flex:none}
+.qopt span{min-width:0}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qfill select{font:inherit; font-family:var(--f-mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1.5px solid var(--accent); border-radius:5px; padding:1px 4px; margin:0 2px}
+.qfill select.right{border-color:var(--green); background:var(--green-soft)}
+.qfill select.wrong{border-color:var(--red); background:var(--red-soft)}
+.qwrite{font:inherit; font-family:var(--f-mono); font-size:.9rem; width:100%; padding:9px 11px; border:1.5px solid var(--rule); border-radius:8px; background:var(--code-bg); color:var(--ink)}
+.qwrite:focus{border-color:var(--accent); outline:none}
+.qwrite.right{border-color:var(--green)} .qwrite.wrong{border-color:var(--red)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; display:grid; gap:6px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.qexp ul{list-style:none; padding:0; display:grid; gap:4px}
+.qexp li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px}
+.qexp .mk{font-family:var(--f-mono); font-weight:600}
+.qexp .mk.y{color:var(--green)} .qexp .mk.n{color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.86rem; color:var(--muted); display:grid; gap:4px; max-width:72ch}
+/* Las rejillas de una columna no crecen con el código largo: el scroll queda dentro de cada bloque. */
+.wrap,section,.block,.head,.idea,.prose,.worked,.files,.reveals,details.rev .rev-body,.prob,.prob-txt,.lab,.lab-exp,.lab-ask,.dcard,.quiz,fieldset.q,.qexp,.tpl-box,.callout{grid-template-columns:minmax(0,1fr)}
+details.rev{min-width:0}
+/* ---- Hoja de ayuda ---- */
+.cara{background:var(--surface); border:1.5px solid var(--ink); border-radius:6px; box-shadow:4px 4px 0 var(--ink); padding:18px 20px; display:grid; gap:10px; min-width:0}
+.cara-h{display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; border-bottom:2px solid var(--ink); padding-bottom:6px}
+.cara-h h2{margin:0; font:900 1.3rem var(--f-display)}
+.cara-h span{font-size:.85rem; color:var(--muted)}
+.cols{column-count:2; column-gap:18px}
+@media (max-width:760px){ .cols{column-count:1} }
+.box{break-inside:avoid; border:1px solid var(--rule); border-radius:6px; padding:8px 10px; margin:0 0 10px; font-size:.84rem; line-height:1.45; background:var(--paper)}
+.box h3{margin:0 0 4px; font:800 .92rem var(--f-display); letter-spacing:.02em}
+.box h3 .pr{font-family:var(--f-mono); font-size:.72rem; font-weight:600; color:var(--accent); margin-right:4px}
+.box h3 .opt{font-family:var(--f-mono); font-size:.68rem; font-weight:500; color:var(--muted); margin-left:6px}
+.box ul{margin:0; padding-left:1rem; display:grid; gap:2px}
+.box p{margin:0 0 3px}
+.box b{font-weight:700}
+.box code{font-size:.8em}
+.no{color:var(--red); font-weight:600}
+.si{color:var(--green); font-weight:600}
+.lad{display:grid; grid-template-columns:auto minmax(0,1fr); gap:2px 8px; align-items:start}
+.lad > .n{font:800 .9rem var(--f-display); color:var(--accent)}
+.legend{font-size:.9rem}
+.legend li{margin-bottom:3px}
+@media print{
+  @page{size:letter; margin:9mm}
+  .nav, .head, .noprint, footer{display:none !important}
+  body{background:#fff}
+  .wrap{padding:0; max-width:none}
+  .cara{box-shadow:none; border:0; padding:0; break-after:page}
+  .box{font-size:8.6pt; line-height:1.32; padding:4px 6px; margin-bottom:5px; background:#fff}
+  .box h3{font-size:9.4pt}
+  .cols{column-count:2 !important; column-gap:8px}
+}
+</style>
+
+<nav class="nav" aria-label="Secciones"><div class="nav-in">
+  <a class="back" href="https://claude.ai/artifact/98SHNeM1aGDQeidWHXeHug" target="_blank" rel="noopener">← Plan</a>
+  <a href="#cara1"><span>1</span>Cara 1</a>
+  <a href="#cara2"><span>2</span>Cara 2</a>
+  <a href="https://claude.ai/artifact/Bf7fGMW6CKviursPEFgyJV" target="_blank" rel="noopener">Repaso final</a>
+</div></nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">DPOO · Examen 2 · Hoja de ayuda</p>
+    <h1>Hoja de ayuda</h1>
+    <div class="meta"><span class="stereo">«tamaño carta, a mano»</span><span>Para copiar hoy</span></div>
+    <p class="lede">Una hoja para pasar a mano. La <b>cara 1</b> tiene lo que más pesa en el examen: pruebas (forma, niveles, técnicas, 4 fases) y patrones. La <b>cara 2</b> tiene contexto, historias, diseño y errores. Si el profe solo deja usar una cara, copia la cara 1.</p>
+    <div class="block noprint">
+      <h3>Cómo copiarla</h3>
+      <ul class="legend">
+        <li><b>Prioridad:</b> <span class="si">★</span> es lo que no puede faltar. Lo marcado <i>(si cabe)</i> es lo primero que puedes quitar si no te alcanza el espacio.</li>
+        <li><b>Ya está abreviado</b> para escribir rápido: → (lleva a), x (por), c/u (cada uno), p/ (para), ✗ (mal).</li>
+        <li><b>Dos colores:</b> los títulos y lo marcado ✗ en un color; el resto en otro. Así encuentras las cosas rápido en el examen.</li>
+        <li><b>Copiarla ya es estudiar:</b> mientras la escribes, di en voz alta para qué sirve cada cosa.</li>
+        <li>Si la quieres imprimir para tenerla al lado mientras copias, la impresión sale en dos páginas tamaño carta.</li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ================= CARA 1 ================= -->
+  <section id="cara1" aria-label="Cara 1">
+    <div class="cara">
+      <div class="cara-h"><h2>CARA 1 · Pruebas y patrones</h2><span>DPOO · Examen 2</span></div>
+      <div class="cols">
+
+        <div class="box">
+          <h3><span class="pr">★</span>FORMA · ¿veo el código?</h3>
+          <p><b>C. BLANCA:</b> SÍ veo código · estructura interna · verificación · la hace el dev. Técn.: cobertura, pruebas de API, inyección de fallos, mutación, estáticas.</p>
+          <p><b>C. NEGRA:</b> NO veo código · funcionalidad (el qué, no el cómo) · validación · tester/QA. Técn.: particiones, bordes, tabla de decisión, pares, casos de uso/HU.</p>
+          <p><b>Mi equipo → blanca · Tercero (pasarela) → negra</b> · la unión app + pasarela → integración. Son complementarias.</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>NIVELES · ¿qué tan grande?</h3>
+          <div class="lad">
+            <span class="n">1</span><span><b>Unitaria:</b> 1 unidad (método/clase/interfaz) AISLADA. Stub = datos fijos · Mock = además verifica llamadas. Temprano, TDD.</span>
+            <span class="n">2</span><span><b>Integración:</b> módulos JUNTOS → interfaces e interacciones. Bottom-up ↑ · top-down ↓ · big-bang (todo de una).</span>
+            <span class="n">3</span><span><b>Sistema:</b> TODO vs requerimientos (lo hace el equipo). Destructiva (carga extrema) · no destructiva (rutina) · inyección de fallos (chaos monkey).</span>
+            <span class="n">4</span><span><b>Aceptación:</b> el CLIENTE decide. De usuario · operacional (listo p/ producción) · contractual · alfa/beta.</span>
+          </div>
+          <p class="no">✗ Regresión NO es un nivel.</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>TÉCNICAS · ¿cómo escojo los casos?</h3>
+          <p><b>Especificación (negra):</b></p>
+          <ul>
+            <li><b>Particiones de equivalencia:</b> grupos tratados igual → 1 representante c/u (también los inválidos). Envío: 0–39999 / 40000+ → 20000 y 60000.</li>
+            <li><b>Valores de borde (BVA):</b> frontera ± 1 → 39999 · 40000 · 40001. Caza el <code>&lt;</code> vs <code>&lt;=</code>.</li>
+            <li><b>Tabla de decisión:</b> combinaciones de condiciones (2 cond. → 4 casos; 3 → 8).</li>
+            <li><b>Transición de estados:</b> secuencias (PIN: 3 errores → bloqueada). Pocos valores.</li>
+          </ul>
+          <p><b>Estructura (blanca) = COBERTURA:</b> instrucciones (c/ línea) &lt; ramas (c/ lado del if) &lt; condiciones (c/ cond. T y F) &lt; cond. múltiples (todas las combinaciones). Eclipse: verde / rojo / amarillo. «No todo el código; sí todos los requerimientos».</p>
+          <p><b>Experiencia:</b> exploración (sin guion) · adivinar errores (vacío, null, 0, negativos).</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>4 FASES + GIVEN-WHEN-THEN</h3>
+          <div class="lad">
+            <span class="n">1</span><span><b>Definir la estructura</b> · <code>@BeforeEach setUp()</code> · <b>GIVEN</b> (dado)</span>
+            <span class="n">2</span><span><b>Ejecutar</b> · llamar el método · <b>WHEN</b> (cuando)</span>
+            <span class="n">3</span><span><b>Chequear</b> · <code>assert</code> · <b>THEN</b> (entonces)</span>
+            <span class="n">4</span><span><b>Destruir la estructura</b> · <code>@AfterEach tearDown()</code> · vuelve al estado inicial</span>
+          </div>
+          <p>Por qué: estado inicial · no cambiar el estado del sistema · pruebas NO acopladas (independientes).</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>MÁS PRUEBAS</h3>
+          <ul>
+            <li><b>Regresión</b> = volver a correr tras un cambio: reset all (todas, la más costosa) · test selection · prioritization (impacto, criticidad, frecuencia).</li>
+            <li><b>TDD:</b> pruebas → fallan → implementar → pasan → refactorizar.</li>
+            <li><b>Falla</b> = assert no se cumple («expected… but was») · <b>Error</b> = excepción · <b>Éxito</b>. <code>assume</code> → ABORTA.</li>
+            <li><code>assertEquals(ESPERADO, obtenido, margen)</code> · <code>assertThrows(X.class, () -&gt; …)</code> · lo que verifica = lo que está en el assert.</li>
+            <li><b>Principios:</b> pequeñas (1 resp.) · independientes · no quemar valores · asserts de alto nivel.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>PATRONES · ¿está bien?</h3>
+          <p><b>SINGLETON</b> (creacional): ① <code>private static</code> instancia ② constructor <code>private</code> ③ <code>public static getInstancia()</code> ④ <code>if (instancia == null)</code> crea.<br><span class="no">✗</span> constructor public → más de uno · <span class="no">✗</span> getInstancia sin static → NO compila · <span class="no">✗</span> sin if → uno nuevo cada vez.</p>
+          <p><b>PROXY</b> (estructural, el del profe): MISMA interfaz que el real · el cliente conoce SOLO la interfaz · solo el proxy le habla al real · controla el acceso (remoto, costoso). En Java: RMI.</p>
+          <p><b>ADAPTER</b> (estructural): implementa MI interfaz · tiene un atributo de la clase ajena · traduce. CAMBIA la interfaz.</p>
+          <p><b>FACADE</b> (estructural): 1 método simple → muchos pasos en muchas clases. El cliente no ve los subsistemas.</p>
+          <p><b>STRATEGY</b> (comportamiento): interfaz + 1 clase x variante · el contexto delega SIN if / instanceof (si no, viola la O).</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">○</span>FAMILIAS GoF <span class="opt">(si cabe)</span></h3>
+          <p><b>Creacionales:</b> Abstract Factory, Builder, Factory Method, Prototype, Singleton.</p>
+          <p><b>Estructurales:</b> Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy.</p>
+          <p><b>Comportamiento:</b> Chain of Resp., Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor.</p>
+          <p><b>Elementos de un patrón:</b> Intent · AKA · Motivation · Applicability | Structure · Participants · Collaborations | Consequences | Implementation · Sample code · Known uses | Related. (Alexander 1977 → GoF 1995)</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CARA 2 ================= -->
+  <section id="cara2" aria-label="Cara 2">
+    <div class="cara">
+      <div class="cara-h"><h2>CARA 2 · Contexto, historias, diseño y errores</h2><span>DPOO · Examen 2</span></div>
+      <div class="cols">
+
+        <div class="box">
+          <h3><span class="pr">★</span>CONTEXTO DE UNA EMPRESA</h3>
+          <ul>
+            <li><b>Funcional</b> = lo que HACE.</li>
+            <li><b>No funcional</b> = qué tan BIEN: rendimiento, carga, disponibilidad, seguridad, usabilidad, plataforma. Debe ser medible.</li>
+            <li><b>Regla del dominio</b> = regla del NEGOCIO (máx. 1 préstamo; total = platos + envío + propina).</li>
+            <li><b>Restricción</b> = límite del PROYECTO: presupuesto, legado (BD que ya existe), equipo, plazo, tecnología impuesta.</li>
+          </ul>
+          <p><span class="no">✗</span> «rápido» = NF mal escrito (sin medida) · «en Java» = restricción.</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>HISTORIAS DE USUARIO</h3>
+          <p><b>Como</b> [rol] <b>quiero</b> [acción] <b>para</b> [beneficio] + criterios VERIFICABLES, en given-when-then → cada criterio = 1 prueba.</p>
+          <p><span class="no">✗</span> tarea técnica («crear tabla») · <span class="no">✗</span> sin beneficio · <span class="no">✗</span> vaga («que funcione bien»).</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>DISEÑO</h3>
+          <ul>
+            <li>La responsabilidad va a quien TIENE la información. Cadena de getters = mal ubicada.</li>
+            <li><b>Estereotipos:</b> contenedor (sabe datos) · estructurador (colecciones, busca) · proveedor de servicios (trabaja p/ otros, pasivo) · coordinador (reparte, decide poco) · controlador (decide y dirige) · interfaz (habla con el exterior).</li>
+            <li><b>Ñam:</b> Pedido = controlador · Despachador = coordinador · Catálogo / Manejador de carritos = estructurador · Conector DB = proveedor · Pasarela / Mapas = interfaz.</li>
+            <li><b>Control:</b> centralizado (pocos controladores + clases get/set; «AlgoService» gigante; fácil hallar los puntos críticos) · delegado (coordinadores; menos acoplamiento) · disperso (sin centro; un cambio afecta a muchos).</li>
+            <li><b>Colaboraciones</b> <span class="no">✗</span>: muchas conexiones desde fuera del vecindario · muchos mensajes de bajo nivel (→ 1 mensaje grueso) · muchos caminos condicionales.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>4 RECOMENDACIONES + SOLID</h3>
+          <p>↓ complejidad · pensar en los cambios · ↓ acoplamiento · <b>inyección de dependencias</b> (por constructor o setter: RECIBIR, no crear ni buscar).</p>
+          <p><b>S</b> 1 razón p/ cambiar · <b>O</b> agregar sin modificar (if x tipo = <span class="no">✗</span>) · <b>L</b> la hija cumple lo del padre (lanza o deja vacío = <span class="no">✗</span>) · <b>I</b> interfaces pequeñas · <b>D</b> depender de interfaces (<code>new</code> concreto adentro = <span class="no">✗</span>).</p>
+          <p class="muted">(si cabe) Responsabilidades: las gruesas primero · sin «manejar/gestionar» · no repetir.</p>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">★</span>ERRORES · leer código</h3>
+          <ul>
+            <li><code>finally</code> SIEMPRE corre · catch específico ANTES del general (si no, no compila).</li>
+            <li><b>Checked</b> (<code>extends Exception</code>) → catch o throws, si no NO COMPILA · <b>unchecked</b> (<code>RuntimeException</code>) no obliga.</li>
+            <li><b>Diseño del error:</b> identificar → planear (probabilidad, prevenir, impacto, corregir) → diseñar (detectar activa/pasiva; reaccionar CERCA; nadie atrapa lo que no puede manejar; convertir bajo → alto nivel) → documentar.</li>
+            <li><b>9 estrategias:</b> prevenir · inacción · balk (avisar al que pidió) · suspensión temporal · acciones provisionales · alternativa · apelar a una autoridad superior · rollback · reintentar (no de inmediato).</li>
+            <li>Regiones de confianza: mi equipo &gt; otros equipos &gt; otras empresas · catch vacío = <span class="no">✗</span>.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h3><span class="pr">○</span>M3 <span class="opt">(si cabe)</span></h3>
+          <p><b>Librería</b> = yo la llamo · <b>Framework</b> = me llama (JUnit, Swing): inversión de control · <b>API</b> = contrato público.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Sale de las diapositivas del profe y de los módulos M1 a M9. Para practicar con preguntas tipo examen: el <a href="https://claude.ai/artifact/Bf7fGMW6CKviursPEFgyJV" target="_blank" rel="noopener">repaso final</a>.</p>
+  </footer>
+</div>
