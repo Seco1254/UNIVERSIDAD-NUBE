@@ -40,6 +40,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | P3 · M1 · Momento lineal, impulso y choques | https://claude.ai/artifact/3kx6GGb7J88waFWh6Aufew | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M1.html` |
 | Física 1 | P3 · M2 · Centro de masa y explosiones | https://claude.ai/artifact/66MsHun6zFbtocWYR4MoXA | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M2.html` |
 | Física 1 | P3 · X1 · Exprés de inercia y torque (Tarea 9) | https://claude.ai/artifact/GLJp5tPNiUUEgmZUZhrJcP | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/X1.html` |
+| Física 1 | P3 · M3 · Cinemática rotacional y momento de inercia | https://claude.ai/artifact/NuK9bkYw3vRKtNs1qXxz24 | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M3.html` |
 
 ## Convenciones
 

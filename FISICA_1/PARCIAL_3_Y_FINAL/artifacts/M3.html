@@ -1,0 +1,1197 @@
+<title>M3 Rotación e inercia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; módulo M3 del Parcial 3. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+
+/* Figuras de rotación e inercia */
+.sv-mass{fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6}
+.sv-axis{fill:var(--surface); stroke:var(--red); stroke-width:2}
+.sv-rod{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-disk{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.8}
+.sv-ring{stroke:var(--ink); stroke-width:6; fill:none}
+.sv-ring2{stroke:var(--ink); stroke-width:3.5; fill:none}
+.sv-plate{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.callout ul,.callout ol{padding-left:20px; display:grid; gap:4px}
+.prob-group{display:grid; gap:4px; margin:10px 0 2px; padding-top:10px; border-top:2px solid var(--ink)}
+.prob-group h3{font-family:var(--f-display); font-size:1.12rem}
+.prob-group p{margin:0; color:var(--muted); font-size:.95rem}
+.chip-opt{font-family:var(--f-mono); font-size:.72rem; color:var(--muted); border:1px dashed var(--muted); padding:1px 6px; border-radius:4px}
+.lab-h{font-size:1rem; margin:4px 0 -4px}
+.ibar{display:flex; height:14px; border-radius:6px; overflow:hidden; background:var(--paper); border:1px solid var(--rule)}
+.ibar span{display:block; height:100%; transition:width .25s}
+.ibar span:first-child{background:var(--accent)}
+.ibar span:last-child{background:var(--orange)}
+.key{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+.key i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>60 min</span></a>
+    <a href="#lab">2 Lab <span>15 min</span></a>
+    <a href="#taller">3 Taller <span>40 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 3 · Módulo 3 de 8</p>
+    <h1>Cinemática rotacional y momento de inercia</h1>
+    <div class="meta">
+      <span class="chip-hot">Parcial 3: jueves 19</span>
+      <span>Viernes 13 de noviembre · ~2 h</span>
+      <span>Libro: 9.1 a 9.3, 9.5 y 9.6 · Diapositivas 19 del profe</span>
+    </div>
+    <p class="prose">En M1 y M2 todo se movía en línea recta. Desde aquí las cosas giran: ruedas, poleas, barras con un eje. Este módulo te da el idioma del giro (cuánto gira, qué tan rápido y qué tan rápido cambia) y una idea nueva de verdad: el <b>momento de inercia</b>, que dice qué tan difícil es poner algo a girar. Es la «masa» de los giros.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M4.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+    <div class="callout">
+      <h3>Lo que pregunta el profe de este tema en el Parcial 3</h3>
+      <ul>
+        <li><b>En 3 de los 4 parciales:</b> una selección múltiple de 10 puntos que pide el momento de inercia de un sistema armado con anillos, barras y masas pegadas, respecto a un eje que no pasa por el centro. Se resuelve con ejes paralelos, pieza por pieza.</li>
+        <li><b>La cinemática rotacional</b> (θ, ω y α) no salió como pregunta propia, pero v = R·ω y a = R·α se usan en todos los problemas de poleas y de rodar (M4 y M5).</li>
+      </ul>
+      <p>Por eso el taller empieza con los dos momentos de inercia de los parciales.</p>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Cómo se describe un giro (θ, ω y α), cómo pasa ese giro a cada punto del cuerpo (v = R·ω) y qué tan difícil es poner algo a girar: el momento de inercia, con su tabla y los ejes paralelos. Seis ejemplos resueltos, solo con letras.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">eje</td><td>—</td><td>La línea alrededor de la cual gira el cuerpo. En las figuras, ⊙ es un eje perpendicular a la página.</td><td>—</td></tr>
+          <tr><td class="mono">θ</td><td>«theta»</td><td>Ángulo que ha girado el cuerpo, en radianes. Una vuelta completa son 2π radianes.</td><td>rad</td></tr>
+          <tr><td class="mono">ω</td><td>«omega»</td><td>Velocidad angular: cuánto ángulo gira por cada segundo.</td><td>rad/s</td></tr>
+          <tr><td class="mono">α</td><td>«alfa»</td><td>Aceleración angular: cuánto cambia ω por cada segundo. Si es negativa, el giro frena.</td><td>rad/s²</td></tr>
+          <tr><td class="mono">ω₀</td><td>«omega cero»</td><td>Velocidad angular al comienzo, en t = 0.</td><td>rad/s</td></tr>
+          <tr><td class="mono">N</td><td>«ene»</td><td>Número de vueltas: θ = 2π·N.</td><td>—</td></tr>
+          <tr><td class="mono">t</td><td>«te»</td><td>Tiempo.</td><td>s</td></tr>
+          <tr><td class="mono">R</td><td>«erre»</td><td>Radio de un cuerpo, o distancia de un punto al eje.</td><td>m</td></tr>
+          <tr><td class="mono">v</td><td>«ve»</td><td>Rapidez de un punto que gira. Su velocidad es tangente al círculo que recorre.</td><td>m/s</td></tr>
+          <tr><td class="mono">a<sub>t</sub></td><td>«a te»</td><td>Aceleración tangencial: la parte de la aceleración de un punto que cambia su rapidez.</td><td>m/s²</td></tr>
+          <tr><td class="mono">a<sub>c</sub></td><td>«a ce»</td><td>Aceleración centrípeta: apunta al centro y cambia la dirección. Ya la viste en M5 del Parcial 2.</td><td>m/s²</td></tr>
+          <tr><td class="mono">M</td><td>«eme»</td><td>Masa, siempre con M mayúscula (la m minúscula es para metros). En el parcial sale como m minúscula.</td><td>kg</td></tr>
+          <tr><td class="mono">r</td><td>«erre minúscula»</td><td>Distancia de cada masa al eje, medida en perpendicular al eje.</td><td>m</td></tr>
+          <tr><td class="mono">Σ</td><td>«sigma»</td><td>«Suma de»: suma un término por cada masa.</td><td>—</td></tr>
+          <tr><td class="mono">I</td><td>«i mayúscula»</td><td>Momento de inercia: qué tan difícil es poner a girar un cuerpo (o frenarlo) alrededor de un eje.</td><td>kg·m²</td></tr>
+          <tr><td class="mono">I<sub>CM</sub></td><td>«i ce eme»</td><td>Momento de inercia respecto a un eje que pasa por el centro de masa (M2).</td><td>kg·m²</td></tr>
+          <tr><td class="mono">D</td><td>«de»</td><td>Distancia entre el eje que pasa por el CM y un eje nuevo, paralelo a él.</td><td>m</td></tr>
+          <tr><td class="mono">L</td><td>«ele»</td><td>Largo de una barra.</td><td>m</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Todo con letras. Si algo se cancela, aparece <span class="cx">tachado</span>.</p>
+    </div>
+
+    <div class="block">
+      <h3>1. Ángulo, velocidad angular y aceleración angular</h3>
+      <p class="prose">Cuando una rueda gira, todos sus puntos dan la vuelta al mismo tiempo. Por eso, para describir el giro basta con decir <b>cuánto ángulo ha girado</b>. Ese ángulo se mide en <b>radianes</b>: el largo del arco recorrido dividido entre el radio. Una vuelta completa es la circunferencia, 2π·R, dividida entre R: 2π radianes.</p>
+      <div class="eq"><span><b>θ = arco / R<span class="ar">y</span>1 vuelta = 2π rad</b></span><span>Un radián es metros sobre metros: no tiene unidades de verdad. Por eso a veces «desaparece» en las cuentas.</span></div>
+      <p class="prose">Lo demás es lo mismo que en línea recta (Parcial 1), pero con ángulos. La <b>velocidad angular</b> ω dice cuánto ángulo gira por cada segundo, y la <b>aceleración angular</b> α dice cuánto cambia ω por cada segundo.</p>
+      <div class="eq"><span><b>ω = Δθ / Δt<span class="ar">y</span>α = Δω / Δt</b></span><span>Δ es «final menos inicial», como en M1. Si α = 0, gira siempre igual de rápido. Si α es negativa, frena.</span></div>
+    </div>
+
+    <div class="block">
+      <h3>2. Las ecuaciones con α constante</h3>
+      <p class="prose">Si α es constante, las ecuaciones son las mismas del movimiento con aceleración constante del Parcial 1. Solo cambias cada letra por su pareja de giro:</p>
+      <div class="tw"><table>
+        <thead><tr><th>En línea recta (Parcial 1)</th><th>Girando</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">x, v, a</td><td class="mono">θ, ω, α</td></tr>
+          <tr><td class="mono">v = v₀ + a·t</td><td class="mono">ω = ω₀ + α·t</td></tr>
+          <tr><td class="mono">x = x₀ + v₀·t + ½·a·t²</td><td class="mono">θ = θ₀ + ω₀·t + ½·α·t²</td></tr>
+          <tr><td class="mono">v² = v₀² + 2·a·Δx</td><td class="mono">ω² = ω₀² + 2·α·Δθ</td></tr>
+        </tbody>
+      </table></div>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1</span>
+            <h4 id="wx1-h">Una rueda que frena hasta detenerse</h4>
+            <p>Una rueda gira con velocidad angular ω₀ y empieza a frenar con aceleración angular constante. Se detiene después de dar N vueltas.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale la aceleración angular α y cuánto tarda en detenerse?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej1"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Pasa las vueltas a radianes.</p><p class="why">Las ecuaciones trabajan con radianes, y cada vuelta son 2π rad.</p><div class="mx">Δθ = 2π·N</div></li>
+          <li><p class="what">Escoge la ecuación que no tiene tiempo.</p><p class="why">Conoces ω₀, la velocidad angular final (0, porque se detiene) y Δθ, pero no el tiempo. Es la pareja de v² = v₀² + 2·a·Δx.</p><div class="mx">ω² = ω₀² + 2·α·Δθ<span class="ar">→</span>0 = ω₀² + 2·α·(2π·N)</div></li>
+          <li><p class="what">Despeja α.</p><p class="why">Pasas ω₀² al otro lado y divides entre 2·2π·N = 4π·N. Sale negativa porque la rueda frena.</p><div class="mx">α = −<span class="frac"><span>ω₀²</span><span>4π·N</span></span></div></li>
+          <li><p class="what">Ahora el tiempo, con ω = ω₀ + α·t.</p><p class="why">Al final ω = 0. Despejas t y reemplazas α: dividir entre una fracción es multiplicar por la fracción volteada, y los dos signos menos se cancelan.</p><div class="mx">0 = ω₀ + α·t<span class="ar">→</span>t = −<span class="frac"><span>ω₀</span><span>α</span></span> = ω₀·<span class="frac"><span>4π·N</span><span>ω₀²</span></span></div></li>
+          <li><p class="what">Simplifica.</p><p class="why">ω₀² = ω₀·ω₀: una ω₀ de arriba se cancela con una de abajo.</p><div class="mx">t = <span class="frac"><span><span class="cx">ω₀</span>·4π·N</span><span><span class="cx">ω₀</span>·ω₀</span></span> = <span class="frac"><span>4π·N</span><span>ω₀</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> α = −ω₀²/(4π·N) y t = 4π·N/ω₀.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si tiene que dar más vueltas para detenerse (N más grande), frena más suave (α más pequeña) y tarda más. Es el mismo problema del carro que frena hasta parar en una distancia, del Parcial 1.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>3. Del giro a cada punto: v = R·ω</h3>
+      <p class="prose">Todos los puntos de la rueda tienen la misma ω, pero no van igual de rápido: en una vuelta, un punto del borde recorre una circunferencia grande y uno cerca del centro, una pequeña, en el mismo tiempo. La rapidez de un punto que está a una distancia R del eje es:</p>
+      <div class="eq"><span><b>v = R·ω</b></span><span>Con ω en rad/s y R en metros, v sale en m/s.</span></div>
+      <p class="prose">Si además el giro acelera, el punto tiene dos aceleraciones: la <b>tangencial</b>, a lo largo de su camino, que cambia su rapidez, y la <b>centrípeta</b> de M5 del Parcial 2, que apunta al centro y cambia su dirección.</p>
+      <div class="eq"><span><b>a<sub>t</sub> = R·α<span class="ar">y</span>a<sub>c</sub> = ω²·R = v²/R</b></span><span>La centrípeta existe aunque ω no cambie; la tangencial solo existe si ω cambia.</span></div>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2</span>
+            <h4 id="wx2-h">Dos puntos del mismo disco</h4>
+            <p>Un disco gira alrededor de su centro con velocidad angular ω y aceleración angular α. El punto P está en el borde, a una distancia R del eje, y el punto Q está a la mitad, a R/2.</p>
+            <p><b>Pregunta:</b> compara la rapidez, la aceleración tangencial y la aceleración centrípeta de P y de Q.</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej2"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Lo que comparten.</p><p class="why">Todo el disco gira el mismo ángulo en el mismo tiempo: P y Q tienen la misma ω y la misma α.</p><div class="mx">ω<sub>P</sub> = ω<sub>Q</sub> = ω<span class="ar">y</span>α<sub>P</sub> = α<sub>Q</sub> = α</div></li>
+          <li><p class="what">Rapidez: v = R·ω, con la distancia de cada uno.</p><p class="why">P está a R del eje y Q a R/2.</p><div class="mx">v<sub>P</sub> = R·ω<span class="ar">y</span>v<sub>Q</sub> = <span class="frac"><span>R</span><span>2</span></span>·ω<span class="ar">→</span>v<sub>P</sub> = 2·v<sub>Q</sub></div></li>
+          <li><p class="what">Aceleración tangencial: a<sub>t</sub> = R·α.</p><div class="mx">a<sub>t,P</sub> = R·α<span class="ar">y</span>a<sub>t,Q</sub> = <span class="frac"><span>R</span><span>2</span></span>·α</div></li>
+          <li><p class="what">Aceleración centrípeta: a<sub>c</sub> = ω²·R.</p><p class="why">La misma ω al cuadrado, multiplicada por la distancia de cada uno.</p><div class="mx">a<sub>c,P</sub> = ω²·R<span class="ar">y</span>a<sub>c,Q</sub> = ω²·<span class="frac"><span>R</span><span>2</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> P tiene el doble de rapidez, de aceleración tangencial y de aceleración centrípeta que Q. La ω y la α son las mismas.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> En una vuelta, P recorre una circunferencia de radio R y Q una de radio R/2, en el mismo tiempo: P tiene que ir el doble de rápido. Por eso la punta de un ventilador es la que más corta el aire.</p>
+      </article>
+      <div class="callout">
+        <h3>Por qué importa para los parciales</h3>
+        <p>Una cuerda enrollada en una polea, o una rueda que rueda sin deslizar, se mueven con la rapidez del borde: <b>v = R·ω</b> y <b>a = R·α</b>. Esa regla aparece en todos los problemas de poleas con masa y de esferas que ruedan (M4 y M5).</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>4. El momento de inercia</h3>
+      <p class="prose">La masa dice qué tan difícil es acelerar algo en línea recta. El <b>momento de inercia</b> dice qué tan difícil es hacerlo girar. No depende solo de cuánta masa hay, sino de <b>qué tan lejos del eje</b> está: la masa lejos del eje cuenta mucho más, porque la distancia va al cuadrado.</p>
+      <div class="eq"><span><b>I = Σ M<sub>i</sub> · r<sub>i</sub>²</b></span><span>r<sub>i</sub> es la distancia de cada masa al eje. Una masa que está justo sobre el eje no aporta nada.</span></div>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · del profe, clase 20</span>
+            <h4 id="wx3-h">Tres masas unidas por alambres</h4>
+            <p>Tres masas, M, 2M y 3M, están unidas por alambres rígidos sin masa de largo a: 2M está encima de M y 3M a su derecha. El eje es perpendicular a la página.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale I si el eje pasa por M? ¿Y si pasa por 2M?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej3"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Eje en M: distancia de cada masa al eje.</p><p class="why">M está sobre el eje (r = 0). 2M y 3M están a un alambre de distancia.</p><div class="mx">r<sub>M</sub> = 0, r<sub>2M</sub> = a, r<sub>3M</sub> = a</div></li>
+          <li><p class="what">Suma M·r² de cada una.</p><div class="mx">I<sub>A</sub> = M·0² + 2M·a² + 3M·a² = 5M·a²</div></li>
+          <li><p class="what">Eje en 2M: distancias nuevas.</p><p class="why">M está a a. 3M está en la diagonal del cuadrado de lado a: por Pitágoras, √(a² + a²) = √2·a.</p><div class="mx">r<sub>M</sub> = a, r<sub>2M</sub> = 0, r<sub>3M</sub> = √2·a</div></li>
+          <li><p class="what">Suma otra vez.</p><p class="why">(√2·a)² = 2a².</p><div class="mx">I<sub>B</sub> = M·a² + 2M·0² + 3M·(√2·a)² = M·a² + 6M·a² = 7M·a²</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> I<sub>A</sub> = 5M·a² e I<sub>B</sub> = 7M·a².</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es el mismo cuerpo, pero con otro eje da otro I. El momento de inercia depende de dónde está el eje; por eso siempre se dice «respecto a qué eje».</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>5. La tabla de momentos de inercia</h3>
+      <p class="prose">Para cuerpos continuos, la suma se vuelve una integral (el profe la hizo en clase). En el parcial basta con saber la tabla. Todos tienen la forma (número)·M·R²: el número dice qué tan lejos del eje está la masa en promedio.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Cuerpo (eje por el centro)</th><th>I</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td>Anillo o cilindro hueco de radio R</td><td class="mono">M·R²</td><td>Toda la masa está a la distancia R.</td></tr>
+          <tr><td>Disco o cilindro sólido</td><td class="mono">½·M·R²</td><td>Hay masa cerca del centro, que aporta poco.</td></tr>
+          <tr><td>Esfera hueca</td><td class="mono">(2/3)·M·R²</td><td></td></tr>
+          <tr><td>Esfera sólida</td><td class="mono">(2/5)·M·R²</td><td></td></tr>
+          <tr><td>Barra de largo L, eje por el centro</td><td class="mono">(1/12)·M·L²</td><td></td></tr>
+          <tr><td>Barra de largo L, eje por un extremo</td><td class="mono">(1/3)·M·L²</td><td>Sale de la de arriba con ejes paralelos (ejemplo 4).</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>6. Teorema de ejes paralelos</h3>
+      <p class="prose">Si conoces I respecto a un eje que pasa por el centro de masa, puedes hallarlo respecto a <b>cualquier eje paralelo</b> a ese: le sumas la masa por la distancia entre los dos ejes al cuadrado.</p>
+      <div class="eq"><span><b>I = I<sub>CM</sub> + M · D²</b></span><span>Ojo: el punto de partida tiene que ser el eje <b>por el CM</b>, y D es la distancia entre los dos ejes.</span></div>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · del profe, clase 20</span>
+            <h4 id="wx4-h">Una barra que gira por un extremo</h4>
+            <p>Una barra uniforme de masa M y largo L gira alrededor de un eje perpendicular que pasa por uno de sus extremos.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale I?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej4"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Busca I<sub>CM</sub> en la tabla.</p><p class="why">El CM de la barra está en su mitad.</p><div class="mx">I<sub>CM</sub> = <span class="frac"><span>1</span><span>12</span></span>·M·L²</div></li>
+          <li><p class="what">Distancia entre los dos ejes.</p><p class="why">Del centro de la barra al extremo hay media barra.</p><div class="mx">D = <span class="frac"><span>L</span><span>2</span></span></div></li>
+          <li><p class="what">Aplica el teorema.</p><p class="why">1/12 + 1/4 = 1/12 + 3/12 = 4/12 = 1/3.</p><div class="mx">I = <span class="frac"><span>1</span><span>12</span></span>·M·L² + M·(<span class="frac"><span>L</span><span>2</span></span>)² = <span class="frac"><span>1</span><span>12</span></span>·M·L² + <span class="frac"><span>1</span><span>4</span></span>·M·L² = <span class="frac"><span>1</span><span>3</span></span>·M·L²</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> I = (1/3)·M·L², el valor de la tabla.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Por el extremo cuesta 4 veces más hacerla girar que por el centro, porque ahora hay masa hasta una distancia L del eje y no solo L/2.</p>
+      </article>
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5</span>
+            <h4 id="wx5-h">Un disco que gira por el borde</h4>
+            <p>Un disco uniforme de masa M y radio R gira alrededor de un eje perpendicular al disco que pasa por un punto de su borde.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale I?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej5"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">I<sub>CM</sub> de la tabla.</p><div class="mx">I<sub>CM</sub> = ½·M·R²</div></li>
+          <li><p class="what">Distancia del centro al eje nuevo.</p><p class="why">El eje está en el borde: a un radio del centro.</p><div class="mx">D = R</div></li>
+          <li><p class="what">Ejes paralelos.</p><div class="mx">I = ½·M·R² + M·R² = <span class="frac"><span>3</span><span>2</span></span>·M·R²</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> I = (3/2)·M·R².</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es más que ½·M·R² (eje en el centro), porque ahora casi toda la masa está más lejos del eje. Para un anillo pasa lo mismo: M·R² + M·R² = 2·M·R². Lo vas a usar en el taller.</p>
+      </article>
+          <article class="wx" aria-labelledby="wx6-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 6</span>
+            <h4 id="wx6-h">Dos discos pegados por el borde</h4>
+            <p>Dos discos iguales, de masa M y radio R, están pegados por un punto de sus bordes. El sistema gira alrededor de un eje perpendicular que pasa por el centro de uno de ellos.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale I?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej6"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Parte el sistema en piezas.</p><p class="why">Son dos discos: haces cada uno por separado y al final sumas.</p><div class="mx">I = I<sub>1</sub> + I<sub>2</sub></div></li>
+          <li><p class="what">Disco 1: el eje pasa por su centro.</p><p class="why">D = 0, así que vale lo de la tabla.</p><div class="mx">I<sub>1</sub> = ½·M·R²</div></li>
+          <li><p class="what">Disco 2: distancia de su centro al eje.</p><p class="why">Del eje al punto donde se tocan hay un radio, R, y de ahí al centro del disco 2, otro R.</p><div class="mx">D = R + R = 2R</div></li>
+          <li><p class="what">Disco 2: ejes paralelos.</p><p class="why">(2R)² = 4R². Y ½ + 4 = ½ + 8/2 = 9/2.</p><div class="mx">I<sub>2</sub> = ½·M·R² + M·(2R)² = ½·M·R² + 4M·R² = <span class="frac"><span>9</span><span>2</span></span>·M·R²</div></li>
+          <li><p class="what">Suma las dos piezas.</p><p class="why">½ + 9/2 = 10/2 = 5.</p><div class="mx">I = ½·M·R² + <span class="frac"><span>9</span><span>2</span></span>·M·R² = 5M·R²</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> I = 5M·R².</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> El disco de afuera aporta 9 veces más que el de adentro, porque está lejos del eje. Así se arman los sistemas del parcial: anillos, barras y masas pegadas, pieza por pieza.</p>
+      </article>
+    </div>
+
+    <div class="callout">
+      <h3>Receta: momento de inercia de un sistema</h3>
+      <ol>
+        <li>Parte el sistema en piezas: anillos, discos, barras y masas puntuales.</li>
+        <li>Para cada pieza, busca I<sub>CM</sub> en la tabla. Una masa puntual no tiene I<sub>CM</sub>: aporta solo M·r².</li>
+        <li>Mide D: la distancia del centro de cada pieza al eje. Si queda en diagonal, dibuja el triángulo y usa Pitágoras.</li>
+        <li>Ejes paralelos para cada pieza: I = I<sub>CM</sub> + M·D².</li>
+        <li>Suma todas las piezas.</li>
+      </ol>
+    </div>
+
+    <div class="callout trap"><h3>Trampas típicas</h3>
+      <p>Contar vueltas como si fueran radianes: una vuelta son 2π rad.</p>
+      <p>Confundir a<sub>t</sub> (cambia la rapidez) con a<sub>c</sub> (cambia la dirección).</p>
+      <p>En ejes paralelos, partir de un eje que no pasa por el CM.</p>
+      <p>Usar el radio del cuerpo en vez de la distancia de su centro al eje.</p>
+      <p>Darle I<sub>CM</sub> a una masa puntual: solo aporta M·r².</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: la rueda y el eje</h2><p>Dos experimentos. En el primero, una rueda gira con aceleración angular constante y ves que todos sus puntos tienen la misma ω, pero no la misma rapidez. En el segundo, mueves el eje y ves cuánto crece el momento de inercia.</p></div>
+    <h3 class="lab-h">Experimento 1 · La rueda</h3>
+    <div class="lab">
+      <div class="lab-stage"><div id="w-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="w-w0" id="w-w0-lab">Velocidad angular inicial ω₀ = 2 rad/s</label><input type="range" id="w-w0" min="0" max="6" step="0.5" value="2"></div>
+        <div class="ctl"><label for="w-al" id="w-al-lab">Aceleración angular α = 0 rad/s²</label><input type="range" id="w-al" min="-2" max="2" step="0.25" value="0"></div>
+        <div class="qrow"><button type="button" class="btn" id="w-go">Girar</button><button type="button" class="btn ghost" id="w-reset">Reiniciar</button></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Tiempo t</span><b id="w-t">0,00 s</b></div>
+          <div class="ro"><span>Ángulo θ</span><b id="w-th">0,00 rad</b></div>
+          <div class="ro"><span>Vueltas N</span><b id="w-n">0,00</b></div>
+          <div class="ro"><span>Velocidad angular ω</span><b id="w-w">2,00 rad/s</b></div>
+          <div class="ro"><span>Rapidez de P (borde, a 1 m)</span><b id="w-vp">2,00 m/s</b></div>
+          <div class="ro"><span>Rapidez de Q (a 0,5 m)</span><b id="w-vq">1,00 m/s</b></div>
+          <div class="status" id="w-status">Listo para girar</div>
+        </div>
+      </div>
+    </div>
+    <h3 class="lab-h">Experimento 2 · Mueve el eje</h3>
+    <div class="lab">
+      <div class="lab-stage"><div id="i-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <fieldset class="ctl"><legend>Cuerpo</legend>
+          <div class="seg">
+            <label><input type="radio" name="i-body" value="anillo" checked><span>Anillo</span></label>
+            <label><input type="radio" name="i-body" value="disco"><span>Disco</span></label>
+            <label><input type="radio" name="i-body" value="barra"><span>Barra</span></label>
+          </div>
+        </fieldset>
+        <div class="ctl"><label for="i-d" id="i-d-lab">Distancia del eje al CM: D = 0</label><input type="range" id="i-d" min="0" max="4" step="1" value="0"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>I<sub>CM</sub>, de la tabla</span><b id="i-cm">1,00 M·R²</b></div>
+          <div class="ro"><span>M·D²</span><b id="i-md">0,00 M·R²</b></div>
+          <div class="ro"><span>I = I<sub>CM</sub> + M·D²</span><b id="i-tot">1,00 M·R²</b></div>
+          <div class="ibar" aria-hidden="true"><span id="i-bar-cm"></span><span id="i-bar-md"></span></div>
+          <div class="key"><span><i style="background:var(--accent)"></i>I<sub>CM</sub></span><span><i style="background:var(--orange)"></i>M·D²</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Con α = 0, ¿qué punto va más rápido, P o Q? ¿Cuántas veces? ¿Y qué pasa con ω?</summary>
+          <div class="rev-body"><p><b>P va el doble de rápido que Q</b>, porque v = R·ω y P está al doble de distancia del eje. Pero los dos tienen la misma ω: todo el disco gira el mismo ángulo en el mismo tiempo.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Pon ω₀ = 4 rad/s y α = −1 rad/s². Antes de girar, calcula cuántas vueltas da hasta detenerse.</summary>
+          <div class="rev-body"><p><b>Unas 1,27 vueltas, en 4 s.</b> Con 0 = ω₀² + 2·α·Δθ: Δθ = 16/2 = 8 rad, y 8/(2π) ≈ 1,27 vueltas. El tiempo sale de 0 = ω₀ + α·t.</p></div></details>
+        <details class="rev"><summary>Reto 3 · Experimento 2: anillo con el eje en el borde (D = R). ¿Cuánto vale I? ¿Y el disco?</summary>
+          <div class="rev-body"><p><b>Anillo: 2·M·R². Disco: (3/2)·M·R².</b> En los dos casos se suma M·R² a lo de la tabla.</p></div></details>
+        <details class="rev"><summary>Reto 4 · Barra: lleva el eje del centro al extremo. ¿Cuántas veces crece I?</summary>
+          <div class="rev-body"><p><b>4 veces:</b> de M·L²/12 a M·L²/3, como en el ejemplo resuelto 4.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero los dos momentos de inercia de los parciales 3 anteriores; después práctica de cinemática rotacional y más sistemas.</p></div>
+    <p class="prose">Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas y 2 tipo parcial. Pasas a M4 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M4 · Energía rotacional y rodar sin deslizar (sábado 14).</p>
+    <p>Fuentes: diapositivas 19 del profe Ávila (clases 18 y 20), parciales 3 de 2024-2 y 2025-1, Tarea 9 de la complementaria E2, Young &amp; Freedman 9.1 a 9.6.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Figuras de M3 ---------- */
+const DEG = Math.PI / 180;
+const sb = (base, s, rest = "") => `${base}<tspan dy="3" font-size="9">${s}</tspan><tspan dy="-3">${rest}</tspan>`;
+const nf = (v) => (Math.round(v * 100) / 100).toString().replace(".", ",").replace("-", "−");
+function axisMark(x, y, lab = "eje") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="8" class="sv-axis"/><circle cx="${f1(x)}" cy="${f1(y)}" r="2.2" class="sv-axle"/>` + (lab ? T(x - 11, y + 20, lab, "sv-tl", "end") : ""); }
+function mass(x, y, lab, r = 8, dx = 12, dy = -8, anchor = "start") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" class="sv-mass"/>` + T(x + dx, y + dy, lab, "sv-t", anchor); }
+/* flecha curva: de a0 a a1 grados (antihorario si a1 > a0) */
+function curvedArrow(cx, cy, r, a0, a1, cls = "a-v") {
+  const p = (a) => [cx + r * Math.cos(a * DEG), cy - r * Math.sin(a * DEG)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1), ccw = a1 > a0;
+  let g = `<path d="M ${f1(x0)} ${f1(y0)} A ${r} ${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} ${ccw ? 0 : 1} ${f1(x1)} ${f1(y1)}" class="sv-arc"/>`;
+  const s = ccw ? 1 : -1, tx = -Math.sin(a1 * DEG) * s, ty = -Math.cos(a1 * DEG) * s;
+  return g + arrowSvg(x1 - tx * 12, y1 - ty * 12, x1 + tx * 2, y1 + ty * 2, cls);
+}
+function ruedaSvg(o = {}) {
+  const cx = 96, cy = 96, R = 66;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>`;
+  for (let k = 0; k < 6; k++) { const a = (k * 60 + 15) * DEG; g += `<line x1="${cx}" y1="${cy}" x2="${f1(cx + R * Math.cos(a))}" y2="${f1(cy - R * Math.sin(a))}" class="sv-thin"/>`; }
+  g += axisMark(cx, cy, "") + curvedArrow(cx, cy, R + 12, 30, 110) + T(cx + 58, cy - 70, o.w || "ω₀", "sv-t t-v");
+  (o.lines || []).forEach((l, i) => { g += T(188, 64 + i * 20, l, "sv-tl"); });
+  return `<svg viewBox="0 0 320 186" role="img" aria-label="${o.aria || "Una rueda que gira alrededor de su eje"}">${g}</svg>`;
+}
+function discoPuntosSvg(o = {}) {
+  const cx = 100, cy = 98, R = 72, a = 35 * DEG;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>` + axisMark(cx, cy, "");
+  const Px = cx + R * Math.cos(a), Py = cy - R * Math.sin(a), Qx = cx + R / 2 * Math.cos(a), Qy = cy - R / 2 * Math.sin(a);
+  g += `<line x1="${cx}" y1="${cy}" x2="${f1(Px)}" y2="${f1(Py)}" class="sv-dash"/>`;
+  g += `<circle cx="${f1(Px)}" cy="${f1(Py)}" r="5" class="sv-mass"/>` + T(Px + 8, Py - 6, "P", "sv-t");
+  g += `<circle cx="${f1(Qx)}" cy="${f1(Qy)}" r="5" class="sv-mass"/>` + T(Qx - 6, Qy - 9, "Q", "sv-t", "end");
+  g += curvedArrow(cx, cy, R + 12, 120, 200) + T(cx - 70, cy - 62, o.alpha ? "ω, α" : "ω", "sv-t t-v", "end");
+  const lines = o.alpha ? ["P: en el borde (R)", "Q: a R/2 del eje", "gira cada vez", "más rápido"] : ["P: en el borde (R)", "Q: a R/2 del eje"];
+  lines.forEach((l, i) => { g += T(192, 70 + i * 20, l, "sv-tl"); });
+  return `<svg viewBox="0 0 320 190" role="img" aria-label="Un disco que gira; P está en el borde y Q a la mitad del radio">${g}</svg>`;
+}
+function poleaCuerdaSvg() {
+  const cx = 110, cy = 70, R = 44, rx = cx + R;
+  let g = `<line x1="60" y1="12" x2="160" y2="12" class="sv-line"/><line x1="${cx}" y1="12" x2="${cx}" y2="${cy}" class="sv-line"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>` + axisMark(cx, cy, "");
+  g += `<line x1="${cx}" y1="${cy}" x2="${cx - R}" y2="${cy}" class="sv-dash"/>` + T(cx - R / 2, cy - 6, "R", "sv-t", "middle");
+  g += `<line x1="${rx}" y1="${cy}" x2="${rx}" y2="128" class="sv-rope"/>`;
+  g += block(rx, 152, 40, 24, "") + `<rect x="${rx - 20}" y="196" width="40" height="24" class="sv-ghost"/>`;
+  g += arrowSvg(rx + 34, 128, rx + 34, 164, "a-v") + T(rx + 40, 150, "a", "sv-t t-v");
+  g += `<line x1="${rx + 64}" y1="152" x2="${rx + 64}" y2="220" class="sv-dim"/>` + T(rx + 70, 190, "h", "sv-t");
+  g += curvedArrow(cx, cy, R + 10, 150, 60) + T(cx - 52, cy - 46, "α, ω", "sv-t t-v", "end");
+  g += T(rx - 26, 146, "bloque", "sv-tl", "end") + T(rx - 26, 214, "después", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 232" role="img" aria-label="Polea de radio R con una cuerda enrollada; del extremo cuelga un bloque que baja una altura h con aceleración a">${g}</svg>`;
+}
+function block(cx, yb, w, h, lab, cls = "sv-block") { return `<rect x="${f1(cx - w / 2)}" y="${f1(yb - h)}" width="${f1(w)}" height="${f1(h)}" class="${cls}"/>` + (lab ? T(cx, yb - h / 2 + 4, lab, "sv-lab", "middle") : ""); }
+function correaSvg() {
+  const y = 100, x1 = 84, r1 = 28, x2 = 224, r2 = 58, d = x2 - x1, sf = (r2 - r1) / d, cf = Math.sqrt(1 - sf * sf);
+  let g = `<circle cx="${x1}" cy="${y}" r="${r1}" class="sv-disk"/><circle cx="${x2}" cy="${y}" r="${r2}" class="sv-disk"/>`;
+  [[-1], [1]].forEach(([k]) => { const nx = -sf, ny = k * cf; g += `<line x1="${f1(x1 + r1 * nx)}" y1="${f1(y + r1 * ny)}" x2="${f1(x2 + r2 * nx)}" y2="${f1(y + r2 * ny)}" class="sv-rope"/>`; });
+  g += axisMark(x1, y, "") + axisMark(x2, y, "");
+  g += `<line x1="${x1}" y1="${y}" x2="${x1}" y2="${y + r1}" class="sv-dash"/>` + T(x1 + 5, y + 20, sb("R", "1"), "sv-t");
+  g += `<line x1="${x2}" y1="${y}" x2="${x2 + r2}" y2="${y}" class="sv-dash"/>` + T(x2 + r2 / 2, y - 6, sb("R", "2"), "sv-t", "middle");
+  g += curvedArrow(x1, y, r1 + 12, 60, 150) + T(x1 - 30, y - 44, sb("ω", "1"), "sv-t t-v", "end");
+  g += curvedArrow(x2, y, r2 + 12, 60, 120) + T(x2 + 30, y - r2 - 18, sb("ω", "2", " = ?"), "sv-t t-v");
+  g += T(154, y + r2 + 26, "correa sin deslizar", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 200" role="img" aria-label="Dos poleas de radios R1 y R2 unidas por una correa; la pequeña gira con omega 1">${g}</svg>`;
+}
+function tresMasasSvg(o = {}) {
+  const mx = 110, my = 150, a = 100, P = { M: [mx, my], "2M": [mx, my - a], "3M": [mx + a, my] };
+  let g = `<line x1="${mx}" y1="${my}" x2="${mx}" y2="${my - a}" class="sv-rope"/><line x1="${mx}" y1="${my}" x2="${mx + a}" y2="${my}" class="sv-rope"/>`;
+  g += T(mx - 10, my - a / 2 + 4, "a", "sv-tl", "end") + T(mx + a / 2, my + 18, "a", "sv-tl", "middle");
+  if (o.axis === "2M" || o.axis === "3M") g += `<line x1="${mx}" y1="${my - a}" x2="${mx + a}" y2="${my}" class="sv-dash"/>` + T(mx + a / 2 + 12, my - a / 2 - 4, "√2·a", "sv-tl");
+  g += mass(mx, my, "M", 8, -12, 18, "end") + mass(mx, my - a, "2M", 9, -14, -6, "end") + mass(mx + a, my, "3M", 10, 14, -10);
+  if (o.axis) { const [x, y] = P[o.axis]; g += axisMark(x, y, ""); g += T(x + 16, y + 22, "eje", "sv-tl"); }
+  return `<svg viewBox="0 0 320 182" role="img" aria-label="Tres masas M, 2M y 3M unidas por alambres de largo a: 2M encima de M y 3M a la derecha de M">${g}</svg>`;
+}
+function barraSvg(o = {}) {
+  const x0 = 40, x1 = 280, y = 90, L = x1 - x0;
+  let g = `<rect x="${x0}" y="${y - 8}" width="${L}" height="16" rx="4" class="sv-rod"/>`;
+  const ax = x0 + L * (o.at ?? 0);
+  if (!o.noAxis) g += axisMark(ax, y, "");
+  g += `<line x1="${x0}" y1="${y + 30}" x2="${x1}" y2="${y + 30}" class="sv-dim"/><line x1="${x0}" y1="${y + 25}" x2="${x0}" y2="${y + 35}" class="sv-dim"/><line x1="${x1}" y1="${y + 25}" x2="${x1}" y2="${y + 35}" class="sv-dim"/>` + T((x0 + x1) / 2, y + 46, o.Llab || "L", "sv-t", "middle");
+  if (o.cm !== false && !o.opts) g += `<line x1="${(x0 + x1) / 2}" y1="${y - 16}" x2="${(x0 + x1) / 2}" y2="${y + 16}" class="sv-dash"/>` + T((x0 + x1) / 2, y - 22, "CM", "sv-tl", "middle");
+  if (o.D) g += `<line x1="${ax}" y1="${y - 34}" x2="${(x0 + x1) / 2}" y2="${y - 34}" class="sv-dim"/>` + T((ax + (x0 + x1) / 2) / 2, y - 40, o.D, "sv-t", "middle");
+  if (!o.noAxis) g += T(ax, y + 22, "eje", "sv-tl", "middle");
+  if (o.opts) [["A", 0], ["C", 0.25], ["B", 0.5]].forEach(([l, f]) => { const x = x0 + L * f; g += `<circle cx="${x}" cy="${y}" r="5" class="sv-axis"/>` + T(x, y - 16, l, "sv-t", "middle"); });
+  if (o.massEnd) g += mass(x1, y, o.massEnd, 11, 0, -18, "middle");
+  return `<svg viewBox="0 0 320 150" role="img" aria-label="${o.opts ? "Barra uniforme de largo L con tres posibles ejes: A en un extremo, C a un cuarto y B en el centro" : "Barra uniforme de largo L con un eje perpendicular"}">${g}</svg>`;
+}
+function discoBordeSvg(o = {}) {
+  const cx = 170, cy = 92, R = 66;
+  let g = o.ring ? `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-ring"/>` : `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>`;
+  g += o.center ? mass(cx, cy, o.center, 8, 12, -10) : `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>` + T(cx + 6, cy - 6, "CM", "sv-tl");
+  g += `<line x1="${cx}" y1="${cy}" x2="${cx - R}" y2="${cy}" class="sv-dash"/>` + T(cx - R / 2, cy - 6, "R", "sv-t", "middle");
+  g += axisMark(cx - R, cy, "") + T(cx - R - 12, cy + 4, "eje", "sv-tl", "end");
+  g += T(cx + R + 4, cy - R + 8, o.ring ? "anillo" : "disco", "sv-tl");
+  return `<svg viewBox="0 0 320 184" role="img" aria-label="Un ${o.ring ? "anillo" : "disco"} de radio R con un eje perpendicular en su borde${o.center ? " y una masa puntual en el centro" : ""}">${g}</svg>`;
+}
+function anillosSvg() {
+  const R = 64, cy = 96, c1 = 96, c2 = c1 + 2 * R;
+  let g = `<circle cx="${c1}" cy="${cy}" r="${R}" class="sv-ring2"/><circle cx="${c2}" cy="${cy}" r="${R}" class="sv-ring2"/>`;
+  g += `<circle cx="${c1}" cy="${cy}" r="2.5" class="sv-axle"/><circle cx="${c2}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  g += `<line x1="${c1}" y1="${cy}" x2="${f1(c1 + R * Math.cos(-50 * DEG))}" y2="${f1(cy + R * Math.sin(-50 * DEG))}" class="sv-dash"/>` + T(c1 + 22, cy - 26, "R", "sv-t");
+  g += `<line x1="${c2}" y1="${cy}" x2="${f1(c2 + R * Math.cos(-50 * DEG))}" y2="${f1(cy + R * Math.sin(-50 * DEG))}" class="sv-dash"/>` + T(c2 + 22, cy - 26, "R", "sv-t");
+  g += axisMark(c1 - R, cy, "") + T(c1 - R + 4, cy + 28, "eje", "sv-tl", "middle");
+  g += T(c1, cy + R + 16, "M", "sv-t", "middle") + T(c2, cy + R + 16, "M", "sv-t", "middle");
+  return `<svg viewBox="0 0 320 186" role="img" aria-label="Dos anillos iguales de masa M y radio R unidos por un punto de sus bordes; el eje pasa por el borde del primer anillo">${g}</svg>`;
+}
+function anilloMasasSvg() {
+  const cx = 160, cy = 106, R = 64;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-ring"/><circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  g += `<line x1="${cx}" y1="${cy}" x2="${cx + R}" y2="${cy}" class="sv-dash"/>` + T(cx + R / 2, cy - 6, "R", "sv-t", "middle");
+  g += axisMark(cx, cy - R, "") + T(cx + 14, cy - R - 8, "eje", "sv-tl");
+  g += mass(cx - R, cy, "M", 9, -14, 4, "end") + mass(cx + R, cy, "M", 9, 14, 4);
+  g += T(cx, cy + R + 20, "anillo de masa M", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Anillo de masa M y radio R con el eje en el punto más alto de su borde y dos masas M pegadas en los extremos del diámetro horizontal">${g}</svg>`;
+}
+function anilloDiscoSvg() {
+  let g = `<circle cx="90" cy="90" r="56" class="sv-ring"/>` + axisMark(90, 90, "") + T(90, 168, "anillo", "sv-tl", "middle");
+  g += `<circle cx="232" cy="90" r="56" class="sv-disk"/>` + axisMark(232, 90, "") + T(232, 168, "disco", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 180" role="img" aria-label="Un anillo y un disco de igual masa y radio, cada uno con un eje perpendicular por su centro">${g}</svg>`;
+}
+function dosDiscosSvg() {
+  const R = 56, cy = 92, c1 = 92, c2 = c1 + 2 * R;
+  let g = `<circle cx="${c1}" cy="${cy}" r="${R}" class="sv-disk"/><circle cx="${c2}" cy="${cy}" r="${R}" class="sv-disk"/>`;
+  g += axisMark(c1, cy, "") + `<circle cx="${c2}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  g += `<line x1="${c1}" y1="${cy}" x2="${c2}" y2="${cy}" class="sv-dash"/>` + T(c1 + R / 2, cy - 7, "R", "sv-t", "middle") + T(c2 - R / 2, cy - 7, "R", "sv-t", "middle");
+  g += T(c1 - 14, cy + 22, "eje", "sv-tl", "end") + T(c1, cy + R + 18, "disco 1 (M)", "sv-tl", "middle") + T(c2, cy + R + 18, "disco 2 (M)", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 180" role="img" aria-label="Dos discos iguales pegados por el borde; el eje pasa por el centro del primero">${g}</svg>`;
+}
+function dosBarrasLSvg() {
+  const x0 = 110, y0 = 160, L = 130;
+  let g = `<rect x="${x0}" y="${y0 - 7}" width="${L}" height="14" rx="4" class="sv-rod"/><rect x="${x0 - 7}" y="${y0 - L}" width="14" height="${L}" rx="4" class="sv-rod"/>`;
+  g += axisMark(x0, y0, "") + T(x0 - 14, y0 + 20, "eje", "sv-tl", "end");
+  g += T(x0 + L / 2, y0 + 26, "L, masa M", "sv-tl", "middle") + T(x0 - 16, y0 - L / 2, "L, masa M", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Dos barras iguales de masa M y largo L unidas por un extremo formando una L; el eje pasa por la esquina">${g}</svg>`;
+}
+const FIG = {
+  ej1: () => ruedaSvg({ lines: ["gira con ω₀,", "frena con α", "constante y se", "detiene después", "de N vueltas"], aria: "Una rueda que gira con omega cero y frena hasta detenerse después de N vueltas" }),
+  ej2: () => discoPuntosSvg({ alpha: true }),
+  ej3: () => tresMasasSvg({ axis: "M" }),
+  ej4: () => barraSvg({ at: 0, D: "L/2" }),
+  ej5: () => discoBordeSvg(),
+  ej6: () => dosDiscosSvg()
+};
+
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+
+/* ---------- Lab 1: la rueda ---------- */
+const W = { w0: 2, al: 0, t: 0, run: false, last: null, done: false };
+const TMAX = 8;
+const wTh = (t) => W.w0 * t + 0.5 * W.al * t * t, wOm = (t) => W.w0 + W.al * t;
+function drawWheel() {
+  const th = wTh(W.t), w = wOm(W.t), cx = 160, cy = 130, R = 72;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>`;
+  for (let k = 0; k < 6; k++) { const a = th + k * Math.PI / 3; g += `<line x1="${cx}" y1="${cy}" x2="${f1(cx + R * Math.cos(a))}" y2="${f1(cy - R * Math.sin(a))}" class="sv-thin"/>`; }
+  g += axisMark(cx, cy, "");
+  const Px = cx + R * Math.cos(th), Py = cy - R * Math.sin(th), Qx = cx + R / 2 * Math.cos(th), Qy = cy - R / 2 * Math.sin(th);
+  g += `<line x1="${cx}" y1="${cy}" x2="${f1(Px)}" y2="${f1(Py)}" class="sv-line"/>`;
+  const sg = Math.sign(w), tx = -Math.sin(th) * sg, ty = -Math.cos(th) * sg, lp = Math.min(56, 9 * Math.abs(w)), lq = Math.min(28, 4.5 * Math.abs(w));
+  if (lp > 3) g += arrowSvg(Px, Py, Px + tx * lp, Py + ty * lp, "a-v") + arrowSvg(Qx, Qy, Qx + tx * lq, Qy + ty * lq, "a-v");
+  g += `<circle cx="${f1(Px)}" cy="${f1(Py)}" r="6" class="sv-mass"/>` + T(Px + 9, Py - 9, "P", "sv-t");
+  g += `<circle cx="${f1(Qx)}" cy="${f1(Qy)}" r="5" class="sv-mass"/>` + T(Qx + 8, Qy - 8, "Q", "sv-t");
+  $("#w-svg").innerHTML = `<svg viewBox="0 0 320 260" role="img" aria-label="Rueda de radio 1 metro que gira; P está en el borde y Q a la mitad del radio; las flechas son sus velocidades">${g}</svg>`;
+  $("#w-t").textContent = fmt(W.t) + " s";
+  $("#w-th").textContent = fmt(th) + " rad";
+  $("#w-n").textContent = fmt(th / (2 * Math.PI));
+  $("#w-w").textContent = fmt(w) + " rad/s";
+  $("#w-vp").textContent = fmt(Math.abs(w)) + " m/s";
+  $("#w-vq").textContent = fmt(Math.abs(w) / 2) + " m/s";
+}
+function wStatus(t, ok) { const st = $("#w-status"); st.textContent = t; st.className = "status" + (ok ? " ok" : ""); }
+function wReset() { W.run = false; W.t = 0; W.last = null; W.done = false; $("#w-go").textContent = "Girar"; wStatus("Listo para girar"); drawWheel(); }
+function wFrame(now) {
+  if (!W.run) return;
+  if (W.last == null) W.last = now;
+  const dt = Math.min(0.05, (now - W.last) / 1000); W.last = now;
+  const t = W.t + dt;
+  if (W.al < 0 && W.w0 > 0 && t >= -W.w0 / W.al) {
+    W.t = -W.w0 / W.al; W.run = false; W.done = true; drawWheel(); $("#w-go").textContent = "Girar";
+    wStatus("Se detuvo a los " + fmt(W.t) + " s, después de " + fmt(wTh(W.t) / (2 * Math.PI)) + " vueltas.", true); return;
+  }
+  if (t >= TMAX) { W.t = TMAX; W.run = false; W.done = true; drawWheel(); $("#w-go").textContent = "Girar"; wStatus("Fin de la animación (8 s). Cambia los valores o reinicia."); return; }
+  W.t = t; drawWheel(); requestAnimationFrame(wFrame);
+}
+$("#w-w0").addEventListener("input", (e) => { W.w0 = +e.target.value; $("#w-w0-lab").textContent = "Velocidad angular inicial ω₀ = " + nf(W.w0) + " rad/s"; wReset(); });
+$("#w-al").addEventListener("input", (e) => { W.al = +e.target.value; $("#w-al-lab").textContent = "Aceleración angular α = " + nf(W.al) + " rad/s²"; wReset(); });
+$("#w-go").addEventListener("click", () => {
+  if (W.run) { W.run = false; $("#w-go").textContent = "Seguir"; wStatus("En pausa"); return; }
+  if (W.done) wReset();
+  if (W.w0 === 0 && W.al === 0) { wStatus("Con ω₀ = 0 y α = 0, la rueda no gira."); return; }
+  W.run = true; W.last = null; $("#w-go").textContent = "Pausa";
+  wStatus(W.al > 0 ? "Acelerando" : W.al < 0 ? "Frenando" : "Girando con ω constante");
+  requestAnimationFrame(wFrame);
+});
+$("#w-reset").addEventListener("click", wReset);
+drawWheel();
+
+/* ---------- Lab 2: mueve el eje ---------- */
+const IB = { body: "anillo", k: 0 };
+const BOD = {
+  anillo: { icm: 1, unit: "M·R²", Ds: ["0", "R/4", "R/2", "3R/4", "R"], d: [0, 0.25, 0.5, 0.75, 1], max: 2 },
+  disco: { icm: 0.5, unit: "M·R²", Ds: ["0", "R/4", "R/2", "3R/4", "R"], d: [0, 0.25, 0.5, 0.75, 1], max: 2 },
+  barra: { icm: 1 / 12, unit: "M·L²", Ds: ["0", "L/8", "L/4", "3L/8", "L/2"], d: [0, 0.125, 0.25, 0.375, 0.5], max: 1 / 3 }
+};
+function drawInertia() {
+  const b = BOD[IB.body], D = b.d[IB.k], md = D * D, tot = b.icm + md, cx = 170, cy = 112;
+  let g = "", px;
+  if (IB.body === "barra") { px = 200; g += `<rect x="${cx - 100}" y="${cy - 8}" width="200" height="16" rx="4" class="sv-rod"/>`; }
+  else { px = 72; g += `<circle cx="${cx}" cy="${cy}" r="72" class="${IB.body === "anillo" ? "sv-ring" : "sv-disk"}"/>`; }
+  const ax = cx - D * px;
+  g += `<circle cx="${cx}" cy="${cy}" r="3" class="sv-axle"/>` + T(cx + 7, cy + 18, "CM", "sv-tl");
+  if (D > 0) g += `<line x1="${f1(ax)}" y1="${cy - 30}" x2="${cx}" y2="${cy - 30}" class="sv-dim"/>` + T((ax + cx) / 2, cy - 36, "D = " + b.Ds[IB.k], "sv-t", "middle");
+  g += axisMark(ax, cy, "") + T(ax, cy + 26, "eje", "sv-tl", "middle");
+  $("#i-svg").innerHTML = `<svg viewBox="0 0 320 214" role="img" aria-label="${IB.body} con el eje a una distancia D = ${b.Ds[IB.k]} de su centro de masa">${g}</svg>`;
+  $("#i-d-lab").textContent = "Distancia del eje al CM: D = " + b.Ds[IB.k];
+  $("#i-cm").textContent = fmt(b.icm) + " " + b.unit;
+  $("#i-md").textContent = fmt(md) + " " + b.unit;
+  $("#i-tot").textContent = fmt(tot) + " " + b.unit;
+  $("#i-bar-cm").style.width = (b.icm / b.max * 100) + "%";
+  $("#i-bar-md").style.width = (md / b.max * 100) + "%";
+}
+document.querySelectorAll('input[name="i-body"]').forEach((r) => r.addEventListener("change", (e) => { IB.body = e.target.value; drawInertia(); }));
+$("#i-d").addEventListener("input", (e) => { IB.k = +e.target.value; drawInertia(); });
+drawInertia();
+
+/* ---------- Taller ---------- */
+const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const rt = (x) => `√<span class="rad">${x}</span>`;
+const tch = (t) => `<span class="cx">${t}</span>`;
+const PROBS = [
+  { group: "Parciales 3 anteriores · empieza por aquí", note: "El momento de inercia salió en 3 de los 4 parciales 3. Estos son dos; el tercero (2026-1) está guardado para el simulacro M8." },
+  { n: "T1", t: "Un anillo con dos masas pegadas", src: "Parcial 3 2024-2 · selección múltiple 1 · 10 puntos",
+    fig: () => anilloMasasSvg(),
+    txt: "Un anillo uniforme de masa M y radio R gira alrededor de un punto fijo de su borde: el eje, perpendicular al anillo, pasa por el punto más alto. Sobre el borde se pegan dos partículas puntuales de masa M cada una, diametralmente opuestas, en los extremos del diámetro horizontal (figura). ¿Cuánto vale el momento de inercia del sistema respecto al eje? Opciones del parcial: A) 3MR² · B) 4MR² · C) 5MR² · D) 6MR² · E) 8MR². (En el parcial la masa sale como m.)",
+    hints: ["Son tres piezas: el anillo y las dos masas. Haz cada una por separado y suma.", "El anillo: ejes paralelos con D = R. Cada masa está a la misma distancia del eje: búscala con Pitágoras. El centro del anillo queda a R debajo del eje y cada masa a R a un lado del centro."],
+    sol: [{ w: "Parte el sistema en piezas.", y: "Tres piezas: el anillo, la masa de la izquierda y la de la derecha.", m: `I = I<sub>anillo</sub> + I<sub>masa 1</sub> + I<sub>masa 2</sub>` },
+      { w: "El anillo, con ejes paralelos.", y: "Respecto a su centro, I<sub>CM</sub> = M·R². El eje está en el borde, a un radio del centro: D = R.", m: `I<sub>anillo</sub> = M·R² + M·R² = 2M·R²` },
+      { w: "Distancia de cada masa al eje.", y: "Del eje al centro del anillo hay R hacia abajo, y del centro a cada masa, R hacia un lado. Esas dos distancias son los catetos de un triángulo rectángulo, y la distancia al eje es la hipotenusa.", m: `r = ${rt("R² + R²")} = ${rt("2")}·R` },
+      { w: "Cada masa es puntual: aporta solo M·r².", y: "(√2·R)² = 2·R².", m: `I<sub>masa 1</sub> = I<sub>masa 2</sub> = M·(${rt("2")}·R)² = 2M·R²` },
+      { w: "Suma las tres piezas.", m: `I = 2M·R² + 2M·R² + 2M·R² = 6M·R²` }],
+    res: "I = 6M·R² (opción D).",
+    checks: [{ q: "¿Cuánto vale I?", opts: ["4M·R²", "5M·R²", "6M·R²", "8M·R²"], a: 2 }] },
+  { n: "T2", t: "Dos anillos unidos por el borde", src: "Parcial 3 2025-1 · selección múltiple 1 · 10 puntos (también es la Tarea 9, ejercicio 3)",
+    fig: () => anillosSvg(),
+    txt: "Dos anillos delgados idénticos, de masa M y radio R, están unidos rígidamente por un punto de sus bordes. El sistema gira alrededor de un eje perpendicular al plano de los anillos que pasa por el borde de uno de ellos (figura). Halla el momento de inercia total respecto a ese eje.",
+    hints: ["Cada anillo respecto a su centro: M·R². Usa ejes paralelos para cada uno por separado y suma.", "El centro del anillo de la izquierda está a R del eje; el del otro, a 3R."],
+    sol: [{ w: "Anillo de la izquierda.", y: "Su centro está a R del eje.", m: "I₁ = M·R² + M·R² = 2M·R²" }, { w: "Anillo de la derecha.", y: "Del eje al punto donde se tocan hay 2R, y de ahí a su centro, R más: D = 3R.", m: "I₂ = M·R² + M·(3R)² = M·R² + 9M·R² = 10M·R²" }, { w: "Suma.", m: "I = I₁ + I₂ = 12M·R²" }],
+    res: "I = 12M·R².",
+    checks: [{ q: "¿Cuánto vale I total?", opts: ["2M·R²", "6M·R²", "10M·R²", "12M·R²"], a: 3 }] },
+  { group: "Más práctica", note: "Cinemática rotacional (la vas a usar en M4 y M5) y otros dos sistemas con ejes paralelos." },
+  { n: "T3", t: "El bloque que desenrolla una cuerda", src: "Para practicar v = R·ω y a = R·α",
+    fig: () => poleaCuerdaSvg(),
+    txt: "Una cuerda está enrollada en una polea de radio R que gira alrededor de su eje. Del extremo libre cuelga un bloque que parte del reposo y baja con aceleración constante a. Cuando el bloque ha bajado una altura h: (a) ¿cuánto vale la aceleración angular α de la polea? (b) ¿Cuánto vale su velocidad angular ω? (c) ¿Cuántas vueltas ha dado?",
+    hints: ["La cuerda no desliza: lo que baja el bloque es lo que se desenrolla del borde. Por eso a = R·α y v = R·ω.", "Para el bloque, como en el Parcial 1: v² = 2·a·h. Para las vueltas: por cada vuelta se desenrolla una circunferencia, 2π·R."],
+    sol: [{ w: "(a) La cuerda no desliza: a = R·α.", y: "El borde de la polea tiene la misma aceleración tangencial que la cuerda, y la cuerda la misma que el bloque.", m: `a = R·α<span class="ar">→</span>α = ${fr("a", "R")}` },
+      { w: "(b) Primero, la rapidez del bloque.", y: "Parte del reposo con aceleración constante a y recorre h: es la ecuación sin tiempo del Parcial 1.", m: `v² = 0 + 2·a·h<span class="ar">→</span>v = ${rt("2·a·h")}` },
+      { w: "(b) Pasa a la polea con v = R·ω.", m: `ω = ${fr("v", "R")} = ${fr(rt("2·a·h"), "R")}` },
+      { w: "(c) Ángulo que giró la polea.", y: "Del borde se desenrolló un arco de largo h, y θ = arco / R.", m: `θ = ${fr("h", "R")}` },
+      { w: "(c) Pasa a vueltas.", y: "Una vuelta son 2π radianes.", m: `N = ${fr("θ", "2π")} = ${fr("h", "2π·R")}` }],
+    res: "α = a/R, ω = √(2·a·h)/R y N = h/(2π·R).",
+    checks: [{ q: "(b) ¿Cuánto vale ω?", opts: ["√(2·a·h)", "√(2·a·h)/R", "a/R", "2·a·h/R"], a: 1 }, { q: "(c) ¿Cuántas vueltas dio?", opts: ["h/R", "h/(2π·R)", "2π·h/R", "R/h"], a: 1 }] },
+  { n: "T4", t: "Dos poleas unidas por una correa", src: "Para practicar v = R·ω",
+    fig: () => correaSvg(),
+    txt: "Dos poleas de radios R₁ y R₂ (la segunda más grande) están unidas por una correa que no desliza. La pequeña gira con velocidad angular ω₁. (a) ¿Con qué velocidad angular gira la grande? (b) Si la pequeña tiene aceleración angular α₁, ¿cuánto vale la aceleración angular de la grande?",
+    hints: ["La correa no desliza: todos sus puntos van con la misma rapidez, y esa rapidez es la del borde de cada polea.", "R₁·ω₁ = R₂·ω₂. Con las aceleraciones pasa lo mismo: R₁·α₁ = R₂·α₂."],
+    sol: [{ w: "(a) La rapidez de la correa es la del borde de cada polea.", y: "Si la correa no desliza, el borde de cada polea va con la misma rapidez que la correa, y v = R·ω.", m: `v = R₁·ω₁ = R₂·ω₂` },
+      { w: "(a) Despeja ω₂.", y: "Divides los dos lados entre R₂.", m: `ω₂ = ${fr("R₁", "R₂")}·ω₁` },
+      { w: "(b) Lo mismo con las aceleraciones.", y: "La correa tiene una sola aceleración a lo largo de ella, y es la aceleración tangencial del borde de cada polea: a = R·α.", m: `R₁·α₁ = R₂·α₂<span class="ar">→</span>α₂ = ${fr("R₁", "R₂")}·α₁` }],
+    res: "ω₂ = (R₁/R₂)·ω₁ y α₂ = (R₁/R₂)·α₁: la polea grande gira más despacio.",
+    checks: [{ q: "(a) ¿Cuánto vale ω₂?", opts: ["ω₁", "(R₂/R₁)·ω₁", "(R₁/R₂)·ω₁", "(R₁/R₂)²·ω₁"], a: 2 }] },
+  { n: "T5", t: "Las tres masas con el eje en 3M", src: "Variante del ejemplo del profe (clase 20)",
+    fig: () => tresMasasSvg({ axis: "3M" }),
+    txt: "Con el mismo sistema del ejemplo resuelto 1 (M en la esquina, 2M encima y 3M a la derecha, alambres de largo a), halla el momento de inercia respecto a un eje perpendicular a la página que pasa por 3M.",
+    hints: ["3M está sobre el eje: no aporta. M está a una distancia a.", "2M está en la diagonal: √2·a."],
+    sol: [{ w: "Distancias al eje en 3M.", m: "r<sub>M</sub> = a, r<sub>2M</sub> = √2·a, r<sub>3M</sub> = 0" }, { w: "Suma M·r².", m: "I = M·a² + 2M·(√2·a)² + 0 = M·a² + 4M·a² = 5M·a²" }],
+    res: "I = 5M·a².",
+    checks: [{ q: "¿Cuánto vale I?", opts: ["3M·a²", "5M·a²", "7M·a²", "9M·a²"], a: 1 }] },
+  { n: "T6", t: "Una barra con el eje a L/4 de un extremo", src: "Variante con ejes paralelos",
+    fig: () => barraSvg({ at: 0.25, D: "L/4" }),
+    txt: "Una barra uniforme de masa M y largo L gira alrededor de un eje perpendicular que pasa a L/4 de uno de sus extremos. ¿Cuánto vale I?",
+    hints: ["Parte de I<sub>CM</sub> = M·L²/12.", "Del centro de la barra al eje hay L/2 − L/4 = L/4."],
+    sol: [{ w: "Distancia del CM al eje.", m: `D = ${fr("L", "2")} − ${fr("L", "4")} = ${fr("L", "4")}` }, { w: "Ejes paralelos.", y: "1/12 + 1/16 = 4/48 + 3/48 = 7/48.", m: `I = ${fr("1", "12")}·M·L² + M·${fr("L²", "16")} = ${fr("7", "48")}·M·L²` }],
+    res: "I = (7/48)·M·L².",
+    checks: [{ q: "¿Cuánto vale I?", opts: ["M·L²/12", "7M·L²/48", "M·L²/3", "M·L²/16"], a: 1 }] }
+];
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    if (p.group) { const gr = el("div", "prob-group"); gr.appendChild(el("h3", "", p.group)); if (p.note) gr.appendChild(el("p", "", p.note)); box.appendChild(gr); return; }
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck) => {
+      const c = el("div", "check"); const cq = el("p"); cq.innerHTML = "Chequeo rápido · " + ck.q; c.appendChild(cq);
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button";
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb2 = el("div", "rev-body"); sb2.innerHTML = stepsHtml(p.sol) + `<div class="wx-res"><b>Resultado:</b> ${p.res}</div>`; ds.appendChild(sb2); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M3", NEXT = "Aprobado. Pasas a M4 · Energía rotacional y rodar sin deslizar.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => discoPuntosSvg(), q: "Un disco gira alrededor de su centro. El punto P está en el borde y el punto Q a la mitad del radio. ¿Qué tienen igual P y Q?",
+      o: ["La rapidez v", "La velocidad angular ω", "La aceleración centrípeta", "Nada"], a: 1,
+      e: "Todo el disco gira el mismo ángulo en el mismo tiempo, así que P y Q tienen la misma ω. La rapidez no: v = R·ω, y P está al doble de distancia del eje, así que va el doble de rápido (y su aceleración centrípeta también es el doble)." },
+    { k: "Conceptual", fig: () => anilloDiscoSvg(), q: "Un anillo y un disco tienen la misma masa M y el mismo radio R. Respecto a un eje perpendicular por su centro, ¿cuál tiene mayor momento de inercia?",
+      o: ["El disco", "El anillo", "Son iguales", "Depende de qué tan rápido giren"], a: 1,
+      e: "Anillo: M·R², porque toda la masa está en el borde. Disco: ½·M·R², porque parte de la masa está cerca del centro." },
+    { k: "Corta", fig: () => barraSvg({ at: 0, D: "L/2" }), q: "Una barra uniforme de masa M y largo L gira alrededor de un eje perpendicular que pasa por uno de sus extremos. ¿Cuánto vale I?",
+      o: ["M·L²/12", "M·L²/3", "M·L²/4", "M·L²"], a: 1,
+      e: "Ejes paralelos con D = L/2: I = M·L²/12 + M·L²/4 = M·L²/12 + 3·M·L²/12 = 4·M·L²/12 = M·L²/3." },
+    { k: "Tipo parcial", fig: () => discoBordeSvg({ center: "M" }), q: "Un disco de masa M y radio R tiene una masa puntual M pegada en su centro. El sistema gira alrededor de un eje perpendicular que pasa por el borde del disco. ¿Cuánto vale I?",
+      o: ["(3/2)·M·R²", "2·M·R²", "(5/2)·M·R²", "3·M·R²"], a: 2,
+      e: "Disco por el borde: ½·M·R² + M·R² = (3/2)·M·R². La masa puntual está en el centro, a R del eje: M·R². Suma: (5/2)·M·R²." },
+    { k: "Tipo parcial", fig: () => ruedaSvg({ w: "ω = ?", lines: ["parte del reposo,", "α constante;", "en un tiempo t", "da N vueltas"], aria: "Una rueda que parte del reposo con aceleración angular constante y da N vueltas en un tiempo t" }), q: "Una rueda parte del reposo con aceleración angular constante y en un tiempo t da N vueltas. ¿Cuánto vale su velocidad angular al final de ese tiempo?",
+      o: ["2π·N/t", "4π·N/t", "π·N/t", "8π·N/t"], a: 1,
+      e: "Desde el reposo: θ = ½·α·t² = 2π·N, así que α = 4π·N/t². Al final, ω = α·t = 4π·N/t. (2π·N/t es la velocidad angular promedio, no la final.)" }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => discoPuntosSvg({ alpha: true }), q: "Un disco gira cada vez más rápido alrededor de su centro. ¿Qué aceleraciones tiene el punto P del borde?",
+      o: ["Solo centrípeta", "Solo tangencial", "Tangencial y centrípeta", "Ninguna, porque gira en un círculo"], a: 2,
+      e: "Tiene aceleración tangencial a_t = R·α, porque su rapidez aumenta, y centrípeta a_c = ω²·R, porque gira en un círculo." },
+    { k: "Conceptual", fig: () => barraSvg({ noAxis: true, opts: true }), q: "¿Por cuál de los ejes A, B o C (perpendiculares a la barra) es más fácil poner a girar la barra, es decir, cuál da el menor momento de inercia?",
+      o: ["Por A, el extremo", "Por B, el centro", "Por C, a un cuarto del extremo", "Da lo mismo"], a: 1,
+      e: "I = I_CM + M·D²: el término M·D² siempre suma, así que el mínimo es con D = 0, por el centro de masa (B)." },
+    { k: "Corta", fig: () => discoBordeSvg({ ring: true }), q: "Un anillo delgado de masa M y radio R gira alrededor de un eje perpendicular que pasa por su borde. ¿Cuánto vale I?",
+      o: ["M·R²", "(3/2)·M·R²", "2·M·R²", "3·M·R²"], a: 2,
+      e: "I = I_CM + M·D² = M·R² + M·R² = 2·M·R²." },
+    { k: "Tipo parcial", fig: () => dosBarrasLSvg(), q: "Dos barras iguales, de masa M y largo L, están unidas por un extremo formando una L. El sistema gira alrededor de un eje perpendicular que pasa por la esquina. ¿Cuánto vale I?",
+      o: ["M·L²/3", "2·M·L²/3", "M·L²/6", "4·M·L²/3"], a: 1,
+      e: "Cada barra gira alrededor de su propio extremo: M·L²/3 cada una. Las dos suman 2·M·L²/3." },
+    { k: "Tipo parcial", fig: () => ruedaSvg({ lines: ["gira con ω₀ y", "frena con α", "constante hasta", "detenerse en", "un tiempo t"], aria: "Una rueda que gira con omega cero y frena hasta detenerse en un tiempo t" }), q: "Una rueda gira con velocidad angular ω₀ y frena con aceleración angular constante hasta detenerse en un tiempo t. ¿Cuántas vueltas dio mientras frenaba?",
+      o: ["ω₀·t/(4π)", "ω₀·t/(2π)", "ω₀·t/2", "2π·ω₀·t"], a: 0,
+      e: "Con α constante, ω baja de ω₀ a 0 de forma pareja: el promedio es ω₀/2. Entonces θ = (ω₀/2)·t, y las vueltas son N = θ/(2π) = ω₀·t/(4π)." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
