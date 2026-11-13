@@ -1,0 +1,1041 @@
+<title>M4 Rodar y energía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; módulo M4 del Parcial 3. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+
+/* Figuras de rotación e inercia */
+.sv-mass{fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6}
+.sv-axis{fill:var(--surface); stroke:var(--red); stroke-width:2}
+.sv-rod{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-disk{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.8}
+.sv-ring{stroke:var(--ink); stroke-width:6; fill:none}
+.sv-ring2{stroke:var(--ink); stroke-width:3.5; fill:none}
+.sv-plate{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.callout ul,.callout ol{padding-left:20px; display:grid; gap:4px}
+.prob-group{display:grid; gap:4px; margin:10px 0 2px; padding-top:10px; border-top:2px solid var(--ink)}
+.prob-group h3{font-family:var(--f-display); font-size:1.12rem}
+.prob-group p{margin:0; color:var(--muted); font-size:.95rem}
+.chip-opt{font-family:var(--f-mono); font-size:.72rem; color:var(--muted); border:1px dashed var(--muted); padding:1px 6px; border-radius:4px}
+.lab-h{font-size:1rem; margin:4px 0 -4px}
+.ibar{display:flex; height:14px; border-radius:6px; overflow:hidden; background:var(--paper); border:1px solid var(--rule)}
+.ibar span{display:block; height:100%; transition:width .25s}
+.ibar span:first-child{background:var(--accent)}
+.ibar span:last-child{background:var(--orange)}
+.key{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+.mini{min-width:0; font-size:.8rem}
+.mini th,.mini td{padding:5px 6px}
+.mini td{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+.mini tr.win td{background:var(--green-soft)}
+.key i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>60 min</span></a>
+    <a href="#lab">2 Lab <span>15 min</span></a>
+    <a href="#taller">3 Taller <span>35 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 3 · Módulo 4 de 8</p>
+    <h1>Energía rotacional y rodar sin deslizar</h1>
+    <div class="meta">
+      <span class="chip-hot">Parcial 3: jueves 19</span>
+      <span>Sábado 14 de noviembre · ~2 h</span>
+      <span>Libro: 9.4 y 10.3 · Diapositivas 19 del profe</span>
+    </div>
+    <p class="prose">Algo que gira también tiene energía cinética, aunque su centro no se mueva. En este módulo la sumas a la tabla de energía de M6–M7 del Parcial 2 y la usas en lo que más sale en el Parcial 3: <b>una esfera que rueda sin deslizar por un plano</b>.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M5.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+    <div class="callout">
+      <h3>Lo que pregunta el profe de este tema en el Parcial 3</h3>
+      <ul>
+        <li><b>En los 4 parciales:</b> una esfera sólida que rueda sin deslizar por un plano inclinado. En 2024-2, 2025-1 y 2025-2 piden la rapidez abajo, que es de este módulo; en 2026-1, la aceleración, que es de M5. Vale 10 puntos como selección múltiple o es una parte de un abierto.</li>
+        <li>Con la tabla de energía de este módulo, la rapidez sale en pocas líneas.</li>
+      </ul>
+      <p>Por eso el taller empieza con esa esfera.</p>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>La energía cinética de algo que gira, qué quiere decir rodar sin deslizar, la regla general para cualquier cuerpo que rueda y la energía con poleas que tienen masa. Cuatro ejemplos resueltos, solo con letras y con su tabla de energía.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">K</td><td>«ka»</td><td>Energía cinética: la energía de moverse.</td><td>J</td></tr>
+          <tr><td class="mono">K de traslación</td><td>—</td><td>La energía cinética de avanzar: ½·M·v², con v la rapidez del centro de masa.</td><td>J</td></tr>
+          <tr><td class="mono">K de rotación</td><td>—</td><td>La energía cinética de girar: ½·I·ω².</td><td>J</td></tr>
+          <tr><td class="mono">U</td><td>«u»</td><td>Energía potencial gravitacional: M·g·h. En un cuerpo grande, h es la altura de su centro de masa.</td><td>J</td></tr>
+          <tr><td class="mono">M</td><td>«eme»</td><td>Masa, con M mayúscula (la m minúscula es para metros). En el parcial sale como m minúscula.</td><td>kg</td></tr>
+          <tr><td class="mono">g</td><td>«ge»</td><td>Aceleración de la gravedad.</td><td>m/s²</td></tr>
+          <tr><td class="mono">H, h</td><td>«hache»</td><td>Altura que baja el cuerpo o su centro de masa.</td><td>m</td></tr>
+          <tr><td class="mono">v</td><td>«ve»</td><td>Rapidez del centro de masa.</td><td>m/s</td></tr>
+          <tr><td class="mono">ω</td><td>«omega»</td><td>Velocidad angular (M3).</td><td>rad/s</td></tr>
+          <tr><td class="mono">R</td><td>«erre»</td><td>Radio del cuerpo que rueda o de la polea.</td><td>m</td></tr>
+          <tr><td class="mono">I, I<sub>CM</sub></td><td>«i», «i ce eme»</td><td>Momento de inercia (M3). I<sub>CM</sub> es respecto al eje que pasa por el centro.</td><td>kg·m²</td></tr>
+          <tr><td class="mono">c</td><td>«ce»</td><td>El número de la tabla de M3: I<sub>CM</sub> = c·M·R². Anillo 1, disco ½, esfera 2/5, esfera hueca 2/3.</td><td>—</td></tr>
+          <tr><td class="mono">L</td><td>«ele»</td><td>Largo de una barra.</td><td>m</td></tr>
+          <tr><td class="mono">θ</td><td>«theta»</td><td>Ángulo del plano inclinado con la horizontal (solo en el lab).</td><td>grados</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Las energías van en una tabla de inicio y final, como en M6–M7 del Parcial 2. Si algo se cancela, aparece <span class="cx">tachado</span>.</p>
+    </div>
+
+    <div class="block">
+      <h3>1. La energía cinética de algo que gira</h3>
+      <p class="prose">Una rueda que gira en su sitio no avanza, pero cada pedacito de ella sí se mueve: el de la masa M<sub>i</sub>, que está a una distancia r<sub>i</sub> del eje, va con rapidez v<sub>i</sub> = r<sub>i</sub>·ω (M3). Si sumas la energía cinética de todos los pedacitos, aparece el momento de inercia:</p>
+      <div class="eq"><span><b>K = Σ ½·M<sub>i</sub>·(r<sub>i</sub>·ω)² = ½·(Σ M<sub>i</sub>·r<sub>i</sub>²)·ω² = ½·I·ω²</b></span><span>Es la misma forma de ½·M·v²: la masa se cambia por I y la rapidez por ω.</span></div>
+      <p class="prose">Si un cuerpo gira alrededor de un <b>pivote fijo</b>, toda su energía cinética es de rotación alrededor de ese pivote, con el I respecto al pivote. Y su energía potencial se calcula con la altura de su <b>centro de masa</b> (M2).</p>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1</span>
+            <h4 id="wx1-h">La barra que cae girando</h4>
+            <p>Una barra uniforme de masa M y largo L gira alrededor de un pivote fijo en uno de sus extremos. Se suelta desde el reposo en posición horizontal y cae girando.</p>
+            <p><b>Pregunta:</b> ¿con qué velocidad angular pasa por la posición vertical? ¿Qué tan rápido va la punta?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej1"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escoge la referencia de altura: el pivote.</p><p class="why">La energía potencial se mide con la altura del centro de masa, que está en la mitad de la barra. Al principio está a la altura del pivote; en la vertical queda L/2 más abajo.</p><div class="mx">h<sub>CM, inicio</sub> = 0<span class="ar">y</span>h<sub>CM, final</sub> = −<span class="frac"><span>L</span><span>2</span></span></div></li>
+          <li><p class="what">Llena la tabla de energía.</p><p class="why">Gira alrededor de un pivote fijo: toda la energía cinética es de rotación, con el I respecto al pivote. Parte del reposo.</p><div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K de rotación</td><td>0</td><td>½·I·ω²</td></tr><tr><td>U = M·g·h<sub>CM</sub></td><td>0</td><td>−M·g·<span class="frac"><span>L</span><span>2</span></span></td></tr><tr class="tot"><td>Total</td><td>0</td><td>½·I·ω² − M·g·<span class="frac"><span>L</span><span>2</span></span></td></tr></tbody></table></div></li>
+          <li><p class="what">Pon el I respecto al pivote.</p><p class="why">Barra por un extremo, de la tabla de M3 (ejemplo 4).</p><div class="mx">I = <span class="frac"><span>1</span><span>3</span></span>·M·L²</div></li>
+          <li><p class="what">No hay fricción en el pivote: el total se conserva.</p><p class="why">Igualas el total del inicio con el del final y pasas la U al otro lado.</p><div class="mx">0 = ½·<span class="frac"><span>1</span><span>3</span></span>·M·L²·ω² − M·g·<span class="frac"><span>L</span><span>2</span></span><span class="ar">→</span><span class="frac"><span>1</span><span>6</span></span>·M·L²·ω² = <span class="frac"><span>1</span><span>2</span></span>·M·g·L</div></li>
+          <li><p class="what">Cancela M y una L, y despeja ω.</p><p class="why">M está a los dos lados. L² = L·L: una L de la izquierda se va con la L de la derecha. Después multiplicas por 6.</p><div class="mx"><span class="frac"><span>1</span><span>6</span></span>·<span class="cx">M</span>·<span class="cx">L</span>·L·ω² = <span class="frac"><span>1</span><span>2</span></span>·<span class="cx">M</span>·g·<span class="cx">L</span><span class="ar">→</span>ω² = <span class="frac"><span>3·g</span><span>L</span></span><span class="ar">→</span>ω = √<span class="rad"><span class="frac"><span>3·g</span><span>L</span></span></span></div></li>
+          <li><p class="what">La punta: v = L·ω.</p><p class="why">La punta está a L del pivote (M3). L·√(3g/L) = √(L²·3g/L) = √(3·g·L).</p><div class="mx">v<sub>punta</sub> = L·√<span class="rad"><span class="frac"><span>3·g</span><span>L</span></span></span> = √<span class="rad">3·g·L</span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> ω = √(3g/L) y la punta va con √(3·g·L).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si la punta cayera libre desde la altura L, llegaría con √(2·g·L). Va más rápido porque la barra la arrastra: el resto de la barra, que cae menos, le «pasa» energía.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>2. Rodar sin deslizar</h3>
+      <p class="prose">Una rueda que <b>rueda sin deslizar</b> avanza y gira a la vez, y una regla amarra las dos cosas: en cada vuelta avanza exactamente su circunferencia, como una cinta métrica que se desenrolla. Por eso el centro avanza con la rapidez del borde de M3, y el punto que toca el piso está quieto en ese instante.</p>
+      <div class="eq"><span><b>v = R·ω</b></span><span>v es la rapidez del centro. Si el cuerpo desliza (patina), esta regla no vale.</span></div>
+      <p class="prose">Entonces su energía cinética tiene dos partes: la de avanzar y la de girar alrededor de su centro.</p>
+      <div class="eq"><span><b>K = ½·M·v² + ½·I<sub>CM</sub>·ω²</b></span><span>Traslación del centro + rotación alrededor del centro.</span></div>
+      <div class="callout">
+        <h3>¿Y la fricción no le quita energía?</h3>
+        <p>Para rodar hace falta fricción <b>estática</b> en el punto de contacto, pero ese punto no desliza: está quieto en el instante en que la fricción actúa. Una fuerza que actúa sobre un punto que no se mueve no hace trabajo. Por eso, al rodar sin deslizar, <b>la energía mecánica se conserva</b>, aunque el plano tenga fricción.</p>
+      </div>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2</span>
+            <h4 id="wx2-h">Un cilindro macizo que rueda por un plano</h4>
+            <p>Un cilindro macizo (un disco grueso) de masa M y radio R se suelta desde el reposo y rueda sin deslizar por un plano inclinado. Baja una altura H.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez llega abajo?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej2"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">¿Se conserva la energía?</p><p class="why">Sí: rueda sin deslizar, así que la fricción estática no hace trabajo.</p></li>
+          <li><p class="what">Llena la tabla de energía.</p><p class="why">Referencia de altura: abajo. Parte del reposo: al inicio no hay energía cinética.</p><div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K de traslación</td><td>0</td><td>½·M·v²</td></tr><tr><td>K de rotación</td><td>0</td><td>½·I<sub>CM</sub>·ω²</td></tr><tr><td>U = M·g·h</td><td>M·g·H</td><td>0</td></tr><tr class="tot"><td>Total</td><td>M·g·H</td><td>½·M·v² + ½·I<sub>CM</sub>·ω²</td></tr></tbody></table></div></li>
+          <li><p class="what">Escribe la rotación en términos de v.</p><p class="why">Rueda sin deslizar: ω = v/R. Cilindro macizo: I<sub>CM</sub> = ½·M·R². La R² de arriba se cancela con la de abajo.</p><div class="mx">½·I<sub>CM</sub>·ω² = ½·(½·M·<span class="cx">R²</span>)·<span class="frac"><span>v²</span><span><span class="cx">R²</span></span></span> = <span class="frac"><span>1</span><span>4</span></span>·M·v²</div></li>
+          <li><p class="what">Iguala el total del inicio con el del final.</p><p class="why">½ + ¼ = ¾.</p><div class="mx">M·g·H = ½·M·v² + <span class="frac"><span>1</span><span>4</span></span>·M·v² = <span class="frac"><span>3</span><span>4</span></span>·M·v²</div></li>
+          <li><p class="what">Cancela M y despeja v.</p><p class="why">Multiplicas por 4/3 y sacas raíz.</p><div class="mx"><span class="cx">M</span>·g·H = <span class="frac"><span>3</span><span>4</span></span>·<span class="cx">M</span>·v²<span class="ar">→</span>v = √<span class="rad"><span class="frac"><span>4·g·H</span><span>3</span></span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = √(4·g·H/3).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es menos que √(2·g·H), la de un bloque que desliza sin fricción desde la misma altura: una parte de la energía se va en hacerlo girar. Y no depende ni de M ni de R.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>3. Cualquier cuerpo que rueda: el número c</h3>
+      <p class="prose">En la tabla de M3, todos los momentos de inercia tienen la forma <b>I<sub>CM</sub> = c·M·R²</b>: c = 1 para el anillo, ½ para el disco, 2/5 para la esfera y 2/3 para la esfera hueca. Con eso, el ejemplo 2 se puede hacer una sola vez para todos.</p>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3</span>
+            <h4 id="wx3-h">La rapidez de cualquier cuerpo que rueda</h4>
+            <p>Un cuerpo redondo de masa M, radio R e I<sub>CM</sub> = c·M·R² rueda sin deslizar desde el reposo y baja una altura H.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez llega abajo? ¿Y qué fracción de su energía cinética es de rotación?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej3"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">La rotación en términos de v.</p><p class="why">Igual que en el ejemplo 2, con c en vez de ½.</p><div class="mx">½·(c·M·<span class="cx">R²</span>)·<span class="frac"><span>v²</span><span><span class="cx">R²</span></span></span> = ½·c·M·v²</div></li>
+          <li><p class="what">Energía cinética total.</p><p class="why">Sacas ½·M·v² como factor común.</p><div class="mx">K = ½·M·v² + ½·c·M·v² = ½·(1 + c)·M·v²</div></li>
+          <li><p class="what">Conservación de la energía.</p><div class="mx"><span class="cx">M</span>·g·H = ½·(1 + c)·<span class="cx">M</span>·v²<span class="ar">→</span>v = √<span class="rad"><span class="frac"><span>2·g·H</span><span>1 + c</span></span></span></div></li>
+          <li><p class="what">La fracción de rotación.</p><p class="why">La rotación es ½·c·M·v² de un total de ½·(1 + c)·M·v². Se cancela ½·M·v².</p><div class="mx"><span class="frac"><span>K<sub>rot</sub></span><span>K</span></span> = <span class="frac"><span>c</span><span>1 + c</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = √(2·g·H/(1 + c)), y la fracción de rotación es c/(1 + c).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Con c = 0 (un bloque que desliza sin fricción) sale √(2·g·H), la de siempre. Entre más grande es c, más energía se va en girar y más despacio avanza.</p>
+      </article>
+      <div class="tw"><table>
+        <thead><tr><th>Cuerpo que rueda</th><th>c</th><th>Rapidez abajo</th><th>Rotación</th></tr></thead>
+        <tbody>
+          <tr><td>Anillo o cilindro hueco</td><td class="mono">1</td><td class="mono">√(g·H)</td><td class="mono">1/2</td></tr>
+          <tr><td>Esfera hueca</td><td class="mono">2/3</td><td class="mono">√(6·g·H/5)</td><td class="mono">2/5</td></tr>
+          <tr><td>Disco o cilindro macizo</td><td class="mono">1/2</td><td class="mono">√(4·g·H/3)</td><td class="mono">1/3</td></tr>
+          <tr><td>Esfera sólida</td><td class="mono">2/5</td><td class="mono">√(10·g·H/7)</td><td class="mono">2/7</td></tr>
+          <tr><td>Bloque sin fricción (no gira)</td><td class="mono">0</td><td class="mono">√(2·g·H)</td><td class="mono">0</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose">En una carrera por el mismo plano gana el de c más pequeño: primero la esfera sólida, después el disco, la esfera hueca y al final el anillo. No importa la masa ni el radio.</p>
+    </div>
+
+    <div class="block">
+      <h3>4. Energía con poleas que tienen masa</h3>
+      <p class="prose">Hasta el Parcial 2, las poleas no tenían masa. Si la tienen, también giran y se llevan energía. Si la cuerda no desliza, la rapidez de la cuerda es la del borde de la polea: <b>v = R·ω</b> (M3).</p>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4</span>
+            <h4 id="wx4-h">El bloque que hace girar una polea pesada</h4>
+            <p>Un bloque de masa M cuelga de una cuerda enrollada en una polea con forma de disco, también de masa M y radio R, que gira sin fricción. El bloque parte del reposo y baja una altura h.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez va el bloque?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej4"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Llena la tabla con los dos cuerpos.</p><p class="why">Referencia de altura: la posición final del bloque. La polea no sube ni baja, así que no cambia su U.</p><div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K del bloque</td><td>0</td><td>½·M·v²</td></tr><tr><td>K de la polea</td><td>0</td><td>½·I·ω²</td></tr><tr><td>U del bloque</td><td>M·g·h</td><td>0</td></tr><tr class="tot"><td>Total</td><td>M·g·h</td><td>½·M·v² + ½·I·ω²</td></tr></tbody></table></div></li>
+          <li><p class="what">La polea en términos de v.</p><p class="why">La cuerda no desliza: ω = v/R. Polea con forma de disco: I = ½·M·R².</p><div class="mx">½·I·ω² = ½·(½·M·<span class="cx">R²</span>)·<span class="frac"><span>v²</span><span><span class="cx">R²</span></span></span> = <span class="frac"><span>1</span><span>4</span></span>·M·v²</div></li>
+          <li><p class="what">Iguala el inicio con el final.</p><div class="mx">M·g·h = ½·M·v² + <span class="frac"><span>1</span><span>4</span></span>·M·v² = <span class="frac"><span>3</span><span>4</span></span>·M·v²</div></li>
+          <li><p class="what">Cancela M y despeja v.</p><div class="mx"><span class="cx">M</span>·g·h = <span class="frac"><span>3</span><span>4</span></span>·<span class="cx">M</span>·v²<span class="ar">→</span>v = √<span class="rad"><span class="frac"><span>4·g·h</span><span>3</span></span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = √(4·g·h/3).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Sin la polea pesada, el bloque caería libre con √(2·g·h). La polea se queda con una parte de la energía. Sale igual que el cilindro del ejemplo 2 porque en los dos casos hay ½·M·v² de avance y ¼·M·v² de un disco que gira.</p>
+      </article>
+    </div>
+
+    <div class="callout">
+      <h3>Receta: energía con algo que gira</h3>
+      <ol>
+        <li>Haz la tabla de inicio y final con una fila para cada energía de cada cuerpo: K de traslación, K de rotación y U.</li>
+        <li>La U de un cuerpo grande se calcula con la altura de su centro de masa.</li>
+        <li>Si rueda sin deslizar o la cuerda no desliza: ω = v/R. Si gira alrededor de un pivote fijo: solo ½·I·ω², con el I respecto al pivote.</li>
+        <li>Reemplaza I y ω, cancela M (y R) y despeja.</li>
+      </ol>
+    </div>
+
+    <div class="callout trap"><h3>Trampas típicas</h3>
+      <p>Olvidar la energía de rotación: con un cuerpo que rueda sale √(2·g·H), que es la de un bloque.</p>
+      <p>Usar v = R·ω cuando el cuerpo desliza.</p>
+      <p>Creer que la fricción estática le quita energía al que rueda sin deslizar: no hace trabajo.</p>
+      <p>En un pivote fijo, usar I<sub>CM</sub> en vez del I respecto al pivote, o la altura de la punta en vez de la del centro de masa.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: la carrera en el plano</h2><p>Un bloque sin fricción, un anillo, un disco y una esfera se sueltan a la vez desde la misma altura. Mira quién gana y cuánta energía se va en girar. La animación va en cámara lenta (×4).</p></div>
+    <div class="lab">
+      <div class="lab-stage"><div id="r-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="r-h" id="r-h-lab">Altura H = 1 m</label><input type="range" id="r-h" min="0.5" max="2" step="0.25" value="1"></div>
+        <div class="ctl"><label for="r-th" id="r-th-lab">Ángulo del plano θ = 30°</label><input type="range" id="r-th" min="15" max="45" step="5" value="30"></div>
+        <div class="qrow"><button type="button" class="btn" id="r-go">Soltar</button><button type="button" class="btn ghost" id="r-reset">Reiniciar</button></div>
+        <div class="readout" aria-live="polite">
+          <table class="mini"><thead><tr><th>Cuerpo</th><th>Rapidez abajo</th><th>Tiempo</th><th>Gira</th></tr></thead><tbody id="r-tab"></tbody></table>
+          <div class="status" id="r-status">Listo para soltar</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · ¿En qué orden llegan los cuatro?</summary>
+          <div class="rev-body"><p><b>Bloque, esfera, disco y anillo.</b> Gana el de c más pequeño: el bloque no gira (c = 0) y el anillo tiene toda su masa en el borde (c = 1).</p></div></details>
+        <details class="rev"><summary>Reto 2 · Cambia la altura H. ¿Cambia el orden? ¿Y las rapideces?</summary>
+          <div class="rev-body"><p><b>El orden no cambia; las rapideces sí</b>, todas con √H: v = √(2·g·H/(1 + c)).</p></div></details>
+        <details class="rev"><summary>Reto 3 · Cambia el ángulo y deja la misma H. ¿Cambia la rapidez con la que llegan abajo?</summary>
+          <div class="rev-body"><p><b>No.</b> La rapidez solo depende de cuánto bajan (la energía). El ángulo cambia cuánto tardan: con un plano más empinado llegan antes, con la misma rapidez.</p></div></details>
+        <details class="rev"><summary>Reto 4 · ¿Qué fracción de la energía cinética de la esfera es de rotación?</summary>
+          <div class="rev-body"><p><b>2/7, cerca del 29 %:</b> c/(1 + c) = (2/5)/(7/5) = 2/7.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero la esfera que rueda de los parciales 3; después la carrera, el Atwood con polea pesada (resuelto con energía) y una barra con una masa en la punta.</p></div>
+    <p class="prose">En cada problema haz la tabla de energía antes de despejar. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas y 2 tipo parcial. Pasas a M5 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M5 · Torque, dinámica rotacional y poleas con masa.</p>
+    <p>Fuentes: diapositivas 19 del profe Ávila, parciales 3 de 2024-2, 2025-1 y 2025-2, Young &amp; Freedman 9.4 y 10.3.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+function inclineSvg(o) {
+  const W = 320, H = 210, deg = o.deg || 30, th = deg * Math.PI / 180;
+  const A = { x: 24, y: 182 };
+  const Ln = Math.min(236, 150 / Math.sin(th));
+  const u = { x: Math.cos(th), y: -Math.sin(th) }, n = { x: -Math.sin(th), y: -Math.cos(th) };
+  const C = { x: A.x + Ln * u.x, y: A.y + Ln * u.y }, B = { x: C.x, y: A.y };
+  const P = (s, off) => ({ x: A.x + s * Ln * u.x + off * n.x, y: A.y + s * Ln * u.y + off * n.y });
+  let g = `<line x1="8" y1="${A.y}" x2="${W - 8}" y2="${A.y}" class="sv-line"/>`;
+  g += `<polygon points="${A.x},${A.y} ${f1(B.x)},${B.y} ${f1(C.x)},${f1(C.y)}" class="sv-ground"/>`;
+  const lab = o.angLabel || (o.mode === "v" ? "β" : "θ");
+  if (o.mode === "v") {
+    const R = 28;
+    g += `<path d="M ${f1(C.x)} ${f1(C.y + R)} A ${R} ${R} 0 0 1 ${f1(C.x - R * u.x)} ${f1(C.y - R * u.y)}" class="sv-arc"/>`;
+    const mid = (Math.PI / 2 + Math.PI - th) / 2;
+    g += `<text x="${f1(C.x + Math.cos(mid) * (R + 12))}" y="${f1(C.y + Math.sin(mid) * (R + 12) + 5)}" class="sv-ang" text-anchor="middle">${lab}</text>`;
+  } else {
+    const R = 34;
+    g += `<path d="M ${A.x + R} ${A.y} A ${R} ${R} 0 0 0 ${f1(A.x + R * u.x)} ${f1(A.y + R * u.y)}" class="sv-arc"/>`;
+    g += `<text x="${A.x + R + 6}" y="${A.y - 6}" class="sv-ang">${lab}</text>`;
+  }
+  const b = o.size || 30, s0 = o.s || 0.5;
+  const c = P(s0, b / 2);
+  g += `<g transform="rotate(${f1(-deg)} ${f1(c.x)} ${f1(c.y)})"><rect x="${f1(c.x - b / 2)}" y="${f1(c.y - b / 2)}" width="${b}" height="${b}" class="sv-block"/></g>`;
+  g += `<text x="${f1(c.x)}" y="${f1(c.y + 4)}" class="sv-lab" text-anchor="middle">${o.label || "X"}</text>`;
+  if (o.pulley) {
+    const r = 11;
+    const pc = { x: C.x + u.x * 12 + n.x * (b / 2 - r), y: C.y + u.y * 12 + n.y * (b / 2 - r) };
+    const s1 = { x: c.x + u.x * b / 2, y: c.y + u.y * b / 2 };
+    const t1 = { x: pc.x + n.x * r, y: pc.y + n.y * r };
+    g += `<line x1="${f1(C.x)}" y1="${f1(C.y)}" x2="${f1(pc.x)}" y2="${f1(pc.y)}" class="sv-brk"/>`;
+    g += `<line x1="${f1(s1.x)}" y1="${f1(s1.y)}" x2="${f1(t1.x)}" y2="${f1(t1.y)}" class="sv-rope"/>`;
+    g += `<circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="${r}" class="sv-pulley"/><circle cx="${f1(pc.x)}" cy="${f1(pc.y)}" r="2" class="sv-axle"/>`;
+    const hx = pc.x + r, top = pc.y + 40, hs = 26;
+    g += `<line x1="${f1(hx)}" y1="${f1(pc.y)}" x2="${f1(hx)}" y2="${f1(top)}" class="sv-rope"/>`;
+    g += `<rect x="${f1(hx - hs / 2)}" y="${f1(top)}" width="${hs}" height="${hs}" class="sv-block"/><text x="${f1(hx)}" y="${f1(top + 17)}" class="sv-lab" text-anchor="middle">${o.pulley}</text>`;
+  }
+  if (o.fric) {
+    const p0 = P(s0, 3), dir = o.fric.dir, len = o.fric.len;
+    const p1 = { x: p0.x + u.x * dir * len, y: p0.y + u.y * dir * len };
+    g += arrowSvg(p0.x, p0.y, p1.x, p1.y, o.fric.cls || "a-fric");
+    g += `<text x="${f1(p1.x + (dir > 0 ? 4 : -4))}" y="${f1(p1.y + 14)}" class="sv-t t-fric" text-anchor="${dir > 0 ? "start" : "end"}">f</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Plano inclinado"}">${g}</svg>`;
+}
+function twoInclineSvg() {
+  let g = `<line x1="8" y1="200" x2="312" y2="200" class="sv-line"/>`;
+  g += `<polygon points="20,200 230,70 270,200" class="sv-ground"/>`;
+  g += `<path d="M 56 200 A 36 36 0 0 0 ${f1(20 + 36 * 0.850)} ${f1(200 - 36 * 0.526)}" class="sv-arc"/><text x="62" y="194" class="sv-ang">α</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="136" class="sv-dash"/>`;
+  g += `<path d="M 230 104 A 34 34 0 0 0 ${f1(230 + 34 * 0.294)} ${f1(70 + 34 * 0.956)}" class="sv-arc"/><text x="${f1(240)}" y="${f1(124)}" class="sv-ang">β</text>`;
+  g += `<g transform="rotate(-31.8 127.6 115.8)"><rect x="112.6" y="100.8" width="30" height="30" class="sv-block"/></g><text x="127.6" y="120" class="sv-lab" text-anchor="middle">M</text>`;
+  g += `<g transform="rotate(72.9 264.3 130.6)"><rect x="249.3" y="115.6" width="30" height="30" class="sv-block"/></g><text x="264.3" y="135" class="sv-lab" text-anchor="middle">X</text>`;
+  g += `<line x1="230" y1="70" x2="230" y2="58" class="sv-brk"/>`;
+  g += `<line x1="140.4" y1="107.9" x2="223" y2="55" class="sv-rope"/><line x1="239.6" y1="55.1" x2="259.9" y2="116.3" class="sv-rope"/>`;
+  g += `<circle cx="230" cy="58" r="10" class="sv-pulley"/><circle cx="230" cy="58" r="2" class="sv-axle"/>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Bloque M en un plano de ángulo alfa con la horizontal y bloque X en un plano de ángulo beta con la vertical, unidos por una cuerda sobre una polea en la cima">${g}</svg>`;
+}
+function wallSvg() {
+  let g = `<line x1="200" y1="14" x2="200" y2="196" class="sv-line"/>`;
+  for (let y = 18; y < 196; y += 10) g += `<line x1="200" y1="${y}" x2="207" y2="${y - 6}" class="sv-hatch"/>`;
+  g += `<rect x="158" y="88" width="42" height="54" class="sv-block"/><text x="179" y="119" class="sv-lab" text-anchor="middle">m</text>`;
+  g += arrowSvg(92, 128, 156, 128, "a-f") + `<text x="92" y="122" class="sv-t t-f">F</text>`;
+  g += arrowSvg(156, 100, 112, 100, "a-n") + `<text x="108" y="96" class="sv-t t-n" text-anchor="end">N</text>`;
+  g += arrowSvg(179, 115, 179, 172, "a-peso") + `<text x="186" y="172" class="sv-t t-peso">mg</text>`;
+  g += arrowSvg(192, 112, 192, 60, "a-fric") + `<text x="186" y="58" class="sv-t t-fric" text-anchor="end">f</text>`;
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Libro presionado contra una pared con una fuerza horizontal F; fricción hacia arriba, peso hacia abajo y normal de la pared">${g}</svg>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Figuras de M4 ---------- */
+const DEG = Math.PI / 180;
+const sb = (base, s, rest = "") => `${base}<tspan dy="3" font-size="9">${s}</tspan><tspan dy="-3">${rest}</tspan>`;
+const nf = (v) => (Math.round(v * 100) / 100).toString().replace(".", ",").replace("-", "−");
+function axisMark(x, y, lab = "eje") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="8" class="sv-axis"/><circle cx="${f1(x)}" cy="${f1(y)}" r="2.2" class="sv-axle"/>` + (lab ? T(x - 11, y + 20, lab, "sv-tl", "end") : ""); }
+function mass(x, y, lab, r = 8, dx = 12, dy = -8, anchor = "start") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" class="sv-mass"/>` + T(x + dx, y + dy, lab, "sv-t", anchor); }
+function block(cx, yb, w, h, lab, cls = "sv-block") { return `<rect x="${f1(cx - w / 2)}" y="${f1(yb - h)}" width="${f1(w)}" height="${f1(h)}" class="${cls}"/>` + (lab ? T(cx, yb - h / 2 + 4, lab, "sv-lab", "middle") : ""); }
+function curvedArrow(cx, cy, r, a0, a1, cls = "a-v") {
+  const p = (a) => [cx + r * Math.cos(a * DEG), cy - r * Math.sin(a * DEG)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1), ccw = a1 > a0;
+  let g = `<path d="M ${f1(x0)} ${f1(y0)} A ${r} ${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} ${ccw ? 0 : 1} ${f1(x1)} ${f1(y1)}" class="sv-arc"/>`;
+  const s = ccw ? 1 : -1, tx = -Math.sin(a1 * DEG) * s, ty = -Math.cos(a1 * DEG) * s;
+  return g + arrowSvg(x1 - tx * 12, y1 - ty * 12, x1 + tx * 2, y1 + ty * 2, cls);
+}
+/* un cuerpo redondo: anillo, disco, esfera (con una raya para ver que gira) */
+function roundBody(cx, cy, r, kind, phi = 0) {
+  let g = kind === "anillo" ? `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${r}" class="sv-ring"/>` : `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${r}" class="${kind === "esfera" ? "sv-mass" : "sv-disk"}" style="stroke:var(--ink); stroke-width:1.6"/>`;
+  if (kind === "esfera") g += `<circle cx="${f1(cx - r * 0.35)}" cy="${f1(cy - r * 0.35)}" r="${f1(r * 0.25)}" fill="var(--surface)" opacity=".7"/>`;
+  g += `<line x1="${f1(cx)}" y1="${f1(cy)}" x2="${f1(cx + r * Math.cos(phi))}" y2="${f1(cy + r * Math.sin(phi))}" class="sv-line"/>`;
+  return g;
+}
+/* plano inclinado con un cuerpo arriba */
+function planoSvg(o = {}) {
+  const x0 = 46, y0 = 58, x1 = 292, y1 = 162, th = Math.atan2(y1 - y0, x1 - x0), nx = Math.sin(th), ny = -Math.cos(th);
+  let g = `<polygon points="${x0},${y0} ${x1},${y1} ${x0},${y1}" class="sv-ground"/>`;
+  const r = o.r || 15, px = x0 + 26 * Math.cos(th), py = y0 + 26 * Math.sin(th), cx = px + r * nx, cy = py + r * ny;
+  g += roundBody(cx, cy, r, o.body || "esfera", 0.6);
+  g += curvedArrow(cx, cy, r + 8, 70, -10);
+  g += `<line x1="22" y1="${f1(py)}" x2="22" y2="${y1}" class="sv-dim"/>` + T(16, (py + y1) / 2 + 4, o.H || "H", "sv-t", "end");
+  g += `<line x1="22" y1="${f1(py)}" x2="${f1(px - 4)}" y2="${f1(py)}" class="sv-dash"/>`;
+  g += T(150, 186, o.lab || "rueda sin deslizar", "sv-tl", "middle");
+  if (o.v !== false) { const ys = (x) => y1 - (x1 - x) * Math.tan(th) - 14; g += arrowSvg(x1 - 96, ys(x1 - 96), x1 - 44, ys(x1 - 44), "a-v") + T(x1 - 44, ys(x1 - 44) - 14, o.v || "v = ?", "sv-t t-v", "end"); }
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="${o.aria || "Un cuerpo redondo arriba de un plano inclinado, a una altura H; rueda sin deslizar"}">${g}</svg>`;
+}
+function esferaBloqueSvg() {
+  let g = "";
+  [[10, "esfera", "rueda"], [168, "bloque", "desliza sin fricción"]].forEach(([ox, k, lab]) => {
+    const x0 = ox + 20, y0 = 52, x1 = ox + 142, y1 = 150, th = Math.atan2(y1 - y0, x1 - x0), nx = Math.sin(th), ny = -Math.cos(th);
+    g += `<polygon points="${x0},${y0} ${x1},${y1} ${x0},${y1}" class="sv-ground"/>`;
+    const px = x0 + 18 * Math.cos(th), py = y0 + 18 * Math.sin(th);
+    if (k === "esfera") g += roundBody(px + 12 * nx, py + 12 * ny, 12, "esfera", 0.5);
+    else g += `<g transform="rotate(${f1(th / DEG)} ${f1(px + 10 * nx)} ${f1(py + 10 * ny)})"><rect x="${f1(px + 10 * nx - 11)}" y="${f1(py + 10 * ny - 10)}" width="22" height="20" class="sv-block"/></g>`;
+    g += `<line x1="${x0 - 8}" y1="${f1(py)}" x2="${x0 - 8}" y2="${y1}" class="sv-dim"/>` + T(x0 - 12, (py + y1) / 2 + 4, "H", "sv-t", "end");
+    g += T((x0 + x1) / 2 + 6, y1 + 18, lab, "sv-tl", "middle");
+  });
+  return `<svg viewBox="0 0 320 178" role="img" aria-label="Dos planos con la misma altura H: en uno baja una esfera rodando y en el otro un bloque deslizando sin fricción">${g}</svg>`;
+}
+function discoRuedaSvg() {
+  const cx = 150, cy = 98, R = 54;
+  let g = `<line x1="40" y1="${cy + R}" x2="290" y2="${cy + R}" class="sv-line"/>`;
+  g += roundBody(cx, cy, R, "disco", -0.8) + `<circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  g += arrowSvg(cx + 6, cy, cx + 62, cy, "a-v") + T(cx + 64, cy - 8, "v", "sv-t t-v");
+  g += curvedArrow(cx, cy, R + 10, 120, 60) + T(cx, cy - R - 18, "ω", "sv-t t-v", "middle");
+  g += `<circle cx="${cx}" cy="${cy + R}" r="3.5" class="sv-axis"/>` + T(cx + 10, cy + R + 16, "no desliza", "sv-tl");
+  g += T(cx - R - 8, cy - R + 10, "disco M, R", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 180" role="img" aria-label="Un disco que rueda sin deslizar sobre el piso con rapidez v">${g}</svg>`;
+}
+function barraCaeSvg(o = {}) {
+  const px = 70, py = 64, L = 190;
+  let g = `<rect x="${px}" y="${py - 7}" width="${L}" height="14" rx="4" class="sv-rod"/>`;
+  g += `<rect x="${px - 7}" y="${py}" width="14" height="${f1(L * 0.62)}" rx="4" class="sv-ghost"/>` + T(px + 14, py + L * 0.62 - 6, "después (vertical)", "sv-tl");
+  if (o.tip) g += mass(px + L, py, o.tip, 10, 0, -16, "middle") + `<circle cx="${px}" cy="${py + L * 0.62}" r="9" class="sv-ghost"/>`;
+  g += axisMark(px, py, "") + T(px - 12, py + 4, "pivote", "sv-tl", "end");
+  g += `<line x1="${px}" y1="${py - 36}" x2="${px + L}" y2="${py - 36}" class="sv-dim"/>` + T(px + L / 2, py - 42, "L", "sv-t", "middle");
+  g += curvedArrow(px, py, 100, -8, -60) + T(px + 104, py + 74, "cae girando", "sv-tl");
+  g += T(px + L / 2, py - 14, o.tip ? "barra M" : "barra M, en reposo", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Una barra con un pivote en el extremo izquierdo se suelta en posición horizontal y cae girando hasta la vertical">${g}</svg>`;
+}
+function poleaMasaSvg(o = {}) {
+  const cx = 110, cy = 70, R = 44, rx = cx + R;
+  let g = `<line x1="60" y1="12" x2="160" y2="12" class="sv-line"/><line x1="${cx}" y1="12" x2="${cx}" y2="${cy}" class="sv-line"/>`;
+  g += (o.anillo ? `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-ring"/>` : `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>`) + axisMark(cx, cy, "");
+  g += `<line x1="${cx}" y1="${cy}" x2="${cx - R}" y2="${cy}" class="sv-dash"/>` + T(cx - R / 2, cy - 6, "R", "sv-t", "middle");
+  g += `<line x1="${rx}" y1="${cy}" x2="${rx}" y2="124" class="sv-rope"/>` + block(rx, 150, 40, 26, "M") + `<rect x="${rx - 20}" y="198" width="40" height="26" class="sv-ghost"/>`;
+  g += `<line x1="${rx + 34}" y1="150" x2="${rx + 34}" y2="224" class="sv-dim"/>` + T(rx + 40, 192, "h", "sv-t");
+  g += T(rx + 14, 40, o.polea || "polea: disco de masa M", "sv-tl", "start");
+  g += T(rx - 26, 216, "parte del reposo", "sv-tl", "end");
+  return `<svg viewBox="0 0 320 236" role="img" aria-label="Un bloque M cuelga de una cuerda enrollada en una polea con masa; baja una altura h desde el reposo">${g}</svg>`;
+}
+function atwoodSvg() {
+  const cx = 160, cy = 64, R = 40;
+  let g = `<line x1="110" y1="12" x2="210" y2="12" class="sv-line"/><line x1="${cx}" y1="12" x2="${cx}" y2="${cy}" class="sv-line"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/>` + axisMark(cx, cy, "") + T(cx + 12, cy - 12, "R", "sv-tl");
+  g += `<line x1="${cx - R}" y1="${cy}" x2="${cx - R}" y2="150" class="sv-rope"/><line x1="${cx + R}" y1="${cy}" x2="${cx + R}" y2="128" class="sv-rope"/>`;
+  g += block(cx - R, 176, 36, 26, "M") + block(cx + R, 166, 46, 38, "2M");
+  g += arrowSvg(cx - R - 34, 170, cx - R - 34, 136, "a-v") + arrowSvg(cx + R + 40, 134, cx + R + 40, 168, "a-v");
+  g += T(cx + R + 46, 156, "baja h", "sv-tl") + T(cx - R - 40, 158, "sube h", "sv-tl", "end");
+  g += T(cx, 210, "polea: disco de masa M, sin fricción", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 222" role="img" aria-label="Máquina de Atwood: bloques M y 2M colgados de una cuerda sobre una polea con forma de disco de masa M">${g}</svg>`;
+}
+function carreraSvg() {
+  const x0 = 40, y0 = 70, x1 = 292, y1 = 168, th = Math.atan2(y1 - y0, x1 - x0), nx = Math.sin(th), ny = -Math.cos(th);
+  let g = `<polygon points="${x0},${y0} ${x1},${y1} ${x0},${y1}" class="sv-ground"/>`;
+  [["anillo", 18], ["disco", 52], ["esfera", 86]].forEach(([k, d]) => { const px = x0 + d * Math.cos(th), py = y0 + d * Math.sin(th); g += roundBody(px + 13 * nx, py + 13 * ny, 13, k, 0.4) + T(px + 26 * nx, py + 26 * ny - 8, k, "sv-tl", "middle"); });
+  g += `<line x1="20" y1="${y0}" x2="20" y2="${y1}" class="sv-dim"/>` + T(14, (y0 + y1) / 2 + 4, "H", "sv-t", "end");
+  g += T(170, 190, "misma M, mismo R, sueltos a la vez", "sv-tl", "middle");
+  return `<svg viewBox="0 0 320 198" role="img" aria-label="Un anillo, un disco y una esfera arriba del mismo plano inclinado, a la altura H">${g}</svg>`;
+}
+const FIG = {
+  ej1: () => barraCaeSvg(),
+  ej2: () => planoSvg({ body: "disco", lab: "cilindro macizo: rueda sin deslizar" }),
+  ej3: () => planoSvg({ body: "esfera", lab: "I_CM = c·M·R², rueda sin deslizar" }),
+  ej4: () => poleaMasaSvg()
+};
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+
+/* ---------- Lab: la carrera ---------- */
+const RACE = [
+  { k: "bloque", lab: "Bloque", c: 0 },
+  { k: "esfera", lab: "Esfera", c: 0.4 },
+  { k: "disco", lab: "Disco", c: 0.5 },
+  { k: "anillo", lab: "Anillo", c: 1 }
+];
+const RC = { H: 1, th: 30, t: 0, run: false, last: null, done: false };
+const gA = 9.8, SLOW = 0.25, LANE = 24;
+const acc = (b) => gA * Math.sin(RC.th * DEG) / (1 + b.c);
+const tEnd = (b) => Math.sqrt(2 * (RC.H / Math.sin(RC.th * DEG)) / acc(b));
+const vEnd = (b) => Math.sqrt(2 * gA * RC.H / (1 + b.c));
+function drawRace() {
+  const th = RC.th * DEG, ux = Math.cos(th), uy = Math.sin(th), nx = Math.sin(th), ny = -Math.cos(th);
+  const Lpx = Math.min(200 / ux, 118 / uy), x0 = 70, y0 = 100, Lm = RC.H / uy;
+  let g = `<polygon points="${x0},${y0} ${f1(x0 + Lpx * ux)},${f1(y0 + Lpx * uy)} ${x0},${f1(y0 + Lpx * uy)}" class="sv-ground"/>`;
+  RACE.forEach((b, k) => {
+    const sx = x0 + k * LANE * nx, sy = y0 + k * LANE * ny;
+    if (k > 0) g += `<line x1="${f1(sx)}" y1="${f1(sy)}" x2="${f1(sx + Lpx * ux)}" y2="${f1(sy + Lpx * uy)}" class="sv-thin"/>`;
+    g += T(sx - 6, sy - 4, b.lab.toLowerCase(), "sv-tl", "end");
+    const sm = Math.min(Lm, 0.5 * acc(b) * RC.t * RC.t), sp = sm / Lm * Lpx, cx = sx + sp * ux, cy = sy + sp * uy;
+    if (b.k === "bloque") g += `<g transform="rotate(${f1(RC.th)} ${f1(cx + 9 * nx)} ${f1(cy + 9 * ny)})"><rect x="${f1(cx + 9 * nx - 9)}" y="${f1(cy + 9 * ny - 9)}" width="18" height="18" class="sv-block"/></g>`;
+    else g += roundBody(cx + 9 * nx, cy + 9 * ny, 9, b.k, sp / 9);
+  });
+  g += `<line x1="${f1(x0 + Lpx * ux)}" y1="${f1(y0 + Lpx * uy)}" x2="${f1(x0 + Lpx * ux + 3 * LANE * nx)}" y2="${f1(y0 + Lpx * uy + 3 * LANE * ny)}" class="sv-dash"/>`;
+  g += T(14, y0 + Lpx * uy - 4, "H = " + nf(RC.H) + " m", "sv-tl");
+  $("#r-svg").innerHTML = `<svg viewBox="0 0 330 250" role="img" aria-label="Carrera por un plano inclinado de un bloque sin fricción, una esfera, un disco y un anillo">${g}</svg>`;
+}
+function fillTable() {
+  const order = [...RACE].sort((a, b) => tEnd(a) - tEnd(b));
+  $("#r-tab").innerHTML = RACE.map((b) => `<tr${RC.done && b === order[0] ? ' class="win"' : ""}><td>${b.lab}</td><td>${fmt(vEnd(b))} m/s</td><td>${fmt(tEnd(b))} s</td><td>${Math.round(100 * b.c / (1 + b.c))} %</td></tr>`).join("");
+  return order;
+}
+function rStatus(t, ok) { const st = $("#r-status"); st.textContent = t; st.className = "status" + (ok ? " ok" : ""); }
+function rReset() { RC.run = false; RC.t = 0; RC.last = null; RC.done = false; $("#r-go").textContent = "Soltar"; rStatus("Listo para soltar"); fillTable(); drawRace(); }
+function rFrame(now) {
+  if (!RC.run) return;
+  if (RC.last == null) RC.last = now;
+  RC.t += Math.min(0.05, (now - RC.last) / 1000) * SLOW; RC.last = now;
+  const tmax = Math.max(...RACE.map(tEnd));
+  if (RC.t >= tmax) { RC.t = tmax; RC.run = false; RC.done = true; drawRace(); const order = fillTable(); $("#r-go").textContent = "Soltar"; rStatus("Orden de llegada: " + order.map((b) => b.lab.toLowerCase()).join(", ") + ".", true); return; }
+  drawRace(); requestAnimationFrame(rFrame);
+}
+$("#r-h").addEventListener("input", (e) => { RC.H = +e.target.value; $("#r-h-lab").textContent = "Altura H = " + nf(RC.H) + " m"; rReset(); });
+$("#r-th").addEventListener("input", (e) => { RC.th = +e.target.value; $("#r-th-lab").textContent = "Ángulo del plano θ = " + RC.th + "°"; rReset(); });
+$("#r-go").addEventListener("click", () => {
+  if (RC.run) { RC.run = false; $("#r-go").textContent = "Seguir"; rStatus("En pausa"); return; }
+  if (RC.done) rReset();
+  RC.run = true; RC.last = null; $("#r-go").textContent = "Pausa"; rStatus("Bajando (cámara lenta ×4)");
+  requestAnimationFrame(rFrame);
+});
+$("#r-reset").addEventListener("click", rReset);
+rReset();
+
+/* ---------- Taller ---------- */
+const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const rt = (x) => `√<span class="rad">${x}</span>`;
+const tch = (t) => `<span class="cx">${t}</span>`;
+const PROBS = [
+  { group: "Parciales 3 anteriores · empieza por aquí", note: "La esfera que rueda salió en los 4 parciales 3. Aquí está la versión de la rapidez (2024-2, 2025-1 y 2025-2). La de la aceleración (2026-1) es de M5 y está guardada para el simulacro." },
+  { n: "T1", t: "La esfera que rueda desde una altura H", src: "Parcial 3 2025-1 · selección múltiple 2 · 10 puntos (salió igual en 2024-2 y 2025-2)",
+    fig: () => planoSvg({ body: "esfera", aria: "Una esfera sólida arriba de un plano inclinado, a una altura H; rueda sin deslizar" }),
+    txt: "Se suelta una esfera sólida uniforme de masa M y radio R (I_CM = (2/5)·M·R²) desde una altura H, desde el reposo, sobre un plano inclinado con fricción. La esfera rueda sin deslizar. ¿Con qué rapidez llega a la parte baja del plano? Opciones del parcial: A) √(g·H) · B) √(2·g·H) · C) √(5·g·H/7) · D) √(10·g·H/7) · E) √(7·g·H/10). (En el parcial la masa sale como m.)",
+    hints: ["Rueda sin deslizar: la fricción estática no hace trabajo y la energía se conserva. Haz la tabla con K de traslación, K de rotación y U.", "ω = v/R e I_CM = (2/5)·M·R². La rotación queda (1/5)·M·v²."],
+    sol: [{ w: "¿Se conserva la energía?", y: "Sí. Aunque el plano tiene fricción, la esfera rueda sin deslizar: el punto de contacto no se mueve y la fricción estática no hace trabajo." },
+      { w: "Tabla de energía.", y: "Referencia de altura: abajo. Parte del reposo.", m: `<div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K de traslación</td><td>0</td><td>½·M·v²</td></tr><tr><td>K de rotación</td><td>0</td><td>½·I<sub>CM</sub>·ω²</td></tr><tr><td>U = M·g·h</td><td>M·g·H</td><td>0</td></tr><tr class="tot"><td>Total</td><td>M·g·H</td><td>½·M·v² + ½·I<sub>CM</sub>·ω²</td></tr></tbody></table></div>` },
+      { w: "La rotación en términos de v.", y: "Rueda sin deslizar: ω = v/R. La R² se cancela.", m: `½·I<sub>CM</sub>·ω² = ½·(${fr("2", "5")}·M·${tch("R²")})·${fr("v²", tch("R²"))} = ${fr("1", "5")}·M·v²` },
+      { w: "Iguala el inicio con el final.", y: "½ + 1/5 = 5/10 + 2/10 = 7/10.", m: `M·g·H = ½·M·v² + ${fr("1", "5")}·M·v² = ${fr("7", "10")}·M·v²` },
+      { w: "Cancela M y despeja v.", y: "Multiplicas por 10/7 y sacas raíz.", m: `${tch("M")}·g·H = ${fr("7", "10")}·${tch("M")}·v²<span class="ar">→</span>v² = ${fr("10·g·H", "7")}<span class="ar">→</span>v = ${rt(fr("10·g·H", "7"))}` }],
+    res: "v = √(10·g·H/7) (opción D).",
+    checks: [{ q: "¿Con qué rapidez llega abajo?", opts: ["√(2·g·H)", "√(10·g·H/7)", "√(7·g·H/10)", "√(5·g·H/7)"], a: 1 }] },
+  { group: "Más práctica", note: "La carrera, el Atwood con polea pesada resuelto con energía (en M5 lo vas a hacer con fuerzas) y una barra que cae con una masa en la punta." },
+  { n: "T2", t: "La carrera: anillo, disco y esfera", src: "Para practicar el número c",
+    fig: () => carreraSvg(),
+    txt: "Un anillo, un disco y una esfera sólida, todos de masa M y radio R, se sueltan desde el reposo a la misma altura H del mismo plano y ruedan sin deslizar. (a) ¿Con qué rapidez llega cada uno abajo? (b) ¿En qué orden llegan?",
+    hints: ["Usa el resultado del ejemplo 3: v = √(2·g·H/(1 + c)), con c = 1, ½ y 2/5.", "En el mismo plano, el que llega con más rapidez también tiene más aceleración, así que llega primero."],
+    sol: [{ w: "(a) Anillo: c = 1.", m: `v = ${rt(fr("2·g·H", "1 + 1"))} = ${rt("g·H")}` },
+      { w: "(a) Disco: c = ½.", y: "1 + ½ = 3/2, y 2/(3/2) = 4/3.", m: `v = ${rt(fr("2·g·H", "3/2"))} = ${rt(fr("4·g·H", "3"))}` },
+      { w: "(a) Esfera: c = 2/5.", y: "1 + 2/5 = 7/5, y 2/(7/5) = 10/7.", m: `v = ${rt(fr("2·g·H", "7/5"))} = ${rt(fr("10·g·H", "7"))}` },
+      { w: "(b) Compara.", y: "10/7 ≈ 1,43, 4/3 ≈ 1,33 y 1. El que tiene c más pequeño pone menos energía en girar, avanza más rápido y llega antes.", m: `esfera > disco > anillo` }],
+    res: "(a) Anillo √(g·H), disco √(4·g·H/3), esfera √(10·g·H/7). (b) Llegan esfera, disco y anillo.",
+    checks: [{ q: "(b) ¿Quién llega último?", opts: ["La esfera", "El disco", "El anillo", "Llegan juntos"], a: 2 }] },
+  { n: "T3", t: "Atwood con polea pesada, con energía", src: "Variante con energía del abierto 1 de 2025-1 y el 3 de 2025-2 (allá piden la aceleración: M5)",
+    fig: () => atwoodSvg(),
+    txt: "Dos bloques, de masas M y 2M, cuelgan de una cuerda que pasa por una polea con forma de disco, de masa M y radio R, que gira sin fricción. La cuerda no desliza. Se sueltan desde el reposo. ¿Con qué rapidez se mueven cuando el bloque 2M ha bajado una altura h?",
+    hints: ["Tabla con tres cuerpos: los dos bloques (misma rapidez v) y la polea (½·I·ω², con ω = v/R). 2M baja h y M sube h.", "La polea: ½·(½·M·R²)·(v/R)² = ¼·M·v²."],
+    sol: [{ w: "Tabla de energía.", y: "Referencia: donde arranca cada bloque. Los dos bloques van con la misma rapidez v, porque los une la cuerda. M sube h y 2M baja h.", m: `<div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K de los bloques</td><td>0</td><td>½·(M + 2M)·v²</td></tr><tr><td>K de la polea</td><td>0</td><td>½·I·ω²</td></tr><tr><td>U de M</td><td>0</td><td>+M·g·h</td></tr><tr><td>U de 2M</td><td>0</td><td>−2M·g·h</td></tr><tr class="tot"><td>Total</td><td>0</td><td>½·3M·v² + ½·I·ω² + M·g·h − 2M·g·h</td></tr></tbody></table></div>` },
+      { w: "La polea en términos de v.", y: "La cuerda no desliza: ω = v/R. Disco: I = ½·M·R².", m: `½·I·ω² = ½·(½·M·${tch("R²")})·${fr("v²", tch("R²"))} = ${fr("1", "4")}·M·v²` },
+      { w: "El total se conserva: el final es 0, como el inicio.", y: "Agrupas: ½·3M = (3/2)·M, y 3/2 + 1/4 = 7/4. Y M·g·h − 2M·g·h = −M·g·h.", m: `${fr("7", "4")}·M·v² − M·g·h = 0` },
+      { w: "Cancela M y despeja v.", m: `${fr("7", "4")}·${tch("M")}·v² = ${tch("M")}·g·h<span class="ar">→</span>v = ${rt(fr("4·g·h", "7"))}` }],
+    res: "v = √(4·g·h/7). En M5 vas a ver que eso corresponde a una aceleración a = 2g/7, la respuesta de los parciales.",
+    checks: [{ q: "¿Cuánto vale v?", opts: ["√(2·g·h/3)", "√(4·g·h/7)", "√(g·h)", "√(2·g·h/7)"], a: 1 }] },
+  { n: "T4", t: "La barra que cae con una masa en la punta", src: "Variante del ejemplo resuelto 1",
+    fig: () => barraCaeSvg({ tip: "M" }),
+    txt: "Una barra uniforme de masa M y largo L gira alrededor de un pivote fijo en un extremo, y tiene una masa puntual M pegada en la otra punta. Se suelta desde el reposo en posición horizontal. ¿Con qué velocidad angular pasa por la vertical?",
+    hints: ["I respecto al pivote: barra por el extremo (M·L²/3) más la masa puntual a L (M·L²).", "La U: el CM de la barra baja L/2 y la masa de la punta baja L."],
+    sol: [{ w: "I respecto al pivote.", y: "Barra por un extremo más una masa puntual a una distancia L.", m: `I = ${fr("1", "3")}·M·L² + M·L² = ${fr("4", "3")}·M·L²` },
+      { w: "Tabla de energía.", y: "Referencia: el pivote. Gira alrededor de un pivote fijo: toda la K es de rotación. El CM de la barra baja L/2 y la masa de la punta baja L: en total, (1/2 + 1)·M·g·L = (3/2)·M·g·L.", m: `<div class="tw"><table class="etab"><thead><tr><th></th><th>Inicio</th><th>Final</th></tr></thead><tbody><tr><td>K de rotación</td><td>0</td><td>½·I·ω²</td></tr><tr><td>U de la barra (CM)</td><td>0</td><td>−M·g·<span class="frac"><span>L</span><span>2</span></span></td></tr><tr><td>U de la masa de la punta</td><td>0</td><td>−M·g·L</td></tr><tr class="tot"><td>Total</td><td>0</td><td>½·I·ω² − <span class="frac"><span>3</span><span>2</span></span>·M·g·L</td></tr></tbody></table></div>` },
+      { w: "El total se conserva.", y: "Pasas la U al otro lado y reemplazas I.", m: `½·${fr("4", "3")}·M·L²·ω² = ${fr("3", "2")}·M·g·L<span class="ar">→</span>${fr("2", "3")}·M·L²·ω² = ${fr("3", "2")}·M·g·L` },
+      { w: "Cancela M y una L, y despeja ω.", y: "Multiplicas los dos lados por 3/2: (3/2)·(3/2) = 9/4.", m: `${fr("2", "3")}·${tch("M")}·${tch("L")}·L·ω² = ${fr("3", "2")}·${tch("M")}·g·${tch("L")}<span class="ar">→</span>ω² = ${fr("9·g", "4·L")}<span class="ar">→</span>ω = ${fr("3", "2")}·${rt(fr("g", "L"))}` }],
+    res: "ω = (3/2)·√(g/L).",
+    checks: [{ q: "¿Cuánto vale ω?", opts: ["√(3·g/L)", "(3/2)·√(g/L)", "√(g/L)", "2·√(g/L)"], a: 1 }] }
+];
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    if (p.group) { const gr = el("div", "prob-group"); gr.appendChild(el("h3", "", p.group)); if (p.note) gr.appendChild(el("p", "", p.note)); box.appendChild(gr); return; }
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck) => {
+      const c = el("div", "check"); const cq = el("p"); cq.innerHTML = "Chequeo rápido · " + ck.q; c.appendChild(cq);
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button";
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb2 = el("div", "rev-body"); sb2.innerHTML = stepsHtml(p.sol) + `<div class="wx-res"><b>Resultado:</b> ${p.res}</div>`; ds.appendChild(sb2); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M4", NEXT = "Aprobado. Pasas a M5 · Torque, dinámica rotacional y poleas con masa.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: () => esferaBloqueSvg(), q: "Desde la misma altura H, una esfera baja rodando sin deslizar y un bloque baja deslizando sin fricción. ¿Cuál llega abajo con más rapidez?",
+      o: ["La esfera", "El bloque", "Llegan con la misma rapidez", "Depende de las masas"], a: 1,
+      e: "Los dos convierten M·g·H en energía cinética, pero la esfera pone una parte (2/7) en girar. El bloque pone todo en avanzar: √(2·g·H) contra √(10·g·H/7)." },
+    { k: "Conceptual", fig: () => planoSvg({ body: "esfera", v: false, lab: "plano con fricción, rueda sin deslizar" }), q: "Una esfera rueda sin deslizar por un plano con fricción. ¿Por qué se puede usar conservación de la energía mecánica?",
+      o: ["Porque la fricción es pequeña", "Porque el punto de contacto no desliza, así que la fricción estática no hace trabajo", "Porque la normal cancela la fricción", "No se puede usar"], a: 1,
+      e: "La fricción estática actúa sobre el punto de contacto, que está quieto en ese instante. Una fuerza sobre un punto que no se mueve no hace trabajo." },
+    { k: "Corta", fig: () => discoRuedaSvg(), q: "Un disco de masa M y radio R rueda sin deslizar con rapidez v. ¿Cuánto vale su energía cinética total?",
+      o: ["½·M·v²", "¾·M·v²", "M·v²", "(7/10)·M·v²"], a: 1,
+      e: "½·M·v² + ½·(½·M·R²)·(v/R)² = ½·M·v² + ¼·M·v² = ¾·M·v²." },
+    { k: "Tipo parcial", fig: () => planoSvg({ body: "anillo", aria: "Un anillo arriba de un plano inclinado, a una altura H" }), q: "Un anillo de masa M y radio R se suelta desde el reposo a una altura H y rueda sin deslizar. ¿Con qué rapidez llega abajo?",
+      o: ["√(g·H)", "√(2·g·H)", "√(4·g·H/3)", "√(10·g·H/7)"], a: 0,
+      e: "Anillo: I_CM = M·R², así que la rotación es ½·M·v². M·g·H = ½·M·v² + ½·M·v² = M·v², y v = √(g·H)." },
+    { k: "Tipo parcial", fig: () => poleaMasaSvg({ polea: "polea: disco de masa 2M" }), q: "Un bloque de masa M cuelga de una cuerda enrollada en una polea con forma de disco, de masa 2M y radio R. Parte del reposo y baja una altura h. ¿Con qué rapidez va?",
+      o: ["√(g·h)", "√(2·g·h)", "√(4·g·h/3)", "√(g·h/2)"], a: 0,
+      e: "Polea: ½·(½·2M·R²)·(v/R)² = ½·M·v². Entonces M·g·h = ½·M·v² + ½·M·v² = M·v², y v = √(g·h)." }
+  ],
+  B: [
+    { k: "Conceptual", fig: () => carreraSvg(), q: "Un anillo y un disco, de la misma masa y el mismo radio, se sueltan a la vez desde la misma altura y ruedan sin deslizar por el mismo plano. ¿Cuál llega primero?",
+      o: ["El anillo", "El disco", "Llegan juntos", "El de mayor masa"], a: 1,
+      e: "El disco (c = ½) pone menos energía en girar que el anillo (c = 1): avanza más rápido y llega primero." },
+    { k: "Conceptual", fig: () => planoSvg({ body: "esfera", lab: "esfera sólida, rueda sin deslizar" }), q: "Una esfera sólida rueda sin deslizar. ¿Qué fracción de su energía cinética es de rotación?",
+      o: ["2/7", "2/5", "5/7", "1/2"], a: 0,
+      e: "Rotación: ½·(2/5)·M·v² = (1/5)·M·v². Total: (7/10)·M·v². Fracción: (1/5)/(7/10) = 2/7." },
+    { k: "Corta", fig: () => planoSvg({ body: "anillo", v: false, lab: "anillo que rueda con rapidez v" }), q: "Un anillo de masa M y radio R rueda sin deslizar con rapidez v. ¿Cuánto vale su energía cinética total?",
+      o: ["½·M·v²", "¾·M·v²", "M·v²", "2·M·v²"], a: 2,
+      e: "½·M·v² + ½·(M·R²)·(v/R)² = ½·M·v² + ½·M·v² = M·v²." },
+    { k: "Tipo parcial", fig: () => planoSvg({ body: "anillo", lab: "esfera hueca: I_CM = (2/3)·M·R²", aria: "Una esfera hueca arriba de un plano inclinado, a una altura H" }), q: "Una esfera hueca de masa M y radio R (I_CM = (2/3)·M·R²) se suelta desde el reposo a una altura H y rueda sin deslizar. ¿Con qué rapidez llega abajo?",
+      o: ["√(6·g·H/5)", "√(10·g·H/7)", "√(3·g·H/5)", "√(g·H)"], a: 0,
+      e: "c = 2/3: M·g·H = ½·(1 + 2/3)·M·v² = (5/6)·M·v², así que v² = 6·g·H/5." },
+    { k: "Tipo parcial", fig: () => poleaMasaSvg({ anillo: true, polea: "polea: anillo de masa 2M" }), q: "Un bloque de masa M cuelga de una cuerda enrollada en una polea que es un anillo de masa 2M y radio R. Parte del reposo y baja una altura h. ¿Con qué rapidez va?",
+      o: ["√(2·g·h/3)", "√(g·h)", "√(2·g·h)", "√(4·g·h/3)"], a: 0,
+      e: "Polea anillo: ½·(2M·R²)·(v/R)² = M·v². Entonces M·g·h = ½·M·v² + M·v² = (3/2)·M·v², y v = √(2·g·h/3)." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>
