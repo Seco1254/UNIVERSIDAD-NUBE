@@ -316,8 +316,8 @@ const DAYS = [
   {p:1, d:"2026-11-14", n:"Sáb", f:"14 nov", load:4, what:"M4 Energía rotacional y rodar sin deslizar · M5 Torque y poleas con masa", mods:["M4","M5"], h:"4–5 h"},
   {p:1, d:"2026-11-15", n:"Dom", f:"15 nov", load:4, what:"M6 Equilibrio estático · M7 Momento angular", mods:["M6","M7"], h:"4–5 h"},
   {p:1, d:"2026-11-16", n:"Lun", f:"16 nov", load:4, what:"Festivo · X2 Gravitación (exprés) + Quiz B de los módulos flojos + hoja de fórmulas del Parcial 3", mods:["X2"], h:"~4 h"},
-  {p:1, d:"2026-11-17", n:"Mar", f:"17 nov", load:1, what:"Rehaz los problemas de parciales que fallaste (probable quiz bono en clase)", mods:[], h:"1 h"},
-  {p:1, d:"2026-11-18", n:"Mié", f:"18 nov", load:3, what:"M8 simulacro: el Parcial 3 de 2026-1 en 80 min + corrección → Quiz 5 de la complementaria a las 17:00", mods:["M8"], h:"2,5 h antes de las 17:00"},
+  {p:1, d:"2026-11-17", n:"Mar", f:"17 nov", load:4, what:"Recta final 1 · M3 inercia (teoría 4–6, T1, T2, quiz) → M4 rodar completo → M2 solo T1 → M7 momento angular", mods:["M3","M4","M2","M7"], h:"5–6 h"},
+  {p:1, d:"2026-11-18", n:"Mié", f:"18 nov", load:4, what:"Recta final 2 · M6 equilibrio y M5 polea con masa (exprés) → Quiz 5 a las 17:00 → noche: M8 simulacro (Parcial 3 de 2026-1, 80 min)", mods:["M6","M5","M8"], h:"5 h"},
   {p:1, d:"2026-11-19", n:"Jue", f:"19 nov", load:0, what:"Parcial 3 a las 12:30 · antes, 30 min con la hoja de fórmulas", mods:[], h:"Llega descansado", exam:true},
   {p:2, d:"2026-11-20", n:"Vie", f:"20 nov", load:2, what:"F1 Vectores y cinemática 1D", mods:["F1"], h:"~2 h"},
   {p:2, d:"2026-11-21", n:"Sáb", f:"21 nov", load:4, what:"F2 Movimiento armónico simple · F3 teoría y lab", mods:["F2","F3"], h:"4–5 h"},
@@ -584,7 +584,7 @@ function renderToday() {
     const p = progress[id] || {};
     if (p.url) { const a = el("a", "btn", "Abrir " + id + " →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a); }
   });
-  const NOTES = { "2026-11-11": "Ajuste del 11 de noviembre: arrancas con M1, y su taller ya empieza con los problemas de los parciales 3 anteriores.", "2026-11-17": "Probable quiz bono en clase: vale 5 de los 105 puntos del parcial.", "2026-11-18": "Hoy a las 17:00: Quiz 5 de la complementaria. Mañana, Parcial 3.", "2026-11-29": "Mañana a las 15:00: examen final." };
+  const NOTES = { "2026-11-17": "Recta final: la prioridad es lo que más sale (esfera que rueda 4/4, inercia 3/4, momento angular 3/4, equilibrio 3/4). M2 solo el T1. La gravitación queda en un resumen.", "2026-11-18": "Hoy a las 17:00: Quiz 5 de la complementaria. En la noche, el simulacro. Mañana, Parcial 3.", "2026-11-29": "Mañana a las 15:00: examen final." };
   if (NOTES[d.d]) { note.hidden = false; note.textContent = NOTES[d.d]; }
 }
 
