@@ -44,6 +44,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | P3 · M4 · Energía rotacional y rodar sin deslizar | https://claude.ai/artifact/2Yy8b2Q6eBVb6WzaqkHZmV | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M4.html` |
 | Física 1 | P3 · M5 · Torque y poleas con masa (exprés, sin lab) | https://claude.ai/artifact/UoJSHGuJMo6CgzvAZV9qXb | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M5.html` |
 | Física 1 | P3 · M6 · Equilibrio estático (exprés, sin lab) | https://claude.ai/artifact/LCNEgUbTrAs4JkFxqPqdoZ | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M6.html` |
+| Física 1 | P3 · M8 · Simulacro: Parcial 3 de 2026-1 (80 min, sobre 90, intentos en `intentos/`) | https://claude.ai/artifact/W86GrJodXwnMFkDBLezZsf | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M8.html` |
 | Física 1 | P3 · M7 · Momento angular (exprés, sin lab) | https://claude.ai/artifact/XfS1Yjj4ZCXZc2sZVRWqx6 | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M7.html` |
 
 ## Convenciones
