@@ -1,0 +1,69 @@
+<title>Hoja Parcial 3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Hoja de repaso para el celular: una columna de tarjetas por tema, ordenadas por lo que más sale */
+:root { --bg:#f5f6fa; --card:#ffffff; --fg:#141a2c; --muted:#5b6377; --accent:#2f54d8; --hot:#c2410c; --line:#dfe3ec; --code:#eef1f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#10131d; --card:#181c29; --fg:#e7eaf3; --muted:#9ba3b8; --accent:#88a2ff; --hot:#f59e5c; --line:#2c3245; --code:#21263a; color-scheme: dark } }
+:root[data-theme="dark"] { --bg:#10131d; --card:#181c29; --fg:#e7eaf3; --muted:#9ba3b8; --accent:#88a2ff; --hot:#f59e5c; --line:#2c3245; --code:#21263a; color-scheme: dark }
+body { background:var(--bg); color:var(--fg); font:15px/1.5 system-ui, -apple-system, sans-serif; padding-block:18px 28px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)) }
+main { max-width:720px; margin:0 auto; display:grid; gap:12px }
+h1 { margin:0; font-size:1.4rem; text-wrap:balance }
+.sub { color:var(--muted); margin:0 }
+section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:grid; gap:6px; min-width:0 }
+h2 { margin:0; font-size:1rem; display:flex; gap:8px; align-items:baseline; flex-wrap:wrap }
+.tag { font-size:.72rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--hot) }
+.f { font-family:ui-monospace, "SF Mono", Menlo, monospace; font-size:.9rem; background:var(--code); border-radius:6px; padding:6px 9px; overflow-x:auto; white-space:nowrap }
+ul { margin:0; padding-left:18px; display:grid; gap:3px }
+.trap { color:var(--hot) }
+.last { border-color:var(--accent) }
+</style>
+<main>
+  <h1>Hoja del Parcial 3</h1>
+  <p class="sub">Ordenada por lo que más salió en los 4 parciales anteriores. Masa con M; en el parcial sale como m.</p>
+
+  <section><h2>Choques por etapas <span class="tag">4 de 4 · 20 pts</span></h2>
+    <div class="f">energía → choque (solo momento) → energía con fricción / resorte / plano / loop</div>
+    <ul><li>Bajada sin fricción: v = √(2gH).</li><li>Se pegan: M₁·v = (M₁ + M₂)·V. <span class="trap">Nunca energía en el choque.</span></li><li>Fricción: W = −µₖ·N·d, con la masa de los dos bloques en N. En un plano: N = M·g·cos θ y d = h/sen θ.</li><li>Resorte: ½·k·x². Loop arriba, justo pasa: N = 0, v² = g·R.</li></ul>
+  </section>
+
+  <section><h2>Esfera que rueda <span class="tag">4 de 4</span></h2>
+    <div class="f">v = √(10gH/7) · a = (5/7)·g·sen θ</div>
+    <ul><li>General con I = c·M·R²: v = √(2gH/(1 + c)), a = g·sen θ/(1 + c). Anillo c = 1, disco ½, esfera 2/5, esfera hueca 2/3.</li><li>Rodar sin deslizar: v = R·ω; K = ½M·v² + ½I·ω². La fricción estática no hace trabajo.</li></ul>
+  </section>
+
+  <section><h2>Fracción de energía disipada <span class="tag">3 de 4</span></h2>
+    <div class="f">se disipa M₂/(M₁ + M₂)   (M₂ estaba quieto, se pegan)</div>
+  </section>
+
+  <section><h2>Momento de inercia <span class="tag">3 de 4</span></h2>
+    <div class="f">I = I_CM + M·D²   (cada pieza con SU centro y SU masa)</div>
+    <ul><li>Anillo M·R² · disco ½M·R² · esfera (2/5)M·R² · barra centro M·L²/12 · barra extremo M·L²/3.</li><li>Masa puntual: solo M·r². Distancia en diagonal: Pitágoras.</li><li>Suma pieza por pieza.</li></ul>
+  </section>
+
+  <section><h2>Momento angular <span class="tag">3 de 4 · 20 pts</span></h2>
+    <div class="f">M_bola·v·d = (I_varilla + M_bola·d²)·ω</div>
+    <ul><li>Respecto al pivote se conserva L. <span class="trap">No p, no energía.</span></li><li>d = distancia del pivote al punto donde pega. L = I·ω. Si L es constante, el torque neto es 0.</li><li>Disco que cambia de I: I₁·ω₁ = I₂·ω₂.</li></ul>
+  </section>
+
+  <section><h2>Equilibrio <span class="tag">3 de 4</span></h2>
+    <div class="f">ΣFx = 0 · ΣFy = 0 · Στ = 0</div>
+    <ul><li>Torques respecto al pivote o al punto con más incógnitas. τ = F·brazo; con cuerda inclinada, T·sen θ.</li><li>Peso de la tabla en su mitad. Pivote: F_px y F_py. Barra apoyada: f = T, N = M·g, µₛ ≥ f/N.</li></ul>
+  </section>
+
+  <section><h2>Polea con masa <span class="tag">2 de 4 · 20 pts</span></h2>
+    <div class="f">a = (M₂ − M₁)·g / (M₁ + M₂ + ½M_p)   → M, 2M, polea M: 2g/7</div>
+    <ul><li>T₁ ≠ T₂: (T₂ − T₁)·R = I·α, α = a/R. Un sentido positivo para todo.</li></ul>
+  </section>
+
+  <section><h2>Centro de masa y explosión <span class="tag">1 de 4</span></h2>
+    <ul><li>X_CM = ΣM·x/ΣM. Al explotar, el CM sigue la parábola y cae donde caería todo junto.</li></ul>
+  </section>
+
+  <section><h2>Cinemática rotacional</h2>
+    <div class="f">ω = ω₀ + α·t · θ = ω₀·t + ½α·t² · v = R·ω · a = R·α · 1 vuelta = 2π</div>
+  </section>
+
+  <section class="last"><h2>Al entrar</h2>
+    <ul><li>Selección múltiple: justifica siempre.</li><li>Abiertos: diagrama + ecuaciones + resultado. El diagrama da puntos aunque no termines.</li><li>Revisa unidades y casos límite al final.</li></ul>
+  </section>
+</main>
