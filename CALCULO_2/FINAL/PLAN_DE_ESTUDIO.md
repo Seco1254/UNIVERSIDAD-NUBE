@@ -138,4 +138,7 @@ No venía solución oficial: estas respuestas las saqué yo y las verifiqué con
 - **Final de 2023, P4:** la suma dice i = 1 pero el término usa n. Es la misma serie.
 - **Más erratas del Parcial 1 de 2026 (Neón):** versión A, P2: la solución pone 2 ln(cos(t/2)) en vez de 4 ln(cos(t/2)); lo correcto es 10π/(3√3) − 2 ln 3. Versión B, P3: el último término es −6/(x − 2), no −6/(x + 2).
 - **Parcial 1 de 2023, P4:** dice «desde x = 1 hasta x = 9», pero la curva es x en función de y: son valores de y (la longitud da 32/3).
+- **Hoja 8.1 (1e):** la respuesta dice 1/2 − log 3, que es negativa; la longitud de y = ln(1 − x²) entre 0 y 1/2 es ln 3 − 1/2.
+- **Hoja 8.1 (1b):** la respuesta (20√10 − 2)/27 corresponde a y = 1 + 2x^(3/2); con 6x^(3/2), como dice el enunciado, da (2/243)(82√82 − 1). No se usa en los módulos.
+- **Parcial 1 de 2023, P3:** escribe dy, pero la variable es x.
 - **Libro:** el programa usa la 6.ª edición del Stewart; la 8.ª en español (e-book de la biblioteca) tiene errores de tipografía.
