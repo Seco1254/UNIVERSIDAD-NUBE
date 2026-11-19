@@ -1,0 +1,754 @@
+<title>M1 Paramétricas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de los módulos del Parcial 3, acento violeta de Cálculo). Columna de lectura ≤ 860px con barra de secciones fija; el lab dibuja la curva paramétrica con una poligonal cuyos tramos se suman hasta acercarse a la longitud. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:8px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.rule-box ul{padding-left:20px; display:grid; gap:4px}
+.tri{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tri div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.tri div.yes{border-color:var(--green); background:var(--green-soft)}
+.tri div.bad{border-color:var(--red); background:var(--red-soft)}
+.tri div.no{border-style:dashed}
+@media (max-width:620px){ .tri{grid-template-columns:1fr} }
+
+/* El árbol de decisión */
+.flow{list-style:none; margin:0; padding:0; display:grid; counter-reset:f}
+.flow li{display:grid; grid-template-columns:2rem minmax(0,1.15fr) minmax(0,1fr); gap:4px 12px; padding:11px 12px; background:var(--surface); border:1px solid var(--rule); border-top:0; counter-increment:f; align-items:baseline}
+.flow li::before{content:counter(f); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; grid-row:1 / span 2}
+.flow li:first-child{border-top:1px solid var(--rule); border-radius:var(--r) var(--r) 0 0}
+.flow li:last-child{border-radius:0 0 var(--r) var(--r)}
+.flow .fq{font-weight:600}
+.flow .fa{font-weight:600; color:var(--green)}
+.flow .fe{grid-column:2 / -1; font-size:.87rem; color:var(--muted); line-height:1.9}
+@media (max-width:620px){ .flow li{grid-template-columns:1.6rem minmax(0,1fr)} .flow .fa{grid-column:2} .flow li::before{grid-row:1 / span 3} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-conv{fill:var(--green-soft); fill-opacity:.75}
+.gr-div{fill:var(--red-soft); fill-opacity:.75}
+.gr-one{stroke:var(--red); stroke-width:1.6}
+.gr-onet{fill:var(--red); font-family:var(--f-mono); font-size:10px; font-weight:500}
+.gr-leg{fill:var(--muted); font-family:var(--f-body); font-size:10.5px}
+.lg-c{fill:var(--green-soft); stroke:var(--green)} .lg-d{fill:var(--red-soft); stroke:var(--red)} .lg-b{fill:var(--accent-soft); stroke:var(--accent)}
+.gr-band{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.5}
+.gr-zz{fill:none; stroke:var(--accent); stroke-width:1.3; stroke-opacity:.7}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.cls-stage{padding:16px; gap:14px}
+.cls-series{font-size:1.25rem; padding:18px 12px; text-align:center; background:var(--paper); border:1px solid var(--rule); border-radius:8px; overflow-x:auto; line-height:2.2}
+.cls-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:6px}
+.crit{font:inherit; font-size:.88rem; font-weight:600; text-align:left; padding:8px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; line-height:1.35}
+.crit:hover{border-color:var(--accent)}
+.crit.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.crit.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.crit:disabled{cursor:default}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.pri{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+.pri.hi{color:var(--red); border-color:currentColor}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+/* Lab: la poligonal */
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:11px}
+.pc-curve{fill:none; stroke:var(--orange); stroke-width:3; stroke-linecap:round}
+.pc-poly{fill:none; stroke:var(--accent); stroke-width:1.6; stroke-dasharray:5 3}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>40 min</span></a>
+    <a href="#lab">2 Lab <span>5 min</span></a>
+    <a href="#taller">3 Taller <span>30 min</span></a>
+    <a href="#quiz">4 Quiz <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Examen final · Módulo 1</p>
+    <h1>Paramétricas: longitud de arco y tangentes</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>Jueves 19 de noviembre · ~1,5 h</span>
+      <span>Libro 10.1–10.2 y 8.1 · P1 del final de 2023 (10 pts)</span>
+    </div>
+    <p class="prose">El primer problema del final de 2023 fue hallar la longitud de una curva paramétrica, y valió 10 de 50 puntos. Es de lo más rápido de aprender del final: una fórmula, una factorización para sacar la raíz y una integral. Aquí también va la pendiente de una curva paramétrica (rectas tangente y normal), que está en la misma hoja del profesor.</p>
+    <div class="callout">
+      <h3>Dónde aparece en tus exámenes</h3>
+      <p>Final 2023-19 P1 (10 pts): la longitud de x = 1 + 3t², y = 4 + 2t³, que es el ejercicio (5a) de la hoja de paramétricas del profe con otro rango. La longitud de una curva y = f(x) salió en los Parciales 1 de 2018-20 y 2023-19.</p>
+    </div>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a M2 (polares).</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es una curva paramétrica, su pendiente y su longitud. Cuatro ejemplos resueltos: el del final, dos de la hoja del profe y uno del Parcial 1.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">t</td><td>«te», el parámetro</td><td>Un número que recorre un intervalo. Piénsalo como el tiempo: a cada t le toca un punto de la curva.</td><td>0 ≤ t ≤ √3</td></tr>
+          <tr><td class="mono">x(t), y(t)</td><td>«equis de te», «ye de te»</td><td>Las coordenadas del punto en el instante t.</td><td>x = 1 + 3t², y = 4 + 2t³: con t = 1, el punto es (4, 6)</td></tr>
+          <tr><td class="mono">dx/dt, dy/dt</td><td>«derivada de x (o de y) con respecto a t»</td><td>Qué tan rápido cambia cada coordenada cuando avanza t.</td><td>dx/dt = 6t, dy/dt = 6t²</td></tr>
+          <tr><td class="mono">dy/dx</td><td>«pendiente»</td><td>La inclinación de la curva en un punto. En paramétricas se calcula dividiendo: (dy/dt)/(dx/dt).</td><td>6t²/(6t) = t</td></tr>
+          <tr><td class="mono">L</td><td>«longitud de arco»</td><td>Lo que mide la curva entre dos valores de t, como si la estiraras con una cuerda.</td><td>L = 14</td></tr>
+          <tr><td class="mono">∫<sub>a</sub><sup>b</sup> … dt</td><td>«integral de a a b»</td><td>La suma de muchos pedacitos, desde t = a hasta t = b.</td><td>∫ de 0 a √3</td></tr>
+          <tr><td class="mono">u, du</td><td>«sustitución»</td><td>Cambio de variable para integrar: u es un pedazo del integrando y du su derivada por dt.</td><td>u = 1 + t², du = 2t dt</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo es un ejercicio del final, de la hoja del profe o de un parcial, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Lo tachado en rojo es lo que se cancela. El último paso es lo que escribes en el examen.</p>
+    </div>
+
+    <!-- Idea 1 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 1 · un punto que se mueve</span><h3>Qué es una curva paramétrica</h3></div>
+      <p class="prose">En vez de dar y en función de x, das las dos coordenadas en función de un tercer número, t. A medida que t avanza, el punto (x(t), y(t)) se mueve y va dibujando la curva. Por ejemplo, la curva del final de 2023:</p>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>t</th><th>x = 1 + 3t²</th><th>y = 4 + 2t³</th><th>Punto</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">0</td><td class="mono">1</td><td class="mono">4</td><td class="mono">(1, 4): donde empieza</td></tr>
+          <tr><td class="mono">1</td><td class="mono">4</td><td class="mono">6</td><td class="mono">(4, 6)</td></tr>
+          <tr><td class="mono">√3</td><td class="mono">1 + 3·3 = 10</td><td class="mono">4 + 2·3√3 ≈ 14,4</td><td class="mono">(10, 14,4): donde termina</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose muted">(√3)³ = √3·√3·√3 = 3√3. En el lab ves la curva completa.</p>
+    </div>
+
+    <!-- Idea 2 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 2 · la pendiente</span><h3>Rectas tangente y normal</h3></div>
+      <div class="rule-box">
+        <b class="k">La regla</b>
+        <p><span class="m">dy/dx = <span class="frac"><span>dy/dt</span><span>dx/dt</span></span></span>. La tangente en el punto (x₀, y₀) es y − y₀ = m(x − x₀), con m = dy/dx. La normal es perpendicular: su pendiente es −1/m.</p>
+        <p>La tangente es <b>horizontal</b> donde dy/dt = 0 (y dx/dt ≠ 0), y <b>vertical</b> donde dx/dt = 0 (y dy/dt ≠ 0).</p>
+      </div>
+
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1 · Hoja 10.1 (3a)</span>
+            <h4 id="wx1-h">Tangente y normal en t = −1</h4>
+            <p>Encuentre la recta normal y la recta tangente a la curva x(t) = t⁴ − 1, y(t) = t³ + t en t = −1.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Halla el punto.</p><p class="why">Reemplazas t = −1 en x y en y.</p><div class="mx">x = (−1)⁴ − 1 = 0<span class="ar">·</span>y = (−1)³ + (−1) = −2<span class="ar">→</span>(0, −2)</div></li>
+          <li><p class="what">Deriva cada coordenada con respecto a t.</p><div class="mx">dx/dt = 4t³<span class="ar">·</span>dy/dt = 3t² + 1</div></li>
+          <li><p class="what">Evalúa en t = −1 y divide.</p><p class="why">La pendiente es dy/dt entre dx/dt.</p><div class="mx">m = <span class="frac"><span>3(−1)² + 1</span><span>4(−1)³</span></span> = <span class="frac"><span>4</span><span>−4</span></span> = −1</div></li>
+          <li><p class="what">Escribe la tangente.</p><p class="why">Punto (0, −2) y pendiente −1.</p><div class="mx">y − (−2) = −1·(x − 0)<span class="ar">→</span>y = −x − 2</div></li>
+          <li><p class="what">Escribe la normal.</p><p class="why">Perpendicular: pendiente −1/m = −1/(−1) = 1.</p><div class="mx">y + 2 = 1·(x − 0)<span class="ar">→</span>y = x − 2</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> tangente y = −x − 2; normal y = x − 2.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Las dos rectas pasan por (0, −2) y sus pendientes multiplicadas dan −1·1 = −1: son perpendiculares.</p>
+      </article>
+    </div>
+
+    <!-- Idea 3 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 3 · el problema del final</span><h3>La longitud de arco</h3></div>
+      <p class="prose">Cuando t avanza un poquito, el punto se corre un poquito en x y un poquito en y. El tramo recorrido es la hipotenusa de ese triángulo: √((Δx)² + (Δy)²). Sumando todos los tramos (en el lab lo ves con una poligonal) y haciéndolos cada vez más pequeños, la suma se vuelve una integral.</p>
+      <div class="rule-box">
+        <b class="k">La fórmula</b>
+        <p><span class="m">L = <span class="sig"><small>b</small><b>∫</b><small>a</small></span> √<span class="rad">(dx/dt)² + (dy/dt)²</span> dt</span>, donde a y b son los valores de t donde empieza y termina el recorrido.</p>
+      </div>
+      <ol class="steps">
+        <li><span><b>Deriva</b> x y y con respecto a t.</span></li>
+        <li><span><b>Eleva al cuadrado y suma.</b></span></li>
+        <li><span><b>Factoriza para sacar la raíz:</b> casi siempre hay un factor común que es un cuadrado, o la suma es un cuadrado perfecto. Ese es el truco del profe.</span></li>
+        <li><span><b>Integra,</b> casi siempre con una sustitución u, y evalúa en los límites de t.</span></li>
+      </ol>
+
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2 · Final 2023-19 P1 (10 pts)</span>
+            <h4 id="wx2-h">La longitud del final de 2023</h4>
+            <p>Encuentre la longitud de arco de la curva paramétrica x(t) = 1 + 3t², y(t) = 4 + 2t³, 0 ≤ t ≤ √3.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Deriva cada coordenada.</p><p class="why">Los números sueltos (1 y 4) se van al derivar.</p><div class="mx">dx/dt = 6t<span class="ar">·</span>dy/dt = 6t²</div></li>
+          <li><p class="what">Eleva al cuadrado y suma.</p><div class="mx">(6t)² + (6t²)² = 36t² + 36t⁴</div></li>
+          <li><p class="what">Saca factor común.</p><p class="why">Los dos términos tienen 36t², que es un cuadrado perfecto: (6t)².</p><div class="mx">36t² + 36t⁴ = 36t²(1 + t²)</div></li>
+          <li><p class="what">Saca la raíz.</p><p class="why">√(36t²) = 6|t|, y como t va de 0 a √3, t ≥ 0 y |t| = t. Lo que queda dentro, 1 + t², no tiene raíz exacta: se queda.</p><div class="mx">√<span class="rad">36t²(1 + t²)</span> = 6t√<span class="rad">1 + t²</span></div></li>
+          <li><p class="what">Arma la integral.</p><div class="mx">L = <span class="sig"><small>√3</small><b>∫</b><small>0</small></span> 6t√<span class="rad">1 + t²</span> dt</div></li>
+          <li><p class="what">Sustitución u.</p><p class="why">La derivada de 1 + t² es 2t, y el 6t de afuera es 3 veces eso. Cambia también los límites: con t = 0, u = 1; con t = √3, u = 1 + 3 = 4.</p><div class="mx">u = 1 + t², du = 2t dt<span class="ar">→</span>6t dt = 3 du<span class="ar">·</span>t: 0 → √3 se vuelve u: 1 → 4</div></li>
+          <li><p class="what">Integra.</p><p class="why">∫ u<sup>1/2</sup> du = u<sup>3/2</sup>/(3/2) = (2/3)u<sup>3/2</sup>, y 3·(2/3) = 2.</p><div class="mx">L = <span class="sig"><small>4</small><b>∫</b><small>1</small></span> 3√u du = 2u<sup>3/2</sup> evaluado de 1 a 4 = 2(4<sup>3/2</sup> − 1<sup>3/2</sup>) = 2(8 − 1) = 14</div></li>
+          <li><p class="what">Escribe la respuesta.</p><div class="mx txt">L = ∫ de 0 a √3 de √((dx/dt)² + (dy/dt)²) dt = ∫ de 0 a √3 de √(36t² + 36t⁴) dt = ∫ de 0 a √3 de 6t√(1 + t²) dt. Con u = 1 + t², du = 2t dt, queda ∫ de 1 a 4 de 3√u du = 2u<sup>3/2</sup> de 1 a 4 = 2(8 − 1) = 14. La longitud de arco es 14.</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> L = 14.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> La curva va de (1, 4) a (10, 14,4). En línea recta eso mide √(81 + 108) ≈ 13,7, y la curva tiene que medir un poco más porque se dobla: 14.</p>
+      </article>
+
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3 · Hoja 10.1 (5b)</span>
+            <h4 id="wx3-h">Cuando la suma es un cuadrado perfecto</h4>
+            <p>Encuentre la longitud de la curva x(t) = e<sup>t</sup> + e<sup>−t</sup>, y(t) = 5 − 2t, 0 ≤ t ≤ 3.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Deriva.</p><p class="why">La derivada de e<sup>−t</sup> es −e<sup>−t</sup> (regla de la cadena).</p><div class="mx">dx/dt = e<sup>t</sup> − e<sup>−t</sup><span class="ar">·</span>dy/dt = −2</div></li>
+          <li><p class="what">Eleva al cuadrado.</p><p class="why">(a − b)² = a² − 2ab + b², y e<sup>t</sup>·e<sup>−t</sup> = e<sup>0</sup> = 1, así que el término del medio es −2.</p><div class="mx">(e<sup>t</sup> − e<sup>−t</sup>)² = e<sup>2t</sup> − 2 + e<sup>−2t</sup><span class="ar">·</span>(−2)² = 4</div></li>
+          <li><p class="what">Suma y reconoce el cuadrado perfecto.</p><p class="why">−2 + 4 = +2: lo que queda es (a + b)² = a² + 2ab + b² con a = e<sup>t</sup> y b = e<sup>−t</sup>.</p><div class="mx">e<sup>2t</sup> − 2 + e<sup>−2t</sup> + 4 = e<sup>2t</sup> + 2 + e<sup>−2t</sup> = (e<sup>t</sup> + e<sup>−t</sup>)²</div></li>
+          <li><p class="what">Saca la raíz.</p><p class="why">e<sup>t</sup> + e<sup>−t</sup> siempre es positivo, así que la raíz del cuadrado es él mismo.</p><div class="mx">√<span class="rad">(e<sup>t</sup> + e<sup>−t</sup>)²</span> = e<sup>t</sup> + e<sup>−t</sup></div></li>
+          <li><p class="what">Integra y evalúa.</p><p class="why">∫ e<sup>−t</sup> dt = −e<sup>−t</sup>. En t = 0 queda 1 − 1 = 0.</p><div class="mx">L = <span class="sig"><small>3</small><b>∫</b><small>0</small></span> (e<sup>t</sup> + e<sup>−t</sup>) dt = [e<sup>t</sup> − e<sup>−t</sup>] de 0 a 3 = (e³ − e<sup>−3</sup>) − (1 − 1) = e³ − e<sup>−3</sup></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> L = e³ − e<sup>−3</sup> ≈ 20,04.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Si la suma no te da algo con raíz exacta, revisa los cuadrados: en estos ejercicios el profe siempre deja un cuadrado perfecto o un factor común que sale de la raíz.</p>
+      </article>
+    </div>
+
+    <!-- Idea 4 -->
+    <div class="block">
+      <div class="idea"><span class="k">Idea 4 · el caso del Parcial 1</span><h3>Longitud de y = f(x) o de x = g(y)</h3></div>
+      <div class="rule-box">
+        <b class="k">La fórmula</b>
+        <p><span class="m">L = ∫ √<span class="rad">1 + (dy/dx)²</span> dx</span> para y = f(x), y <span class="m">L = ∫ √<span class="rad">1 + (dx/dy)²</span> dy</span> para x = g(y). Es la misma fórmula paramétrica con t = x (o t = y): la derivada de x con respecto a x es 1.</p>
+      </div>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head one">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4 · Parcial 1 2018-20 P5 (8 pts)</span>
+            <h4 id="wx4-h">Una curva x = g(y)</h4>
+            <p>Encuentre la longitud de la curva x = ln(csc y) entre y = π/4 y y = π/2.</p>
+          </div>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Deriva x con respecto a y.</p><p class="why">Regla de la cadena: la derivada de ln(algo) es (algo)′/algo, y la de csc y es −csc y cot y.</p><div class="mx"><span class="frac"><span>dx</span><span>dy</span></span> = <span class="frac"><span>−<span class="cx">csc y</span> cot y</span><span><span class="cx">csc y</span></span></span> = −cot y</div></li>
+          <li><p class="what">Arma 1 + (dx/dy)² y usa la identidad.</p><p class="why">1 + cot² y = csc² y es una de las identidades pitagóricas (la de 1 + tan² = sec² dividida entre tan²).</p><div class="mx">1 + cot² y = csc² y<span class="ar">→</span>√<span class="rad">csc² y</span> = csc y</div></li>
+          <li><p class="what">Integra.</p><p class="why">∫ csc y dy = ln|csc y − cot y|. En y = π/2: csc = 1 y cot = 0. En y = π/4: csc = √2 y cot = 1.</p><div class="mx">L = <span class="sig"><small>π/2</small><b>∫</b><small>π/4</small></span> csc y dy = ln|1 − 0| − ln|√2 − 1| = −ln(√2 − 1)</div></li>
+          <li><p class="what">Simplifica.</p><p class="why">−ln(a) = ln(1/a), y 1/(√2 − 1) = √2 + 1 (multiplica arriba y abajo por √2 + 1).</p><div class="mx">L = ln(√2 + 1) ≈ 0,881</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> L = ln(1 + √2) ≈ 0,881.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Es positiva, como toda longitud. Este tipo no salió en el final de 2023, pero es la misma fórmula: si sale, ya la tienes.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>La frase para el examen</h3>
+      <div class="mx txt">La longitud de arco es L = ∫ de a a b de √((dx/dt)² + (dy/dt)²) dt. Como dx/dt = … y dy/dt = …, el integrando es √(…) = … . Con la sustitución u = …, L = … .</div>
+    </div>
+
+    <div class="callout trap"><h3>Trampas</h3>
+      <p><b>√(a² + b²) no es a + b.</b> Primero factoriza o busca el cuadrado perfecto; después sacas la raíz.</p>
+      <p><b>√(36t²) = 6|t|.</b> Si t ≥ 0 en el rango, queda 6t.</p>
+      <p><b>Los límites de la integral son valores de t,</b> no de x ni de y. Si cambias a u, cambia también los límites.</p>
+      <p><b>dy/dx no es dy/dt:</b> la pendiente es (dy/dt)/(dx/dt).</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>La longitud es el límite de sumar hipotenusas: parte la curva en tramos rectos y mira cómo la suma se acerca a L.</p></div>
+    <div class="lab">
+      <div class="lab-stage"><div id="pc-svg" class="lab-fig"></div><p class="small muted" id="pc-note"></p></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="pc-sel">Curva</label><select id="pc-sel"></select></div>
+        <div class="ctl"><label for="pc-n" id="pc-n-lab">Tramos rectos: 3</label><input type="range" id="pc-n" min="1" max="40" step="1" value="3"></div>
+        <div class="readout" aria-live="polite">
+          <div class="ro"><span>Suma de las hipotenusas</span><b id="pc-sum">—</b></div>
+          <div class="ro"><span>Longitud exacta L</span><b id="pc-L">—</b></div>
+          <div class="ro"><span>Diferencia</span><b id="pc-d">—</b></div>
+          <div class="status" id="pc-status">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Con la curva del final y un solo tramo, ¿cuánto mide la suma? ¿Por qué es menor que 14?</summary>
+          <div class="rev-body"><p><b>≈ 13,75:</b> es la línea recta de (1, 4) a (10, 14,4). La recta es el camino más corto, así que la curva mide más.</p></div></details>
+        <details class="rev"><summary>Reto 2 · ¿Con cuántos tramos la diferencia baja de 0,01?</summary>
+          <div class="rev-body"><p><b>Con 7 tramos</b> (con 6 queda justo en 0,01). Al subir los tramos, la poligonal se pega a la curva y la suma sube hacia L. La integral es justo el límite de esa suma.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero la hoja del profe, de donde salió el final; después tangentes y variantes nuevas.</p></div>
+    <p class="prose">Hazlos en papel, con la frase. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. Si quieres que te corrija, mándame una foto.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 conceptuales y 2 tipo examen. Pasas a M2 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las preguntas que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M2 · Polares: área y longitud (viernes 20).</p>
+    <p>Fuente de los problemas: el examen final de 2023-19, el Parcial 1 de 2018-20 y la hoja de curvas paramétricas del profesor Martínez (MATE 1214, Universidad de los Andes).</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const dec = (v, d) => v.toFixed(d).replace(".", ",").replace(/^-/, "−");
+
+/* ---------- Notación ---------- */
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const M = (x) => `<span class="m">${x}</span>`;
+
+/* ---------- Lab: la poligonal ---------- */
+const CURVES = [
+  { lab: "Final 2023 P1: x = 1 + 3t², y = 4 + 2t³", a: 0, b: Math.sqrt(3), ta: "0", tb: "√3",
+    x: (t) => 1 + 3 * t * t, y: (t) => 4 + 2 * t * t * t, L: 14, Ltxt: "14" },
+  { lab: "Hoja 10.1 (5b): x = eᵗ + e⁻ᵗ, y = 5 − 2t", a: 0, b: 3, ta: "0", tb: "3",
+    x: (t) => Math.exp(t) + Math.exp(-t), y: (t) => 5 - 2 * t, L: Math.exp(3) - Math.exp(-3), Ltxt: "e³ − e⁻³" },
+  { lab: "Hoja 10.1 (5c): x = 3 cos t − cos 3t, y = 3 sen t − sen 3t", a: 0, b: Math.PI, ta: "0", tb: "π",
+    x: (t) => 3 * Math.cos(t) - Math.cos(3 * t), y: (t) => 3 * Math.sin(t) - Math.sin(3 * t), L: 12, Ltxt: "12" }
+];
+function drawPC() {
+  const c = CURVES[Number($("#pc-sel").value)], n = Number($("#pc-n").value);
+  const W = 360, H = 250, pad = 26;
+  const pts = []; for (let i = 0; i <= 300; i++) { const t = c.a + (c.b - c.a) * i / 300; pts.push([c.x(t), c.y(t)]); }
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const k = Math.min((W - 2 * pad) / (x1 - x0 || 1), (H - 2 * pad) / (y1 - y0 || 1));
+  const ox = (W - k * (x1 - x0)) / 2, oy = (H - k * (y1 - y0)) / 2;
+  const X = (x) => ox + (x - x0) * k, Y = (y) => H - oy - (y - y0) * k;
+  let g = `<path d="${pts.map((p, i) => (i ? "L" : "M") + f1(X(p[0])) + " " + f1(Y(p[1]))).join("")}" class="pc-curve"/>`;
+  const poly = []; let sum = 0;
+  for (let i = 0; i <= n; i++) { const t = c.a + (c.b - c.a) * i / n; poly.push([c.x(t), c.y(t)]); if (i) sum += Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]); }
+  g += `<polyline points="${poly.map((p) => f1(X(p[0])) + "," + f1(Y(p[1]))).join(" ")}" class="pc-poly"/>`;
+  poly.forEach((p) => { g += `<circle cx="${f1(X(p[0]))}" cy="${f1(Y(p[1]))}" r="3" class="gr-dot"/>`; });
+  const s = pts[0], e = pts[pts.length - 1];
+  g += `<text x="${f1(X(s[0]) + 8)}" y="${f1(Y(s[1]) + 16)}" class="gr-ann">t = ${c.ta}</text><text x="${f1(X(e[0]) - 6)}" y="${f1(Y(e[1]) - 6)}" class="gr-ann" text-anchor="end">t = ${c.tb}</text>`;
+  $("#pc-svg").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="La curva y una poligonal de ${n} tramos">${g}</svg>`;
+  $("#pc-n-lab").textContent = "Tramos rectos: " + n;
+  $("#pc-sum").textContent = dec(sum, 4);
+  $("#pc-L").textContent = c.Ltxt + " ≈ " + dec(c.L, 4);
+  $("#pc-d").textContent = dec(c.L - sum, 4);
+  const st = $("#pc-status");
+  st.textContent = c.L - sum < 0.01 ? "La poligonal ya casi es la curva: la suma es prácticamente L." : "Sube los tramos: la suma crece hacia L.";
+  st.className = "status" + (c.L - sum < 0.01 ? " ok" : "");
+  $("#pc-note").textContent = "La curva gruesa es la paramétrica; la línea punteada une " + (n + 1) + " puntos con t repartidos de " + c.ta + " a " + c.tb + ".";
+}
+CURVES.forEach((c, i) => { const o = el("option", "", c.lab); o.value = String(i); $("#pc-sel").appendChild(o); });
+$("#pc-sel").addEventListener("change", drawPC);
+$("#pc-n").addEventListener("input", drawPC);
+drawPC();
+
+/* ---------- Taller ---------- */
+const PROBS = [
+  { n: "T1", t: "El ejercicio original del final", pri: true, src: "Hoja 10.1 (5a) · el final de 2023 cambió el rango",
+    txt: `<p>Encuentre la longitud de la curva x(t) = 1 + 3t², y(t) = 4 + 2t³, entre t = 0 y t = 1. Hazlo sin mirar el ejemplo 2.</p>`,
+    checks: [{ q: "El integrando, ya simplificado", opts: ["6t + 6t²", "6t√(1 + t²)", "√(6t + 6t²)", "36t²(1 + t²)"], a: 1 },
+      { q: "La longitud", opts: ["14", "2√2", "4√2 − 2", "2√2 − 1"], a: 2 }],
+    hints: ["Es el ejemplo 2 con otro límite: con u = 1 + t², t = 1 da u = 2.", "2u<sup>3/2</sup> evaluado de 1 a 2: 2·2<sup>3/2</sup> − 2 = 2·2√2 − 2."],
+    sol: ["dx/dt = 6t, dy/dt = 6t², así que el integrando es √(36t²(1 + t²)) = 6t√(1 + t²).", "Con u = 1 + t² (u de 1 a 2): L = ∫ de 1 a 2 de 3√u du = 2u<sup>3/2</sup> de 1 a 2 = 2(2√2 − 1) = <b>4√2 − 2 ≈ 3,66</b>."] },
+  { n: "T2", t: "La de las identidades", pri: true, src: "Hoja 10.1 (5c)",
+    txt: `<p>Encuentre la longitud de la curva x(t) = 3 cos t − cos(3t), y(t) = 3 sen t − sen(3t), 0 ≤ t ≤ π.</p>`,
+    checks: [{ q: "(dx/dt)² + (dy/dt)² simplificado", opts: ["9", "18(1 − cos 2t) = 36 sen² t", "36 cos² t", "18"], a: 1 },
+      { q: "La longitud", opts: ["6π", "12", "6", "24"], a: 1 }],
+    hints: ["dx/dt = −3 sen t + 3 sen 3t y dy/dt = 3 cos t − 3 cos 3t. Al sumar los cuadrados aparece sen² + cos² = 1 dos veces.", "El término cruzado es −18(cos t cos 3t + sen t sen 3t) = −18 cos(3t − t) = −18 cos 2t. Y 1 − cos 2t = 2 sen² t."],
+    sol: ["(dx/dt)² + (dy/dt)² = 9(sen² 3t + cos² 3t) + 9(sen² t + cos² t) − 18(cos t cos 3t + sen t sen 3t) = 18 − 18 cos 2t = 36 sen² t.", "√(36 sen² t) = 6 sen t, porque sen t ≥ 0 entre 0 y π. L = ∫ de 0 a π de 6 sen t dt = 6[−cos t] de 0 a π = 6(1 + 1) = <b>12</b>."] },
+  { n: "T3", t: "Tangentes", pri: false, src: "Hoja 10.1 (3b) y (4a)",
+    txt: `<ol class="items"><li>(3b) Recta tangente y normal a x(t) = e<sup>√t</sup>, y(t) = t − ln(t²) en t = 1.</li><li>(4a) Puntos donde la tangente es horizontal: x(t) = 10 − t², y(t) = t³ − 12t.</li></ol>`,
+    checks: [{ q: "(3b) La tangente", opts: ["y = −(2/e)x + 3", "y = (e/2)x + 1", "y = −2x + 2e + 1", "y = −(2/e)x + 1"], a: 0 },
+      { q: "(4a) Los puntos", opts: ["(10, 0)", "(6, 16) y (6, −16)", "(6, 0)", "(−2, 2)"], a: 1 }],
+    hints: ["(3b) La derivada de e<sup>√t</sup> es e<sup>√t</sup>/(2√t), y la de ln(t²) es 2/t.", "(4a) Horizontal: dy/dt = 3t² − 12 = 0. Revisa que dx/dt = −2t no sea 0 ahí."],
+    sol: ["<b>(3b)</b> En t = 1: el punto es (e, 1). dx/dt = e/2 y dy/dt = 1 − 2 = −1, así que m = −1/(e/2) = −2/e. Tangente: y − 1 = −(2/e)(x − e), o sea <b>y = −(2/e)x + 3</b>. Normal: pendiente e/2, y − 1 = (e/2)(x − e).",
+      "<b>(4a)</b> 3t² − 12 = 0 da t = ±2, y ahí dx/dt = ∓4 ≠ 0. Con t = 2: (6, −16); con t = −2: (6, 16). <b>Tangente horizontal en (6, 16) y (6, −16).</b>"] },
+  { n: "T4", t: "Variantes nuevas", pri: false, src: "Al estilo del profesor",
+    txt: `<ol class="items"><li>(a) x = t², y = (2/3)t³, 0 ≤ t ≤ √3</li><li>(b) x = e<sup>t</sup> cos t, y = e<sup>t</sup> sen t, 0 ≤ t ≤ 1</li><li>(c) La longitud de y = (2/3)x<sup>3/2</sup> entre x = 0 y x = 3</li></ol>`,
+    checks: [{ q: "(a)", opts: ["14", "14/3", "7/3", "2√3"], a: 1 }, { q: "(b)", opts: ["e − 1", "2(e − 1)", "√2(e − 1)", "√2 e"], a: 2 }, { q: "(c)", opts: ["14/3", "7", "2√3", "8/3"], a: 0 }],
+    hints: ["(a) Factor común 4t². (b) Al sumar los cuadrados, los términos cruzados se cancelan y queda 2e<sup>2t</sup>. (c) dy/dx = √x, así que 1 + (dy/dx)² = 1 + x."],
+    sol: ["<b>(a)</b> √(4t² + 4t⁴) = 2t√(1 + t²); con u = 1 + t²: (2/3)u<sup>3/2</sup> de 1 a 4 = <b>14/3</b>.",
+      "<b>(b)</b> dx/dt = e<sup>t</sup>(cos t − sen t), dy/dt = e<sup>t</sup>(sen t + cos t); la suma de cuadrados es 2e<sup>2t</sup> y su raíz √2 e<sup>t</sup>. L = √2(e − 1).",
+      "<b>(c)</b> L = ∫ de 0 a 3 de √(1 + x) dx = (2/3)(1 + x)<sup>3/2</sup> de 0 a 3 = (2/3)(8 − 1) = <b>14/3</b>."] }
+];
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t));
+    h.appendChild(el("span", "pri" + (p.pri ? " hi" : ""), p.pri ? "Prioridad" : "Si te sobra tiempo"));
+    h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(elh("div", "prob-body", p.txt));
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(elh("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(elh("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => sb.appendChild(elh("p", "", s))); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M1", NEXT = "Aprobado. Pasas a M2: polares, área y longitud.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "Para x = 1 + 3t², y = 4 + 2t³, ¿cuánto es (dx/dt)² + (dy/dt)²?",
+      o: ["6t + 6t²", "36t²(1 + t²)", "36t² + 6t⁴", "(6t + 6t²)²"], a: 1,
+      e: "(6t)² + (6t²)² = 36t² + 36t⁴ = 36t²(1 + t²). Así la raíz sale: 6t√(1 + t²)." },
+    { k: "Conceptual", q: "¿Cuál es la fórmula de la longitud de una curva paramétrica entre t = a y t = b?",
+      o: ["∫ √(x² + y²) dt", "∫ (dx/dt + dy/dt) dt", "∫ √(1 + (dy/dt)²) dt", "∫ √((dx/dt)² + (dy/dt)²) dt"], a: 3,
+      e: "Cada tramo es la hipotenusa de un triángulo de catetos dx y dy: √((dx/dt)² + (dy/dt)²) dt." },
+    { k: "Conceptual", q: "Para x = t⁴ − 1, y = t³ + t, ¿cuánto vale la pendiente dy/dx en t = 1?",
+      o: ["1/4", "4", "1", "−1"], a: 2,
+      e: "dy/dt = 3t² + 1 = 4 y dx/dt = 4t³ = 4 en t = 1, así que dy/dx = 4/4 = 1." },
+    { k: "Tipo examen", q: "Encuentre la longitud de x = 3t², y = 2t³, 0 ≤ t ≤ √8.",
+      o: ["52", "26", "54", "18√8"], a: 0,
+      e: "√(36t² + 36t⁴) = 6t√(1 + t²). Con u = 1 + t² (de 1 a 9): 2u<sup>3/2</sup> de 1 a 9 = 2(27 − 1) = 52." },
+    { k: "Tipo examen", q: "Encuentre la longitud de x = e<sup>t</sup> + e<sup>−t</sup>, y = 5 − 2t, 0 ≤ t ≤ 1.",
+      o: ["e + 1/e − 2", "2(e − 1)", "e − 1/e + 2", "e − 1/e"], a: 3,
+      e: "(e<sup>t</sup> − e<sup>−t</sup>)² + 4 = (e<sup>t</sup> + e<sup>−t</sup>)². L = ∫ de 0 a 1 de (e<sup>t</sup> + e<sup>−t</sup>) dt = (e − 1/e) − (1 − 1) = e − 1/e." }
+  ],
+  B: [
+    { k: "Conceptual", q: "¿A qué es igual (e<sup>t</sup> − e<sup>−t</sup>)² + 4?",
+      o: ["(e<sup>t</sup> − e<sup>−t</sup> + 2)²", "(e<sup>t</sup> + e<sup>−t</sup>)²", "e<sup>2t</sup> + e<sup>−2t</sup> + 4", "(e<sup>t</sup> + e<sup>−t</sup>)² + 4"], a: 1,
+      e: "(e<sup>t</sup> − e<sup>−t</sup>)² = e<sup>2t</sup> − 2 + e<sup>−2t</sup>; sumando 4 queda e<sup>2t</sup> + 2 + e<sup>−2t</sup> = (e<sup>t</sup> + e<sup>−t</sup>)²." },
+    { k: "Conceptual", q: "Para x = 10 − t², y = t³ − 12t, ¿en qué valores de t la tangente es horizontal?",
+      o: ["t = 0", "t = ±√12", "t = ±2", "En ninguno"], a: 2,
+      e: "Horizontal: dy/dt = 3t² − 12 = 0, o sea t = ±2. Ahí dx/dt = −2t ≠ 0." },
+    { k: "Conceptual", q: "En la longitud de arco paramétrica, los límites de la integral son…",
+      o: ["los valores de t donde empieza y termina el recorrido", "los valores de x", "los valores de y", "siempre 0 y 1"], a: 0,
+      e: "Se integra en t (dt), así que los límites son valores de t. Si cambias a u, cambia los límites." },
+    { k: "Tipo examen", q: "Encuentre la longitud de x = t², y = (2/3)t³, 0 ≤ t ≤ √8.",
+      o: ["26/3", "52", "52/3", "18"], a: 2,
+      e: "√(4t² + 4t⁴) = 2t√(1 + t²). Con u = 1 + t² (de 1 a 9): (2/3)u<sup>3/2</sup> de 1 a 9 = (2/3)(27 − 1) = 52/3." },
+    { k: "Tipo examen", q: "Encuentre la longitud de x = e<sup>t</sup> cos t, y = e<sup>t</sup> sen t, 0 ≤ t ≤ 2.",
+      o: ["√2 e²", "√2(e² − 1)", "e² − 1", "2(e² − 1)"], a: 1,
+      e: "La suma de cuadrados es 2e<sup>2t</sup>, su raíz √2 e<sup>t</sup>, y ∫ de 0 a 2 de √2 e<sup>t</sup> dt = √2(e² − 1)." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(elh("span", "", it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(elh("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.innerHTML = (ok ? "Correcta. " : "Incorrecta. La respuesta es la " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

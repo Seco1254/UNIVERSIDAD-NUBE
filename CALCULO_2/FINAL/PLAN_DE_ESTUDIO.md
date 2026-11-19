@@ -70,7 +70,7 @@ La misma de siempre: módulos de 4 secciones (teoría, lab, taller y quiz de pas
 
 | Módulo | Tema | Libro | Día | Por qué |
 |---|---|---|---|---|
-| **M1** | Paramétricas: longitud de arco y tangentes | 10.1–10.2, 8.1 | Jue 19 (~1,5 h) | P1 del final de 2023 · sin parcial |
+| **M1** | [Paramétricas: longitud de arco y tangentes](https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw) | 10.1–10.2, 8.1 | Jue 19 (~1,5 h) | P1 del final de 2023 · sin parcial |
 | **M2** | Polares: área y longitud | 10.3–10.4 | Vie 20 (~2 h) | P2 del final de 2023 · sin parcial |
 | **M3** | Integración: partes, trigonométricas, sustitución y fracciones parciales | 7.1–7.4, 7.8 | Sáb 21 (~2,5 h) | P3 del final |
 | **M4** | Ecuaciones diferenciales: separables, lineales y segundo orden | 9.3–9.5, 17.1–17.2, H | Sáb 21 (~2 h) | P5 del final |

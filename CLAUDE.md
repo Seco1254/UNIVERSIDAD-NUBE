@@ -54,6 +54,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Cálculo 2 | M6 · Series de potencias: radio e intervalo de convergencia | https://claude.ai/artifact/2B2r4zNC2NfohFrv2GW7Z1 | `CALCULO_2/PARCIAL_3/artifacts/M6.html` |
 | Cálculo 2 | M7 · Series de Taylor con la geométrica | https://claude.ai/artifact/1CqgP2hEhtPdqfHwKDdUJ8 | `CALCULO_2/PARCIAL_3/artifacts/M7.html` |
 | Cálculo 2 | Plan Examen final (tracker de progreso en `progreso/`, docs `M1`…`M6`; el simulacro M6 va sobre 50) | https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU | `CALCULO_2/FINAL/artifacts/plan.html` |
+| Cálculo 2 | Final · M1 · Paramétricas: longitud de arco y tangentes | https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw | `CALCULO_2/FINAL/artifacts/M1.html` |
 
 ## Convenciones
 
