@@ -1,0 +1,474 @@
+<title>Anillo con dos masas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; módulo M3 del Parcial 3. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+
+/* Figuras de rotación e inercia */
+.sv-mass{fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6}
+.sv-axis{fill:var(--surface); stroke:var(--red); stroke-width:2}
+.sv-rod{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-disk{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.8}
+.sv-ring{stroke:var(--ink); stroke-width:6; fill:none}
+.sv-ring2{stroke:var(--ink); stroke-width:3.5; fill:none}
+.sv-plate{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.callout ul,.callout ol{padding-left:20px; display:grid; gap:4px}
+.prob-group{display:grid; gap:4px; margin:10px 0 2px; padding-top:10px; border-top:2px solid var(--ink)}
+.prob-group h3{font-family:var(--f-display); font-size:1.12rem}
+.prob-group p{margin:0; color:var(--muted); font-size:.95rem}
+.chip-opt{font-family:var(--f-mono); font-size:.72rem; color:var(--muted); border:1px dashed var(--muted); padding:1px 6px; border-radius:4px}
+.lab-h{font-size:1rem; margin:4px 0 -4px}
+.ibar{display:flex; height:14px; border-radius:6px; overflow:hidden; background:var(--paper); border:1px solid var(--rule)}
+.ibar span{display:block; height:100%; transition:width .25s}
+.ibar span:first-child{background:var(--accent)}
+.ibar span:last-child{background:var(--orange)}
+.key{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+.key i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px}
+.fig-row{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:16px; align-items:center}
+@media (max-width:640px){ .fig-row{grid-template-columns:1fr} }
+.fig-row figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px}
+.fig-row svg, .big svg{width:100%; height:auto; display:block}
+.big{max-width:420px; margin:0 auto}
+.piece{display:inline-block; font-family:var(--f-mono); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent)}
+.hl{fill:none; stroke:var(--orange); stroke-width:3}
+.ghost-ring{fill:none; stroke:var(--muted); stroke-width:3; opacity:.35}
+.ghost-dot{fill:var(--muted); opacity:.35}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Parcial 3 · M3 · explicación del T1</p>
+    <h1>El anillo con dos masas, paso a paso</h1>
+    <div class="meta"><span>Parcial 3 2024-2 · selección múltiple 1 · 10 puntos</span><span>~15 min</span></div>
+    <p class="prose">Un anillo de masa M y radio R gira alrededor de un eje que pasa por el punto más alto de su borde. En el borde tiene pegadas dos masas puntuales M, a la izquierda y a la derecha. ¿Cuánto vale el momento de inercia del sistema respecto a ese eje?</p>
+    <div class="big"><div data-fig="todo"></div></div>
+  </header>
+
+  <section aria-labelledby="idea-h">
+    <div class="sec-title"><span class="sec-num">0</span><h2 id="idea-h">Las dos reglas que vas a usar</h2><p>Todo el problema sale de estas dos ideas.</p></div>
+    <div class="callout">
+      <h3>Regla 1: el momento de inercia se suma por piezas</h3>
+      <p>Si el sistema está hecho de varias piezas, I<sub>total</sub> = I<sub>pieza 1</sub> + I<sub>pieza 2</sub> + … Cada pieza se calcula sola, <b>con su propia masa</b>, y al final se suman. Aquí hay tres piezas: el anillo, la masa de la izquierda y la masa de la derecha.</p>
+    </div>
+    <div class="callout">
+      <h3>Regla 2: ejes paralelos, siempre con los datos de la misma pieza</h3>
+      <p><b>I = I<sub>CM</sub> + M·D²</b>, donde las tres letras son de la misma pieza: I<sub>CM</sub> es el de esa pieza respecto a <b>su propio</b> centro, M es <b>su</b> masa y D es la distancia de <b>su</b> centro al eje.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="p1-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="p1-h">Pieza 1: el anillo</h2><p>El anillo tiene la masa repartida, así que se necesita la tabla y los ejes paralelos.</p></div>
+    <div class="fig-row">
+      <figure><div data-fig="anillo"></div></figure>
+      <ol class="wx-steps">
+        <li><p class="what">Busca I<sub>CM</sub> del anillo en la tabla.</p><p class="why">Respecto a un eje por su centro, toda la masa del anillo está a la misma distancia R.</p><div class="mx">I<sub>CM</sub> = M·R²</div></li>
+        <li><p class="what">Mide D: del centro del anillo al eje.</p><p class="why">El eje está en el borde, justo arriba del centro: hay un radio de distancia.</p><div class="mx">D = R</div></li>
+        <li><p class="what">Aplica ejes paralelos.</p><p class="why">I<sub>CM</sub> del anillo + su masa por su D al cuadrado.</p><div class="mx">I<sub>anillo</sub> = M·R² + M·R² = 2M·R²</div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="p2-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="p2-h">Pieza 2: la masa de la izquierda</h2><p>Aquí estaba la duda. Vamos despacio.</p></div>
+    <div class="callout">
+      <h3>¿Por qué una masa puntual no tiene I<sub>CM</sub>?</h3>
+      <p>Una masa puntual es como una bolita sin tamaño: toda su masa está en un solo punto. Su centro de masa es ese mismo punto. Si la pusieras a girar sobre sí misma, ninguna parte de ella estaría lejos de su eje: su I<sub>CM</sub> vale 0.</p>
+      <p>Entonces ejes paralelos da I = 0 + M·D², y D es la distancia de la bolita al eje. Por eso la solución escribe directamente <b>M·r²</b>: es lo mismo, sin el cero.</p>
+    </div>
+    <div class="fig-row">
+      <figure><div data-fig="masa"></div></figure>
+      <ol class="wx-steps">
+        <li><p class="what">Ubica el eje y la masa.</p><p class="why">El eje está arriba del anillo. La masa está a la izquierda, a la altura del centro.</p></li>
+        <li><p class="what">Arma el triángulo rectángulo.</p><p class="why">Del eje bajas R hasta el centro del anillo (cateto vertical). Del centro vas R hacia la izquierda hasta la masa (cateto horizontal). La línea recta del eje a la masa es la hipotenusa: esa es la distancia que importa.</p><div class="mx">catetos: R y R</div></li>
+        <li><p class="what">Pitágoras.</p><p class="why">hipotenusa² = cateto² + cateto².</p><div class="mx">r² = R² + R² = 2R²<span class="ar">→</span>r = √<span class="rad">2</span>·R</div></li>
+        <li><p class="what">Momento de inercia de la masa.</p><p class="why">I<sub>CM</sub> = 0 y D = r. Ojo: en la fórmula va r², que ya calculaste: 2R². No hace falta sacar la raíz.</p><div class="mx">I<sub>masa izq</sub> = 0 + M·r² = M·2R² = 2M·R²</div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="p3-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="p3-h">Pieza 3: la masa de la derecha</h2><p>Es el espejo de la izquierda.</p></div>
+    <ol class="wx-steps">
+      <li><p class="what">Misma distancia al eje.</p><p class="why">Está a R del centro hacia la derecha y el centro está a R debajo del eje: el mismo triángulo, volteado.</p><div class="mx">r = √<span class="rad">2</span>·R</div></li>
+      <li><p class="what">Mismo resultado.</p><div class="mx">I<sub>masa der</sub> = M·2R² = 2M·R²</div></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="sum-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="sum-h">Suma las tres piezas</h2><p>Regla 1.</p></div>
+    <div class="mx">I = I<sub>anillo</sub> + I<sub>masa izq</sub> + I<sub>masa der</sub> = 2M·R² + 2M·R² + 2M·R² = <b>6M·R²</b></div>
+    <div class="wx-res"><b>Resultado:</b> I = 6M·R², opción D del parcial.</div>
+  </section>
+
+  <section aria-labelledby="alt-h">
+    <div class="sec-title"><span class="sec-num">5</span><h2 id="alt-h">La otra forma: todo el sistema junto</h2><p>Tu idea de usar el centro de masa también funciona, pero con el sistema completo.</p></div>
+    <ol class="wx-steps">
+      <li><p class="what">Centro de masa de todo el sistema.</p><p class="why">Por simetría (una masa a cada lado, igual de lejos), el centro de masa de anillo + dos masas es el centro del anillo.</p></li>
+      <li><p class="what">I de todo el sistema respecto a ese centro.</p><p class="why">Anillo: M·R². Cada masa está a R del centro: M·R² cada una.</p><div class="mx">I<sub>CM, sistema</sub> = M·R² + M·R² + M·R² = 3M·R²</div></li>
+      <li><p class="what">Ejes paralelos con la masa TOTAL.</p><p class="why">Ahora la «pieza» es todo el sistema: su masa es 3M y su centro está a D = R del eje.</p><div class="mx">I = 3M·R² + 3M·R² = 6M·R²</div></li>
+    </ol>
+    <p class="prose">Da lo mismo. Las dos formas respetan la regla 2: en la forma 1 cada pieza usa su propio centro y su propia masa; en la forma 2 el sistema completo usa su propio centro y su masa total.</p>
+  </section>
+
+  <section aria-labelledby="trap-h">
+    <div class="sec-title"><span class="sec-num">!</span><h2 id="trap-h">Lo que no se puede hacer: mezclar</h2><p>Usar el centro del anillo como si fuera el centro de una masa sola.</p></div>
+    <div class="fig-row">
+      <figure><div data-fig="trampa"></div></figure>
+      <div class="callout trap">
+        <p>Imagina una sola masa M pegada <b>abajo</b> del anillo, en el punto opuesto al eje.</p>
+        <p><b>Bien:</b> está a 2R del eje, así que I = M·(2R)² = <b>4M·R²</b>.</p>
+        <p><b>Mezclando:</b> «respecto al centro del anillo vale M·R², y el centro está a R del eje»: M·R² + M·R² = 2M·R². <b>Está mal.</b> El centro del anillo no es el centro de esa masa, así que no se puede usar como I<sub>CM</sub> de ella.</p>
+        <p>En el T1 la mezcla da por casualidad el número correcto, porque las masas están de lado. Por eso conviene no acostumbrarse a ella.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="chk-h">
+    <div class="sec-title"><span class="sec-num">✓</span><h2 id="chk-h">Compruébalo tú</h2><p>Mismo anillo y mismo eje, pero ahora las dos masas M están una arriba (justo en el eje) y otra abajo.</p></div>
+    <div class="fig-row">
+      <figure><div data-fig="check"></div></figure>
+      <div class="check" style="border-top:0">
+        <p>¿Cuánto vale I del sistema respecto al eje?</p>
+        <div class="opts" id="opts"></div>
+        <p class="fb" id="fb" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer><p>Volver a <a href="https://claude.ai/artifact/NuK9bkYw3vRKtNs1qXxz24" target="_blank" rel="noopener">M3 · Inercia</a> · <a href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">plan</a></p></footer>
+</div>
+
+<script>
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+function axisMark(x, y) { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="8" class="sv-axis"/><circle cx="${f1(x)}" cy="${f1(y)}" r="2.2" class="sv-axle"/>`; }
+function mass(x, y, lab, cls = "sv-mass") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="9" class="${cls}"/>` + (lab ? T(x, y + 26, lab, "sv-t", "middle") : ""); }
+const cx = 160, cy = 120, R = 70, yTop = cy - R;
+function base(o = {}) {
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="${o.ringGhost ? "ghost-ring" : "sv-ring"}"/><circle cx="${cx}" cy="${cy}" r="2.5" class="sv-axle"/>`;
+  g += axisMark(cx, yTop) + T(cx + 14, yTop - 8, "eje", "sv-tl");
+  return g;
+}
+const FIG = {
+  todo: () => { let g = base(); g += mass(cx - R, cy, "") + mass(cx + R, cy, "") + T(cx - R - 16, cy + 5, "M", "sv-t", "end") + T(cx + R + 16, cy + 5, "M") + `<line x1="${cx}" y1="${cy}" x2="${cx + R}" y2="${cy}" class="sv-dash"/>` + T(cx + R / 2, cy - 6, "R", "sv-t", "middle") + T(cx, cy + R + 22, "anillo de masa M", "sv-tl", "middle"); return `<svg viewBox="0 0 320 222" role="img" aria-label="Anillo con el eje arriba y dos masas a los lados">${g}</svg>`; },
+  anillo: () => { let g = base() + mass(cx - R, cy, "", "ghost-dot") + mass(cx + R, cy, "", "ghost-dot"); g += `<line x1="${cx + 30}" y1="${yTop}" x2="${cx + 30}" y2="${cy}" class="sv-dim"/>` + T(cx + 36, (yTop + cy) / 2 + 4, "D = R", "sv-t"); g += T(cx + 6, cy + 18, "centro", "sv-tl"); return `<svg viewBox="0 0 320 210" role="img" aria-label="El anillo: su centro está a una distancia R del eje">${g}</svg>`; },
+  masa: () => { let g = base({ ringGhost: true }) + mass(cx + R, cy, "", "ghost-dot") + mass(cx - R, cy, "") + T(cx - R - 16, cy + 5, "M", "sv-t", "end"); g += `<line x1="${cx}" y1="${yTop}" x2="${cx}" y2="${cy}" class="sv-dim"/><line x1="${cx}" y1="${cy}" x2="${cx - R}" y2="${cy}" class="sv-dim"/><line x1="${cx}" y1="${yTop}" x2="${cx - R}" y2="${cy}" class="hl"/>`; g += T(cx + 6, (yTop + cy) / 2 + 4, "R", "sv-t") + T(cx - R / 2, cy + 18, "R", "sv-t", "middle") + T(cx - R / 2 - 12, (yTop + cy) / 2 - 6, "r = √2·R", "sv-t", "end"); g += `<rect x="${cx - 10}" y="${cy - 10}" width="10" height="10" fill="none" class="sv-dim"/>`; return `<svg viewBox="0 0 320 210" role="img" aria-label="Triángulo rectángulo con catetos R y R entre el eje y la masa de la izquierda">${g}</svg>`; },
+  trampa: () => { let g = base({ ringGhost: true }) + mass(cx, cy + R, "M"); g += `<line x1="${cx + 30}" y1="${yTop}" x2="${cx + 30}" y2="${cy + R}" class="hl"/>` + T(cx + 36, cy + 4, "2R", "sv-t"); return `<svg viewBox="0 0 320 222" role="img" aria-label="Una masa abajo del anillo, a una distancia 2R del eje">${g}</svg>`; },
+  check: () => { let g = base() + mass(cx, cy + R, "M") + `<circle cx="${cx}" cy="${yTop}" r="9" class="sv-mass" opacity=".6"/>` + T(cx - 16, yTop + 4, "M", "sv-t", "end"); return `<svg viewBox="0 0 320 222" role="img" aria-label="Anillo con una masa en el eje, arriba, y otra abajo">${g}</svg>`; }
+};
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+const OPTS = ["4M·R²", "6M·R²", "2M·R²", "8M·R²"], ANS = 1;
+const box = document.getElementById("opts"), fb = document.getElementById("fb");
+OPTS.forEach((o, i) => {
+  const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = o; b.id = "op-" + i;
+  b.addEventListener("click", () => {
+    box.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+    if (i === ANS) { b.classList.add("right"); fb.className = "fb ok"; fb.textContent = "Correcto. Anillo 2M·R² + masa de arriba 0 (está en el eje: r = 0) + masa de abajo M·(2R)² = 4M·R²."; }
+    else { b.classList.add("wrong"); fb.className = "fb no"; fb.textContent = "No es esa. Pista: la masa de arriba está justo en el eje (r = 0) y la de abajo está a 2R."; }
+  });
+  box.appendChild(b);
+});
+</script>

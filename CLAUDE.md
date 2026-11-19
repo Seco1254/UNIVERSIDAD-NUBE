@@ -41,6 +41,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | P3 · M2 · Centro de masa y explosiones | https://claude.ai/artifact/66MsHun6zFbtocWYR4MoXA | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M2.html` |
 | Física 1 | P3 · X1 · Exprés de inercia y torque (Tarea 9) | https://claude.ai/artifact/GLJp5tPNiUUEgmZUZhrJcP | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/X1.html` |
 | Física 1 | P3 · M3 · Cinemática rotacional y momento de inercia | https://claude.ai/artifact/NuK9bkYw3vRKtNs1qXxz24 | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M3.html` |
+| Física 1 | P3 · M3 · T1 explicado: anillo con dos masas (ficha de refuerzo) | https://claude.ai/artifact/7MMztN84hVA7x7XeU4MKvb | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/T1_anillo_masas.html` |
 | Física 1 | P3 · M4 · Energía rotacional y rodar sin deslizar | https://claude.ai/artifact/2Yy8b2Q6eBVb6WzaqkHZmV | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M4.html` |
 | Física 1 | P3 · M5 · Torque y poleas con masa (exprés, sin lab) | https://claude.ai/artifact/UoJSHGuJMo6CgzvAZV9qXb | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M5.html` |
 | Física 1 | P3 · M6 · Equilibrio estático (exprés, sin lab) | https://claude.ai/artifact/LCNEgUbTrAs4JkFxqPqdoZ | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M6.html` |
