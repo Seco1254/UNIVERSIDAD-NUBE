@@ -1,0 +1,67 @@
+<title>Bola y varilla</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Una sola figura animada con su explicación debajo */
+:root { --bg:#f4f6fa; --fg:#151a2b; --muted:#5d6478; --accent:#2f54d8; --ball:#d9e0f7; --rod:#e2e6ef; --hl:#d0661c; --line:#c9cfdc; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#121521; --fg:#e6e9f2; --muted:#9aa2b8; --accent:#7f9bff; --ball:#2b3557; --rod:#2a3042; --hl:#f08a3c; --line:#3a4157; color-scheme: dark } }
+:root[data-theme="dark"] { --bg:#121521; --fg:#e6e9f2; --muted:#9aa2b8; --accent:#7f9bff; --ball:#2b3557; --rod:#2a3042; --hl:#f08a3c; --line:#3a4157; color-scheme: dark }
+body { background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, sans-serif; padding-block:20px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)) }
+main { max-width:640px; margin:0 auto; display:grid; gap:14px }
+h1 { font-size:1.35rem; margin:0; text-wrap:balance }
+svg { width:100%; height:auto; display:block; background:var(--bg); border:1px solid var(--line); border-radius:10px }
+.row { display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+button { font:inherit; font-weight:600; padding:8px 14px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer }
+button.ghost { background:transparent; color:var(--accent) }
+button:focus-visible { outline:2px solid var(--hl); outline-offset:2px }
+#step { font-weight:600 }
+ol { margin:0; padding-left:20px; display:grid; gap:6px }
+.m { font-family:ui-monospace, monospace }
+</style>
+<main>
+  <h1>La bola que se pega a la varilla</h1>
+  <svg id="s" viewBox="0 0 360 300" role="img" aria-label="Animación: una bola llega a la punta de una varilla con pivote, se pega y giran juntas"></svg>
+  <div class="row"><button type="button" id="play">Reproducir</button><button type="button" class="ghost" id="reset">Reiniciar</button><span id="step" aria-live="polite">Antes del choque</span></div>
+  <ol>
+    <li><b>Antes:</b> solo se mueve la bola. Su momento angular respecto al pivote es <span class="m">M·v × brazo</span>. La línea naranja es el brazo: la distancia del pivote a la línea por la que viaja la bola. Como pega en la punta, el brazo es <b>ℓ</b>: <span class="m">L<sub>antes</sub> = M·v·ℓ</span>.</li>
+    <li><b>El choque:</b> el pivote empuja la varilla, pero esa fuerza pasa por el pivote: no hace torque. Por eso el momento angular respecto al pivote no cambia.</li>
+    <li><b>Después:</b> varilla y bola giran juntas con ω: <span class="m">L<sub>después</sub> = I·ω</span>, con I = M·ℓ²/3 (varilla por el extremo) + M·ℓ² (bola en la punta).</li>
+    <li>Igualas: <span class="m">M·v·ℓ = (4/3)·M·ℓ²·ω</span>, y despejas <span class="m">ω = 3v/(4ℓ)</span>.</li>
+  </ol>
+</main>
+<script>
+const s = document.getElementById("s"), stepEl = document.getElementById("step");
+const P = { x: 90, y: 250 }, L = 190, Rb = 10;
+let t = 0, run = false, last = null;
+const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function draw() {
+  const hit = 1.0, tipY0 = P.y - L;
+  let ang = 0, bx, by, txt;
+  if (t < hit) { bx = 330 - (330 - (P.x + Rb + 4)) * t; by = tipY0; txt = "Antes del choque: L = M·v·ℓ"; }
+  else { const dt = t - hit; ang = Math.min(dt * 0.9, 1.3); bx = null; txt = "Después: giran juntas, L = I·ω"; }
+  const tipX = P.x + L * Math.sin(ang), tipY = P.y - L * Math.cos(ang);
+  let g = `<line x1="${P.x}" y1="${P.y}" x2="${tipX}" y2="${tipY}" stroke="var(--fg)" stroke-width="12" stroke-linecap="round"/>`;
+  g += `<line x1="${P.x}" y1="${P.y}" x2="${tipX}" y2="${tipY}" stroke="var(--rod)" stroke-width="8" stroke-linecap="round"/>`;
+  g += `<circle cx="${P.x}" cy="${P.y}" r="8" fill="var(--bg)" stroke="#c63a3a" stroke-width="2.5"/><circle cx="${P.x}" cy="${P.y}" r="2.5" fill="var(--fg)"/>`;
+  g += `<text x="${P.x - 14}" y="${P.y + 22}" fill="var(--muted)" font-size="12" text-anchor="middle">pivote</text>`;
+  if (bx !== null) {
+    g += `<line x1="${P.x - 26}" y1="${P.y}" x2="${P.x - 26}" y2="${tipY0}" stroke="var(--hl)" stroke-width="3"/><text x="${P.x - 32}" y="${(P.y + tipY0) / 2}" fill="var(--hl)" font-size="15" text-anchor="end" font-weight="700">ℓ</text>`;
+    g += `<line x1="${P.x - 26}" y1="${tipY0}" x2="345" y2="${tipY0}" stroke="var(--hl)" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+    g += `<circle cx="${bx}" cy="${by}" r="${Rb}" fill="var(--ball)" stroke="var(--fg)" stroke-width="1.8"/>`;
+    g += `<line x1="${bx - 16}" y1="${by + 22}" x2="${bx - 56}" y2="${by + 22}" stroke="var(--accent)" stroke-width="2.5"/><polygon points="${bx - 60},${by + 22} ${bx - 52},${by + 18} ${bx - 52},${by + 26}" fill="var(--accent)"/><text x="${bx - 36}" y="${by + 40}" fill="var(--accent)" font-size="13" text-anchor="middle">v</text>`;
+  } else {
+    g += `<circle cx="${tipX + Rb * Math.cos(ang) }" cy="${tipY + Rb * Math.sin(ang)}" r="${Rb}" fill="var(--ball)" stroke="var(--fg)" stroke-width="1.8"/>`;
+    g += `<path d="M ${P.x + 60} ${P.y - 90} A 110 110 0 0 1 ${P.x + 100} ${P.y - 40}" fill="none" stroke="var(--accent)" stroke-width="2.5"/><text x="${P.x + 112}" y="${P.y - 70}" fill="var(--accent)" font-size="14">ω</text>`;
+  }
+  s.innerHTML = g; stepEl.textContent = txt;
+}
+function frame(now) {
+  if (!run) return;
+  if (last == null) last = now;
+  t += Math.min(0.05, (now - last) / 1000) * 0.6; last = now;
+  if (t > 2.6) { run = false; return draw(); }
+  draw(); requestAnimationFrame(frame);
+}
+document.getElementById("play").addEventListener("click", () => { if (reduce) { t = 2.6; draw(); return; } if (t >= 2.6) t = 0; run = true; last = null; requestAnimationFrame(frame); });
+document.getElementById("reset").addEventListener("click", () => { run = false; t = 0; draw(); });
+draw();
+</script>
