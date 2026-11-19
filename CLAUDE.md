@@ -53,8 +53,10 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Cálculo 2 | M4 · Raíz, cociente, alternantes y ¿qué criterio uso? (incluye la estrategia de M5) | https://claude.ai/artifact/Hwk6wh6if4YTKyEPgNBC2V | `CALCULO_2/PARCIAL_3/artifacts/M4.html` |
 | Cálculo 2 | M6 · Series de potencias: radio e intervalo de convergencia | https://claude.ai/artifact/2B2r4zNC2NfohFrv2GW7Z1 | `CALCULO_2/PARCIAL_3/artifacts/M6.html` |
 | Cálculo 2 | M7 · Series de Taylor con la geométrica | https://claude.ai/artifact/1CqgP2hEhtPdqfHwKDdUJ8 | `CALCULO_2/PARCIAL_3/artifacts/M7.html` |
-| Cálculo 2 | Plan Examen final (tracker de progreso en `progreso/`, docs `M1`…`M6`; el simulacro M6 va sobre 50) | https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU | `CALCULO_2/FINAL/artifacts/plan.html` |
-| Cálculo 2 | Final · M1 · Paramétricas: longitud de arco y tangentes | https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw | `CALCULO_2/FINAL/artifacts/M1.html` |
+| Cálculo 2 | Plan Examen final (tracker de progreso en `progreso/`, docs `M1`…`M5`; quices sobre 10, se pasa con 8; el simulacro M5 va sobre 50) | https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU | `CALCULO_2/FINAL/artifacts/plan.html` |
+| Cálculo 2 | Final · Integración: todas las técnicas (explicaciones del bloque del Parcial 1; la cita el M1) | https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc | `CALCULO_2/FINAL/artifacts/integracion.html` |
+| Cálculo 2 | Final · Paramétricas: longitud de arco y tangentes (la cita el M4; intentos en `intentos/`) | https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw | `CALCULO_2/FINAL/artifacts/M1.html` |
+| Cálculo 2 | Parcial 2 · Ecuaciones separables, Lineales y Bernoulli, Segundo orden y coeficientes indeterminados, Coeficientes indeterminados, Simulacro Parcial 2 (hechos en otras conversaciones; los cita el M2 del final) | [separables](https://claude.ai/artifact/9tWWxyLsdzdnG7n2VFMhZH) · [lineales](https://claude.ai/artifact/4SxfPSG9GFNWzYsneurM5Q) · [segundo orden](https://claude.ai/artifact/HGp12FT3EM6tD3q6sxoUtH) · [coef. indet.](https://claude.ai/artifact/NHzoHae9hrPCK2gNbD2xnJ) · [simulacro](https://claude.ai/artifact/SJETfGkuseKRAmbDWczDRL) | — |
 
 ## Convenciones
 

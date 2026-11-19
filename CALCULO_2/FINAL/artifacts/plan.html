@@ -174,6 +174,9 @@ footer{font-size:.82rem; color:var(--muted)}
 .need b{font-family:var(--f-display); font-size:1.7rem; font-weight:800; font-stretch:110%; line-height:1; font-variant-numeric:tabular-nums}
 .need span{font-size:.82rem; color:var(--muted)}
 .need div.goal{border:1.5px solid var(--ink); box-shadow:3px 3px 0 var(--ink)}
+.recs{display:flex; flex-wrap:wrap; gap:4px 12px; font-size:.86rem; margin-top:8px}
+.recs a{font-weight:600; text-decoration:none}
+.recs a:hover{text-decoration:underline}
 </style>
 
 <div class="wrap">
@@ -183,7 +186,7 @@ footer{font-size:.82rem; color:var(--muted)}
     <p class="lede">Entra todo el curso: integración, ecuaciones diferenciales, series, paramétricas y polares. Vale el 25 % de la nota. Lunes 23 de noviembre de 2026 (confirmado). Si sale como el de 2023: 110 minutos, 5 problemas de 10 puntos, sin apuntes ni calculadora.</p>
     <div class="stats">
       <div class="stat"><b id="dias">4</b><span id="dias-lab">días para el final</span></div>
-      <div class="stat"><b id="aprob">0/6</b><span>módulos aprobados</span></div>
+      <div class="stat"><b id="aprob">0/5</b><span>módulos aprobados</span></div>
       <div class="stat" style="align-self:center"><div class="bar" aria-hidden="true"><i id="aprob-bar"></i></div></div>
     </div>
   </header>
@@ -207,22 +210,22 @@ footer{font-size:.82rem; color:var(--muted)}
   <section aria-labelledby="sem-h">
     <div class="sec-head">
       <h2 id="sem-h">Tu calendario</h2>
-      <p class="note">Empezaste el jueves 19, así que quedan cuatro días, unas 12 horas. El plan se comprimió a 6 módulos, en el orden que más puntos da por hora de estudio. La carga sigue tus días: el jueves es liviano y el fin de semana va lo largo.</p>
+      <p class="note">Quedan cuatro días, unas 12 horas. Vas en el orden en que se vio en clase, un módulo por bloque del curso, y paramétricas y polares al final. Cada módulo repasa todo su bloque, no solo lo que salió en el final de 2023, por si sale otra pregunta del mismo tema.</p>
       <div class="legend" id="legend"></div>
     </div>
     <div class="days" id="days"></div>
     <ul class="rules">
-      <li><b>Ajuste del 19 de noviembre:</b> el final es el lunes 23 (confirmado) y empiezas hoy. El plan pasó de 10 a 6 módulos: cada uno trae solo lo que pide el final.</li>
-      <li><b>Por qué este orden:</b> paramétricas y polares valen 20 de 50 y son lo más rápido de aprender, una fórmula y una integral. Integración y ecuaciones van el sábado, tu día largo. Series las estudiaste para el Parcial 3: el domingo es repaso.</li>
-      <li><b>Si te atrasas:</b> no recortes M1, M2 ni el simulacro. Si el sábado no terminas M4, haz solo separables y segundo orden, los dos tipos del final de 2023.</li>
-      <li><b>El lunes antes del final:</b> 30 minutos con la hoja de fórmulas. Nada nuevo.</li>
+      <li><b>Ajuste del 19 de noviembre (tarde):</b> un módulo por bloque, en el orden de clase: integración, complejos y ecuaciones, series, y paramétricas y polares al final.</li>
+      <li><b>Las explicaciones se reciclan:</b> cada módulo enlaza la explicación de tus artefactos de los parciales. Integración no tenía artefacto, así que hay uno nuevo con todas las técnicas.</li>
+      <li><b>Quices de 10 problemas:</b> 7 de opción múltiple que se califican solos y 3 abiertos que me mandas en foto para corregir. Pasas con 8/10 contando los abiertos. Cada problema dice si salió en un parcial o en el final, si es del estilo del profe o de otro tipo.</li>
+      <li><b>Simulacro:</b> queda armado para el domingo, solo si alcanzas.</li>
     </ul>
   </section>
 
   <section aria-labelledby="mod-h">
     <div class="sec-head">
       <h2 id="mod-h">Módulos</h2>
-      <p class="note">Cada módulo tiene cuatro partes: teoría, lab visual, taller y quiz. Pasas al siguiente con 4/5 o más en el quiz; si no, repasamos el error y haces el Quiz B. Los ejemplos resueltos son ejercicios del final de 2023, de tus parciales y de las hojas del profe, con sus números.</p>
+      <p class="note">Cada módulo repasa su bloque completo con resúmenes, problemas y un quiz de 10 (7 de opción múltiple y 3 abiertos que me mandas). Pasas con 8/10. Las explicaciones largas están en tus artefactos de los parciales: cada tarjeta las enlaza.</p>
       <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
     </div>
     <div class="mods" id="mods"></div>
@@ -271,6 +274,8 @@ footer{font-size:.82rem; color:var(--muted)}
       <li><b>El peso del final:</b> el programa pone 25 % en una columna y 20 % en la otra. Solo con 25 % la suma da 100 %, así que el plan usa 25 %.</li>
       <li><b>Las soluciones del semestre (Neón) son el modelo de redacción,</b> pero tienen erratas: en el Parcial 3 versión B, P4, la línea de f‴ dice (−1)²7²·3! y debe ser (−1)³7³·3!. En el Parcial 2 versión B, P1, dice «ortogonal a y⁴ + x⁴ = k», copiado de la versión A, pero la familia es y⁵ − x⁵ = k.</li>
       <li><b>En el final de 2023, P4,</b> la suma dice i = 1 pero el término usa n: es la misma serie.</li>
+      <li><b>Más erratas del Parcial 1 de 2026 (Neón):</b> versión A, P2: la solución pone 2 ln(cos(t/2)) en vez de 4 ln(cos(t/2)); lo correcto es 10π/(3√3) − 2 ln 3. Versión B, P3: el último término es −6/(x − 2), no −6/(x + 2).</li>
+      <li><b>Parcial 1 de 2023, P4:</b> dice «desde x = 1 hasta x = 9», pero la curva es x en función de y: son valores de y (y la longitud da 32/3).</li>
       <li><b>Los módulos del Parcial 3 siguen sirviendo.</b> El M5 de este plan es repaso con el M3 y el M4 del parcial (comparación, raíz, cociente, alternantes y la lista de criterios).</li>
     </ul>
   </section>
@@ -290,56 +295,57 @@ const NEED = [
   {g:"4,0", f:"4,8", p:"48/50"}
 ];
 const DAYS = [
-  {d:"2026-11-19", n:"Jue", f:"19 nov", load:1, what:"M1 Paramétricas: longitud de arco y tangentes", mods:["M1"], h:"1–1,5 h"},
-  {d:"2026-11-20", n:"Vie", f:"20 nov", load:2, what:"M2 Polares: área y longitud", mods:["M2"], h:"~2 h"},
-  {d:"2026-11-21", n:"Sáb", f:"21 nov", load:4, what:"M3 Integración + M4 Ecuaciones diferenciales", mods:["M3","M4"], h:"4–5 h"},
-  {d:"2026-11-22", n:"Dom", f:"22 nov", load:4, what:"M5 Series (1 h) + M6 Simulacro de 110 min y corrección. Duerme temprano", mods:["M5","M6"], h:"4–5 h"},
+  {d:"2026-11-19", n:"Jue", f:"19 nov", load:1, what:"M1 Integración: las explicaciones de todas las técnicas", mods:["M1"], h:"1–1,5 h"},
+  {d:"2026-11-20", n:"Vie", f:"20 nov", load:2, what:"M1 Integración: problemas y quiz de 10", mods:["M1"], h:"~2 h"},
+  {d:"2026-11-21", n:"Sáb", f:"21 nov", load:4, what:"M2 Complejos y ecuaciones diferenciales + M3 Series", mods:["M2","M3"], h:"4–5 h"},
+  {d:"2026-11-22", n:"Dom", f:"22 nov", load:4, what:"M4 Paramétricas y polares + simulacro si alcanzas. Duerme temprano", mods:["M4","M5"], h:"4–5 h"},
   {d:"2026-11-23", n:"Lun", f:"23 nov", load:0, what:"30 min con la hoja de fórmulas y Examen final", mods:[], h:"Llega descansado", exam:true}
 ];
 const MODS = [
-  {id:"M1", t:"Paramétricas: longitud de arco y tangentes", hot:true, clase:"Visto en clase", day:"Jue 19", h:"~1,5 h", libro:"10.1–10.2 y 8.1", extra:"P1 del final de 2023 (10 pts)",
-    dominar:["Longitud de arco paramétrica, L = ∫ √((dx/dt)² + (dy/dt)²) dt, y de y = f(x), L = ∫ √(1 + (f′)²) dx.","Sacar el cuadrado perfecto debajo de la raíz: 36t² + 36t⁴ = 36t²(1 + t²).","La pendiente dy/dx = (dy/dt)/(dx/dt): recta tangente y tangentes horizontales."],
-    taller:["Final 2023 P1: x = 1 + 3t², y = 4 + 2t³, 0 ≤ t ≤ √3","Hoja 10.1: ejercicios 3 a 5","Longitud de y = f(x): Parcial 1 2023 P4"],
-    trampas:["√(a² + b²) no es a + b: factoriza antes de sacar la raíz.","Los límites de la integral son los de t, no los de x."]},
-  {id:"M2", t:"Polares: área y longitud", hot:true, clase:"Visto en clase", day:"Vie 20", h:"~2 h", libro:"10.3–10.4", extra:"P2 del final de 2023 (10 pts)",
-    dominar:["Lo mínimo de polares: x = r cos θ, y = r sen θ, r² = x² + y², y las curvas típicas.","Área: A = ½ ∫ r² dθ, con cos²θ = (1 + cos 2θ)/2 y sen 2θ = 2 sen θ cos θ.","Longitud polar e intersección de dos curvas."],
-    taller:["Final 2023 P2: r = cos θ − sen θ, 0 ≤ θ ≤ π/4","Hoja 10.1: ejercicios 7 a 12","Libro 10.4: 6, 7, 35, 40 y 46"],
-    trampas:["Olvidar el ½ del área.","(cos θ − sen θ)² = 1 − sen 2θ.","r puede ser negativo."]},
-  {id:"M3", t:"Integración: partes, trigonométricas, sustitución y fracciones parciales", clase:"Visto en clase", day:"Sáb 21", h:"~2,5 h", libro:"7.1–7.4 y 7.8", extra:"P3 del final de 2023 (10 pts)",
-    dominar:["Partes: ∫ u dv = uv − ∫ v du, con ln y polinomios como u.","Fracciones parciales: factores lineales, repetidos e irreducibles, y división larga si hace falta.","Sustitución trigonométrica y potencias de sen y cos, con la receta «¿qué técnica uso?»."],
-    taller:["Final 2023 P3: ∫ x² ln x dx y ∫ (x² + 6)/(x(x − 3)(x + 2)) dx","Parcial 1 2026, con la solución del profe","Parcial 1 2025"],
-    trampas:["Si el grado de arriba es mayor o igual que el de abajo, primero se divide.","Volver a la variable x al final.","La constante C."]},
-  {id:"M4", t:"Ecuaciones diferenciales: separables, lineales y segundo orden", clase:"Visto en clase", day:"Sáb 21", h:"~2 h", libro:"9.3–9.5, 17.1–17.2 y H", extra:"P5 del final de 2023 (10 pts)",
-    dominar:["Separables con condición inicial.","Lineales con factor integrante, y Bernoulli si alcanza.","Segundo orden: ecuación característica (raíces distintas, repetidas o complejas) y coeficientes indeterminados."],
-    taller:["Final 2023 P5: (x² + 1)y′ = 2xy, y(0) = 1, y y″ − 14y′ + 49y = 7","Parcial 2 2026, con la solución del profe","Parcial 2 2025"],
+  {id:"M1", t:"Integración: todas las técnicas", clase:"Bloque del Parcial 1", day:"Jue 19 – Vie 20", h:"~3 h", libro:"7.1–7.4, 7.8 y 8.1", extra:"P3 del final de 2023 · tu P1: 3,5",
+    rec:[["Integración: todas las técnicas", "https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc"]],
+    dominar:["Partes (LIATE), integrales trigonométricas y sustitución trigonométrica con el triángulo.","Fracciones parciales: lineales, repetidos, irreducibles y división larga.","Impropias con límite o por comparación, y longitud de arco de y = f(x)."],
+    taller:["Final 2023 P3: ∫ x² ln x dx y ∫ (x² + 6)/(x(x − 3)(x + 2)) dx","Parcial 1 de 2026 (versiones A y B), 2025, 2023 y 2018","Hojas 7.1 a 8.1 del profe"],
+    trampas:["Volver a x al final de una sustitución.","Si el grado de arriba es mayor o igual, primero se divide.","En una impropia, escribir el límite."]},
+  {id:"M2", t:"Complejos y ecuaciones diferenciales", clase:"Bloque del Parcial 2", day:"Sáb 21", h:"~2,5 h", libro:"Apéndice H, 9.1–9.5 y 17.1–17.2", extra:"P5 del final de 2023 · tu P2: 3,9",
+    rec:[["Ecuaciones separables", "https://claude.ai/artifact/9tWWxyLsdzdnG7n2VFMhZH"],["Lineales y Bernoulli", "https://claude.ai/artifact/4SxfPSG9GFNWzYsneurM5Q"],["Segundo orden y coeficientes indeterminados", "https://claude.ai/artifact/HGp12FT3EM6tD3q6sxoUtH"],["Coeficientes indeterminados", "https://claude.ai/artifact/NHzoHae9hrPCK2gNbD2xnJ"],["Simulacro Parcial 2", "https://claude.ai/artifact/SJETfGkuseKRAmbDWczDRL"]],
+    dominar:["Complejos: a + bi, conjugado, forma polar, De Moivre y raíces.","Separables, lineales, Bernoulli y trayectorias ortogonales.","Segundo orden: ecuación característica y coeficientes indeterminados."],
+    taller:["Final 2023 P5: (x² + 1)y′ = 2xy, y(0) = 1, y y″ − 14y′ + 49y = 7","Parcial 2 de 2026 (versiones A y B), 2025 y 2023","Hojas H, 9.3, 9.5, 17.1 y 17.2"],
     trampas:["Raíz repetida: la segunda solución lleva x.","En la lineal, primero dejar y′ sola.","Si la y<sub>p</sub> propuesta ya resuelve la homogénea, se multiplica por x."]},
-  {id:"M5", t:"Series: converge o diverge", clase:"Repaso del Parcial 3", day:"Dom 22", h:"~1 h", libro:"11.2–11.6", extra:"P4 del final de 2023 (10 pts)",
-    dominar:["La lista «¿qué criterio uso?» del M4 del Parcial 3.","El criterio de divergencia con cos(algo que tiende a 0) → 1.","Comparación en el límite con 1/n<sup>p</sup>."],
-    taller:["Final 2023 P4","Parcial 3 2026, P1 (a) a (c), con la solución del profe","El T4 del M4 del Parcial 3: los 8 del punto 1"],
-    trampas:["1<sup>∞</sup> no es 1.","Sin la frase del criterio, el punto vale 0."]},
-  {id:"M6", t:"Simulacro estilo Martínez", day:"Dom 22", h:"110 min + corrección", libro:"todo el curso", extra:"sin apuntes", sim:true, meta:36,
-    dominar:["Un final nuevo con la mezcla de 2023: 5 problemas de 10 pts.","Calificado por literal, como el profe: criterio, cuenta y frase.","Lo que pierdas se repasa el domingo en la noche: nada nuevo."],
+  {id:"M3", t:"Series", clase:"Bloque del Parcial 3", day:"Sáb 21", h:"~2 h", libro:"11.1–11.10", extra:"P4 del final de 2023 · tu P3: 3,2",
+    rec:[["M1 Sucesiones y límites", "https://claude.ai/artifact/ETtmmaWSoyPyFuYaU6SHaC"],["M2 Series básicas", "https://claude.ai/artifact/KY9zgRfF2aiqytsvs3YZWp"],["M3 Comparación y serie p", "https://claude.ai/artifact/FcYHimB26pxcfGEbXNdQif"],["M4 Raíz, cociente y alternantes", "https://claude.ai/artifact/Hwk6wh6if4YTKyEPgNBC2V"],["M6 Radio e intervalo", "https://claude.ai/artifact/2B2r4zNC2NfohFrv2GW7Z1"],["M7 Series de Taylor", "https://claude.ai/artifact/1CqgP2hEhtPdqfHwKDdUJ8"]],
+    dominar:["La lista «¿qué criterio uso?» y la frase de cada criterio.","Radio e intervalo, también con un número delante de x, como en tu P3.","Taylor con la geométrica o con derivadas, e integrando para el logaritmo."],
+    taller:["Final 2023 P4: (4n² + 1)/(n⁵ + 2n) y (−1)<sup>n</sup> cos(n/√(n⁴ + 2))","Tu Parcial 3 de 2026 (versiones A y B), con la solución del profe","Parciales 3 de 2025 y 2023"],
+    trampas:["1<sup>∞</sup> no es 1.","Con L = 1 el criterio no decide.","No olvidar los extremos del intervalo."]},
+  {id:"M4", t:"Paramétricas y polares", clase:"Visto en clase", day:"Dom 22", h:"~2,5 h", libro:"10.1–10.4", extra:"P1 y P2 del final de 2023 (20 pts)",
+    rec:[["Paramétricas: longitud de arco y tangentes", "https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw"]],
+    dominar:["Longitud de arco paramétrica y la pendiente dy/dx = (dy/dt)/(dx/dt).","Polares: x = r cos θ, y = r sen θ, las curvas típicas y la conversión.","Área A = ½ ∫ r² dθ, longitud polar e intersecciones."],
+    taller:["Final 2023 P1 y P2","Hoja 10.1 completa (ejercicios 1 a 12)","Libro 10.4: 6, 7, 35, 40 y 46"],
+    trampas:["Olvidar el ½ del área.","Los límites de la integral son valores de t o de θ.","√(a² + b²) no es a + b."]},
+  {id:"M5", t:"Simulacro estilo Martínez (opcional)", day:"Dom 22", h:"110 min + corrección", libro:"todo el curso", extra:"solo si alcanzas", sim:true, meta:36,
+    rec:[],
+    dominar:["Un final nuevo con la mezcla de 2023: 5 problemas de 10 pts.","Calificado por literal, como el profe: criterio, cuenta y frase."],
     taller:["5 problemas nuevos al estilo del profesor, sobre 50"],
     trampas:["Meta: 36/50 o más (nota 3,6 en el final: definitiva 3,7)."]}
 ];
 /* [problema, tema, de dónde salió, módulo] */
 const FINAL23 = [
-  ["P1 · 10 pts","Longitud de arco de una curva paramétrica","La hoja 10.1 (5a), con otro rango","M1"],
-  ["P2 · 10 pts","Área en coordenadas polares","Del tipo de la hoja 10.1 (11)","M2"],
-  ["P3 · 10 pts","Dos integrales: partes y fracciones parciales","Del tipo de las hojas 7.1 y 7.4","M3"],
-  ["P4 · 10 pts","Dos series: converge o diverge","Comparación en el límite y criterio de divergencia","M5"],
-  ["P5 · 10 pts","Dos ecuaciones: separable y segundo orden no homogénea","Del tipo de las hojas 9.3 y 17.2","M4"]
+  ["P1 · 10 pts","Longitud de arco de una curva paramétrica","La hoja 10.1 (5a), con otro rango","M4"],
+  ["P2 · 10 pts","Área en coordenadas polares","Del tipo de la hoja 10.1 (11)","M4"],
+  ["P3 · 10 pts","Dos integrales: partes y fracciones parciales","Del tipo de las hojas 7.1 y 7.4","M1"],
+  ["P4 · 10 pts","Dos series: converge o diverge","Comparación en el límite y criterio de divergencia","M3"],
+  ["P5 · 10 pts","Dos ecuaciones: separable y segundo orden no homogénea","Del tipo de las hojas 9.3 y 17.2","M2"]
 ];
 /* [problema, enunciado (HTML), veredicto, respuesta (HTML), módulo] */
 const CLAVE = [
-  ["P1","Longitud de x = 1 + 3t², y = 4 + 2t³, 0 ≤ t ≤ √3","val","L = ∫ 6t√(1 + t²) dt de 0 a √3 = 2(1 + t²)<sup>3/2</sup> evaluado = 2(8 − 1) = <b>14</b>.","M1"],
-  ["P2","Área encerrada por r = cos θ − sen θ, 0 ≤ θ ≤ π/4","val","A = ½ ∫ (1 − sen 2θ) dθ de 0 a π/4 = <b>π/8 − 1/4</b> ≈ 0,143.","M2"],
-  ["P3a","∫ x² ln x dx","val","Partes con u = ln x: <b>(x³/3) ln x − x³/9 + C</b>.","M3"],
-  ["P3b","∫ (x² + 6)/(x(x − 3)(x + 2)) dx","val","A = −1, B = 1, C = 1: <b>−ln|x| + ln|x − 3| + ln|x + 2| + C</b>.","M3"],
-  ["P4a","Σ (4n² + 1)/(n⁵ + 2n)","conv","Comparación en el límite con 1/n³: L = 4, y p = 3 &gt; 1.","M5"],
-  ["P4b","Σ (−1)<sup>n</sup> cos(n/√(n⁴ + 2))","div","n/√(n⁴ + 2) → 0, así que |a<sub>n</sub>| = cos(…) → 1 ≠ 0: criterio de divergencia.","M5"],
-  ["P5a","(x² + 1)y′ = 2xy, y(0) = 1","val","Separable: ln|y| = ln(x² + 1) + C, y la condición da <b>y = x² + 1</b>.","M4"],
-  ["P5b","y″ − 14y′ + 49y = 7","val","r = 7 doble: <b>y = C₁e<sup>7x</sup> + C₂x e<sup>7x</sup> + 1/7</b>.","M4"]
+  ["P1","Longitud de x = 1 + 3t², y = 4 + 2t³, 0 ≤ t ≤ √3","val","L = ∫ 6t√(1 + t²) dt de 0 a √3 = 2(1 + t²)<sup>3/2</sup> evaluado = 2(8 − 1) = <b>14</b>.","M4"],
+  ["P2","Área encerrada por r = cos θ − sen θ, 0 ≤ θ ≤ π/4","val","A = ½ ∫ (1 − sen 2θ) dθ de 0 a π/4 = <b>π/8 − 1/4</b> ≈ 0,143.","M4"],
+  ["P3a","∫ x² ln x dx","val","Partes con u = ln x: <b>(x³/3) ln x − x³/9 + C</b>.","M1"],
+  ["P3b","∫ (x² + 6)/(x(x − 3)(x + 2)) dx","val","A = −1, B = 1, C = 1: <b>−ln|x| + ln|x − 3| + ln|x + 2| + C</b>.","M1"],
+  ["P4a","Σ (4n² + 1)/(n⁵ + 2n)","conv","Comparación en el límite con 1/n³: L = 4, y p = 3 &gt; 1.","M3"],
+  ["P4b","Σ (−1)<sup>n</sup> cos(n/√(n⁴ + 2))","div","n/√(n⁴ + 2) → 0, así que |a<sub>n</sub>| = cos(…) → 1 ≠ 0: criterio de divergencia.","M3"],
+  ["P5a","(x² + 1)y′ = 2xy, y(0) = 1","val","Separable: ln|y| = ln(x² + 1) + C, y la condición da <b>y = x² + 1</b>.","M2"],
+  ["P5b","y″ − 14y′ + 49y = 7","val","r = 7 doble: <b>y = C₁e<sup>7x</sup> + C₂x e<sup>7x</sup> + 1/7</b>.","M2"]
 ];
 
 const $ = (s) => document.querySelector(s);
@@ -428,7 +434,7 @@ let progress = {};
 let db = null, canWrite = false;
 const writeQueue = {};
 
-function isPassed(m, p) { if (!p || p.quiz == null || p.quiz === "") return false; return m.sim ? Number(p.quiz) >= m.meta : Number(p.quiz) >= 4; }
+function isPassed(m, p) { if (!p || p.quiz == null || p.quiz === "") return false; return m.sim ? Number(p.quiz) >= m.meta : Number(p.quiz) >= 8; }
 function status(m, idx) {
   const p = progress[m.id] || {};
   if (isPassed(m, p)) return [m.sim ? "Meta cumplida" : "Aprobado", "ok"];
@@ -454,7 +460,13 @@ function renderMods() {
     meta.appendChild(el("span", "", m.day + " · " + m.h));
     meta.appendChild(el("span", "", "Libro " + m.libro));
     if (m.extra) meta.appendChild(el("span", "", m.extra));
-    tbox.appendChild(meta); head.appendChild(tbox);
+    tbox.appendChild(meta);
+    if (m.rec && m.rec.length) {
+      const rec = el("div", "recs"); rec.appendChild(el("span", "muted", "Explicaciones:"));
+      m.rec.forEach(([t, u]) => { const a = el("a", "", t + " ↗"); a.href = u; a.target = "_blank"; a.rel = "noopener"; rec.appendChild(a); });
+      tbox.appendChild(rec);
+    }
+    head.appendChild(tbox);
     const [st, cls] = status(m, idx);
     head.appendChild(el("span", "pill " + cls, st));
     card.appendChild(head);
@@ -482,7 +494,7 @@ function renderMods() {
     } else {
       inp = el("select");
       const o0 = el("option", "", "—"); o0.value = ""; inp.appendChild(o0);
-      for (let i = 0; i <= 5; i++) { const o = el("option", "", i + "/5"); o.value = String(i); inp.appendChild(o); }
+      for (let i = 0; i <= 10; i++) { const o = el("option", "", i + "/10"); o.value = String(i); inp.appendChild(o); }
       inp.value = p.quiz != null ? String(p.quiz) : "";
       inp.addEventListener("change", () => save(m.id, { quiz: inp.value === "" ? null : Number(inp.value) }));
       q.appendChild(inp);

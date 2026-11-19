@@ -7,7 +7,7 @@
 **Formato esperado (como el final de 2023-19):** 110 minutos, 5 problemas de 10 puntos (sobre 50), sin apuntes, sin calculadora y sin hojas extra. «Respuesta sin justificación será calificada con cero».
 **Días de estudio:** 4 (jueves 19 → domingo 22 de noviembre), unas 12 horas.
 
-> **Ajuste del 19 de noviembre:** el estudio empezó el jueves 19, así que el plan pasó de 10 a 6 módulos, en el orden que más puntos da por hora: paramétricas y polares primero (20 de 50 puntos y lo más rápido de aprender), integración y ecuaciones el sábado, y series (ya estudiadas para el Parcial 3) como repaso el domingo, con el simulacro.
+> **Ajuste del 19 de noviembre (tarde):** a pedido del estudiante, un módulo por bloque del curso en el orden de clase (integración, complejos y ecuaciones, series) y paramétricas y polares al final. Cada módulo repasa todo su bloque, por si sale otra pregunta del mismo tema. Las explicaciones se reciclan de los artefactos de cada parcial; integración no tenía artefacto y tiene uno nuevo. Quices de 10 problemas: 7 de opción múltiple y 3 abiertos que Claude corrige; se pasa con 8/10.
 
 El material está en [`material/`](material/): el programa, las soluciones del semestre (Neón) y la página del profe (hojas por sección, parciales, el final de 2023, talleres y quices).
 
@@ -34,11 +34,11 @@ Notas hasta ahora: parciales 3,5 · 3,9 · 3,2 (60 %) y talleres 3,50 · 4,23 ·
 
 | Problema | Tema | De dónde sale | Módulo |
 |---|---|---|---|
-| P1 (10 pts) | Longitud de arco de una curva paramétrica | La hoja 10.1 (5a), con otro rango | M1 |
-| P2 (10 pts) | Área en coordenadas polares | Del tipo de la hoja 10.1 (11) | M2 |
-| P3 (10 pts) | Dos integrales: partes y fracciones parciales | Del tipo de las hojas 7.1 y 7.4 | M3 |
-| P4 (10 pts) | Dos series: converge o diverge | Comparación en el límite y criterio de divergencia | M5 |
-| P5 (10 pts) | Dos ecuaciones: separable y segundo orden no homogénea | Del tipo de las hojas 9.3 y 17.2 | M4 |
+| P1 (10 pts) | Longitud de arco de una curva paramétrica | La hoja 10.1 (5a), con otro rango | M4 |
+| P2 (10 pts) | Área en coordenadas polares | Del tipo de la hoja 10.1 (11) | M4 |
+| P3 (10 pts) | Dos integrales: partes y fracciones parciales | Del tipo de las hojas 7.1 y 7.4 | M1 |
+| P4 (10 pts) | Dos series: converge o diverge | Comparación en el límite y criterio de divergencia | M3 |
+| P5 (10 pts) | Dos ecuaciones: separable y segundo orden no homogénea | Del tipo de las hojas 9.3 y 17.2 | M2 |
 
 ### Patrones del profesor
 
@@ -68,14 +68,13 @@ La misma de siempre: módulos de 4 secciones (teoría, lab, taller y quiz de pas
 
 ## 4. Los módulos
 
-| Módulo | Tema | Libro | Día | Por qué |
+| Módulo | Tema | Libro | Día | Explicaciones que se reciclan |
 |---|---|---|---|---|
-| **M1** | [Paramétricas: longitud de arco y tangentes](https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw) | 10.1–10.2, 8.1 | Jue 19 (~1,5 h) | P1 del final de 2023 · sin parcial |
-| **M2** | Polares: área y longitud | 10.3–10.4 | Vie 20 (~2 h) | P2 del final de 2023 · sin parcial |
-| **M3** | Integración: partes, trigonométricas, sustitución y fracciones parciales | 7.1–7.4, 7.8 | Sáb 21 (~2,5 h) | P3 del final |
-| **M4** | Ecuaciones diferenciales: separables, lineales y segundo orden | 9.3–9.5, 17.1–17.2, H | Sáb 21 (~2 h) | P5 del final |
-| **M5** | Series: converge o diverge | 11.2–11.6 | Dom 22 (~1 h) | P4 del final · repaso con el M3 y el M4 del Parcial 3 |
-| **M6** | Simulacro (110 min, sobre 50) | Todo | Dom 22 | Meta: 36/50 |
+| **M1** | Integración: todas las técnicas | 7.1–7.4, 7.8, 8.1 | Jue 19 – Vie 20 | [Integración: todas las técnicas](https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc) (nuevo) |
+| **M2** | Complejos y ecuaciones diferenciales | H, 9.1–9.5, 17.1–17.2 | Sáb 21 | [Ecuaciones separables](https://claude.ai/artifact/9tWWxyLsdzdnG7n2VFMhZH), [Lineales y Bernoulli](https://claude.ai/artifact/4SxfPSG9GFNWzYsneurM5Q), [Segundo orden y coeficientes indeterminados](https://claude.ai/artifact/HGp12FT3EM6tD3q6sxoUtH), [Coeficientes indeterminados](https://claude.ai/artifact/NHzoHae9hrPCK2gNbD2xnJ), [Simulacro Parcial 2](https://claude.ai/artifact/SJETfGkuseKRAmbDWczDRL) |
+| **M3** | Series | 11.1–11.10 | Sáb 21 | Los M1 a M7 del Parcial 3 (tabla de `CLAUDE.md`) |
+| **M4** | Paramétricas y polares | 10.1–10.4 | Dom 22 | [Paramétricas: longitud de arco y tangentes](https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw) |
+| **M5** | Simulacro (110 min, sobre 50), opcional | Todo | Dom 22 | Meta: 36/50 |
 
 ---
 
@@ -83,26 +82,23 @@ La misma de siempre: módulos de 4 secciones (teoría, lab, taller y quiz de pas
 
 | Día | Carga | Qué |
 |---|---|---|
-| Jue 19 nov | Liviana (1–1,5 h) | M1 Paramétricas: longitud de arco y tangentes |
-| Vie 20 nov | Suave (~2 h) | M2 Polares: área y longitud |
-| Sáb 21 nov | Pesada (4–5 h) | M3 Integración + M4 Ecuaciones diferenciales |
-| Dom 22 nov | Pesada (4–5 h) | M5 Series (1 h) + **M6 Simulacro** de 110 min y corrección; dormir temprano |
+| Jue 19 nov | Liviana (1–1,5 h) | M1 Integración: las explicaciones de todas las técnicas |
+| Vie 20 nov | Suave (~2 h) | M1 Integración: problemas y quiz de 10 |
+| Sáb 21 nov | Pesada (4–5 h) | M2 Complejos y ecuaciones + M3 Series |
+| Dom 22 nov | Pesada (4–5 h) | M4 Paramétricas y polares + simulacro si alcanza; dormir temprano |
 | **Lun 23 nov** | — | 30 min con la hoja de fórmulas y **examen final** |
-
-**Si te atrasas:** no recortes M1, M2 ni el simulacro. Si el sábado no terminas M4, haz solo separables y segundo orden, los dos tipos del final de 2023.
 
 ---
 
 ## 6. Tu progreso
 
-| Módulo | Teoría | Lab | Taller | Quiz (nota) | Estado |
-|---|---|---|---|---|---|
-| M1 Paramétricas | ☐ | ☐ | ☐ | — | ⏳ |
-| M2 Polares | ☐ | ☐ | ☐ | — | 🔒 |
-| M3 Integración | ☐ | ☐ | ☐ | — | 🔒 |
-| M4 Ecuaciones diferenciales | ☐ | ☐ | ☐ | — | 🔒 |
-| M5 Series | ☐ | ☐ | ☐ | — | 🔒 |
-| M6 Simulacro | — | — | — | —/50 | 🔒 |
+| Módulo | Quiz (sobre 10; se pasa con 8) | Estado |
+|---|---|---|
+| M1 Integración | — | ⏳ |
+| M2 Complejos y ecuaciones | — | 🔒 |
+| M3 Series | — | 🔒 |
+| M4 Paramétricas y polares | — | 🔒 |
+| M5 Simulacro (opcional) | —/50 | 🔒 |
 
 ---
 
@@ -112,14 +108,14 @@ No venía solución oficial: estas respuestas las saqué yo y las verifiqué con
 
 | Problema | Enunciado | Respuesta | Módulo |
 |---|---|---|---|
-| P1 | Longitud de x = 1 + 3t², y = 4 + 2t³, 0 ≤ t ≤ √3 | L = ∫₀^√3 6t√(1 + t²) dt = 2(1 + t²)^(3/2) evaluado = **14** | M1 |
-| P2 | Área encerrada por r = cos θ − sen θ, 0 ≤ θ ≤ π/4 | A = ½ ∫₀^(π/4) (1 − sen 2θ) dθ = **π/8 − 1/4** ≈ 0,143 | M2 |
-| P3a | ∫ x² ln x dx | Partes con u = ln x: **(x³/3) ln x − x³/9 + C** | M3 |
-| P3b | ∫ (x² + 6)/(x(x − 3)(x + 2)) dx | A = −1, B = 1, C = 1: **−ln\|x\| + ln\|x − 3\| + ln\|x + 2\| + C** | M3 |
-| P4a | Σ (4n² + 1)/(n⁵ + 2n) | **Converge.** Comparación en el límite con 1/n³: L = 4 | M5 |
-| P4b | Σ (−1)ⁿ cos(n/√(n⁴ + 2)) | **Diverge.** n/√(n⁴ + 2) → 0, así que \|aₙ\| → cos 0 = 1 ≠ 0 | M5 |
-| P5a | (x² + 1)y′ = 2xy, y(0) = 1 | Separable: **y = x² + 1** | M4 |
-| P5b | y″ − 14y′ + 49y = 7 | r = 7 doble: **y = C₁e^(7x) + C₂x e^(7x) + 1/7** | M4 |
+| P1 | Longitud de x = 1 + 3t², y = 4 + 2t³, 0 ≤ t ≤ √3 | L = ∫₀^√3 6t√(1 + t²) dt = 2(1 + t²)^(3/2) evaluado = **14** | M4 |
+| P2 | Área encerrada por r = cos θ − sen θ, 0 ≤ θ ≤ π/4 | A = ½ ∫₀^(π/4) (1 − sen 2θ) dθ = **π/8 − 1/4** ≈ 0,143 | M4 |
+| P3a | ∫ x² ln x dx | Partes con u = ln x: **(x³/3) ln x − x³/9 + C** | M1 |
+| P3b | ∫ (x² + 6)/(x(x − 3)(x + 2)) dx | A = −1, B = 1, C = 1: **−ln\|x\| + ln\|x − 3\| + ln\|x + 2\| + C** | M1 |
+| P4a | Σ (4n² + 1)/(n⁵ + 2n) | **Converge.** Comparación en el límite con 1/n³: L = 4 | M3 |
+| P4b | Σ (−1)ⁿ cos(n/√(n⁴ + 2)) | **Diverge.** n/√(n⁴ + 2) → 0, así que \|aₙ\| → cos 0 = 1 ≠ 0 | M3 |
+| P5a | (x² + 1)y′ = 2xy, y(0) = 1 | Separable: **y = x² + 1** | M2 |
+| P5b | y″ − 14y′ + 49y = 7 | r = 7 doble: **y = C₁e^(7x) + C₂x e^(7x) + 1/7** | M2 |
 
 ## Anexo B: el Parcial 3 del 26 de octubre (versión A, con la solución del profe)
 
@@ -138,4 +134,6 @@ No venía solución oficial: estas respuestas las saqué yo y las verifiqué con
 - **Peso del final:** el programa pone 25 % en una columna y 20 % en otra. Solo con 25 % suma 100 %.
 - **Erratas en las soluciones del semestre (Neón):** Parcial 3 versión B, P4: la línea de f‴ dice (−1)²7²·3! y debe ser (−1)³7³·3!. Parcial 2 versión B, P1: dice «ortogonal a y⁴ + x⁴ = k» (copiado de la versión A), pero la familia es y⁵ − x⁵ = k.
 - **Final de 2023, P4:** la suma dice i = 1 pero el término usa n. Es la misma serie.
+- **Más erratas del Parcial 1 de 2026 (Neón):** versión A, P2: la solución pone 2 ln(cos(t/2)) en vez de 4 ln(cos(t/2)); lo correcto es 10π/(3√3) − 2 ln 3. Versión B, P3: el último término es −6/(x − 2), no −6/(x + 2).
+- **Parcial 1 de 2023, P4:** dice «desde x = 1 hasta x = 9», pero la curva es x en función de y: son valores de y (la longitud da 32/3).
 - **Libro:** el programa usa la 6.ª edición del Stewart; la 8.ª en español (e-book de la biblioteca) tiene errores de tipografía.

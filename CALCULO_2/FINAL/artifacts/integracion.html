@@ -1,0 +1,700 @@
+<title>Integración Parcial 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de los módulos de Cálculo, acento violeta). Columna de lectura ≤ 860px con barra de secciones fija; una sección por técnica, cada una con su regla, ejemplos resueltos de los parciales y trampas, para que los módulos del final enlacen a cada sección. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:8px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.rule-box ul{padding-left:20px; display:grid; gap:4px}
+.tri{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tri div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.tri div.yes{border-color:var(--green); background:var(--green-soft)}
+.tri div.bad{border-color:var(--red); background:var(--red-soft)}
+.tri div.no{border-style:dashed}
+@media (max-width:620px){ .tri{grid-template-columns:1fr} }
+
+/* El árbol de decisión */
+.flow{list-style:none; margin:0; padding:0; display:grid; counter-reset:f}
+.flow li{display:grid; grid-template-columns:2rem minmax(0,1.15fr) minmax(0,1fr); gap:4px 12px; padding:11px 12px; background:var(--surface); border:1px solid var(--rule); border-top:0; counter-increment:f; align-items:baseline}
+.flow li::before{content:counter(f); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; grid-row:1 / span 2}
+.flow li:first-child{border-top:1px solid var(--rule); border-radius:var(--r) var(--r) 0 0}
+.flow li:last-child{border-radius:0 0 var(--r) var(--r)}
+.flow .fq{font-weight:600}
+.flow .fa{font-weight:600; color:var(--green)}
+.flow .fe{grid-column:2 / -1; font-size:.87rem; color:var(--muted); line-height:1.9}
+@media (max-width:620px){ .flow li{grid-template-columns:1.6rem minmax(0,1fr)} .flow .fa{grid-column:2} .flow li::before{grid-row:1 / span 3} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-conv{fill:var(--green-soft); fill-opacity:.75}
+.gr-div{fill:var(--red-soft); fill-opacity:.75}
+.gr-one{stroke:var(--red); stroke-width:1.6}
+.gr-onet{fill:var(--red); font-family:var(--f-mono); font-size:10px; font-weight:500}
+.gr-leg{fill:var(--muted); font-family:var(--f-body); font-size:10.5px}
+.lg-c{fill:var(--green-soft); stroke:var(--green)} .lg-d{fill:var(--red-soft); stroke:var(--red)} .lg-b{fill:var(--accent-soft); stroke:var(--accent)}
+.gr-band{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.5}
+.gr-zz{fill:none; stroke:var(--accent); stroke-width:1.3; stroke-opacity:.7}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.cls-stage{padding:16px; gap:14px}
+.cls-series{font-size:1.25rem; padding:18px 12px; text-align:center; background:var(--paper); border:1px solid var(--rule); border-radius:8px; overflow-x:auto; line-height:2.2}
+.cls-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:6px}
+.crit{font:inherit; font-size:.88rem; font-weight:600; text-align:left; padding:8px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; line-height:1.35}
+.crit:hover{border-color:var(--accent)}
+.crit.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.crit.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.crit:disabled{cursor:default}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.pri{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+.pri.hi{color:var(--red); border-color:currentColor}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+/* Secciones enlazables */
+section[id]{scroll-margin-top:64px}
+</style>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU" target="_blank" rel="noopener">← Plan del final</a>
+    <a href="#sust">Sustitución</a>
+    <a href="#partes">Partes</a>
+    <a href="#trig">Trigonométricas</a>
+    <a href="#sustrig">Sust. trigonométrica</a>
+    <a href="#fracciones">Fracciones parciales</a>
+    <a href="#impropias">Impropias</a>
+    <a href="#longitud">Longitud de arco</a>
+    <a href="#cual">¿Qué técnica uso?</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Bloque del Parcial 1 · Explicaciones</p>
+    <h1>Integración: todas las técnicas</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>Libro 7.1–7.4, 7.8 y 8.1</span>
+      <span>~1,5 h de lectura</span>
+    </div>
+    <p class="prose">Esta página reúne todo el bloque del Parcial 1: cada técnica de integración con su regla, cuándo se usa, ejemplos resueltos de los parciales del profesor Martínez y las trampas. Es la explicación a la que enlaza el M1 del plan del final; la práctica y el quiz están allá.</p>
+    <div class="callout">
+      <h3>Qué ha salido del bloque</h3>
+      <p>En los cuatro Parciales 1 que hay (2018-20, 2023-19, 2025-10 y 2026-20) salieron siempre sustitución trigonométrica, fracciones parciales, partes e impropia por comparación; casi siempre una integral trigonométrica; y dos veces longitud de arco. En el final de 2023 el P3 fue ∫ x² ln x dx (partes) y una fracción parcial (10 pts).</p>
+    </div>
+  </header>
+
+  <section aria-labelledby="sim-h">
+    <div class="block">
+      <h3 id="sim-h">Símbolos de esta página</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">∫ f(x) dx</td><td>«integral de f»</td><td>Una función cuya derivada es f (la antiderivada).</td><td>∫ 2x dx = x² + C</td></tr>
+          <tr><td class="mono">C</td><td>«constante de integración»</td><td>Cualquier número: la derivada de un número es 0. Va siempre en las integrales indefinidas.</td><td>x² + 7 también sirve</td></tr>
+          <tr><td class="mono">u, du</td><td>«u» y «de u»</td><td>En sustitución, u es un pedazo del integrando y du = u′ dx.</td><td>u = tan x, du = sec²x dx</td></tr>
+          <tr><td class="mono">u, dv</td><td>«u» y «de v»</td><td>En partes, los dos pedazos en que partes el integrando: uno se deriva (u) y el otro se integra (dv).</td><td>u = ln x, dv = x² dx</td></tr>
+          <tr><td class="mono">θ</td><td>«zeta» o «theta»</td><td>El ángulo que se introduce en la sustitución trigonométrica.</td><td>x = 2 tan θ</td></tr>
+          <tr><td class="mono">sec, csc, cot</td><td>«secante», «cosecante», «cotangente»</td><td>1/cos, 1/sen y cos/sen.</td><td>sec θ = 1/cos θ</td></tr>
+          <tr><td class="mono">A, B, C</td><td>«constantes»</td><td>En fracciones parciales, los números que se buscan en los numeradores (esta C no es la de integración).</td><td>A/(x − 1) + B/(x + 1)</td></tr>
+          <tr><td class="mono">lím<sub>b→∞</sub></td><td>«límite cuando b tiende a infinito»</td><td>Cómo se calcula una integral impropia: con un número b en vez de ∞ y después el límite.</td><td>∫<sub>1</sub><sup>∞</sup> = lím ∫<sub>1</sub><sup>b</sup></td></tr>
+          <tr><td class="mono">p</td><td>«pe»</td><td>El exponente de las integrales p, ∫ 1/x<sup>p</sup> dx.</td><td>1/x³: p = 3</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada ejemplo es un ejercicio de los parciales del profe o del final de 2023, con sus números. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Lo tachado en rojo es lo que se cancela.</p>
+    </div>
+  </section>
+
+  <!-- ============ SUSTITUCIÓN ============ -->
+  <section id="sust" aria-labelledby="sust-h">
+    <div class="sec-title"><span class="sec-num">0</span><h2 id="sust-h">Sustitución u: la base de todo</h2><p>Todas las demás técnicas terminan en una sustitución.</p></div>
+    <div class="rule-box">
+      <b class="k">La regla</b>
+      <p>Si dentro del integrando aparece una función y también su derivada (hasta un número), llama u a la función: <span class="m">∫ f(g(x)) g′(x) dx = ∫ f(u) du</span>.</p>
+    </div>
+    <article class="wx" aria-labelledby="wx0-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 0 · Parcial 1 2023-19 P1a (5 pts)</span>
+        <h4 id="wx0-h">Una tangente y su derivada</h4>
+        <p>Encuentre <span class="m">∫ tan³x sec²x dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Busca una función y su derivada.</p><p class="why">La derivada de tan x es sec²x, y sec²x está ahí multiplicando.</p><div class="mx">u = tan x<span class="ar">→</span>du = sec²x dx</div></li>
+        <li><p class="what">Reemplaza.</p><div class="mx">∫ tan³x sec²x dx = ∫ u³ du</div></li>
+        <li><p class="what">Integra y vuelve a x.</p><div class="mx">= <span class="frac"><span>u⁴</span><span>4</span></span> + C = <span class="frac"><span>tan⁴x</span><span>4</span></span> + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> tan⁴x/4 + C.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Deriva: (tan⁴x/4)′ = tan³x·sec²x. Revisar derivando es la mejor forma de comprobar cualquier integral.</p>
+    </article>
+  </section>
+
+  <!-- ============ PARTES ============ -->
+  <section id="partes" aria-labelledby="partes-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="partes-h">Integración por partes</h2><p>Libro 7.1 · Para productos de dos tipos distintos de función: polinomio por ln, por exponencial o por seno/coseno.</p></div>
+    <div class="rule-box">
+      <b class="k">La regla</b>
+      <p><span class="m">∫ u dv = u·v − ∫ v du</span>. Con límites: <span class="m">∫<sub>a</sub><sup>b</sup> u dv = [u·v]<sub>a</sub><sup>b</sup> − ∫<sub>a</sub><sup>b</sup> v du</span>.</p>
+      <p><b>Cómo escoger u:</b> la que se simplifica al derivar, en este orden: <b>L</b>ogaritmo, <b>I</b>nversa trigonométrica (arctan), <b>A</b>lgebraica (x, x²), <b>T</b>rigonométrica, <b>E</b>xponencial (LIATE). Lo demás es dv, y tienes que poder integrarlo.</p>
+    </div>
+    <p class="prose">De dónde sale: es la regla del producto al revés. (uv)′ = u′v + uv′, así que uv′ = (uv)′ − u′v, e integrando: ∫ u dv = uv − ∫ v du.</p>
+
+    <article class="wx" aria-labelledby="wx1-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 1 · Final 2023-19 P3a (5 pts)</span>
+        <h4 id="wx1-h">Logaritmo por polinomio</h4>
+        <p>Resuelva <span class="m">∫ x² ln x dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Escoge u y dv.</p><p class="why">ln x es el primero de LIATE y al derivarlo se vuelve 1/x, más sencillo. x² se integra fácil.</p><div class="mx">u = ln x<span class="ar">·</span>dv = x² dx</div></li>
+        <li><p class="what">Deriva u e integra dv.</p><div class="mx">du = <span class="frac"><span>1</span><span>x</span></span> dx<span class="ar">·</span>v = <span class="frac"><span>x³</span><span>3</span></span></div></li>
+        <li><p class="what">Aplica la fórmula.</p><div class="mx">∫ x² ln x dx = <span class="frac"><span>x³</span><span>3</span></span> ln x − ∫ <span class="frac"><span>x³</span><span>3</span></span>·<span class="frac"><span>1</span><span>x</span></span> dx</div></li>
+        <li><p class="what">Simplifica la nueva integral.</p><p class="why">x³/x = x²: una x se cancela.</p><div class="mx">∫ <span class="frac"><span>x<sup>3</sup></span><span>3<span class="cx">x</span></span></span> dx = ∫ <span class="frac"><span>x²</span><span>3</span></span> dx = <span class="frac"><span>x³</span><span>9</span></span></div></li>
+        <li><p class="what">Escribe el resultado.</p><div class="mx">∫ x² ln x dx = <span class="frac"><span>x³</span><span>3</span></span> ln x − <span class="frac"><span>x³</span><span>9</span></span> + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> (x³/3) ln x − x³/9 + C.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Si hubieras escogido u = x², tendrías que integrar ln x como dv, que es más difícil. Por eso ln va primero.</p>
+    </article>
+
+    <article class="wx" aria-labelledby="wx2-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 2 · Parcial 1 2026-20 P2, versión A (10 pts)</span>
+        <h4 id="wx2-h">El desplazamiento con velocidad t·sec²(t/2)</h4>
+        <p>Una partícula se mueve con velocidad v(t) = t sec²(t/2) m/s. ¿Cuántos metros se ha desplazado desde t = π/3 hasta t = 2π/3?</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Plantea la integral.</p><p class="why">La posición cumple x′(t) = v(t), así que el desplazamiento es la integral de la velocidad.</p><div class="mx">desplazamiento = <span class="sig"><small>2π/3</small><b>∫</b><small>π/3</small></span> t sec²(t/2) dt</div></li>
+        <li><p class="what">Escoge u y dv.</p><p class="why">t es algebraica y sec² es trigonométrica: u = t. Para v, la derivada de tan(t/2) es (1/2)sec²(t/2), así que hay que multiplicar por 2.</p><div class="mx">u = t, du = dt<span class="ar">·</span>dv = sec²(t/2) dt, v = 2 tan(t/2)</div></li>
+        <li><p class="what">Aplica partes con límites.</p><div class="mx">= [2t tan(t/2)]<sub>π/3</sub><sup>2π/3</sup> − 2 <span class="sig"><small>2π/3</small><b>∫</b><small>π/3</small></span> tan(t/2) dt</div></li>
+        <li><p class="what">Integra la tangente.</p><p class="why">∫ tan(t/2) dt = −2 ln|cos(t/2)|. Multiplicado por −2 da +4 ln|cos(t/2)|.</p><div class="mx">= [2t tan(t/2) + 4 ln|cos(t/2)|]<sub>π/3</sub><sup>2π/3</sup></div></li>
+        <li><p class="what">Evalúa.</p><p class="why">tan(π/3) = √3, tan(π/6) = 1/√3, cos(π/3) = 1/2, cos(π/6) = √3/2.</p><div class="mx">= <span class="frac"><span>4π√3</span><span>3</span></span> − <span class="frac"><span>2π</span><span>3√3</span></span> + 4 ln(1/2) − 4 ln(√3/2) = <span class="frac"><span>10π</span><span>3√3</span></span> + 4 ln(1/√3)</div></li>
+        <li><p class="what">Simplifica.</p><p class="why">4 ln(1/√3) = −4·(1/2) ln 3 = −2 ln 3.</p><div class="mx">= <span class="frac"><span>10π</span><span>3√3</span></span> − 2 ln 3 ≈ 3,85 m</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> 10π/(3√3) − 2 ln 3 ≈ 3,85 metros.</div>
+      <p class="wx-chk"><b>Ojo con la solución oficial:</b> en la versión A, el profe escribe 2 ln(cos(t/2)) en vez de 4 ln(cos(t/2)) y termina en 10π/(3√3) − 2 ln √3. Lo verifiqué con cálculo simbólico: lo correcto es −2 ln 3 (= −4 ln √3). En la versión B, con csc², el coeficiente 4 sí está bien.</p>
+    </article>
+
+    <article class="wx" aria-labelledby="wx3-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 3 · Parcial 1 2025-10 P2 (8 pts)</span>
+        <h4 id="wx3-h">Polinomio por coseno, con límites</h4>
+        <p>Velocidad v(t) = t cos(t/2). Desplazamiento desde t = 0 hasta t = π.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Escoge u y dv.</p><p class="why">La derivada de sen(t/2) es (1/2)cos(t/2), así que v = 2 sen(t/2).</p><div class="mx">u = t, du = dt<span class="ar">·</span>dv = cos(t/2) dt, v = 2 sen(t/2)</div></li>
+        <li><p class="what">Aplica partes.</p><div class="mx"><span class="sig"><small>π</small><b>∫</b><small>0</small></span> t cos(t/2) dt = [2t sen(t/2)]<sub>0</sub><sup>π</sup> − <span class="sig"><small>π</small><b>∫</b><small>0</small></span> 2 sen(t/2) dt</div></li>
+        <li><p class="what">Integra y evalúa.</p><p class="why">∫ 2 sen(t/2) dt = −4 cos(t/2). sen(π/2) = 1, cos(π/2) = 0, cos 0 = 1.</p><div class="mx">= (2π·1 − 0) + [4 cos(t/2)]<sub>0</sub><sup>π</sup> = 2π + (0 − 4) = 2π − 4</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> 2π − 4 ≈ 2,28 metros.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Si la integral nueva sale igual de difícil o peor, escogiste mal u. Y si el producto es e<sup>x</sup> sen x, se hace partes dos veces y la integral original aparece otra vez a la derecha: la pasas al otro lado y despejas (integral cíclica).</p>
+    </article>
+  </section>
+
+  <!-- ============ TRIGONOMÉTRICAS ============ -->
+  <section id="trig" aria-labelledby="trig-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="trig-h">Integrales trigonométricas</h2><p>Libro 7.2 · Potencias de seno y coseno, o de tangente y secante.</p></div>
+    <div class="tw"><table>
+      <thead><tr><th>Integral</th><th>Si…</th><th>Haz esto</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">∫ sen<sup>m</sup>x cos<sup>n</sup>x dx</td><td>la potencia del coseno es impar</td><td>Guarda un cos x, cambia los cos² que quedan por 1 − sen² y usa u = sen x.</td></tr>
+        <tr><td class="mono">∫ sen<sup>m</sup>x cos<sup>n</sup>x dx</td><td>la potencia del seno es impar</td><td>Guarda un sen x, cambia los sen² por 1 − cos² y usa u = cos x (du = −sen x dx).</td></tr>
+        <tr><td class="mono">∫ sen<sup>m</sup>x cos<sup>n</sup>x dx</td><td>las dos son pares</td><td>Ángulo medio: sen²x = (1 − cos 2x)/2 y cos²x = (1 + cos 2x)/2.</td></tr>
+        <tr><td class="mono">∫ tan<sup>m</sup>x sec<sup>n</sup>x dx</td><td>la potencia de la secante es par</td><td>Guarda un sec²x, cambia los sec² que quedan por 1 + tan² y usa u = tan x.</td></tr>
+        <tr><td class="mono">∫ tan<sup>m</sup>x sec<sup>n</sup>x dx</td><td>la potencia de la tangente es impar</td><td>Guarda sec x tan x, cambia los tan² por sec² − 1 y usa u = sec x.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="prose muted">Identidades que van de memoria: sen² + cos² = 1, 1 + tan² = sec², sen 2x = 2 sen x cos x, y las de ángulo medio de la tabla.</p>
+
+    <article class="wx" aria-labelledby="wx4-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 4 · Parcial 1 2026-20 P1b, versión A (6 pts)</span>
+        <h4 id="wx4-h">Seno a la 5 por coseno al cubo</h4>
+        <p>Encuentre <span class="m">∫ sen⁵x cos³x dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Mira las potencias.</p><p class="why">Las dos son impares: sirve cualquiera. Guarda un coseno (la potencia 3 es la más chica).</p><div class="mx">sen⁵x cos³x = sen⁵x cos²x·cos x</div></li>
+        <li><p class="what">Cambia cos² por 1 − sen².</p><div class="mx">= sen⁵x (1 − sen²x) cos x</div></li>
+        <li><p class="what">Sustituye u = sen x.</p><p class="why">du = cos x dx: justo el coseno que guardaste.</p><div class="mx">∫ u⁵(1 − u²) du = ∫ (u⁵ − u⁷) du = <span class="frac"><span>u⁶</span><span>6</span></span> − <span class="frac"><span>u⁸</span><span>8</span></span> + C</div></li>
+        <li><p class="what">Vuelve a x.</p><div class="mx">= <span class="frac"><span>sen⁶x</span><span>6</span></span> − <span class="frac"><span>sen⁸x</span><span>8</span></span> + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> sen⁶x/6 − sen⁸x/8 + C.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Si guardas un seno en vez de un coseno sale −cos⁴x/4 + cos⁶x/3 − cos⁸x/8 + C, que se ve distinto pero difiere solo en una constante. El profe acepta las dos.</p>
+    </article>
+
+    <article class="wx" aria-labelledby="wx5-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 5 · Parcial 1 2025-10 P1a (5 pts)</span>
+        <h4 id="wx5-h">Tangente y secante con secante par</h4>
+        <p>Encuentre <span class="m">∫ tan⁴x sec⁴x dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Guarda un sec²x.</p><p class="why">La potencia de la secante es par, 4.</p><div class="mx">tan⁴x sec⁴x = tan⁴x sec²x·sec²x</div></li>
+        <li><p class="what">Cambia el otro sec² por 1 + tan².</p><div class="mx">= tan⁴x (1 + tan²x) sec²x</div></li>
+        <li><p class="what">Sustituye u = tan x.</p><p class="why">du = sec²x dx.</p><div class="mx">∫ u⁴(1 + u²) du = <span class="frac"><span>u⁵</span><span>5</span></span> + <span class="frac"><span>u⁷</span><span>7</span></span> + C = <span class="frac"><span>tan⁵x</span><span>5</span></span> + <span class="frac"><span>tan⁷x</span><span>7</span></span> + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> tan⁵x/5 + tan⁷x/7 + C.</div>
+    </article>
+
+    <article class="wx" aria-labelledby="wx6-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 6 · Hoja 7.2 · las dos potencias pares</span>
+        <h4 id="wx6-h">Seno al cuadrado</h4>
+        <p>Encuentre <span class="m">∫ sen²x dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Usa el ángulo medio.</p><p class="why">No hay potencia impar que guardar.</p><div class="mx">sen²x = <span class="frac"><span>1 − cos 2x</span><span>2</span></span></div></li>
+        <li><p class="what">Integra término a término.</p><p class="why">∫ cos 2x dx = sen 2x/2.</p><div class="mx">∫ <span class="frac"><span>1 − cos 2x</span><span>2</span></span> dx = <span class="frac"><span>x</span><span>2</span></span> − <span class="frac"><span>sen 2x</span><span>4</span></span> + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> x/2 − sen 2x/4 + C.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Esta sale también al final de la sustitución trigonométrica y en el área de polares (M4): vale la pena tenerla de memoria.</p>
+    </article>
+  </section>
+
+  <!-- ============ SUSTITUCIÓN TRIGONOMÉTRICA ============ -->
+  <section id="sustrig" aria-labelledby="sustrig-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="sustrig-h">Sustitución trigonométrica</h2><p>Libro 7.3 · Para raíces de a² − x², a² + x² o x² − a².</p></div>
+    <div class="tw"><table>
+      <thead><tr><th>Si ves…</th><th>Haz</th><th>dx</th><th>La raíz queda</th><th>Por la identidad</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">√(a² − x²)</td><td class="mono">x = a sen θ</td><td class="mono">a cos θ dθ</td><td class="mono">a cos θ</td><td class="mono">1 − sen² = cos²</td></tr>
+        <tr><td class="mono">√(a² + x²)</td><td class="mono">x = a tan θ</td><td class="mono">a sec²θ dθ</td><td class="mono">a sec θ</td><td class="mono">1 + tan² = sec²</td></tr>
+        <tr><td class="mono">√(x² − a²)</td><td class="mono">x = a sec θ</td><td class="mono">a sec θ tan θ dθ</td><td class="mono">a tan θ</td><td class="mono">sec² − 1 = tan²</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="steps">
+      <li><span><b>Escoge el cambio</b> según la raíz (tabla) y calcula dx.</span></li>
+      <li><span><b>Reemplaza todo:</b> la raíz, las x de afuera y el dx. Simplifica: te queda una integral trigonométrica (sección 2).</span></li>
+      <li><span><b>Integra en θ.</b></span></li>
+      <li><span><b>Vuelve a x con el triángulo:</b> dibuja el triángulo rectángulo de tu cambio (por ejemplo, tan θ = x/2: opuesto x, adyacente 2, hipotenusa √(x² + 4)) y lee de ahí sen, cos, sec.</span></li>
+    </ol>
+
+    <article class="wx" aria-labelledby="wx7-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 7 · Parcial 1 2026-20 P1a, versión A (6 pts)</span>
+        <h4 id="wx7-h">√(x² + 4): tangente</h4>
+        <p>Encuentre <span class="m">∫ <span class="frac"><span>x³</span><span>√(x² + 4)</span></span> dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Escoge el cambio.</p><p class="why">a² + x² con a = 2: x = 2 tan θ.</p><div class="mx">x = 2 tan θ<span class="ar">·</span>dx = 2 sec²θ dθ<span class="ar">·</span>√(x² + 4) = √(4 tan²θ + 4) = 2 sec θ</div></li>
+        <li><p class="what">Reemplaza y simplifica.</p><p class="why">x³ = 8 tan³θ. Un sec θ de arriba se cancela con el de abajo.</p><div class="mx">∫ <span class="frac"><span>8 tan³θ·2 sec<sup>2</sup>θ</span><span>2 sec θ</span></span> dθ = 8 ∫ tan³θ sec θ dθ</div></li>
+        <li><p class="what">Integral trigonométrica: tangente impar.</p><p class="why">Guarda sec θ tan θ y cambia tan²θ por sec²θ − 1. Con u = sec θ, du = sec θ tan θ dθ.</p><div class="mx">8 ∫ (sec²θ − 1) sec θ tan θ dθ = 8 ∫ (u² − 1) du = <span class="frac"><span>8u³</span><span>3</span></span> − 8u + C</div></li>
+        <li><p class="what">Vuelve a x con el triángulo.</p><p class="why">tan θ = x/2: opuesto x, adyacente 2, hipotenusa √(x² + 4). Entonces sec θ = hipotenusa/adyacente = √(x² + 4)/2.</p><div class="mx"><span class="frac"><span>8</span><span>3</span></span>·<span class="frac"><span>(x² + 4)<sup>3/2</sup></span><span>8</span></span> − 8·<span class="frac"><span>√(x² + 4)</span><span>2</span></span> = <span class="frac"><span>(x² + 4)<sup>3/2</sup></span><span>3</span></span> − 4√(x² + 4) + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> (x² + 4)<sup>3/2</sup>/3 − 4√(x² + 4) + C.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Esta también sale con u = x² + 4 (x³ = x²·x y x² = u − 4). Si ves esa salida en el parcial, úsala: es más corta.</p>
+    </article>
+
+    <article class="wx" aria-labelledby="wx8-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 8 · Parcial 1 2025-10 P1b (5 pts)</span>
+        <h4 id="wx8-h">√(9 − x²): seno</h4>
+        <p>Encuentre <span class="m">∫ <span class="frac"><span>x³</span><span>√(9 − x²)</span></span> dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Escoge el cambio.</p><p class="why">a² − x² con a = 3.</p><div class="mx">x = 3 sen θ<span class="ar">·</span>dx = 3 cos θ dθ<span class="ar">·</span>√(9 − x²) = 3 cos θ</div></li>
+        <li><p class="what">Reemplaza.</p><p class="why">x³ = 27 sen³θ, y el 3 cos θ de abajo se cancela con el de dx.</p><div class="mx">∫ <span class="frac"><span>27 sen³θ·<span class="cx">3 cos θ</span></span><span><span class="cx">3 cos θ</span></span></span> dθ = 27 ∫ sen³θ dθ</div></li>
+        <li><p class="what">Seno impar: guarda un seno.</p><p class="why">sen²θ = 1 − cos²θ; con u = cos θ, du = −sen θ dθ.</p><div class="mx">27 ∫ (1 − cos²θ) sen θ dθ = −27 ∫ (1 − u²) du = −27u + 9u³ + C</div></li>
+        <li><p class="what">Vuelve a x.</p><p class="why">sen θ = x/3: opuesto x, hipotenusa 3, adyacente √(9 − x²). cos θ = √(9 − x²)/3.</p><div class="mx">−27·<span class="frac"><span>√(9 − x²)</span><span>3</span></span> + 9·<span class="frac"><span>(9 − x²)<sup>3/2</sup></span><span>27</span></span> = <span class="frac"><span>(9 − x²)<sup>3/2</sup></span><span>3</span></span> − 9√(9 − x²) + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> (9 − x²)<sup>3/2</sup>/3 − 9√(9 − x²) + C.</div>
+    </article>
+
+    <article class="wx" aria-labelledby="wx9-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 9 · Parcial 1 2023-19 P1b (5 pts)</span>
+        <h4 id="wx9-h">√(x² − 4): secante</h4>
+        <p>Encuentre <span class="m">∫ <span class="frac"><span>8</span><span>x⁴√(x² − 4)</span></span> dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Escoge el cambio.</p><p class="why">x² − a² con a = 2.</p><div class="mx">x = 2 sec θ<span class="ar">·</span>dx = 2 sec θ tan θ dθ<span class="ar">·</span>√(x² − 4) = 2 tan θ</div></li>
+        <li><p class="what">Reemplaza y simplifica.</p><p class="why">x⁴ = 16 sec⁴θ. Se cancelan tan θ y un sec θ.</p><div class="mx">∫ <span class="frac"><span>8·2 sec θ <span class="cx">tan θ</span></span><span>16 sec⁴θ·2 <span class="cx">tan θ</span></span></span> dθ = <span class="frac"><span>1</span><span>2</span></span> ∫ <span class="frac"><span>1</span><span>sec³θ</span></span> dθ = <span class="frac"><span>1</span><span>2</span></span> ∫ cos³θ dθ</div></li>
+        <li><p class="what">Coseno impar.</p><p class="why">cos²θ = 1 − sen²θ y u = sen θ.</p><div class="mx"><span class="frac"><span>1</span><span>2</span></span> ∫ (1 − sen²θ) cos θ dθ = <span class="frac"><span>1</span><span>2</span></span>(sen θ − <span class="frac"><span>sen³θ</span><span>3</span></span>) + C</div></li>
+        <li><p class="what">Vuelve a x.</p><p class="why">sec θ = x/2: hipotenusa x, adyacente 2, opuesto √(x² − 4). sen θ = √(x² − 4)/x.</p><div class="mx">= <span class="frac"><span>√(x² − 4)</span><span>2x</span></span> − <span class="frac"><span>(x² − 4)<sup>3/2</sup></span><span>6x³</span></span> + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> √(x² − 4)/(2x) − (x² − 4)<sup>3/2</sup>/(6x³) + C.</div>
+    </article>
+  </section>
+
+  <!-- ============ FRACCIONES PARCIALES ============ -->
+  <section id="fracciones" aria-labelledby="fr-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="fr-h">Fracciones parciales</h2><p>Libro 7.4 · Para fracciones de polinomios: se parten en fracciones simples que se integran con ln y arctan.</p></div>
+    <ol class="steps">
+      <li><span><b>Si el grado de arriba es mayor o igual que el de abajo, divide primero.</b> Te queda un polinomio más una fracción con grado de arriba menor.</span></li>
+      <li><span><b>Factoriza el denominador.</b></span></li>
+      <li><span><b>Escribe la forma</b> según cada factor:</span></li>
+    </ol>
+    <div class="tw"><table class="narrow">
+      <thead><tr><th>Factor de abajo</th><th>Pones</th><th>Ejemplo del profe</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">(x − r), lineal</td><td class="mono">A/(x − r)</td><td>Final 2023 P3b</td></tr>
+        <tr><td class="mono">(x − r)², repetido</td><td class="mono">A/(x − r) + B/(x − r)²</td><td>2018: 8x/((x − 1)(x² − 1)) = 2/(x − 1) + 4/(x − 1)² − 2/(x + 1)</td></tr>
+        <tr><td class="mono">x² + b², sin raíces reales</td><td class="mono">(Ax + B)/(x² + b²)</td><td>2025 P3 y 2023: (4x³ − 3x² + 4x − 1)/(x⁴ − 1) = 1/(x − 1) + 3/(x + 1) − 1/(x² + 1)</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="steps" start="4">
+      <li><span><b>Halla las constantes:</b> multiplica por el denominador y reemplaza x por cada raíz (se anulan todos los términos menos uno). Si no alcanzan las raíces, compara coeficientes.</span></li>
+      <li><span><b>Integra:</b> ∫ A/(x − r) dx = A ln|x − r|; ∫ 2x/(x² + 1) dx = ln(x² + 1); ∫ 1/(x² + 1) dx = arctan x.</span></li>
+    </ol>
+
+    <article class="wx" aria-labelledby="wx10-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 10 · Final 2023-19 P3b (5 pts)</span>
+        <h4 id="wx10-h">Tres factores lineales</h4>
+        <p>Resuelva <span class="m">∫ <span class="frac"><span>x² + 6</span><span>x(x − 3)(x + 2)</span></span> dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Revisa los grados y escribe la forma.</p><p class="why">Arriba grado 2, abajo grado 3: no hay que dividir. Tres factores lineales distintos.</p><div class="mx"><span class="frac"><span>x² + 6</span><span>x(x − 3)(x + 2)</span></span> = <span class="frac"><span>A</span><span>x</span></span> + <span class="frac"><span>B</span><span>x − 3</span></span> + <span class="frac"><span>C</span><span>x + 2</span></span></div></li>
+        <li><p class="what">Multiplica por el denominador.</p><div class="mx">x² + 6 = A(x − 3)(x + 2) + B·x(x + 2) + C·x(x − 3)</div></li>
+        <li><p class="what">Reemplaza las raíces.</p><p class="why">En cada raíz se anulan dos términos y queda una sola constante.</p><div class="mx">x = 0: 6 = −6A → A = −1<span class="ar">·</span>x = 3: 15 = 15B → B = 1<span class="ar">·</span>x = −2: 10 = 10C → C = 1</div></li>
+        <li><p class="what">Integra cada fracción.</p><div class="mx">∫ (−<span class="frac"><span>1</span><span>x</span></span> + <span class="frac"><span>1</span><span>x − 3</span></span> + <span class="frac"><span>1</span><span>x + 2</span></span>) dx = −ln|x| + ln|x − 3| + ln|x + 2| + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> −ln|x| + ln|x − 3| + ln|x + 2| + C, o en una sola: ln|(x − 3)(x + 2)/x| + C.</div>
+    </article>
+
+    <article class="wx" aria-labelledby="wx11-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 11 · Parcial 1 2026-20 P3, versión A (12 pts)</span>
+        <h4 id="wx11-h">Primero la división larga</h4>
+        <p>Use fracciones parciales para reescribir <span class="m"><span class="frac"><span>x⁴ + 2x³ + 3x² + 13x − 1</span><span>x³ + 2x² − x − 2</span></span></span>, sabiendo que x³ + 2x² − x − 2 = (x² − 1)(x + 2).</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Divide.</p><p class="why">Arriba grado 4, abajo grado 3. x por el denominador da x⁴ + 2x³ − x² − 2x; restando queda el residuo.</p><div class="mx">x⁴ + 2x³ + 3x² + 13x − 1 = x·(x³ + 2x² − x − 2) + (4x² + 15x − 1)</div></li>
+        <li><p class="what">Escribe el cociente más la fracción.</p><p class="why">x² − 1 = (x − 1)(x + 1).</p><div class="mx">= x + <span class="frac"><span>4x² + 15x − 1</span><span>(x − 1)(x + 1)(x + 2)</span></span></div></li>
+        <li><p class="what">Forma y constantes.</p><p class="why">4x² + 15x − 1 = A(x + 1)(x + 2) + B(x − 1)(x + 2) + C(x − 1)(x + 1), y reemplazas las raíces.</p><div class="mx">x = 1: 18 = 6A → A = 3<span class="ar">·</span>x = −1: −12 = −2B → B = 6<span class="ar">·</span>x = −2: −15 = 3C → C = −5</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> x + 3/(x − 1) + 6/(x + 1) − 5/(x + 2).</div>
+      <p class="wx-chk"><b>Ojo con la solución oficial de la versión B:</b> el último término dice −6/(x + 2), pero el factor es (x − 2): lo correcto es −6/(x − 2).</p>
+    </article>
+
+    <article class="wx" aria-labelledby="wx12-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 12 · Parcial 1 2025-10 P3 (10 pts)</span>
+        <h4 id="wx12-h">Con un factor x² + 1</h4>
+        <p>Use fracciones parciales para hallar <span class="m">∫ <span class="frac"><span>5x³ + 3x² − 7x + 7</span><span>(x² + 1)(x² − x − 2)</span></span> dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Factoriza y escribe la forma.</p><p class="why">x² − x − 2 = (x − 2)(x + 1). Para x² + 1, que no tiene raíces reales, el numerador es Ax + B.</p><div class="mx"><span class="frac"><span>5x³ + 3x² − 7x + 7</span><span>(x² + 1)(x − 2)(x + 1)</span></span> = <span class="frac"><span>Ax + B</span><span>x² + 1</span></span> + <span class="frac"><span>C</span><span>x − 2</span></span> + <span class="frac"><span>D</span><span>x + 1</span></span></div></li>
+        <li><p class="what">Las raíces reales dan C y D.</p><div class="mx">x = 2: 40 + 12 − 14 + 7 = 45 = 5·3·C → C = 3<span class="ar">·</span>x = −1: −5 + 3 + 7 + 7 = 12 = 2·(−3)·D → D = −2</div></li>
+        <li><p class="what">A y B comparando coeficientes.</p><p class="why">Al multiplicar por el denominador, el coeficiente de x³ a la derecha es A + C + D, y tiene que ser 5: A = 5 − 3 + 2 = 4. Con x = 0 queda −2B + C − 2D = 7, o sea −2B + 3 + 4 = 7: B = 0.</p><div class="mx">A = 4, B = 0</div></li>
+        <li><p class="what">Integra.</p><p class="why">∫ 4x/(x² + 1) dx = 2 ln(x² + 1), con u = x² + 1.</p><div class="mx">∫ (<span class="frac"><span>4x</span><span>x² + 1</span></span> + <span class="frac"><span>3</span><span>x − 2</span></span> − <span class="frac"><span>2</span><span>x + 1</span></span>) dx = 2 ln(x² + 1) + 3 ln|x − 2| − 2 ln|x + 1| + C</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> 2 ln(x² + 1) + 3 ln|x − 2| − 2 ln|x + 1| + C.</div>
+    </article>
+  </section>
+
+  <!-- ============ IMPROPIAS ============ -->
+  <section id="impropias" aria-labelledby="imp-h">
+    <div class="sec-title"><span class="sec-num">5</span><h2 id="imp-h">Integrales impropias</h2><p>Libro 7.8 · Cuando un límite es ∞ o la función explota dentro del intervalo.</p></div>
+    <div class="rule-box">
+      <b class="k">La definición</b>
+      <p><span class="m">∫<sub>a</sub><sup>∞</sup> f dx = lím<sub>b→∞</sub> ∫<sub>a</sub><sup>b</sup> f dx</span>. Si f explota en a: <span class="m">∫<sub>a</sub><sup>b</sup> f dx = lím<sub>A→a⁺</sub> ∫<sub>A</sub><sup>b</sup> f dx</span>. Si el límite es un número, converge; si es ±∞ o no existe, diverge.</p>
+      <p><b>Integrales p:</b> ∫<sub>1</sub><sup>∞</sup> 1/x<sup>p</sup> dx converge si p &gt; 1; ∫<sub>0</sub><sup>1</sup> 1/x<sup>p</sup> dx converge si p &lt; 1.</p>
+      <p><b>Comparación:</b> si 0 ≤ f ≤ g y ∫ g converge, ∫ f converge. Si f ≥ g ≥ 0 y ∫ g diverge, ∫ f diverge. Es la misma lógica de la comparación de series (M3 del Parcial 3).</p>
+    </div>
+
+    <article class="wx" aria-labelledby="wx13-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 13 · Parcial 1 2026-20 P1c, versión A (6 pts)</span>
+        <h4 id="wx13-h">La función explota en 0</h4>
+        <p>Encuentre <span class="m">∫<sub>0</sub><sup>1</sup> <span class="frac"><span>1</span><span>y<sup>1/4</sup></span></span> dy</span> si existe.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Reconoce que es impropia.</p><p class="why">En y = 0 se divide entre 0: se pone un límite.</p><div class="mx">= lím<sub>A→0⁺</sub> <span class="sig"><small>1</small><b>∫</b><small>A</small></span> y<sup>−1/4</sup> dy</div></li>
+        <li><p class="what">Integra.</p><p class="why">Se suma 1 al exponente: −1/4 + 1 = 3/4, y se divide entre 3/4.</p><div class="mx">= lím<sub>A→0⁺</sub> [<span class="frac"><span>4</span><span>3</span></span>y<sup>3/4</sup>]<sub>A</sub><sup>1</sup> = lím<sub>A→0⁺</sub> (<span class="frac"><span>4</span><span>3</span></span> − <span class="frac"><span>4</span><span>3</span></span>A<sup>3/4</sup>) = <span class="frac"><span>4</span><span>3</span></span></div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> converge a 4/3.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Es una integral p de 0 a 1 con p = 1/4 &lt; 1: converge. En la versión B salió ∫<sub>0</sub><sup>1</sup> 1/(x − 1) dx, que explota en 1 y diverge (da ln 0 = −∞).</p>
+    </article>
+
+    <article class="wx" aria-labelledby="wx14-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 14 · Parcial 1 2025-10 P1c (5 pts)</span>
+        <h4 id="wx14-h">Partes dentro de una impropia</h4>
+        <p>Encuentre <span class="m">∫<sub>1</sub><sup>∞</sup> <span class="frac"><span>ln y</span><span>y³</span></span> dy</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Pon el límite.</p><div class="mx">= lím<sub>b→∞</sub> <span class="sig"><small>b</small><b>∫</b><small>1</small></span> y<sup>−3</sup> ln y dy</div></li>
+        <li><p class="what">Partes: u = ln y.</p><p class="why">v = ∫ y<sup>−3</sup> dy = −1/(2y²).</p><div class="mx">∫ y<sup>−3</sup> ln y dy = −<span class="frac"><span>ln y</span><span>2y²</span></span> + ∫ <span class="frac"><span>1</span><span>2y³</span></span> dy = −<span class="frac"><span>ln y</span><span>2y²</span></span> − <span class="frac"><span>1</span><span>4y²</span></span></div></li>
+        <li><p class="what">Evalúa de 1 a b.</p><p class="why">En y = 1: ln 1 = 0, así que queda −1/4.</p><div class="mx">(−<span class="frac"><span>ln b</span><span>2b²</span></span> − <span class="frac"><span>1</span><span>4b²</span></span>) − (0 − <span class="frac"><span>1</span><span>4</span></span>)</div></li>
+        <li><p class="what">Toma el límite.</p><p class="why">ln b/b² → 0 (el polinomio le gana al logaritmo; por L'Hôpital: (1/b)/(2b) → 0).</p><div class="mx">lím<sub>b→∞</sub> = 0 − 0 + <span class="frac"><span>1</span><span>4</span></span> = <span class="frac"><span>1</span><span>4</span></span></div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> converge a 1/4.</div>
+    </article>
+
+    <article class="wx" aria-labelledby="wx15-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 15 · Parcial 1 2026-20 P4, versión A (10 pts)</span>
+        <h4 id="wx15-h">Converge o diverge por comparación</h4>
+        <p>Determine si converge <span class="m">∫<sub>3</sub><sup>∞</sup> <span class="frac"><span>x² − arcsen(x<sup>−1/2026</sup>) − x<sup>−1/2025</sup> + x<sup>−1/2024</sup></span><span>x⁵ + 1</span></span> dx</span>.</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Mira qué manda.</p><p class="why">Arriba, x² es lo grande; lo demás es pequeño (potencias negativas y un arcoseno de algo que tiende a 0). Abajo manda x⁵. Se parece a x²/x⁵ = 1/x³.</p><div class="mx">≈ <span class="frac"><span>x²</span><span>x⁵</span></span> = <span class="frac"><span>1</span><span>x³</span></span></div></li>
+        <li><p class="what">Acota.</p><p class="why">Para x ≥ 3 el integrando es positivo, el numerador es menor que x² y el denominador es mayor que x⁵.</p><div class="mx">0 ≤ <span class="frac"><span>x² − …</span><span>x⁵ + 1</span></span> ≤ <span class="frac"><span>x²</span><span>x⁵</span></span> = <span class="frac"><span>1</span><span>x³</span></span></div></li>
+        <li><p class="what">Escribe la frase.</p><div class="mx txt">Como 0 ≤ f(x) ≤ 1/x³ para x ≥ 3 y ∫ de 3 a ∞ de 1/x³ dx converge (integral p con p = 3 &gt; 1), la integral converge por el criterio de comparación.</div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> converge.</div>
+      <p class="wx-chk"><b>Los otros parciales:</b> 2025: ∫<sub>3</sub><sup>∞</sup> (|sen(x<sup>2025</sup> + arctan(x − 2024))| + 1)/(x − 2) dx ≥ 1/(x − 2), que diverge. 2023: el numerador x⁷ + |arctan(…)| ≤ (1 + π/2)x⁷, así que todo es ≤ (1 + π/2)/x⁴ y converge. La idea siempre es la misma: lo raro (seno, arcoseno, arctan) está acotado.</p>
+    </article>
+  </section>
+
+  <!-- ============ LONGITUD DE ARCO ============ -->
+  <section id="longitud" aria-labelledby="lon-h">
+    <div class="sec-title"><span class="sec-num">6</span><h2 id="lon-h">Longitud de arco de y = f(x) o x = g(y)</h2><p>Libro 8.1 · La versión paramétrica está en el módulo de <a href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw" target="_blank" rel="noopener">Paramétricas</a>.</p></div>
+    <div class="rule-box">
+      <b class="k">La fórmula</b>
+      <p><span class="m">L = ∫<sub>a</sub><sup>b</sup> √(1 + (dy/dx)²) dx</span> o, si la curva es x = g(y), <span class="m">L = ∫<sub>c</sub><sup>d</sup> √(1 + (dx/dy)²) dy</span>. El truco del profe: 1 + (derivada)² casi siempre es un cuadrado perfecto.</p>
+    </div>
+    <article class="wx" aria-labelledby="wx16-h">
+      <div class="wx-head one"><div class="wx-q">
+        <span class="tag">Ejemplo resuelto 16 · Parcial 1 2023-19 P4 (10 pts)</span>
+        <h4 id="wx16-h">Reducir el integrando antes de integrar</h4>
+        <p>Una partícula se mueve por la curva x = √y (y − 3)/3 desde y = 1 hasta y = 9. Encuentre la distancia recorrida. (El enunciado dice «desde x = 1 hasta x = 9», pero la curva está dada como x en función de y: son valores de y.)</p>
+      </div></div>
+      <ol class="wx-steps">
+        <li><p class="what">Escribe x con potencias y deriva.</p><div class="mx">x = <span class="frac"><span>1</span><span>3</span></span>(y<sup>3/2</sup> − 3y<sup>1/2</sup>)<span class="ar">→</span><span class="frac"><span>dx</span><span>dy</span></span> = <span class="frac"><span>1</span><span>2</span></span>(y<sup>1/2</sup> − y<sup>−1/2</sup>)</div></li>
+        <li><p class="what">Eleva al cuadrado y suma 1.</p><p class="why">(a − b)² = a² − 2ab + b², con y<sup>1/2</sup>·y<sup>−1/2</sup> = 1.</p><div class="mx">1 + <span class="frac"><span>1</span><span>4</span></span>(y − 2 + <span class="frac"><span>1</span><span>y</span></span>) = <span class="frac"><span>1</span><span>4</span></span>(y + 2 + <span class="frac"><span>1</span><span>y</span></span>) = <span class="frac"><span>1</span><span>4</span></span>(y<sup>1/2</sup> + y<sup>−1/2</sup>)²</div></li>
+        <li><p class="what">Saca la raíz e integra.</p><div class="mx">L = <span class="sig"><small>9</small><b>∫</b><small>1</small></span> <span class="frac"><span>1</span><span>2</span></span>(y<sup>1/2</sup> + y<sup>−1/2</sup>) dy = <span class="frac"><span>1</span><span>2</span></span>[<span class="frac"><span>2</span><span>3</span></span>y<sup>3/2</sup> + 2y<sup>1/2</sup>]<sub>1</sub><sup>9</sup> = <span class="frac"><span>1</span><span>2</span></span>(24 − <span class="frac"><span>8</span><span>3</span></span>) = <span class="frac"><span>32</span><span>3</span></span></div></li>
+      </ol>
+      <div class="wx-res"><b>Resultado:</b> L = 32/3.</div>
+      <p class="wx-chk"><b>¿Tiene sentido?</b> Es el mismo truco del cuadrado perfecto de las paramétricas: −2 se vuelve +2 al sumar 1. El otro ejemplo del profe, x = ln(csc y), está resuelto en el módulo de <a href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw" target="_blank" rel="noopener">Paramétricas, ejemplo 4</a>.</p>
+    </article>
+  </section>
+
+  <!-- ============ CUÁL ============ -->
+  <section id="cual" aria-labelledby="cual-h">
+    <div class="sec-title"><span class="sec-num">7</span><h2 id="cual-h">¿Qué técnica uso?</h2><p>Mira el integrando y recorre la lista en orden.</p></div>
+    <ol class="flow">
+      <li><span class="fq">¿Hay una función y su derivada?</span><span class="fa">Sustitución u.</span><span class="fe">tan³x sec²x, x/(x² + 1), x e<sup>x²</sup>.</span></li>
+      <li><span class="fq">¿Es un producto de tipos distintos (polinomio por ln, e<sup>x</sup>, sen)?</span><span class="fa">Partes, con u según LIATE.</span><span class="fe">x² ln x, t sec²(t/2), t cos(t/2), e<sup>x</sup> sen x.</span></li>
+      <li><span class="fq">¿Son potencias de sen y cos, o de tan y sec?</span><span class="fa">Integral trigonométrica (tabla).</span><span class="fe">sen⁵x cos³x, tan⁴x sec⁴x, sen²x.</span></li>
+      <li><span class="fq">¿Hay √(a² − x²), √(a² + x²) o √(x² − a²)?</span><span class="fa">Sustitución trigonométrica.</span><span class="fe">x³/√(x² + 4), x³/√(9 − x²), 8/(x⁴√(x² − 4)).</span></li>
+      <li><span class="fq">¿Es una fracción de polinomios?</span><span class="fa">Fracciones parciales (divide primero si hace falta).</span><span class="fe">(x² + 6)/(x(x − 3)(x + 2)).</span></li>
+      <li><span class="fq">¿Un límite es ∞ o la función explota?</span><span class="fa">Impropia: límite, o comparación si solo preguntan si converge.</span><span class="fe">∫<sub>0</sub><sup>1</sup> y<sup>−1/4</sup>, ∫<sub>1</sub><sup>∞</sup> ln y/y³.</span></li>
+    </ol>
+    <div class="callout trap"><h3>Trampas</h3>
+      <p><b>La constante C</b> en toda integral indefinida.</p>
+      <p><b>Volver a x</b> al final de una sustitución (con el triángulo en la trigonométrica).</p>
+      <p><b>En una impropia, escribe el límite:</b> no se reemplaza ∞ directamente.</p>
+      <p><b>Revisar derivando:</b> si tu respuesta derivada no da el integrando, hay un error.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Fuente: Parciales 1 de 2018-20, 2023-19, 2025-10 y 2026-20 (con las soluciones del semestre), el final de 2023-19 y las hojas 7.1 a 8.1 del profesor Martínez (MATE 1214, Universidad de los Andes). Todas las respuestas están verificadas con cálculo simbólico.</p>
+  </footer>
+</div>
