@@ -405,7 +405,7 @@ svg text{fill:var(--ink)}
           <figure class="wx-fig"><div data-fig="ej1"></div></figure>
         </div>
         <ol class="wx-steps">
-          <li><p class="what">Diagrama de fuerzas de la tabla.</p><p class="why">Hacia arriba, las dos tensiones T₁ (izquierda) y T₂ (derecha). Hacia abajo, el peso de la tabla M·g en la mitad y la normal de la persona, M·g, a L/4 de la izquierda (la persona está quieta: la tabla la empuja con M·g y ella empuja la tabla con lo mismo).</p></li>
+          <li><p class="what">Diagrama de fuerzas de la tabla.</p><div class="wx-fig" data-fig="dcl1"></div><p class="why">Hacia arriba, las dos tensiones T₁ (izquierda) y T₂ (derecha). Hacia abajo, el peso de la tabla M·g en la mitad y la normal de la persona, M·g, a L/4 de la izquierda (la persona está quieta: la tabla la empuja con M·g y ella empuja la tabla con lo mismo).</p></li>
           <li><p class="what">Torques respecto al extremo izquierdo.</p><p class="why">Ahí está T₁: su brazo es cero y desaparece. Las fuerzas hacia abajo, a la derecha del punto, hacen girar horario (−); T₂ hace girar antihorario (+).</p><div class="mx">T₂·L − M·g·<span class="frac"><span>L</span><span>4</span></span> − M·g·<span class="frac"><span>L</span><span>2</span></span> = 0</div></li>
           <li><p class="what">Despeja T₂.</p><p class="why">Divides entre L. Y 1/4 + 1/2 = 3/4.</p><div class="mx">T₂·<span class="cx">L</span> = M·g·<span class="cx">L</span>·(<span class="frac"><span>1</span><span>4</span></span> + <span class="frac"><span>1</span><span>2</span></span>)<span class="ar">→</span>T₂ = <span class="frac"><span>3</span><span>4</span></span>·M·g</div></li>
           <li><p class="what">ΣF<sub>y</sub> = 0 para T₁.</p><p class="why">Las dos tensiones sostienen los dos pesos: 2M·g.</p><div class="mx">T₁ + T₂ = 2M·g<span class="ar">→</span>T₁ = 2M·g − <span class="frac"><span>3</span><span>4</span></span>·M·g = <span class="frac"><span>5</span><span>4</span></span>·M·g</div></li>
@@ -424,7 +424,7 @@ svg text{fill:var(--ink)}
           <figure class="wx-fig"><div data-fig="ej2"></div></figure>
         </div>
         <ol class="wx-steps">
-          <li><p class="what">Diagrama de fuerzas.</p><p class="why">El peso M·g en la mitad. La tensión T en la punta, inclinada: componentes T·cos θ hacia la pared y T·sen θ hacia arriba. El pivote hace una fuerza que no conoces: le pones F<sub>px</sub> y F<sub>py</sub>.</p></li>
+          <li><p class="what">Diagrama de fuerzas.</p><div class="wx-fig" data-fig="dcl2"></div><p class="why">El peso M·g en la mitad. La tensión T en la punta, inclinada: componentes T·cos θ hacia la pared y T·sen θ hacia arriba. El pivote hace una fuerza que no conoces: le pones F<sub>px</sub> y F<sub>py</sub>.</p></li>
           <li><p class="what">Torques respecto al pivote.</p><p class="why">F<sub>px</sub> y F<sub>py</sub> actúan en el pivote: desaparecen. La componente T·cos θ va a lo largo de la tabla y su línea pasa por el pivote: tampoco hace torque. Solo quedan T·sen θ (antihorario) y el peso (horario).</p><div class="mx">T·sen θ·L − M·g·<span class="frac"><span>L</span><span>2</span></span> = 0</div></li>
           <li><p class="what">Despeja T.</p><p class="why">Se cancela L.</p><div class="mx">T·sen θ·<span class="cx">L</span> = M·g·<span class="frac"><span><span class="cx">L</span></span><span>2</span></span><span class="ar">→</span>T = <span class="frac"><span>M·g</span><span>2·sen θ</span></span></div></li>
           <li><p class="what">Si te piden la fuerza del pivote: ΣF = 0.</p><div class="mx">F<sub>px</sub> = T·cos θ<span class="ar">y</span>F<sub>py</sub> = M·g − T·sen θ = <span class="frac"><span>M·g</span><span>2</span></span></div></li>
@@ -598,7 +598,45 @@ function escaleraSvg() {
   g += T((xb + xw) / 2 - 20, (yf + top) / 2 - 8, "escalera M, L", "sv-tl", "end");
   return `<svg viewBox="0 0 320 200" role="img" aria-label="Una escalera apoyada en una pared lisa y en un piso con fricción, formando un ángulo theta con el piso">${g}</svg>`;
 }
+/* ---------- Diagramas de cuerpo libre ---------- */
+const fArr = (x1, y1, x2, y2, lab, lx, ly, anchor = "middle") => arrowSvg(x1, y1, x2, y2, "a-f") + T(lx, ly, lab, "sv-t t-f", anchor);
+function dclTabla(o = {}) {
+  const x0 = 50, x1 = 270, y = 100, L = x1 - x0, cx = (x0 + x1) / 2;
+  let g = `<rect x="${x0}" y="${y - 6}" width="${L}" height="12" rx="3" class="sv-rod"/>`;
+  g += fArr(x0, y - 8, x0, y - 58, "T₁", x0 - 8, y - 40, "end") + fArr(x1, y - 8, x1, y - 58, "T₂", x1 + 8, y - 40, "start");
+  g += fArr(cx, y + 8, cx, y + 70, "", 0, 0) + T(cx, y + 86, "M·g de la tabla (en L/2)", "sv-t t-f", "middle");
+  (o.people || []).forEach(([f, lab]) => { const px = x0 + f * L; g += fArr(px, y + 8, px, y + 40, "", 0, 0) + T(px, y + 56, "M·g en " + lab, "sv-tl", "middle"); });
+  return `<svg viewBox="0 0 320 200" role="img" aria-label="Diagrama de cuerpo libre de la tabla colgada">${g}</svg>`;
+}
+function dclPivote(o = {}) {
+  const x0 = 50, x1 = 270, y = 110, L = x1 - x0, ax = x0 + (o.at ?? 1) * L, th = (o.th ?? 35) * Math.PI / 180;
+  let g = `<rect x="${x0}" y="${y - 6}" width="${L}" height="12" rx="3" class="sv-rod"/><circle cx="${x0}" cy="${y}" r="5" class="sv-axis"/>`;
+  g += fArr(x0 - 4, y, x0 - 44, y, "F_px", x0 - 26, y + 20) + fArr(x0, y - 8, x0, y - 52, "F_py", x0 - 6, y - 40, "end");
+  g += fArr(ax, y - 6, ax - 60 * Math.cos(th), y - 6 - 60 * Math.sin(th), "T", ax - 60 * Math.cos(th) + 10, y - 14 - 60 * Math.sin(th), "start");
+  g += T(ax - 34, y - 12, o.ang || "θ", "sv-ang", "end");
+  g += fArr((x0 + x1) / 2, y + 8, (x0 + x1) / 2, y + 54, "M·g", (x0 + x1) / 2 + 6, y + 46, "start");
+  if (o.person) g += fArr(x1, y + 8, x1, y + 50, "N (persona)", x1 - 6, y + 66, "end");
+  return `<svg viewBox="0 0 320 190" role="img" aria-label="Diagrama de cuerpo libre de la tabla con pivote y cuerda">${g}</svg>`;
+}
+function dclPersona() {
+  const x = 60, y = 90;
+  let g = `<circle cx="${x}" cy="${y}" r="14" class="sv-mass"/>` + fArr(x, y - 16, x, y - 60, "N", x + 6, y - 44, "start") + fArr(x, y + 16, x, y + 60, "M·g", x + 6, y + 52, "start") + T(x + 40, y + 4, "persona: N = M·g", "sv-tl");
+  return `<svg viewBox="0 0 220 170" role="img" aria-label="Diagrama de cuerpo libre de la persona">${g}</svg>`;
+}
+function dclEscalera(o = {}) {
+  /* escalera: pie abajo a la izquierda, punta arriba a la derecha contra la pared */
+  const xb = 100, yb = 170, xt = 230, yt = 40;
+  let g = `<line x1="${xb}" y1="${yb}" x2="${xt}" y2="${yt}" class="sv-line" style="stroke-width:9; stroke:var(--c-ground)"/><line x1="${xb}" y1="${yb}" x2="${xt}" y2="${yt}" class="sv-line"/>`;
+  const cx = (xb + xt) / 2, cy = (yb + yt) / 2;
+  g += fArr(cx, cy + 6, cx, cy + 56, "M·g", cx + 6, cy + 46, "start");
+  g += fArr(xb, yb, xb, yb - 50, sb("N", "1"), xb - 8, yb - 34, "end");
+  g += fArr(xb + 4, yb, xb + 50, yb, "f (hacia la pared)", xb + 28, yb + 18);
+  g += fArr(xt - 4, yt, xt - 50, yt, sb("N", "2") + " (pared)", xt - 28, yt - 8);
+  return `<svg viewBox="0 0 320 196" role="img" aria-label="Diagrama de cuerpo libre de la escalera">${g}</svg>`;
+}
 const FIG = {
+  dcl1: () => dclTabla({ people: [[0.25, "L/4"]] }),
+  dcl2: () => dclPivote(),
   ej1: () => tablaColgadaSvg({ lab: "tabla de masa M y largo L; persona de masa M" }),
   ej2: () => pivoteCuerdaSvg()
 };
@@ -614,7 +652,7 @@ const PROBS = [
     fig: () => tablaColgadaSvg({ people: [[0.25, "L/4"], [2 / 3, "L/3"]] }),
     txt: "Dos personas, cada una de masa M, están sobre una tabla de la misma masa M y largo L que cuelga horizontal del techo por dos cuerdas, C₁ en el extremo izquierdo y C₂ en el derecho. Una persona está a L/4 del extremo izquierdo y la otra a L/3 del extremo derecho. ¿Cuánto vale la tensión de la cuerda C₁? Opciones: A) 2Mg · B) (4/3)Mg · C) (13/12)Mg · D) (17/12)Mg · E) (19/12)Mg.",
     hints: ["Torques respecto al extremo izquierdo: así desaparece T₁ y sacas T₂. La segunda persona está a L − L/3 = 2L/3 de la izquierda.", "Después, ΣF_y = 0: T₁ + T₂ = 3M·g."],
-    sol: [{ w: "Fuerzas sobre la tabla.", y: "Arriba: T₁ y T₂. Abajo: el peso de la tabla M·g en L/2 y las dos personas, M·g en L/4 y M·g en 2L/3 (a L/3 del extremo derecho)." },
+    sol: [{ w: "Fuerzas sobre la tabla.", f: dclTabla({ people: [[0.25, "L/4"], [2 / 3, "2L/3"]] }), y: "Arriba: T₁ y T₂. Abajo: el peso de la tabla M·g en L/2 y las dos personas, M·g en L/4 y M·g en 2L/3 (a L/3 del extremo derecho)." },
       { w: "Torques respecto al extremo izquierdo.", y: "T₁ desaparece. 1/4 + 1/2 + 2/3 = 3/12 + 6/12 + 8/12 = 17/12.", m: `T₂·L = M·g·(${fr("L", "4")} + ${fr("L", "2")} + ${fr("2L", "3")})<span class="ar">→</span>T₂ = ${fr("17", "12")}·M·g` },
       { w: "ΣF_y = 0.", y: "3M·g = 36/12·M·g.", m: `T₁ = 3M·g − ${fr("17", "12")}·M·g = ${fr("19", "12")}·M·g` }],
     res: "T₁ = (19/12)·M·g (opción E). Coincide con la solución oficial.",
@@ -623,7 +661,7 @@ const PROBS = [
     fig: () => pivoteCuerdaSvg({ at: 1 / 3, atLab: "L/3", ang: "45°", person: true, lab: "tabla M, persona M" }),
     txt: "Una tabla de masa M y largo L está unida a un pivote en la pared y a una cuerda. La cuerda está amarrada a L/3 del pivote y forma 45° con la tabla. Una persona de la misma masa M se para en el extremo libre de la tabla. (cos 45° = sen 45° = 1/√2.) A) (5 pts) Dibuja los diagramas de fuerzas de la tabla y de la persona. B) (10 pts) Escribe las ecuaciones de equilibrio. C) (5 pts) ¿Qué tensión debe soportar la cuerda para que la tabla quede horizontal?",
     hints: ["Persona: N = M·g (la tabla la empuja con N y ella empuja la tabla con N hacia abajo, en la punta).", "Torques respecto al pivote: T·sen 45°·(L/3) = M·g·(L/2) + N·L."],
-    sol: [{ w: "A) Diagramas.", y: "Persona: su peso M·g hacia abajo y la normal N de la tabla hacia arriba. Tabla: F_px y F_py en el pivote, la tensión T a L/3 (inclinada 45°), su peso M·g en L/2 y la fuerza N de la persona, hacia abajo, en L. El profe insiste: no olvides el pivote." },
+    sol: [{ w: "A) Diagramas.", f: dclPivote({ at: 1 / 3, ang: "45°", th: 45, person: true }) + dclPersona(), y: "Persona: su peso M·g hacia abajo y la normal N de la tabla hacia arriba. Tabla: F_px y F_py en el pivote, la tensión T a L/3 (inclinada 45°), su peso M·g en L/2 y la fuerza N de la persona, hacia abajo, en L. El profe insiste: no olvides el pivote." },
       { w: "B) Ecuaciones.", y: "Persona: N − M·g = 0. Tabla, con torques respecto al pivote (el pivote y T·cos 45° no hacen torque):", m: `F<sub>px</sub> − T·cos 45° = 0<br>F<sub>py</sub> + T·sen 45° − M·g − N = 0<br>T·sen 45°·${fr("L", "3")} − M·g·${fr("L", "2")} − N·L = 0` },
       { w: "C) Reemplaza N = M·g y despeja T.", y: "Cancelas L. ½ + 1 = 3/2. sen 45° = 1/√2, así que T/(3√2) = (3/2)·M·g.", m: `${fr("T", "3·√2")} = ${fr("3", "2")}·M·g<span class="ar">→</span>T = ${fr("9·√2", "2")}·M·g` }],
     res: "T = (9√2/2)·M·g ≈ 6,4·M·g. Coincide con la solución oficial.",
@@ -633,13 +671,13 @@ const PROBS = [
     fig: () => escaleraSvg(),
     txt: "Una escalera uniforme de masa M y largo L se apoya en una pared lisa (sin fricción) y en un piso con fricción, formando un ángulo θ con el piso. ¿Cuál es el mínimo coeficiente de fricción estática µ_s para que no se deslice?",
     hints: ["Fuerzas: peso en L/2; en el piso, la normal N₁ (arriba) y la fricción f (hacia la pared); en la pared lisa solo una normal N₂ horizontal.", "Torques respecto al pie de la escalera: N₂·L·sen θ = M·g·(L/2)·cos θ."],
-    sol: [{ w: "ΣF.", y: "Vertical: N₁ = M·g. Horizontal: f = N₂." },
+    sol: [{ w: "Diagrama y ΣF.", f: dclEscalera(), y: "Vertical: N₁ = M·g. Horizontal: f = N₂." },
       { w: "Torques respecto al pie.", y: "N₁ y f actúan en el pie: desaparecen. El brazo del peso es la distancia horizontal (L/2)·cos θ; el de N₂ (horizontal) es la altura L·sen θ.", m: `N₂·L·sen θ = M·g·${fr("L", "2")}·cos θ<span class="ar">→</span>N₂ = ${fr("M·g", "2")}·cot θ` },
       { w: "Condición de no deslizar.", y: "f = N₂ tiene que ser ≤ µ_s·N₁ = µ_s·M·g.", m: `µ<sub>s</sub> ≥ ${fr("cot θ", "2")}` }],
     res: "µ_s mínimo = cot θ / 2 = 1/(2·tan θ).",
     checks: [{ q: "¿Cuánto vale µ_s mínimo?", opts: ["tan θ / 2", "cot θ / 2", "cot θ", "1/2"], a: 1 }] }
 ];
-function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.f ? `<div class="qfig">${s.f}</div>` : ""}${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
 (function renderProblems() {
   const box = $("#problems");
   PROBS.forEach((p) => {
