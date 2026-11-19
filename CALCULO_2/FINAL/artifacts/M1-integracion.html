@@ -1,0 +1,1262 @@
+<title>M1 Integración</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de los módulos del final, acento violeta de Cálculo). Columna de lectura ≤ 860px con barra de secciones fija. El repaso son tarjetas por técnica que enlazan a la explicación completa; el lab clasifica integrales por técnica y muestra el área de una impropia creciendo hacia su límite. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:8px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.rule-box ul{padding-left:20px; display:grid; gap:4px}
+.tri{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tri div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.tri div.yes{border-color:var(--green); background:var(--green-soft)}
+.tri div.bad{border-color:var(--red); background:var(--red-soft)}
+.tri div.no{border-style:dashed}
+@media (max-width:620px){ .tri{grid-template-columns:1fr} }
+
+/* El árbol de decisión */
+.flow{list-style:none; margin:0; padding:0; display:grid; counter-reset:f}
+.flow li{display:grid; grid-template-columns:2rem minmax(0,1.15fr) minmax(0,1fr); gap:4px 12px; padding:11px 12px; background:var(--surface); border:1px solid var(--rule); border-top:0; counter-increment:f; align-items:baseline}
+.flow li::before{content:counter(f); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; grid-row:1 / span 2}
+.flow li:first-child{border-top:1px solid var(--rule); border-radius:var(--r) var(--r) 0 0}
+.flow li:last-child{border-radius:0 0 var(--r) var(--r)}
+.flow .fq{font-weight:600}
+.flow .fa{font-weight:600; color:var(--green)}
+.flow .fe{grid-column:2 / -1; font-size:.87rem; color:var(--muted); line-height:1.9}
+@media (max-width:620px){ .flow li{grid-template-columns:1.6rem minmax(0,1fr)} .flow .fa{grid-column:2} .flow li::before{grid-row:1 / span 3} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-conv{fill:var(--green-soft); fill-opacity:.75}
+.gr-div{fill:var(--red-soft); fill-opacity:.75}
+.gr-one{stroke:var(--red); stroke-width:1.6}
+.gr-onet{fill:var(--red); font-family:var(--f-mono); font-size:10px; font-weight:500}
+.gr-leg{fill:var(--muted); font-family:var(--f-body); font-size:10.5px}
+.lg-c{fill:var(--green-soft); stroke:var(--green)} .lg-d{fill:var(--red-soft); stroke:var(--red)} .lg-b{fill:var(--accent-soft); stroke:var(--accent)}
+.gr-band{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.5}
+.gr-zz{fill:none; stroke:var(--accent); stroke-width:1.3; stroke-opacity:.7}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.cls-stage{padding:16px; gap:14px}
+.cls-series{font-size:1.25rem; padding:18px 12px; text-align:center; background:var(--paper); border:1px solid var(--rule); border-radius:8px; overflow-x:auto; line-height:2.2}
+.cls-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:6px}
+.crit{font:inherit; font-size:.88rem; font-weight:600; text-align:left; padding:8px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; line-height:1.35}
+.crit:hover{border-color:var(--accent)}
+.crit.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.crit.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.crit:disabled{cursor:default}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.pri{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+.pri.hi{color:var(--red); border-color:currentColor}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+/* Lab: la poligonal */
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:11px}
+.pc-curve{fill:none; stroke:var(--orange); stroke-width:3; stroke-linecap:round}
+.pc-poly{fill:none; stroke:var(--accent); stroke-width:1.6; stroke-dasharray:5 3}
+
+/* Etiquetas de origen de cada problema */
+.src-tag{font-family:var(--f-mono); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid currentColor; white-space:nowrap; font-weight:500; line-height:1.6}
+.src-tag.ex{color:var(--red); background:var(--red-soft)}
+.src-tag.st{color:var(--accent); background:var(--accent-soft)}
+.src-tag.ot{color:var(--muted); border-style:dashed}
+.legend{display:grid; gap:6px; font-size:.9rem}
+.legend > span{display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline}
+
+/* Repaso: una tarjeta por técnica */
+.tech{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; gap:12px; padding:16px; min-width:0}
+.tech-h{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:4px 12px; align-items:baseline}
+.tech-n{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:1.6rem; line-height:1; color:var(--accent)}
+.tech-h h3{font-size:1.2rem}
+.go{font-size:.88rem; font-weight:600; text-decoration:none; white-space:nowrap}
+.go:hover{text-decoration:underline}
+@media (max-width:560px){ .tech-h{grid-template-columns:auto minmax(0,1fr)} .tech-h .go{grid-column:2} }
+.tech-g{display:grid; grid-template-columns:7.5rem minmax(0,1fr); gap:10px 14px; margin:0}
+.tech-g dt{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); padding-top:.25em}
+.tech-g dd{margin:0; min-width:0; line-height:1.75}
+.tech-g dd.trap{color:var(--red)}
+.tech-g dd ul{padding-left:18px; display:grid; gap:2px}
+@media (max-width:560px){ .tech-g{grid-template-columns:1fr; gap:2px} .tech-g dd{margin-bottom:10px} }
+.tech-links{font-size:.9rem; display:flex; flex-wrap:wrap; gap:4px 14px; border-top:1px dashed var(--rule); padding-top:10px; margin:0}
+.tech-links b{font-weight:600; color:var(--muted)}
+details.wxd{border:1px solid var(--rule); border-radius:8px; background:var(--paper)}
+details.wxd > summary{cursor:pointer; padding:10px 12px; font-weight:600; font-size:.93rem; list-style:none; display:flex; gap:6px 10px; align-items:baseline; flex-wrap:wrap}
+details.wxd > summary::-webkit-details-marker{display:none}
+details.wxd > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.wxd[open] > summary::before{content:"−"}
+details.wxd > .wx{margin:0 10px 10px}
+.trifig{display:block}
+.tri-svg{width:100%; max-width:280px; height:auto; display:block}
+.tri-l{fill:var(--accent-soft); stroke:var(--accent); stroke-width:1.5}
+.tri-r{fill:none; stroke:var(--accent); stroke-width:1.2}
+.tri-t{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+
+/* Lab A: el clasificador */
+.cl-int{font-size:1.3rem}
+.tab[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.ctl-l{font-size:.85rem; font-weight:600}
+.seg{display:flex; gap:6px; flex-wrap:wrap}
+
+/* Lab B: el área de la impropia */
+.imp-area{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.6}
+.imp-curve{fill:none; stroke:var(--accent); stroke-width:2.2}
+.imp-acc{fill:none; stroke:var(--orange); stroke-width:2.2}
+.imp-lim{stroke:var(--green); stroke-width:1.5; stroke-dasharray:6 4}
+.imp-limt{fill:var(--green); font-family:var(--f-mono); font-size:11px; font-weight:500}
+.imp-dot{fill:var(--orange); stroke:var(--surface); stroke-width:1.5}
+.imp-more{fill:var(--accent); font-family:var(--f-mono); font-size:11px; font-weight:500}
+.imp-cap{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+
+/* Taller: grupos */
+.grp{display:grid; gap:4px; padding-top:8px}
+.grp h3{font-size:1.2rem}
+.grp p{color:var(--muted); font-size:.92rem}
+.prob-head .pts{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+
+/* Quiz: problemas abiertos */
+.q.open{border-style:dashed; border-color:var(--accent)}
+.q .tags{display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline}
+.open-note{font-size:.9rem; color:var(--muted); border-left:3px solid var(--accent); padding-left:10px}
+.pill.wait{background:var(--orange-soft); color:var(--orange)}
+.att .det{color:var(--muted)}
+.prob-body > *{min-width:0}
+.prob-body .m{display:block; overflow-x:auto; overflow-y:hidden; padding-block:4px}
+.q legend > span{min-width:0}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Repaso <span>25 min</span></a>
+    <a href="#lab">2 Lab <span>10 min</span></a>
+    <a href="#taller">3 Taller <span>50 min</span></a>
+    <a href="#quiz">4 Quiz <span>35 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Examen final · Módulo 1</p>
+    <h1>Integración: práctica de todas las técnicas</h1>
+    <div class="meta">
+      <span class="chip-ref">Visto en clase</span>
+      <span>Viernes 20 de noviembre · ~2 h</span>
+      <span>Libro 7.1–7.4, 7.8 y 8.1 · tu Parcial 1: 3,5</span>
+    </div>
+    <p class="prose">Ayer leíste las explicaciones de todas las técnicas. Hoy toca practicarlas como en el examen: un repaso rápido por técnica, un lab para reconocer cuál usar, el taller con los problemas de los parciales y el quiz de 10. Cada tarjeta del repaso te lleva con un clic a su explicación completa.</p>
+    <div class="callout">
+      <h3>Dónde aparece en tus exámenes</h3>
+      <p>En el final de 2023 fue el P3: dos integrales, una por partes y otra con fracciones parciales. Los Parciales 1 de 2018, 2023, 2025 y 2026 repiten el mismo esquema: tres integrales (partes o potencias trigonométricas, sustitución trigonométrica e impropia), un desplazamiento con partes, unas fracciones parciales y una impropia por comparación.</p>
+    </div>
+    <div class="legend" aria-label="Qué significa cada etiqueta">
+      <span><span class="src-tag ex">Salió en examen</span> tal cual en un parcial, un quiz o el final</span>
+      <span><span class="src-tag st">Estilo examen</span> el mismo tipo de problema, con otros números</span>
+      <span><span class="src-tag ot">Otro tipo</span> de las hojas y talleres del profe, para que nada te tome por sorpresa</span>
+    </div>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz: 7 preguntas de opción múltiple que se califican solas y 3 problemas abiertos que me mandas en foto. Pasas a M2 con 8/10.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. REPASO ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Repaso</h2><p>Siete tarjetas, una por técnica: la señal para reconocerla, la receta y la trampa. Debajo de varias hay ejemplos resueltos de casos que no estaban en la explicación de ayer.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">∫ f(x) dx</td><td>«integral de f»</td><td>Una antiderivada: una función cuya derivada es f. Lleva + C.</td><td>∫ 2x dx = x² + C</td></tr>
+          <tr><td class="mono">∫<sub>a</sub><sup>b</sup> f(x) dx</td><td>«integral de a a b»</td><td>Un número: F(b) − F(a), el área con signo bajo la curva.</td><td>∫ de 0 a 1 de 2x dx = 1</td></tr>
+          <tr><td class="mono">u, du</td><td>«sustitución»</td><td>Un pedazo del integrando y su derivada por dx.</td><td>u = x² + 9, du = 2x dx</td></tr>
+          <tr><td class="mono">uv − ∫ v du</td><td>«partes»</td><td>La fórmula de partes: u se deriva, dv se integra.</td><td>u = ln x, dv = x² dx</td></tr>
+          <tr><td class="mono">θ</td><td>«theta»</td><td>El ángulo de la sustitución trigonométrica. Se regresa a x con un triángulo.</td><td>x = 6 sec θ</td></tr>
+          <tr><td class="mono">sec, csc, cot</td><td>«secante, cosecante, cotangente»</td><td>1/cos, 1/sen y cos/sen.</td><td>sec θ = x/6</td></tr>
+          <tr><td class="mono">A, B, C</td><td>«las constantes»</td><td>Los numeradores que se buscan en fracciones parciales.</td><td>A/(x − 1) + B/(x + 1)</td></tr>
+          <tr><td class="mono">lím<sub>b→∞</sub></td><td>«límite cuando b tiende a infinito»</td><td>A qué se acerca un valor cuando b crece sin parar. Así se calcula una impropia.</td><td>lím (1 − 1/b) = 1</td></tr>
+          <tr><td class="mono">A → 1⁻</td><td>«A tiende a 1 por la izquierda»</td><td>A se acerca a 1 con valores menores que 1.</td><td>ln(1 − A) → −∞</td></tr>
+          <tr><td class="mono">converge / diverge</td><td>—</td><td>Converge: el límite es un número. Diverge: es ±∞ o no existe.</td><td>∫ de 1 a ∞ de 1/x² converge a 1</td></tr>
+          <tr><td class="mono">1/xᵖ</td><td>«uno sobre x a la pe»</td><td>La integral de referencia para comparar. p es el exponente.</td><td>p = 2 > 1: ∫ de 1 a ∞ converge</td></tr>
+          <tr><td class="mono">L</td><td>«longitud de arco»</td><td>Lo que mide una curva entre dos puntos.</td><td>L = ln 3 − 1/2</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo usar este repaso</h3>
+      <p>Lee cada tarjeta y pregúntate si sabrías hacer un ejercicio así sin mirar. Si dudas, «Explicación completa» abre en otra pestaña la sección exacta de la página de ayer. Los ejemplos extra están cerrados: ábrelos cuando llegues a ese caso. En cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro); lo tachado en rojo es lo que se cancela.</p>
+    </div>
+
+    <!-- Técnica 1 -->
+    <article class="tech" aria-labelledby="r1-h">
+      <div class="tech-h"><span class="tech-n">1</span><h3 id="r1-h">Sustitución u</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#sust" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>La señal</dt><dd>Ves una función y, multiplicando, su derivada (o casi: salvo una constante). En tan³x sec²x, la derivada de tan x es sec²x.</dd>
+        <dt>La receta</dt><dd>u = la función de adentro; du = u′ dx; reescribe todo en u (y los límites, si hay); integra; regresa a x.</dd>
+        <dt>Trampa</dt><dd class="trap">Si después de cambiar te sobra una x que no puedes escribir en u, esa no era la sustitución.</dd>
+        <dt>Ha salido</dt><dd>P1 2023 P1(a): ∫ tan³x sec²x dx (5 pts). Y va adentro de casi todos los demás problemas.</dd>
+      </dl>
+      <p class="tech-links"><b>Ejemplo resuelto de ayer:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx0-h" target="_blank" rel="noopener">∫ tan³x sec²x dx ↗</a></p>
+    </article>
+
+    <!-- Técnica 2 -->
+    <article class="tech" aria-labelledby="r2-h">
+      <div class="tech-h"><span class="tech-n">2</span><h3 id="r2-h">Integración por partes</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#partes" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>La señal</dt><dd>Un producto de dos clases distintas de funciones (polinomio por exponencial, por trigonométrica o por logaritmo), o un ln o un arctan solos.</dd>
+        <dt>La receta</dt><dd><span class="m">∫ u dv = uv − ∫ v du</span>. u es lo que se simplifica al derivar; en orden: logaritmo, trigonométrica inversa, polinomio, trigonométrica, exponencial. dv es el resto. Si la nueva integral vuelve a ser un producto, partes otra vez. Si reaparece la integral original, despéjala.</dd>
+        <dt>Trampa</dt><dd class="trap">Con límites, evalúa uv en los dos extremos. Y v de sec²(t/2) es 2 tan(t/2), no tan(t/2): la regla de la cadena al revés multiplica por 2.</dd>
+        <dt>Ha salido</dt><dd><ul><li>Final 2023 P3(a): ∫ x² ln x dx.</li><li>P1 2026 P2 (10 pts): el desplazamiento con v(t) = t sec²(t/2), y con t csc²(t/2) en la versión B.</li><li>P1 2025 P2 (8 pts): t cos(t/2). P1 2018 P1 (6 pts): cos(√x) y sen(√x).</li></ul></dd>
+      </dl>
+      <p class="tech-links"><b>Ejemplos resueltos de ayer:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx1-h" target="_blank" rel="noopener">x² ln x (final 2023) ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx2-h" target="_blank" rel="noopener">t sec²(t/2) (P1 2026) ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx3-h" target="_blank" rel="noopener">t cos(t/2) (P1 2025) ↗</a></p>
+
+      <details class="wxd"><summary>Ejemplo extra 1 · Partes que vuelve a empezar: ∫ eˣ sen x dx <span class="src-tag ot">Otro tipo</span></summary>
+        <article class="wx" aria-labelledby="e1-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Hoja 7.1 (4a) · integral cíclica</span>
+            <h4 id="e1-h">Cuando la integral original reaparece</h4>
+            <p>Encuentre ∫ e<sup>x</sup> sen x dx.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Escoge u y dv.</p><p class="why">Ni e<sup>x</sup> ni sen x se simplifican al derivar, así que cualquiera sirve. Tomamos u = la trigonométrica y mantenemos esa elección en la segunda vuelta.</p><div class="mx">u = sen x, dv = e<sup>x</sup> dx<span class="ar">→</span>du = cos x dx, v = e<sup>x</sup></div></li>
+            <li><p class="what">Aplica partes.</p><p class="why">∫ u dv = uv − ∫ v du.</p><div class="mx">∫ e<sup>x</sup> sen x dx = e<sup>x</sup> sen x − ∫ e<sup>x</sup> cos x dx</div></li>
+            <li><p class="what">Partes otra vez en la nueva integral, con la misma elección.</p><p class="why">u = cos x, otra vez la trigonométrica. La derivada de cos x es −sen x, y el menos de la fórmula con ese menos da más.</p><div class="mx">∫ e<sup>x</sup> cos x dx = e<sup>x</sup> cos x − ∫ e<sup>x</sup>(−sen x) dx = e<sup>x</sup> cos x + ∫ e<sup>x</sup> sen x dx</div></li>
+            <li><p class="what">Reemplaza en el paso 2.</p><p class="why">Reapareció la integral del principio. Llámala I.</p><div class="mx">I = e<sup>x</sup> sen x − (e<sup>x</sup> cos x + I) = e<sup>x</sup> sen x − e<sup>x</sup> cos x − I</div></li>
+            <li><p class="what">Despeja I.</p><p class="why">Pasa la I de la derecha a sumar a la izquierda y divide entre 2. La + C va al final.</p><div class="mx">2I = e<sup>x</sup> sen x − e<sup>x</sup> cos x<span class="ar">→</span>I = <span class="frac"><span>e<sup>x</sup>(sen x − cos x)</span><span>2</span></span> + C</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> ∫ e<sup>x</sup> sen x dx = e<sup>x</sup>(sen x − cos x)/2 + C.</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> Deriva: e<sup>x</sup>(sen x − cos x)/2 + e<sup>x</sup>(cos x + sen x)/2 = e<sup>x</sup> sen x. Si en la segunda vuelta cambias a u = e<sup>x</sup>, deshaces la primera y llegas a I = I.</p>
+        </article>
+      </details>
+
+      <details class="wxd"><summary>Ejemplo extra 2 · Sustitución y después partes: ∫ cos(√x) dx <span class="src-tag ex">Salió en examen</span></summary>
+        <article class="wx" aria-labelledby="e2-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Parcial 1 2018-20 versión A, P1 (6 pts)</span>
+            <h4 id="e2-h">Primero quitar la raíz</h4>
+            <p>Encuentre ∫ de 0 a π²/4 de cos(√x) dx.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Quita la raíz con una sustitución.</p><p class="why">Si w = √x, entonces x = w² y dx = 2w dw. Cambia también los límites: x = 0 da w = 0; x = π²/4 da w = π/2.</p><div class="mx">w = √x<span class="ar">·</span>x = w², dx = 2w dw<span class="ar">·</span>x: 0 → π²/4 se vuelve w: 0 → π/2</div></li>
+            <li><p class="what">Reescribe la integral.</p><div class="mx"><span class="sig"><small>π²/4</small><b>∫</b><small>0</small></span> cos(√x) dx = <span class="sig"><small>π/2</small><b>∫</b><small>0</small></span> cos(w)·2w dw = 2 <span class="sig"><small>π/2</small><b>∫</b><small>0</small></span> w cos w dw</div></li>
+            <li><p class="what">Partes con u = w.</p><p class="why">w se simplifica al derivar (da 1) y cos w se integra fácil.</p><div class="mx">u = w, dv = cos w dw<span class="ar">→</span>du = dw, v = sen w<span class="ar">·</span>∫ w cos w dw = w sen w − ∫ sen w dw = w sen w + cos w</div></li>
+            <li><p class="what">Evalúa en los límites de w.</p><p class="why">sen(π/2) = 1, cos(π/2) = 0, sen 0 = 0 y cos 0 = 1.</p><div class="mx">2[w sen w + cos w] de 0 a π/2 = 2[(π/2 · 1 + 0) − (0 + 1)] = 2(π/2 − 1) = π − 2</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> π − 2 ≈ 1,14.</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> cos(√x) baja de 1 a 0 en un intervalo de largo π²/4 ≈ 2,47: el área es positiva y menor que 2,47. La versión B traía sen(√x); está en el taller (T7).</p>
+        </article>
+      </details>
+    </article>
+
+    <!-- Técnica 3 -->
+    <article class="tech" aria-labelledby="r3-h">
+      <div class="tech-h"><span class="tech-n">3</span><h3 id="r3-h">Potencias trigonométricas</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#trig" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>La señal</dt><dd>Productos de potencias de sen y cos, o de tan y sec.</dd>
+        <dt>La receta</dt><dd><ul><li><b>sen y cos:</b> si una potencia es impar, aparta un factor de esa función, pasa el resto con sen² + cos² = 1 y toma u = la otra. Si las dos son pares, ángulo doble: sen²x = (1 − cos 2x)/2 y cos²x = (1 + cos 2x)/2.</li><li><b>tan y sec:</b> si sec es par, aparta sec²x y toma u = tan x. Si tan es impar, aparta sec x tan x y toma u = sec x.</li></ul></dd>
+        <dt>Trampa</dt><dd class="trap">Con u = cos x, du = −sen x dx: ese menos cambia todos los signos del resultado.</dd>
+        <dt>Ha salido</dt><dd>P1 2026 P1(b) (6 pts): sen⁵x cos³x (versión A) y sen³t cos⁵t (versión B). P1 2025 P1(a) (5 pts): tan⁴x sec⁴x. Taller 1 2026: tan³x sec⁶x.</dd>
+      </dl>
+      <p class="tech-links"><b>Ejemplos resueltos de ayer:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx4-h" target="_blank" rel="noopener">sen⁵x cos³x ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx5-h" target="_blank" rel="noopener">tan⁴x sec⁴x ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx6-h" target="_blank" rel="noopener">sen²x ↗</a></p>
+
+      <details class="wxd"><summary>Ejemplo extra 3 · Tangente con potencia impar: ∫ tan³θ sec³θ dθ <span class="src-tag ot">Otro tipo</span></summary>
+        <article class="wx" aria-labelledby="e3-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Hoja 7.2 (2c)</span>
+            <h4 id="e3-h">Cuando la secante es impar</h4>
+            <p>Encuentre ∫ tan³θ sec³θ dθ.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Mira las potencias.</p><p class="why">sec³ es impar: si apartas sec² para usar u = tan θ, te queda un sec θ suelto que no se escribe en tan sin raíz. Pero tan³ es impar: aparta sec θ tan θ, que es la derivada de sec θ.</p><div class="mx">tan³θ sec³θ = tan²θ sec²θ · (sec θ tan θ)</div></li>
+            <li><p class="what">Cambia tan² con la identidad.</p><p class="why">tan²θ = sec²θ − 1, para que todo quede en sec θ.</p><div class="mx">= (sec²θ − 1) sec²θ · sec θ tan θ</div></li>
+            <li><p class="what">Sustitución u = sec θ.</p><div class="mx">u = sec θ, du = sec θ tan θ dθ<span class="ar">→</span>∫ (u² − 1)u² du = ∫ (u⁴ − u²) du = <span class="frac"><span>u⁵</span><span>5</span></span> − <span class="frac"><span>u³</span><span>3</span></span> + C</div></li>
+            <li><p class="what">Regresa a θ.</p><div class="mx"><span class="frac"><span>sec⁵θ</span><span>5</span></span> − <span class="frac"><span>sec³θ</span><span>3</span></span> + C</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> sec⁵θ/5 − sec³θ/3 + C.</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> La regla de la tarjeta: sec par, u = tan; tan impar, u = sec. Si las dos se cumplen (como en tan³x sec⁴x), las dos respuestas difieren en una constante y ambas son correctas.</p>
+        </article>
+      </details>
+    </article>
+
+    <!-- Técnica 4 -->
+    <article class="tech" aria-labelledby="r4-h">
+      <div class="tech-h"><span class="tech-n">4</span><h3 id="r4-h">Sustitución trigonométrica</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#sustrig" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>La señal</dt><dd>Aparece √(a² − x²), √(a² + x²) o √(x² − a²), y no hay una x afuera que sirva de du.</dd>
+        <dt>La receta</dt><dd>a² − x²: x = a sen θ. a² + x²: x = a tan θ. x² − a²: x = a sec θ. Cambia dx, simplifica la raíz con la identidad, integra en θ (casi siempre queda una de potencias trigonométricas) y regresa a x con el triángulo.</dd>
+        <dt>Trampa</dt><dd class="trap">No termines en θ. Las funciones de θ se regresan con el triángulo; θ sola, con arcsen, arctan o arcsec.</dd>
+        <dt>Ha salido</dt><dd>En todos los Parciales 1: x³/√(x² + 4) (2026 A), y³/√(y² − 4) (2026 B), x³/√(9 − x²) (2025), 8/(x⁴√(x² − 4)) (2023), √(x² − 36)/x³ (2018 A y Quiz 1) y x²/√(36 − x²) (2018 B).</dd>
+      </dl>
+      <p class="tech-links"><b>Ejemplos resueltos de ayer:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx7-h" target="_blank" rel="noopener">√(x² + 4): tangente ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx8-h" target="_blank" rel="noopener">√(9 − x²): seno ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx9-h" target="_blank" rel="noopener">√(x² − 4): secante ↗</a></p>
+
+      <details class="wxd"><summary>Ejemplo extra 4 · Secante con la raíz arriba: ∫ √(x² − 36)/x³ dx <span class="src-tag ex">Salió en examen</span></summary>
+        <article class="wx" aria-labelledby="e4-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Parcial 1 2018-20 versión A, P3 (12 pts) · también el Quiz 1 de 2018</span>
+            <h4 id="e4-h">La raíz en el numerador</h4>
+            <p>Encuentre ∫ √(x² − 36)/x³ dx.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Escoge la sustitución.</p><p class="why">La raíz es √(x² − a²) con a = 6: va la secante.</p><div class="mx">x = 6 sec θ<span class="ar">·</span>dx = 6 sec θ tan θ dθ</div></li>
+            <li><p class="what">Simplifica la raíz.</p><p class="why">Factor común 36 y la identidad sec²θ − 1 = tan²θ.</p><div class="mx">x² − 36 = 36 sec²θ − 36 = 36(sec²θ − 1) = 36 tan²θ<span class="ar">→</span>√<span class="rad">x² − 36</span> = 6 tan θ</div></li>
+            <li><p class="what">Reemplaza x, dx y la raíz.</p><p class="why">x³ = (6 sec θ)³ = 216 sec³θ.</p><div class="mx">∫ <span class="frac"><span>6 tan θ</span><span>216 sec³θ</span></span> · 6 sec θ tan θ dθ = ∫ <span class="frac"><span>36 tan²θ sec θ</span><span>216 sec³θ</span></span> dθ</div></li>
+            <li><p class="what">Simplifica.</p><p class="why">36/216 = 1/6, y un sec θ de arriba se cancela con uno de abajo.</p><div class="mx"><span class="frac"><span>1</span><span>6</span></span> ∫ <span class="frac"><span>tan²θ <span class="cx">sec θ</span></span><span>sec²θ <span class="cx">sec θ</span></span></span> dθ = <span class="frac"><span>1</span><span>6</span></span> ∫ <span class="frac"><span>tan²θ</span><span>sec²θ</span></span> dθ</div></li>
+            <li><p class="what">Pasa a seno y coseno.</p><p class="why">tan²θ = sen²θ/cos²θ y 1/sec²θ = cos²θ: los cos² se cancelan.</p><div class="mx"><span class="frac"><span>tan²θ</span><span>sec²θ</span></span> = <span class="frac"><span>sen²θ</span><span><span class="cx">cos²θ</span></span></span> · <span class="cx">cos²θ</span> = sen²θ<span class="ar">→</span><span class="frac"><span>1</span><span>6</span></span> ∫ sen²θ dθ</div></li>
+            <li><p class="what">Ángulo doble.</p><p class="why">sen²θ = (1 − cos 2θ)/2, y después sen 2θ = 2 sen θ cos θ.</p><div class="mx"><span class="frac"><span>1</span><span>6</span></span>(<span class="frac"><span>θ</span><span>2</span></span> − <span class="frac"><span>sen 2θ</span><span>4</span></span>) = <span class="frac"><span>θ</span><span>12</span></span> − <span class="frac"><span>sen θ cos θ</span><span>12</span></span> + C</div></li>
+            <li><p class="what">Arma el triángulo.</p><p class="why">sec θ = x/6 = hipotenusa/adyacente. El opuesto sale por Pitágoras: √(x² − 36).</p>
+              <svg class="tri-svg" viewBox="0 0 280 124" role="img" aria-label="Triángulo rectángulo con hipotenusa x, cateto adyacente 6 y cateto opuesto raíz de x al cuadrado menos 36">
+                <path d="M20 100 L170 100 L170 18 Z" class="tri-l"/>
+                <path d="M160 100 L160 90 L170 90" class="tri-r"/>
+                <text x="95" y="117" text-anchor="middle" class="tri-t">6</text>
+                <text x="176" y="63" class="tri-t">√(x² − 36)</text>
+                <text x="86" y="52" text-anchor="end" class="tri-t">x</text>
+                <text x="46" y="95" class="tri-t">θ</text>
+              </svg>
+              <div class="mx">sen θ = <span class="frac"><span>√(x² − 36)</span><span>x</span></span><span class="ar">·</span>cos θ = <span class="frac"><span>6</span><span>x</span></span><span class="ar">·</span>θ = arcsec(x/6)</div></li>
+            <li><p class="what">Regresa a x.</p><p class="why">(√(x² − 36)/x)·(6/x) = 6√(x² − 36)/x², y 6/12 = 1/2.</p><div class="mx"><span class="frac"><span>1</span><span>12</span></span> arcsec<span class="frac"><span>x</span><span>6</span></span> − <span class="frac"><span>1</span><span>12</span></span> · <span class="frac"><span>6√(x² − 36)</span><span>x²</span></span> = <span class="frac"><span>1</span><span>12</span></span> arcsec<span class="frac"><span>x</span><span>6</span></span> − <span class="frac"><span>√(x² − 36)</span><span>2x²</span></span> + C</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> (1/12) arcsec(x/6) − √(x² − 36)/(2x²) + C.</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> Verificado derivando. La versión B traía x²/√(36 − x²), que va con seno: es la pregunta 8 del Quiz A.</p>
+        </article>
+      </details>
+    </article>
+
+    <!-- Técnica 5 -->
+    <article class="tech" aria-labelledby="r5-h">
+      <div class="tech-h"><span class="tech-n">5</span><h3 id="r5-h">Fracciones parciales</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#fracciones" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>La señal</dt><dd>Un cociente de polinomios.</dd>
+        <dt>La receta</dt><dd><ul><li>Si el grado de arriba es mayor o igual que el de abajo, divide primero.</li><li>Factoriza el denominador y arma la forma: A/(x − a) por cada factor lineal; A/(x − a) + B/(x − a)² si se repite; (Bx + C)/(x² + k) si es cuadrático sin raíces.</li><li>Multiplica por el denominador y evalúa en las raíces; los que falten, comparando coeficientes.</li><li>Integra: ∫ A/(x − a) dx = A ln|x − a|; ∫ x/(x² + 1) dx = ½ ln(x² + 1); ∫ 1/(x² + 1) dx = arctan x.</li></ul></dd>
+        <dt>Trampa</dt><dd class="trap">Con un factor repetido van dos fracciones, A/(x − 1) y B/(x − 1)². Con x² + 1 el numerador es Bx + C, no solo B.</dd>
+        <dt>Ha salido</dt><dd>Final 2023 P3(b). P1 2026 P3 (12 pts, con división). P1 2025 P3 (10 pts, con x² + 1). P1 2023 P2 (10 pts, con x⁴ − 1). P1 2018 P2 (10 pts, con un factor repetido).</dd>
+      </dl>
+      <p class="tech-links"><b>Ejemplos resueltos de ayer:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx10-h" target="_blank" rel="noopener">tres factores lineales (final 2023) ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx11-h" target="_blank" rel="noopener">con división (P1 2026) ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx12-h" target="_blank" rel="noopener">con x² + 1 (P1 2025) ↗</a></p>
+
+      <details class="wxd"><summary>Ejemplo extra 5 · Un factor repetido: 8x/((x − 1)(x² − 1)) <span class="src-tag ex">Salió en examen</span></summary>
+        <article class="wx" aria-labelledby="e5-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Parcial 1 2018-20 versión A, P2 (10 pts)</span>
+            <h4 id="e5-h">Dos fracciones para el mismo factor</h4>
+            <p>Utilice fracciones parciales para reescribir 8x/((x − 1)(x² − 1)) como suma de fracciones. No debe integrar.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Factoriza todo el denominador.</p><p class="why">x² − 1 = (x − 1)(x + 1), así que (x − 1) aparece dos veces.</p><div class="mx">(x − 1)(x² − 1) = (x − 1)(x − 1)(x + 1) = (x − 1)²(x + 1)</div></li>
+            <li><p class="what">Arma la forma.</p><p class="why">Una fracción por cada potencia del factor repetido y una para (x + 1).</p><div class="mx"><span class="frac"><span>8x</span><span>(x − 1)²(x + 1)</span></span> = <span class="frac"><span>A</span><span>x − 1</span></span> + <span class="frac"><span>B</span><span>(x − 1)²</span></span> + <span class="frac"><span>C</span><span>x + 1</span></span></div></li>
+            <li><p class="what">Multiplica por el denominador.</p><div class="mx">8x = A(x − 1)(x + 1) + B(x + 1) + C(x − 1)²</div></li>
+            <li><p class="what">Evalúa en las raíces.</p><p class="why">En x = 1 se anulan A y C; en x = −1 se anulan A y B.</p><div class="mx">x = 1: 8 = 2B<span class="ar">→</span>B = 4<span class="ar">·</span>x = −1: −8 = 4C<span class="ar">→</span>C = −2</div></li>
+            <li><p class="what">Falta A: usa cualquier otro valor.</p><p class="why">Con x = 0 las cuentas son las más cortas.</p><div class="mx">x = 0: 0 = −A + B + C = −A + 4 − 2<span class="ar">→</span>A = 2</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> 8x/((x − 1)(x² − 1)) = 2/(x − 1) + 4/(x − 1)² − 2/(x + 1).</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> Prueba con x = 2: a la izquierda 16/(1·3) = 16/3; a la derecha 2 + 4 − 2/3 = 16/3. Si pidieran integrar: 2 ln|x − 1| − 4/(x − 1) − 2 ln|x + 1| + C.</p>
+        </article>
+      </details>
+    </article>
+
+    <!-- Técnica 6 -->
+    <article class="tech" aria-labelledby="r6-h">
+      <div class="tech-h"><span class="tech-n">6</span><h3 id="r6-h">Integrales impropias</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#impropias" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>La señal</dt><dd>Un límite infinito, o una función que explota en un extremo o en un punto de adentro del intervalo.</dd>
+        <dt>Calcularla</dt><dd>Cambia el problema por una letra (b o A), integra y toma el límite. Si da un número, converge a ese número; si da ±∞ o no existe, diverge. Si explota en el medio, parte la integral ahí: si un pedazo diverge, toda diverge.</dd>
+        <dt>Compararla</dt><dd>Cuando no se puede integrar (o no lo piden), acota el integrando positivo: por arriba con una que converge, converge; por debajo con una que diverge, diverge. Las de referencia: ∫ de 1 a ∞ de 1/xᵖ converge si p &gt; 1; ∫ de 0 a 1 de 1/xᵖ converge si p &lt; 1.</dd>
+        <dt>Trampa</dt><dd class="trap">Por arriba con una que diverge, o por debajo con una que converge, no dice nada. Y ∫ de 0 a 2 de 1/(x − 1)² no es −2: explota en x = 1.</dd>
+        <dt>Ha salido</dt><dd>Calcular: P1 2026 P1(c), ∫ de 0 a 1 de y<sup>−1/4</sup> (A) y de 1/(x − 1) (B); P1 2025 P1(c), ln y/y³; P1 2023 P1(c), ln y/∛y. Comparar: en todos los Parciales 1 (2026 P4, 2025 P4, 2023 P3, 2018 P4).</dd>
+      </dl>
+      <p class="tech-links"><b>Ejemplos resueltos de ayer:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx13-h" target="_blank" rel="noopener">explota en 0 ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx14-h" target="_blank" rel="noopener">partes dentro de una impropia ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx15-h" target="_blank" rel="noopener">comparación (P1 2026) ↗</a></p>
+
+      <details class="wxd"><summary>Ejemplo extra 6 · Explota en la mitad del intervalo: ∫ de 0 a 3 de 1/(x² − 3x + 2) <span class="src-tag ot">Otro tipo</span></summary>
+        <article class="wx" aria-labelledby="e6-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Hoja 7.8 (1e)</span>
+            <h4 id="e6-h">El problema está adentro</h4>
+            <p>Determine si ∫ de 0 a 3 de dx/(x² − 3x + 2) converge o diverge.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Busca dónde explota.</p><p class="why">El denominador se hace cero en sus raíces, y las dos están dentro de [0, 3].</p><div class="mx">x² − 3x + 2 = (x − 1)(x − 2) = 0<span class="ar">→</span>x = 1 y x = 2</div></li>
+            <li><p class="what">Parte la integral en los puntos problemáticos.</p><p class="why">Cada pedazo tiene que converger por separado. Basta con que uno diverja.</p><div class="mx"><span class="sig"><small>3</small><b>∫</b><small>0</small></span> = <span class="sig"><small>1</small><b>∫</b><small>0</small></span> + <span class="sig"><small>1,5</small><b>∫</b><small>1</small></span> + <span class="sig"><small>2</small><b>∫</b><small>1,5</small></span> + <span class="sig"><small>3</small><b>∫</b><small>2</small></span></div></li>
+            <li><p class="what">Antiderivada con fracciones parciales.</p><p class="why">1/((x − 1)(x − 2)) = A/(x − 1) + B/(x − 2): con x = 1, A = −1; con x = 2, B = 1.</p><div class="mx">∫ (<span class="frac"><span>−1</span><span>x − 1</span></span> + <span class="frac"><span>1</span><span>x − 2</span></span>) dx = ln|x − 2| − ln|x − 1| = ln<span class="frac"><span>|x − 2|</span><span>|x − 1|</span></span></div></li>
+            <li><p class="what">El primer pedazo, con límite.</p><p class="why">Cuando A → 1⁻, |A − 2| → 1 y |A − 1| → 0: el cociente crece sin tope, y su ln también.</p><div class="mx"><span class="lim">lím<small>A→1⁻</small></span>[ln<span class="frac"><span>|A − 2|</span><span>|A − 1|</span></span> − ln 2] = +∞</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> diverge (el primer pedazo ya es infinito).</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> Si evaluaras directo F(3) − F(0) = ln(1/2) − ln 2 = −2 ln 2, obtendrías un número falso: el teorema fundamental solo sirve si la función no explota en el intervalo.</p>
+        </article>
+      </details>
+
+      <details class="wxd"><summary>Ejemplo extra 7 · Comparación que diverge: ∫ de 1 a ∞ de (|cos x| + 1)/x <span class="src-tag ot">Otro tipo</span></summary>
+        <article class="wx" aria-labelledby="e7-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Hoja 7.8 (2b)</span>
+            <h4 id="e7-h">Acotar por debajo</h4>
+            <p>Determine si ∫ de 1 a ∞ de (|cos x| + 1)/x dx converge o diverge. No debe calcularla.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Revisa que el integrando sea positivo.</p><p class="why">Comparación solo sirve con funciones que no son negativas. |cos x| ≥ 0, así que el numerador es al menos 1, y x &gt; 0.</p><div class="mx">(|cos x| + 1)/x &gt; 0 para x ≥ 1</div></li>
+            <li><p class="what">Acota por debajo.</p><p class="why">Quitar el |cos x| ≥ 0 del numerador hace la fracción más pequeña (o igual).</p><div class="mx"><span class="frac"><span>|cos x| + 1</span><span>x</span></span> ≥ <span class="frac"><span>1</span><span>x</span></span></div></li>
+            <li><p class="what">La de referencia diverge.</p><p class="why">Es la de p = 1.</p><div class="mx"><span class="sig"><small>∞</small><b>∫</b><small>1</small></span> <span class="frac"><span>1</span><span>x</span></span> dx = <span class="lim">lím<small>b→∞</small></span> ln b = ∞</div></li>
+            <li><p class="what">Concluye.</p><div class="mx txt">Como 0 &lt; 1/x ≤ (|cos x| + 1)/x y ∫ de 1 a ∞ de 1/x diverge, por comparación ∫ de 1 a ∞ de (|cos x| + 1)/x dx diverge.</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> diverge.</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> Acotar por arriba con 2/x (que también diverge) no habría dicho nada. Antes de acotar, decide qué crees que pasa: si el integrando se parece a 1/x, apunta a «diverge» y acota por debajo.</p>
+        </article>
+      </details>
+    </article>
+
+    <!-- Técnica 7 -->
+    <article class="tech" aria-labelledby="r7-h">
+      <div class="tech-h"><span class="tech-n">7</span><h3 id="r7-h">Longitud de arco</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#longitud" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>La señal</dt><dd>«La distancia que recorre la partícula por la curva» o «la longitud de la curva y = f(x)» (o x = g(y)).</dd>
+        <dt>La receta</dt><dd><span class="m">L = ∫ √<span class="rad">1 + (y′)²</span> dx</span> (o con x′ y dy). Expande 1 + (y′)²: casi siempre queda un cuadrado perfecto o una identidad como 1 + tan² = sec².</dd>
+        <dt>Trampa</dt><dd class="trap">Los límites son de la variable con la que integras: en x = g(y) son valores de y.</dd>
+        <dt>Ha salido</dt><dd>P1 2023 P4 (10 pts). P1 2018 P5 (8 pts): x = ln(csc y). El final de 2023 la pidió para una paramétrica; eso va en M4.</dd>
+      </dl>
+      <p class="tech-links"><b>Ejemplos resueltos:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#wx16-h" target="_blank" rel="noopener">P1 2023 P4 ↗</a> <a href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw#wx4-h" target="_blank" rel="noopener">x = ln(csc y), P1 2018 (en Paramétricas) ↗</a></p>
+
+      <details class="wxd"><summary>Ejemplo extra 8 · Longitud con fracciones parciales adentro: y = ln(1 − x²) <span class="src-tag ot">Otro tipo</span></summary>
+        <article class="wx" aria-labelledby="e8-h">
+          <div class="wx-head one"><div class="wx-q">
+            <span class="tag">Hoja 8.1 (1e) · el P4 de 2023 salió de esta misma hoja</span>
+            <h4 id="e8-h">Un cuadrado perfecto y después fracciones</h4>
+            <p>Encuentre la longitud de la curva y = ln(1 − x²) para 0 ≤ x ≤ 1/2.</p>
+          </div></div>
+          <ol class="wx-steps">
+            <li><p class="what">Deriva.</p><p class="why">La derivada de ln(algo) es (algo)′/algo.</p><div class="mx">y′ = <span class="frac"><span>−2x</span><span>1 − x²</span></span></div></li>
+            <li><p class="what">Arma 1 + (y′)² con denominador común.</p><div class="mx">1 + <span class="frac"><span>4x²</span><span>(1 − x²)²</span></span> = <span class="frac"><span>(1 − x²)² + 4x²</span><span>(1 − x²)²</span></span> = <span class="frac"><span>1 − 2x² + x⁴ + 4x²</span><span>(1 − x²)²</span></span> = <span class="frac"><span>(1 + x²)²</span><span>(1 − x²)²</span></span></div></li>
+            <li><p class="what">Saca la raíz.</p><p class="why">Arriba y abajo hay cuadrados, y entre 0 y 1/2 los dos paréntesis son positivos.</p><div class="mx">√<span class="rad">1 + (y′)²</span> = <span class="frac"><span>1 + x²</span><span>1 − x²</span></span></div></li>
+            <li><p class="what">Divide: el grado de arriba es igual al de abajo.</p><p class="why">1 + x² = −(1 − x²) + 2.</p><div class="mx"><span class="frac"><span>1 + x²</span><span>1 − x²</span></span> = −1 + <span class="frac"><span>2</span><span>1 − x²</span></span></div></li>
+            <li><p class="what">Fracciones parciales.</p><p class="why">1 − x² = (1 − x)(1 + x). Con x = 1, A = 1; con x = −1, B = 1.</p><div class="mx"><span class="frac"><span>2</span><span>(1 − x)(1 + x)</span></span> = <span class="frac"><span>1</span><span>1 − x</span></span> + <span class="frac"><span>1</span><span>1 + x</span></span></div></li>
+            <li><p class="what">Integra y evalúa.</p><p class="why">∫ 1/(1 − x) dx = −ln|1 − x| (por la cadena sale un menos). En x = 0 todo vale 0.</p><div class="mx">L = [−x − ln(1 − x) + ln(1 + x)] de 0 a 1/2 = −<span class="frac"><span>1</span><span>2</span></span> − ln<span class="frac"><span>1</span><span>2</span></span> + ln<span class="frac"><span>3</span><span>2</span></span> = −<span class="frac"><span>1</span><span>2</span></span> + ln 3</div></li>
+          </ol>
+          <div class="wx-res"><b>Resultado:</b> L = ln 3 − 1/2 ≈ 0,599.</div>
+          <p class="wx-chk"><b>¿Tiene sentido?</b> La curva va de (0, 0) a (1/2, −0,288); en línea recta eso mide ≈ 0,577, y la curva mide un poco más. La hoja del profe dice «1/2 − log 3», que es negativo: tiene el signo al revés.</p>
+        </article>
+      </details>
+    </article>
+
+    <div class="callout trap">
+      <h3>Las trampas que más puntos quitan</h3>
+      <p><b>Olvidar la división</b> antes de las fracciones parciales cuando el grado de arriba no es menor.</p>
+      <p><b>Terminar en θ</b> en una sustitución trigonométrica: siempre se regresa a x.</p>
+      <p><b>Evaluar directo</b> una integral que explota adentro del intervalo.</p>
+      <p><b>Comparar al revés:</b> por arriba solo sirve si la de referencia converge; por debajo, solo si diverge.</p>
+      <p><b>Escribir sin justificar:</b> «Respuesta sin justificación será calificada con cero». Cada sustitución, cada cota y cada límite van escritos.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab</h2><p>Dos ejercicios visuales: reconocer la técnica de un vistazo y ver por qué una impropia converge o diverge.</p></div>
+
+    <div class="block">
+      <h3>Lab A · ¿Qué técnica uso?</h3>
+      <p class="prose">En el examen lo difícil no suele ser la cuenta sino decidir por dónde empezar. Mira la integral, escoge la técnica y lee la señal. No hace falta resolverla. Es el mismo árbol de <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#cual" target="_blank" rel="noopener">«¿Qué técnica uso?» de ayer ↗</a>.</p>
+      <div class="lab">
+        <div class="lab-stage cls-stage">
+          <p class="eyebrow" id="cl-count">Integral 1 de 18</p>
+          <div class="cls-series cl-int" id="cl-int" aria-live="polite"></div>
+          <div class="cls-btns" id="cl-btns" role="group" aria-label="Técnicas"></div>
+          <p class="fb" id="cl-fb" aria-live="polite"></p>
+          <div class="qrow"><button class="btn" type="button" id="cl-next" disabled>Siguiente integral</button><a class="go" id="cl-link" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc" target="_blank" rel="noopener" hidden>Ver la explicación ↗</a></div>
+        </div>
+        <div class="lab-side">
+          <div class="readout">
+            <div class="ro"><span>Acertadas a la primera</span><b id="cl-ok">0</b></div>
+            <div class="ro"><span>Integrales vistas</span><b id="cl-done">0 de 18</b></div>
+          </div>
+          <div class="status" id="cl-status">Escoge una técnica para la primera integral.</div>
+          <button class="btn ghost" type="button" id="cl-reset">Empezar de nuevo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Lab B · Impropias: ¿el área se queda quieta?</h3>
+      <p class="prose">Una impropia converge si el área deja de crecer cuando estiras el intervalo. Mueve el límite y mira las dos gráficas: arriba, el área bajo 1/xᵖ; abajo, cuánto vale esa área a medida que estiras. Son las integrales de referencia que usas para comparar.</p>
+      <div class="lab">
+        <div class="lab-stage"><div id="imp-svg" class="lab-fig"></div><div id="imp-svg2" class="lab-fig"></div><p class="small muted" id="imp-note"></p></div>
+        <div class="lab-side">
+          <div class="ctl"><span class="ctl-l" id="imp-mode-l">Hacia dónde se estira</span><div class="seg" role="group" aria-labelledby="imp-mode-l"><button class="tab" type="button" id="imp-inf" aria-pressed="true">De 1 a ∞</button><button class="tab" type="button" id="imp-zero" aria-pressed="false">De 0 a 1</button></div></div>
+          <div class="ctl"><label for="imp-p">Exponente p de 1/xᵖ</label><select id="imp-p"></select></div>
+          <div class="ctl"><label for="imp-s" id="imp-s-lab">b = 1</label><input type="range" id="imp-s" min="0" max="3" step="0.01" value="0.6"></div>
+          <div class="readout" aria-live="polite">
+            <div class="ro"><span id="imp-int-l">Área de 1 a b</span><b id="imp-int">—</b></div>
+            <div class="ro"><span>Al estirar del todo</span><b id="imp-lim">—</b></div>
+            <div class="status" id="imp-status">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <h3>Retos del lab</h3>
+        <p class="muted">Predice primero y después compruébalo.</p>
+        <div class="challenges">
+          <details class="rev"><summary>Reto 1 · De 1 a ∞ con p = 2: ¿a qué número se acerca el área?</summary>
+            <div class="rev-body"><p><b>A 1 = 1/(2 − 1).</b> Con b = 1000 el área ya es 0,999. La curva naranja se aplana contra la línea verde.</p></div></details>
+          <details class="rev"><summary>Reto 2 · De 1 a ∞ con p = 1: ¿el área se detiene?</summary>
+            <div class="rev-body"><p><b>No.</b> Vale ln b: con b = 1000 es 6,91 y sigue subiendo, muy despacio pero sin tope. Por eso ∫ de 1 a ∞ de 1/x diverge, y es la que usas para comparar por debajo.</p></div></details>
+          <details class="rev"><summary>Reto 3 · De 0 a 1 con p = 1/4: es la del P1 2026 versión A. ¿Converge?</summary>
+            <div class="rev-body"><p><b>Sí, a 4/3 = 1/(1 − 1/4).</b> Cerca de 0 la función explota, pero tan despacio que el área no crece sin tope.</p></div></details>
+          <details class="rev"><summary>Reto 4 · De 0 a 1 con p = 2: ¿converge?</summary>
+            <div class="rev-body"><p><b>No.</b> Con a = 0,001 el área ya pasa de 999. Cerca de 0 la regla se invierte: converge solo si p &lt; 1.</p></div></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero los problemas que salieron en los parciales (los que no se resolvieron ayer), después el mismo estilo con otros números y al final otros tipos de las hojas del profe.</p></div>
+    <p class="prose">Hazlos en papel y con justificación, como en el parcial. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista antes de ver la solución. Si quieres que te corrija un procedimiento, mándame la foto.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>10 problemas: 7 de opción múltiple que se califican solos y 3 abiertos que me mandas en foto. Pasas a M2 con 8/10.</p></div>
+    <div class="callout">
+      <h3>Cómo se califica</h3>
+      <p>Cada pregunta vale 1 punto. Las 7 de opción múltiple se califican al enviar. Los 3 abiertos resuélvelos en papel, con todo el procedimiento como en el parcial, y mándame una foto en el chat: 1 punto si está completo y justificado, ½ si el método va bien pero hay un error de cuentas, 0 si el método no sirve. Yo sumo y marco tu plan.</p>
+    </div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Problemas nuevos sobre lo mismo. Antes, repasa las tarjetas de lo que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude sume los abiertos y actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: M2 · Complejos y ecuaciones diferenciales (sábado 21).</p>
+    <p>Fuente de los problemas: el final de 2023-19, los Parciales 1 de 2018-20, 2023-19, 2025-10 y 2026-20, el Quiz 1 de 2018-20, el Taller 1 de 2026-20 y las hojas 7.1 a 8.1 del profesor Martínez (MATE 1214, Universidad de los Andes). Todas las respuestas están verificadas con cálculo simbólico.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+const dec = (v, d) => v.toFixed(d).replace(".", ",").replace(/^-/, "−");
+const nf = (n) => (n == null || n === "" ? "—" : String(n).replace(".", ","));
+const INT = "https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc";
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const SG = (lo, hi) => `<span class="sig"><small>${hi}</small><b>∫</b><small>${lo}</small></span>`;
+const niceStep = (r) => { const e = Math.pow(10, Math.floor(Math.log10(r))); const m = r / e; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * e; };
+
+/* ---------- Lab A: ¿qué técnica uso? ---------- */
+const TECH = ["Sustitución u", "Partes", "Potencias trigonométricas", "Sustitución trigonométrica", "Fracciones parciales", "Impropia: límite", "Impropia: comparación"];
+const TECH_SEC = ["sust", "partes", "trig", "sustrig", "fracciones", "impropias", "impropias"];
+const CL = [
+  { i: `∫ x e<sup>x²</sup> dx`, ok: [0], s: "La x de afuera es (casi) la derivada de x²: u = x², du = 2x dx." },
+  { i: `∫ x e<sup>x</sup> dx`, ok: [1], s: "Polinomio por exponencial y ninguno es la derivada del otro: partes con u = x." },
+  { i: `∫ ${F("x²", "x³ + 1")} dx`, ok: [0], s: "Arriba está (casi) la derivada de abajo: u = x³ + 1. No hacen falta fracciones parciales." },
+  { i: `∫ ${F("x + 5", "x² + x − 2")} dx`, ok: [4], s: "Cociente de polinomios: abajo factoriza en (x + 2)(x − 1) y arriba no está su derivada." },
+  { i: `∫ √<span class="rad">25 − x²</span> dx`, ok: [3], s: "√(a² − x²) sin una x afuera que sirva de du: x = 5 sen θ." },
+  { i: `∫ ${F("x", "√(25 − x²)")} dx`, ok: [0, 3], s: "Trampa: la x de afuera es, salvo un −2, la derivada de 25 − x². Con u = 25 − x² sale en una línea; con seno también sale, pero más largo." },
+  { i: `∫ sen⁴x cos³x dx`, ok: [2], s: "cos tiene potencia impar: aparta un cos x, cambia cos²x = 1 − sen²x y toma u = sen x." },
+  { i: `∫ arctan x dx`, ok: [1], s: "Una arctan sola: partes con u = arctan x y dv = dx." },
+  { i: `∫ ${F("ln x", "x")} dx`, ok: [0], s: "1/x es la derivada de ln x: u = ln x." },
+  { i: `${SG("1", "∞")} ${F("2 + sen x", "x³")} dx`, ok: [6], s: "Positiva y sin antiderivada fácil: acótala por arriba con 3/x³, que converge." },
+  { i: `${SG("0", "1")} ln x dx`, ok: [5, 1], s: "ln x explota en 0: se calcula con un límite A → 0⁺, y la antiderivada x ln x − x sale por partes." },
+  { i: `∫ ${F("1", "x²√(x² − 16)")} dx`, ok: [3], s: "√(x² − a²): x = 4 sec θ." },
+  { i: `∫ e<sup>2x</sup> cos x dx`, ok: [1], s: "Exponencial por trigonométrica: partes dos veces y despejas la integral que reaparece." },
+  { i: `∫ ${F("x³ + 1", "x² − 4")} dx`, ok: [4], s: "Cociente con el grado de arriba mayor: primero la división y después fracciones con (x − 2)(x + 2)." },
+  { i: `${SG("3", "∞")} ${F("x² + arctan x", "x⁵ + 1")} dx`, ok: [6], s: "Como en los P4: positiva y sin antiderivada fácil. Lo que domina es x²/x⁵ = 1/x³: acota por arriba." },
+  { i: `∫ cos²x dx`, ok: [2], s: "Potencia par sola: ángulo doble, cos²x = (1 + cos 2x)/2." },
+  { i: `∫ tan⁵x sec⁴x dx`, ok: [2, 0], s: "sec par: aparta sec²x, cambia el otro sec²x = 1 + tan²x y toma u = tan x." },
+  { i: `${SG("0", "∞")} x e<sup>−x</sup> dx`, ok: [5, 1], s: "Límite infinito: cambia ∞ por b y toma el límite. La antiderivada sale por partes." }
+];
+let clIdx = 0, clOk = 0, clDone = 0, clFirst = true;
+function clStats() {
+  $("#cl-ok").textContent = String(clOk);
+  $("#cl-done").textContent = clDone + " de " + CL.length;
+}
+function clRender() {
+  const it = CL[clIdx];
+  $("#cl-count").textContent = "Integral " + (clIdx + 1) + " de " + CL.length;
+  $("#cl-int").innerHTML = it.i;
+  const fb = $("#cl-fb"); fb.textContent = ""; fb.className = "fb";
+  $("#cl-next").disabled = true; $("#cl-next").textContent = "Siguiente integral"; $("#cl-link").hidden = true;
+  clFirst = true;
+  const box = $("#cl-btns"); box.textContent = "";
+  TECH.forEach((t, k) => {
+    const b = el("button", "crit", t); b.type = "button"; b.id = "cl-b" + k;
+    b.addEventListener("click", () => clPick(k, b));
+    box.appendChild(b);
+  });
+}
+function clPick(k, b) {
+  const it = CL[clIdx], fb = $("#cl-fb");
+  if (it.ok.includes(k)) {
+    b.classList.add("right");
+    if (clFirst) clOk++;
+    clDone++;
+    fb.textContent = (k === it.ok[0] ? "Correcto. " : "También sirve. ") + it.s;
+    fb.className = "fb ok";
+    $("#cl-btns").querySelectorAll(".crit").forEach((x) => (x.disabled = true));
+    const a = $("#cl-link"); a.href = INT + "#" + TECH_SEC[it.ok[0]]; a.hidden = false;
+    const last = clIdx === CL.length - 1;
+    $("#cl-next").disabled = last; if (last) $("#cl-next").textContent = "Terminaste";
+    clStats();
+    const st = $("#cl-status");
+    if (last) { st.textContent = "Terminaste: " + clOk + " de " + CL.length + " a la primera." + (clOk >= 15 ? " Ya reconoces las técnicas." : " Repasa las señales de las que fallaste."); st.className = "status" + (clOk >= 15 ? " ok" : ""); }
+    else { st.textContent = "Llevas " + clOk + " de " + clDone + " a la primera."; st.className = "status"; }
+  } else {
+    b.classList.add("wrong"); b.disabled = true; clFirst = false;
+    fb.textContent = "No es esa. Fíjate qué hay afuera de la raíz, del cociente o del producto, y prueba otra.";
+    fb.className = "fb no";
+  }
+}
+$("#cl-next").addEventListener("click", () => { if (clIdx < CL.length - 1) { clIdx++; clRender(); } });
+$("#cl-reset").addEventListener("click", () => { clIdx = 0; clOk = 0; clDone = 0; clStats(); $("#cl-status").textContent = "Escoge una técnica para la primera integral."; $("#cl-status").className = "status"; clRender(); });
+clStats(); clRender();
+
+/* ---------- Lab B: el área de la impropia ---------- */
+const IMPM = {
+  inf: { ps: [[0.5, "1/2"], [1, "1"], [1.5, "3/2"], [2, "2"], [3, "3"]], def: 3 },
+  zero: { ps: [[0.25, "1/4"], [0.5, "1/2"], [1, "1"], [1.5, "3/2"], [2, "2"]], def: 0 }
+};
+const LIMTXT = { inf: { 1.5: "2", 2: "1", 3: "1/2" }, zero: { 0.25: "4/3", 0.5: "2" } };
+let impMode = "inf";
+const areaOf = (mode, p, s) => {
+  if (mode === "inf") { const b = Math.pow(10, s); return p === 1 ? Math.log(b) : (Math.pow(b, 1 - p) - 1) / (1 - p); }
+  const a = Math.pow(10, -s); return p === 1 ? -Math.log(a) : (1 - Math.pow(a, 1 - p)) / (1 - p);
+};
+const limOf = (mode, p) => (mode === "inf" ? (p > 1 ? 1 / (p - 1) : Infinity) : (p < 1 ? 1 / (1 - p) : Infinity));
+const pTxt = (p) => IMPM[impMode].ps.find((x) => x[0] === p)[1];
+function impFill() {
+  const sel = $("#imp-p"); sel.textContent = "";
+  IMPM[impMode].ps.forEach(([p, t], i) => { const o = el("option", "", "p = " + t); o.value = String(p); if (i === IMPM[impMode].def) o.selected = true; sel.appendChild(o); });
+}
+function impDraw() {
+  const p = Number($("#imp-p").value), s = Number($("#imp-s").value), inf = impMode === "inf";
+  const lim = limOf(impMode, p), val = areaOf(impMode, p, s), bnd = inf ? Math.pow(10, s) : Math.pow(10, -s);
+  const f = (x) => Math.pow(x, -p);
+  /* Gráfica 1: la curva y el área sombreada */
+  const W = 360, H = 190, L = 36, R = 14, T = 12, B = 24;
+  const xmax = inf ? 12 : 1.2, ymax = inf ? 2 : 8;
+  const X = (x) => L + (x / xmax) * (W - L - R), Y = (y) => H - B - (Math.min(y, ymax) / ymax) * (H - T - B);
+  const xt = inf ? [[0, "0"], [1, "1"], [2, "2"], [4, "4"], [6, "6"], [8, "8"], [10, "10"], [12, "12"]] : [[0, "0"], [0.25, "0,25"], [0.5, "0,5"], [0.75, "0,75"], [1, "1"]];
+  const yt = inf ? [[0, "0"], [0.5, "0,5"], [1, "1"], [1.5, "1,5"], [2, "2"]] : [[0, "0"], [2, "2"], [4, "4"], [6, "6"], [8, "8"]];
+  let g = "";
+  yt.forEach(([v, t]) => { g += `<line x1="${L}" x2="${W - R}" y1="${f1(Y(v))}" y2="${f1(Y(v))}" class="gr-grid"/><text x="${L - 6}" y="${f1(Y(v) + 3.5)}" text-anchor="end" class="gr-tick">${t}</text>`; });
+  xt.forEach(([v, t]) => { g += `<text x="${f1(X(v))}" y="${H - B + 15}" text-anchor="middle" class="gr-tick">${t}</text>`; });
+  /* el área */
+  const a0 = inf ? 1 : bnd, a1 = inf ? Math.min(bnd, xmax) : 1, N = 90, pts = [];
+  for (let k = 0; k <= N; k++) { const x = inf ? a0 + (a1 - a0) * k / N : a0 * Math.pow(a1 / a0, k / N); pts.push([x, f(x)]); }
+  if (a1 > a0) g += `<path d="M${f1(X(a0))} ${f1(Y(0))}${pts.map((q) => "L" + f1(X(q[0])) + " " + f1(Y(q[1]))).join("")}L${f1(X(a1))} ${f1(Y(0))}Z" class="imp-area"/>`;
+  /* la curva */
+  const c0 = Math.max(Math.pow(ymax, -1 / p), 0.0005), cp = [];
+  for (let k = 0; k <= 160; k++) { const x = c0 * Math.pow(xmax / c0, k / 160); cp.push([x, f(x)]); }
+  g += `<path d="${cp.map((q, i) => (i ? "L" : "M") + f1(X(q[0])) + " " + f1(Y(q[1]))).join("")}" class="imp-curve"/>`;
+  g += `<line x1="${L}" x2="${W - R}" y1="${f1(Y(0))}" y2="${f1(Y(0))}" class="gr-axis"/><line x1="${L}" x2="${L}" y1="${T}" y2="${H - B}" class="gr-axis"/>`;
+  if (inf) {
+    if (bnd > xmax) g += `<text x="${W - R}" y="${f1(Y(ymax) + 12)}" text-anchor="end" class="imp-more">→ sigue hasta b = ${dec(bnd, 0)}</text>`;
+    else g += `<text x="${f1(X(bnd))}" y="${f1(Y(f(bnd)) - 8)}" text-anchor="middle" class="imp-more">b</text>`;
+  } else {
+    if (f(bnd) > ymax) g += `<text x="${W - R}" y="${f1(Y(ymax) + 12)}" text-anchor="end" class="imp-more">↑ en x = a la curva vale ${f(bnd) >= 1000 ? Math.round(f(bnd)).toLocaleString("es-CO") : dec(f(bnd), 1)}</text>`;
+    else g += `<text x="${f1(X(bnd))}" y="${f1(Y(f(bnd)) - 8)}" text-anchor="middle" class="imp-more">a</text>`;
+  }
+  g += inf ? `<text x="${f1(X(5))}" y="${f1(Y(1.25))}" class="imp-cap">y = 1/xᵖ</text>` : `<text x="${f1(X(0.45))}" y="${f1(Y(5.5))}" class="imp-cap">y = 1/xᵖ</text>`;
+  $("#imp-svg").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="La curva 1/x a la p y el área bajo ella">${g}</svg>`;
+  /* Gráfica 2: el área según cuánto estiras */
+  const W2 = 360, H2 = 170, L2 = 44, R2 = 14, T2 = 14, B2 = 30;
+  const end = areaOf(impMode, p, 3), top = isFinite(lim) ? Math.max(lim, end) * 1.25 : end * 1.12;
+  const st = niceStep(top / 4), ymx = Math.ceil(top / st) * st;
+  const X2 = (sv) => L2 + (sv / 3) * (W2 - L2 - R2), Y2 = (v) => H2 - B2 - (v / ymx) * (H2 - T2 - B2);
+  let h = "";
+  const dd = st < 0.1 ? 2 : st < 1 ? 1 : 0;
+  for (let v = 0; v <= ymx + 1e-9; v += st) h += `<line x1="${L2}" x2="${W2 - R2}" y1="${f1(Y2(v))}" y2="${f1(Y2(v))}" class="gr-grid"/><text x="${L2 - 6}" y="${f1(Y2(v) + 3.5)}" text-anchor="end" class="gr-tick">${dec(v, dd)}</text>`;
+  (inf ? ["1", "10", "100", "1000"] : ["1", "0,1", "0,01", "0,001"]).forEach((t, k) => { h += `<text x="${f1(X2(k))}" y="${H2 - B2 + 14}" text-anchor="middle" class="gr-tick">${t}</text>`; });
+  h += `<text x="${f1((L2 + W2 - R2) / 2)}" y="${H2 - 3}" text-anchor="middle" class="imp-cap">${inf ? "b, el límite de arriba" : "a, el límite de abajo"} (escala logarítmica)</text>`;
+  if (isFinite(lim)) h += `<line x1="${L2}" x2="${W2 - R2}" y1="${f1(Y2(lim))}" y2="${f1(Y2(lim))}" class="imp-lim"/><text x="${L2 + 6}" y="${f1(Y2(lim) - 6)}" class="imp-limt">se acerca a ${LIMTXT[impMode][p]}</text>`;
+  const ap = []; for (let k = 0; k <= 120; k++) { const sv = 3 * k / 120; ap.push([sv, areaOf(impMode, p, sv)]); }
+  h += `<path d="${ap.map((q, i) => (i ? "L" : "M") + f1(X2(q[0])) + " " + f1(Y2(q[1]))).join("")}" class="imp-acc"/>`;
+  h += `<line x1="${L2}" x2="${W2 - R2}" y1="${f1(Y2(0))}" y2="${f1(Y2(0))}" class="gr-axis"/>`;
+  h += `<circle cx="${f1(X2(s))}" cy="${f1(Y2(val))}" r="4.5" class="imp-dot"/>`;
+  $("#imp-svg2").innerHTML = `<svg viewBox="0 0 ${W2} ${H2}" role="img" aria-label="Cuánto vale el área a medida que se estira el intervalo">${h}</svg>`;
+  /* Lecturas */
+  $("#imp-s-lab").textContent = inf ? "b = " + (bnd < 10 ? dec(bnd, 2) : bnd < 100 ? dec(bnd, 1) : dec(bnd, 0)) : "a = " + (bnd >= 0.1 ? dec(bnd, 2) : bnd >= 0.01 ? dec(bnd, 3) : dec(bnd, 4));
+  $("#imp-int-l").textContent = inf ? "Área de 1 a b" : "Área de a a 1";
+  $("#imp-int").textContent = dec(val, 3);
+  $("#imp-lim").textContent = isFinite(lim) ? "converge a " + LIMTXT[impMode][p] : "crece sin tope";
+  const stx = $("#imp-status"), pt = pTxt(p);
+  if (isFinite(lim)) { stx.textContent = (inf ? "p = " + pt + " > 1" : "p = " + pt + " < 1") + ": converge. El área se acerca a " + LIMTXT[impMode][p] + " y no pasa de ahí."; stx.className = "status ok"; }
+  else { stx.textContent = (inf ? "p = " + pt + " ≤ 1" : "p = " + pt + " ≥ 1") + ": diverge. El área sigue creciendo sin tope."; stx.className = "status bad"; }
+  $("#imp-note").textContent = "Arriba, lo sombreado es la integral " + (inf ? "de 1 a b" : "de a a 1") + ". Abajo, la curva naranja es cuánto vale esa área según " + (inf ? "b" : "a") + "; la línea verde, el valor al que se acerca. Si no hay línea verde, no hay a dónde acercarse.";
+}
+function impSetMode(m) {
+  impMode = m;
+  $("#imp-inf").setAttribute("aria-pressed", String(m === "inf"));
+  $("#imp-zero").setAttribute("aria-pressed", String(m === "zero"));
+  impFill(); impDraw();
+}
+$("#imp-inf").addEventListener("click", () => impSetMode("inf"));
+$("#imp-zero").addEventListener("click", () => impSetMode("zero"));
+$("#imp-p").addEventListener("change", impDraw);
+$("#imp-s").addEventListener("input", impDraw);
+impFill(); impDraw();
+
+/* ---------- Taller ---------- */
+const TAG = { ex: ["ex", "Salió en examen"], st: ["st", "Estilo examen"], ot: ["ot", "Otro tipo"] };
+const GRP = {
+  A: ["A · Salieron en un examen", "Prioridad. Son los que no se resolvieron ayer: la versión B de 2026 y los de 2023 y 2018."],
+  B: ["B · Estilo examen, con otros números", "El mismo tipo de problema que sale siempre."],
+  C: ["C · Otros tipos", "Si te sobra tiempo: de las hojas y del Taller 1, por si el final trae algo distinto."]
+};
+const PROBS = [
+  { n: "T1", grp: "A", tag: "ex", t: "Tres integrales de la versión B", src: "Parcial 1 2026-20 versión B, P1", pts: "18 pts",
+    txt: `<ol class="items"><li>(a) ∫ ${F("y³", "√(y² − 4)")} dy</li><li>(b) ∫ sen³t cos⁵t dt</li><li>(c) ${SG("0", "1")} ${F("1", "x − 1")} dx</li></ol>`,
+    checks: [
+      { q: "(a)", opts: ["(y² − 4)<sup>3/2</sup>/3 + 4√(y² − 4) + C", "(y² − 4)<sup>3/2</sup>/3 − 4√(y² − 4) + C", "8 tan³θ/3 + 8 tan θ + C", "y⁴/(4√(y² − 4)) + C"], a: 0 },
+      { q: "(b)", opts: ["cos⁶t/6 − cos⁸t/8 + C", "−cos⁶t/6 + cos⁸t/8 + C", "−cos⁶t/6 − cos⁸t/8 + C", "sen⁴t cos⁶t/24 + C"], a: 1 },
+      { q: "(c)", opts: ["Converge a 0", "Converge a −1", "Diverge", "Converge a ln 2"], a: 2 }],
+    hints: ["(a) √(y² − 4) pide y = 2 sec θ: la raíz queda 2 tan θ y la integral, 8∫ sec⁴θ dθ. También sirve u = y² − 4 con y² = u + 4.", "(b) Las dos potencias son impares. Aparta un sen t, cambia sen²t = 1 − cos²t y toma u = cos t (cuidado con el menos de du).", "(c) ¿Dónde explota 1/(x − 1)? Cambia ese extremo por A y toma el límite A → 1⁻."],
+    sol: ["<b>(a)</b> y = 2 sec θ, dy = 2 sec θ tan θ dθ, √(y² − 4) = 2 tan θ. ∫ (8 sec³θ)/(2 tan θ) · 2 sec θ tan θ dθ = 8∫ sec⁴θ dθ = 8∫ (tan²θ + 1) sec²θ dθ = 8 tan³θ/3 + 8 tan θ + C. Con el triángulo (sec θ = y/2), tan θ = √(y² − 4)/2: <b>(y² − 4)<sup>3/2</sup>/3 + 4√(y² − 4) + C</b>. Quedarse en θ (la opción con tan θ) no vale.",
+      "<b>(b)</b> sen³t cos⁵t = (1 − cos²t) cos⁵t sen t. Con u = cos t, du = −sen t dt: −∫ (1 − u²)u⁵ du = −u⁶/6 + u⁸/8: <b>−cos⁶t/6 + cos⁸t/8 + C</b>. Con u = sen t sale sen⁴t/4 − sen⁶t/3 + sen⁸t/8 + C, que también es correcta.",
+      "<b>(c)</b> Explota en x = 1: ∫ de 0 a 1 = lím<sub>A→1⁻</sub> [ln|x − 1|] de 0 a A = lím ln(1 − A) − ln 1 = −∞. <b>Diverge.</b> La solución oficial dice «cerca al cero», pero el problema está en x = 1."] },
+  { n: "T2", grp: "A", tag: "ex", t: "El desplazamiento de la versión B", src: "Parcial 1 2026-20 versión B, P2", pts: "10 pts",
+    txt: `<p>Una partícula se mueve tal que la velocidad al cabo de t segundos es v(t) = t csc²(t/2) metros por segundo. ¿Cuántos metros se ha desplazado desde t = π/3 hasta t = 2π/3 segundos? La derivada de cot t es −csc²t.</p>`,
+    checks: [
+      { q: "La v de partes (la antiderivada de csc²(t/2))", opts: ["−cot(t/2)", "−2 cot(t/2)", "2 cot(t/2)", "−½ cot(t/2)"], a: 1 },
+      { q: "El desplazamiento", opts: ["2π/(3√3) + 2 ln 3", "2π/(3√3) − 2 ln 3", "10π/(3√3) − 2 ln 3", "2π/√3"], a: 0 }],
+    hints: ["u = t, dv = csc²(t/2) dt. Como la derivada de cot(t/2) es −½ csc²(t/2), v = −2 cot(t/2).", "Te queda +2∫ cot(t/2) dt = 4 ln|sen(t/2)|. Usa cot(π/3) = 1/√3, cot(π/6) = √3, sen(π/3) = √3/2 y sen(π/6) = 1/2."],
+    sol: ["Partes: ∫ t csc²(t/2) dt = −2t cot(t/2) + 2∫ cot(t/2) dt = −2t cot(t/2) + 4 ln|sen(t/2)|.",
+      "Primer término, de π/3 a 2π/3: −(4π/3)(1/√3) + (2π/3)√3 = −4π/(3√3) + 6π/(3√3) = 2π/(3√3).",
+      "Segundo término: 4[ln(√3/2) − ln(1/2)] = 4 ln √3 = 2 ln 3.",
+      "<b>Desplazamiento: 2π/(3√3) + 2 ln 3 ≈ 3,41 m.</b> La versión A, con sec², está resuelta en la página de ayer (ejemplo 2) y da 10π/(3√3) − 2 ln 3."] },
+  { n: "T3", grp: "A", tag: "ex", t: "Fracciones con división, versión B", src: "Parcial 1 2026-20 versión B, P3", pts: "12 pts",
+    txt: `<p>Use el método de fracciones parciales para reescribir esta fracción como suma de fracciones:</p><p class="m">${F("x⁴ − 2x³ − 4x² + 3x − 8", "x³ − 2x² − x + 2")}</p><p>El grado del numerador es mayor que el del denominador. Además, x³ − 2x² − x + 2 = (x² − 1)(x − 2).</p>`,
+    checks: [
+      { q: "Cociente y residuo de la división", opts: ["x y −3x² + x − 8", "x y 3x² + x − 8", "x − 4 y −3x² + x − 8", "x + 1 y −x² + 2x − 6"], a: 0 },
+      { q: "La descomposición completa", opts: ["x − 2/(x + 1) + 5/(x − 1) − 6/(x − 2)", "x + 2/(x + 1) − 5/(x − 1) + 6/(x − 2)", "x − 2/(x + 1) + 5/(x − 1) − 6/(x + 2)", "−2/(x + 1) + 5/(x − 1) − 6/(x − 2)"], a: 0 }],
+    hints: ["Divide: x⁴ ÷ x³ = x. Resta x(x³ − 2x² − x + 2) del numerador.", "Para (−3x² + x − 8)/((x + 1)(x − 1)(x − 2)), evalúa en x = 1, x = −1 y x = 2."],
+    sol: ["División: x⁴ − 2x³ − 4x² + 3x − 8 − x(x³ − 2x² − x + 2) = −3x² + x − 8. El cociente es x.",
+      "−3x² + x − 8 = A(x − 1)(x − 2) + B(x + 1)(x − 2) + C(x + 1)(x − 1). x = 1: −10 = −2B, B = 5. x = −1: −12 = 6A, A = −2. x = 2: −18 = 3C, C = −6.",
+      "<b>x − 2/(x + 1) + 5/(x − 1) − 6/(x − 2).</b> Ojo: la solución oficial escribe −6/(x + 2) al final; es (x − 2)."] },
+  { n: "T4", grp: "A", tag: "ex", t: "Comparación de la versión B", src: "Parcial 1 2026-20 versión B, P4", pts: "10 pts",
+    txt: `<p>Determine si la integral converge o diverge:</p><p class="m">${SG("3", "∞")} ${F("x² + arcsen(x<sup>−1/2026</sup> − x<sup>−1/2025</sup> + x<sup>−1/2024</sup>)", "x³ − 1")} dx</p>`,
+    checks: [{ q: "Conclusión y comparación", opts: ["Converge: el integrando es ≤ 2/x²", "Diverge: el integrando es ≥ x²/x³ = 1/x", "Converge: el integrando es ≤ 1/x", "Diverge: el integrando es ≥ 1/x²"], a: 1 }],
+    hints: ["Lo que domina es x²/x³ = 1/x: apunta a «diverge» y acota por debajo.", "Para x > 1, x<sup>−1/2026</sup> > x<sup>−1/2025</sup>: lo de adentro del arcsen es positivo y el arcsen también, así que el numerador es mayor que x². Y x³ − 1 < x³."],
+    sol: ["El integrando es positivo. Numerador: x² + arcsen(algo positivo) > x². Denominador: 0 < x³ − 1 < x³. Entonces el integrando es mayor que x²/x³ = 1/x.",
+      "∫ de 3 a ∞ de 1/x dx = lím (ln b − ln 3) = ∞. Por comparación (por debajo con una que diverge), <b>la integral diverge</b>. La versión A tenía x⁵ + 1 abajo y convergía (ejemplo 15 de ayer)."] },
+  { n: "T5", grp: "A", tag: "ex", t: "Con x⁴ − 1 abajo", src: "Parcial 1 2023-19, P2", pts: "10 pts",
+    txt: `<p>Use el método de fracciones parciales para escribir la fracción como suma de fracciones irreducibles. No debe realizar la integral.</p><p class="m">${F("4x³ − 3x² + 4x − 1", "x⁴ − 1")}</p>`,
+    checks: [
+      { q: "La forma correcta", opts: ["A/(x − 1) + B/(x + 1) + (Cx + D)/(x² + 1)", "A/(x − 1) + B/(x + 1) + C/(x² + 1)", "A/(x − 1) + B/(x + 1) + C/(x − 1)²", "A/(x² − 1) + B/(x² + 1)"], a: 0 },
+      { q: "El resultado", opts: ["1/(x − 1) + 3/(x + 1) − 1/(x² + 1)", "3/(x − 1) + 1/(x + 1) − 1/(x² + 1)", "1/(x − 1) + 3/(x + 1) − x/(x² + 1)", "1/(x − 1) + 3/(x + 1) + 1/(x² + 1)"], a: 0 }],
+    hints: ["x⁴ − 1 = (x² − 1)(x² + 1) = (x − 1)(x + 1)(x² + 1), y x² + 1 no factoriza.", "Con x = 1 y x = −1 salen A y B. Para C y D compara el coeficiente de x³ y el término independiente."],
+    sol: ["4x³ − 3x² + 4x − 1 = A(x + 1)(x² + 1) + B(x − 1)(x² + 1) + (Cx + D)(x² − 1).",
+      "x = 1: 4 = 4A, A = 1. x = −1: −12 = −4B, B = 3. Coeficiente de x³: 4 = A + B + C, C = 0. Término independiente: −1 = A − B − D, D = −1.",
+      "<b>1/(x − 1) + 3/(x + 1) − 1/(x² + 1).</b> Comprueba con el coeficiente de x²: A − B + D = 1 − 3 − 1 = −3."] },
+  { n: "T6", grp: "A", tag: "ex", t: "Comparación que converge", src: "Parcial 1 2023-19, P3", pts: "10 pts",
+    txt: `<p>Determine si la integral converge o diverge (el examen escribe dy, pero la variable es x):</p><p class="m">${SG("1", "∞")} ${F("x⁷ + |arctan(x² + 2x − 1 + 3)|", "x¹¹ + 2")} dx</p>`,
+    checks: [{ q: "Conclusión y comparación", opts: ["Diverge: el integrando es ≥ 1/x⁴", "Converge: el integrando es ≤ 3/x⁴", "Converge: el integrando es ≥ 1/x⁴", "Diverge: el integrando es ≥ x⁷/x¹¹"], a: 1 }],
+    hints: ["Lo que domina es x⁷/x¹¹ = 1/x⁴ (p = 4 > 1): apunta a «converge» y acota por arriba.", "|arctan| < π/2 < 2, y para x ≥ 1, 2 ≤ 2x⁷."],
+    sol: ["Integrando positivo. |arctan(·)| < π/2 < 2 ≤ 2x⁷ para x ≥ 1, así que el numerador es menor que 3x⁷. El denominador x¹¹ + 2 es mayor que x¹¹.",
+      "Entonces 0 < integrando < 3x⁷/x¹¹ = 3/x⁴, y ∫ de 1 a ∞ de 3/x⁴ dx = 1 converge (p = 4 > 1). <b>Por comparación, converge.</b>"] },
+  { n: "T7", grp: "A", tag: "ex", t: "La versión B de 2018", src: "Parcial 1 2018-20 versión B, P1 y P2", pts: "6 + 10 pts",
+    txt: `<ol class="items"><li>(a) ${SG("0", "π²/4")} sen(√x) dx</li><li>(b) Reescriba con fracciones parciales, sin integrar: ${F("8x", "(x + 1)(x² − 1)")}</li></ol>`,
+    checks: [
+      { q: "(a)", opts: ["π − 2", "2", "π/2", "1"], a: 1 },
+      { q: "(b)", opts: ["−2/(x + 1) + 4/(x + 1)² + 2/(x − 1)", "2/(x + 1) + 4/(x + 1)² − 2/(x − 1)", "4/(x + 1)² + 2/(x − 1)", "−2/(x − 1) + 4/(x − 1)² + 2/(x + 1)"], a: 0 }],
+    hints: ["(a) Es el ejemplo extra 2 con seno: w = √x, dx = 2w dw, y partes en 2∫ w sen w dw.", "(b) (x + 1)(x² − 1) = (x + 1)²(x − 1): la forma es A/(x + 1) + B/(x + 1)² + C/(x − 1)."],
+    sol: ["<b>(a)</b> 2∫ de 0 a π/2 de w sen w dw = 2[−w cos w + sen w] de 0 a π/2 = 2[(0 + 1) − (0 + 0)] = <b>2</b>.",
+      "<b>(b)</b> 8x = A(x + 1)(x − 1) + B(x − 1) + C(x + 1)². x = 1: 8 = 4C, C = 2. x = −1: −8 = −2B, B = 4. x = 0: 0 = −A − B + C, A = −2. <b>−2/(x + 1) + 4/(x + 1)² + 2/(x − 1).</b>"] },
+  { n: "T8", grp: "B", tag: "st", t: "Otro desplazamiento", src: "Como el P2 de 2026 y de 2025", pts: "",
+    txt: `<p>Una partícula se mueve con velocidad v(t) = t sec²(t/3) metros por segundo. ¿Cuántos metros se desplaza desde t = 0 hasta t = π segundos?</p>`,
+    checks: [
+      { q: "La v de partes", opts: ["tan(t/3)", "3 tan(t/3)", "⅓ tan(t/3)", "3 sec(t/3)"], a: 1 },
+      { q: "El desplazamiento", opts: ["3√3π − 9 ln 2", "3√3π + 9 ln 2", "√3π − 3 ln 2", "3√3π"], a: 0 }],
+    hints: ["u = t, dv = sec²(t/3) dt, v = 3 tan(t/3).", "∫ tan(t/3) dt = −3 ln|cos(t/3)|. Usa tan(π/3) = √3 y cos(π/3) = 1/2."],
+    sol: ["∫ t sec²(t/3) dt = 3t tan(t/3) − 3∫ tan(t/3) dt = 3t tan(t/3) + 9 ln|cos(t/3)|.",
+      "De 0 a π: 3π√3 + 9 ln(1/2) − (0 + 9 ln 1) = <b>3√3π − 9 ln 2 ≈ 10,09 m</b>."] },
+  { n: "T9", grp: "B", tag: "st", t: "Sustitución con seno", src: "Como la hoja 7.3 (1b), con otros números", pts: "",
+    txt: `<p>Encuentre ∫ ${F("√(4 − x²)", "x²")} dx.</p>`,
+    checks: [
+      { q: "Después de sustituir, la integral en θ es", opts: ["∫ cot²θ dθ", "∫ tan²θ dθ", "4∫ cos²θ dθ", "∫ csc θ dθ"], a: 0 },
+      { q: "El resultado", opts: ["−√(4 − x²)/x − arcsen(x/2) + C", "√(4 − x²)/x − arcsen(x/2) + C", "−√(4 − x²)/x + arcsen(x/2) + C", "−cot θ − θ + C"], a: 0 }],
+    hints: ["x = 2 sen θ: dx = 2 cos θ dθ y √(4 − x²) = 2 cos θ.", "cot²θ = csc²θ − 1, y ∫ csc²θ dθ = −cot θ."],
+    sol: ["x = 2 sen θ: ∫ (2 cos θ)(2 cos θ dθ)/(4 sen²θ) = ∫ cot²θ dθ = ∫ (csc²θ − 1) dθ = −cot θ − θ + C.",
+      "Triángulo con sen θ = x/2: opuesto x, hipotenusa 2, adyacente √(4 − x²). cot θ = √(4 − x²)/x y θ = arcsen(x/2): <b>−√(4 − x²)/x − arcsen(x/2) + C.</b>"] },
+  { n: "T10", grp: "B", tag: "st", t: "División, fracciones e integral", src: "Como el P3 de 2026, pero integrando", pts: "",
+    txt: `<p>Encuentre ∫ ${F("x⁴ + 2x³ + x² + 2x − 4", "x³ + x² − 4x − 4")} dx, sabiendo que x³ + x² − 4x − 4 = (x² − 4)(x + 1).</p>`,
+    checks: [
+      { q: "Cociente y residuo", opts: ["x + 1 y 4x² + 10x", "x y 4x² + 6x − 4", "x + 1 y 4x² − 10x", "x + 2 y 2x² + 10x + 4"], a: 0 },
+      { q: "La integral", opts: ["x²/2 + x + 3 ln|x − 2| − ln|x + 2| + 2 ln|x + 1| + C", "x²/2 + x + 3 ln|x + 2| − ln|x − 2| + 2 ln|x + 1| + C", "x²/2 + 3 ln|x − 2| − ln|x + 2| + 2 ln|x + 1| + C", "x²/2 + x + 3/(x − 2) − 1/(x + 2) + 2/(x + 1) + C"], a: 0 }],
+    hints: ["Divide en dos pasos: primero x, después +1.", "Para (4x² + 10x)/((x − 2)(x + 2)(x + 1)), evalúa en x = 2, −2 y −1."],
+    sol: ["División: cociente x + 1 y residuo 4x² + 10x.",
+      "4x² + 10x = A(x + 2)(x + 1) + B(x − 2)(x + 1) + C(x − 2)(x + 2). x = 2: 36 = 12A, A = 3. x = −2: −4 = 4B, B = −1. x = −1: −6 = −3C, C = 2.",
+      "<b>x²/2 + x + 3 ln|x − 2| − ln|x + 2| + 2 ln|x + 1| + C.</b>"] },
+  { n: "T11", grp: "B", tag: "st", t: "Tres impropias para calcular", src: "Hoja 7.8 (1a) y (1d), y una con partes", pts: "",
+    txt: `<ol class="items"><li>(a) ${SG("e", "∞")} ${F("1", "x(ln x)³")} dx</li><li>(b) ${SG("2", "3")} ${F("1", "√(x − 2)")} dx</li><li>(c) ${SG("0", "∞")} x e<sup>−x</sup> dx</li></ol>`,
+    checks: [{ q: "(a)", opts: ["1/2", "Diverge", "1", "−1/2"], a: 0 }, { q: "(b)", opts: ["Diverge", "2", "1", "2√3"], a: 1 }, { q: "(c)", opts: ["Diverge", "0", "1", "−1"], a: 2 }],
+    hints: ["(a) u = ln x: con x = e, u = 1; con x → ∞, u → ∞.", "(b) Explota en x = 2: límite con A → 2⁺.", "(c) Partes con u = x. En el límite, b e<sup>−b</sup> = b/e<sup>b</sup> → 0 por L'Hôpital."],
+    sol: ["<b>(a)</b> ∫ de 1 a ∞ de du/u³ = lím [−1/(2u²)] de 1 a B = 0 + 1/2 = <b>1/2</b>.",
+      "<b>(b)</b> lím<sub>A→2⁺</sub> [2√(x − 2)] de A a 3 = 2 − 0 = <b>2</b>.",
+      "<b>(c)</b> ∫ x e<sup>−x</sup> dx = −x e<sup>−x</sup> − e<sup>−x</sup>. De 0 a b: (−b e<sup>−b</sup> − e<sup>−b</sup>) − (0 − 1) → 0 − 0 + 1 = <b>1</b>."] },
+  { n: "T12", grp: "B", tag: "st", t: "Dos comparaciones", src: "Como el P4 de todos los Parciales 1", pts: "",
+    txt: `<ol class="items"><li>(a) ${SG("1", "∞")} ${F("x + cos²(x³)", "x³ + 1")} dx</li><li>(b) ${SG("2", "∞")} ${F("x² + arctan x", "x³ − 1")} dx</li></ol>`,
+    checks: [{ q: "(a)", opts: ["Converge: ≤ 2/x²", "Diverge: ≥ 1/x", "Converge: ≤ 1/x", "Diverge: ≥ 1/x²"], a: 0 }, { q: "(b)", opts: ["Converge: ≤ 2/x²", "Diverge: ≥ 1/x", "Converge: ≤ 1/x³", "No se puede comparar"], a: 1 }],
+    hints: ["(a) Lo que domina es x/x³ = 1/x²: cos² ≤ 1 ≤ x, y x³ + 1 > x³.", "(b) Lo que domina es x²/x³ = 1/x: arctan x > 0 y x³ − 1 < x³."],
+    sol: ["<b>(a)</b> 0 < (x + cos²(x³))/(x³ + 1) ≤ (x + 1)/x³ ≤ 2x/x³ = 2/x² para x ≥ 1, y ∫ de 1 a ∞ de 2/x² converge. <b>Converge.</b>",
+      "<b>(b)</b> (x² + arctan x)/(x³ − 1) ≥ x²/x³ = 1/x > 0 para x ≥ 2, y ∫ de 2 a ∞ de 1/x diverge. <b>Diverge.</b>"] },
+  { n: "T13", grp: "B", tag: "st", t: "Longitud con una identidad", src: "Hoja 8.1 (1c) · el P4 de 2023 salió de esta hoja", pts: "",
+    txt: `<p>Encuentre la longitud de la curva y = ln(cos x) para 0 ≤ x ≤ π/3.</p>`,
+    checks: [{ q: "√(1 + (y′)²) simplificado", opts: ["sec x", "1 + tan x", "sec²x", "√(1 − tan²x)"], a: 0 }, { q: "La longitud", opts: ["ln(2 + √3)", "√3", "ln 2", "ln(2 − √3)"], a: 0 }],
+    hints: ["y′ = −sen x/cos x = −tan x, y 1 + tan²x = sec²x.", "∫ sec x dx = ln|sec x + tan x|; sec(π/3) = 2 y tan(π/3) = √3."],
+    sol: ["y′ = −tan x, 1 + tan²x = sec²x y √(sec²x) = sec x, que es positivo en [0, π/3].",
+      "L = [ln|sec x + tan x|] de 0 a π/3 = ln(2 + √3) − ln 1 = <b>ln(2 + √3) ≈ 1,317</b>. La hoja lo escribe como ln((1 + √3)/(√3 − 1)), que es lo mismo."] },
+  { n: "T14", grp: "C", tag: "ot", t: "Partes cíclica con límites", src: "Hoja 7.1 (4d)", pts: "",
+    txt: `<p>Encuentre ${SG("0", "π")} e<sup>2x</sup> sen x dx.</p>`,
+    checks: [{ q: "El resultado", opts: ["(1 + e<sup>2π</sup>)/5", "(e<sup>2π</sup> − 1)/5", "(1 + e<sup>2π</sup>)/2", "e<sup>2π</sup>/5"], a: 0 }],
+    hints: ["Es el ejemplo extra 1 con e<sup>2x</sup>: en cada vuelta, v = e<sup>2x</sup>/2.", "Al despejar te queda (5/4)I = …"],
+    sol: ["I = (e<sup>2x</sup> sen x)/2 − ½∫ e<sup>2x</sup> cos x dx, y ∫ e<sup>2x</sup> cos x dx = (e<sup>2x</sup> cos x)/2 + ½ I.",
+      "I = (e<sup>2x</sup> sen x)/2 − (e<sup>2x</sup> cos x)/4 − I/4, así que I = e<sup>2x</sup>(2 sen x − cos x)/5.",
+      "De 0 a π: e<sup>2π</sup>(0 + 1)/5 − (0 − 1)/5 = <b>(1 + e<sup>2π</sup>)/5</b>."] },
+  { n: "T15", grp: "C", tag: "ot", t: "Sustitución, partes y una división", src: "Taller 1 2026-20 (1a)", pts: "",
+    txt: `<p>Encuentre ${SG("0", "1")} arctan(√t) dt.</p>`,
+    checks: [{ q: "El resultado", opts: ["π/4", "π/2 − 1", "1 − π/4", "π/4 − 1/2"], a: 1 }],
+    hints: ["t = s², dt = 2s ds: queda ∫ de 0 a 1 de 2s arctan s ds.", "Partes con u = arctan s y v = s². Después, s²/(1 + s²) = 1 − 1/(1 + s²)."],
+    sol: ["Con t = s²: ∫ de 0 a 1 de 2s arctan s ds = [s² arctan s] de 0 a 1 − ∫ de 0 a 1 de s²/(1 + s²) ds = π/4 − ∫ de 0 a 1 de (1 − 1/(1 + s²)) ds.",
+      "= π/4 − (1 − π/4) = <b>π/2 − 1 ≈ 0,571</b>."] },
+  { n: "T16", grp: "C", tag: "ot", t: "Tangente y secante con límites", src: "Taller 1 2026-20 (1c)", pts: "",
+    txt: `<p>Encuentre ${SG("0", "π/4")} tan³x sec⁶x dx.</p>`,
+    checks: [{ q: "El resultado", opts: ["17/24", "1/4", "7/12", "13/24"], a: 0 }],
+    hints: ["sec par: tan³x sec⁶x = tan³x (1 + tan²x)² sec²x, y u = tan x va de 0 a 1."],
+    sol: ["∫ de 0 a 1 de u³(1 + u²)² du = ∫ de 0 a 1 de (u³ + 2u⁵ + u⁷) du = 1/4 + 1/3 + 1/8 = <b>17/24</b>."] },
+  { n: "T17", grp: "C", tag: "ot", t: "Quitar una raíz con u²", src: "Taller 1 2026-20 (1g)", pts: "",
+    txt: `<p>Encuentre ∫ ${F("x − 1", "x√(x + 1)")} dx.</p>`,
+    checks: [
+      { q: "Con u² = x + 1, la integral queda", opts: ["2∫ (u² − 2)/(u² − 1) du", "∫ (u² − 2)/(u² − 1) du", "2∫ (u² − 1)/(u² − 2) du", "2∫ (u − 2)/(u − 1) du"], a: 0 },
+      { q: "El resultado", opts: ["2√(x + 1) − ln|√(x + 1) − 1| + ln(√(x + 1) + 1) + C", "2√(x + 1) + ln|√(x + 1) − 1| − ln(√(x + 1) + 1) + C", "√(x + 1) − ln|x| + C", "2√(x + 1) − 2 ln|x| + C"], a: 0 }],
+    hints: ["x = u² − 1, dx = 2u du y √(x + 1) = u: la u de dx se cancela con la de abajo.", "(u² − 2)/(u² − 1) = 1 − 1/(u² − 1), y 1/(u² − 1) va por fracciones parciales."],
+    sol: ["Con u² = x + 1: ∫ (u² − 2)/((u² − 1)u) · 2u du = 2∫ (u² − 2)/(u² − 1) du = 2∫ (1 − 1/(u² − 1)) du.",
+      "2/(u² − 1) = 1/(u − 1) − 1/(u + 1), así que queda 2u − ln|u − 1| + ln|u + 1| + C.",
+      "<b>2√(x + 1) − ln|√(x + 1) − 1| + ln(√(x + 1) + 1) + C.</b>"] },
+  { n: "T18", grp: "C", tag: "ot", t: "Completar el cuadrado", src: "Hoja 7.3 (2b)", pts: "",
+    txt: `<p>Encuentre ∫ ${F("1", "√(x² − 6x + 13)")} dx.</p>`,
+    checks: [
+      { q: "Completando el cuadrado, x² − 6x + 13 =", opts: ["(x − 3)² + 4", "(x − 3)² − 4", "(x + 3)² + 4", "(x − 6)² + 13"], a: 0 },
+      { q: "El resultado", opts: ["ln(√(x² − 6x + 13) + x − 3) + C", "arctan((x − 3)/2) + C", "½ ln(x² − 6x + 13) + C", "arcsen((x − 3)/2) + C"], a: 0 }],
+    hints: ["x² − 6x + 9 = (x − 3)². Con u = x − 3 queda ∫ du/√(u² + 4).", "u = 2 tan θ da ∫ sec θ dθ = ln|sec θ + tan θ|."],
+    sol: ["x² − 6x + 13 = (x − 3)² + 4. Con u = x − 3 y u = 2 tan θ: ∫ (2 sec²θ)/(2 sec θ) dθ = ∫ sec θ dθ = ln|sec θ + tan θ|.",
+      "sec θ = √(u² + 4)/2 y tan θ = u/2: queda ln|√(u² + 4) + u| − ln 2, y el −ln 2 entra en la C. <b>ln(√(x² − 6x + 13) + x − 3) + C.</b>"] },
+  { n: "T19", grp: "C", tag: "ot", t: "¿Para qué r converge?", src: "Hoja 7.8 (3a)", pts: "",
+    txt: `<p>Determine para qué valores de r converge ${SG("1", "∞")} ${F("1", "x<sup>r</sup>")} dx, y cuánto vale cuando converge.</p>`,
+    checks: [{ q: "La respuesta", opts: ["Converge si r > 1, a 1/(r − 1)", "Converge si r ≥ 1, a 1/(r − 1)", "Converge si r < 1, a 1/(1 − r)", "Converge si r > 0, a 1/r"], a: 0 }],
+    hints: ["Separa r = 1 (da ln b) de r ≠ 1 (da (b<sup>1−r</sup> − 1)/(1 − r)).", "b<sup>1−r</sup> → 0 solo si el exponente 1 − r es negativo."],
+    sol: ["r = 1: ∫ de 1 a b de 1/x dx = ln b → ∞: diverge.",
+      "r ≠ 1: [x<sup>1−r</sup>/(1 − r)] de 1 a b = (b<sup>1−r</sup> − 1)/(1 − r). Si r > 1, b<sup>1−r</sup> → 0 y queda 1/(r − 1). Si r < 1, b<sup>1−r</sup> → ∞: diverge.",
+      "<b>Converge solo si r > 1, y vale 1/(r − 1).</b> Es la regla de las integrales p del Lab B."] }
+];
+(function renderProblems() {
+  const box = $("#problems"); let g = "";
+  PROBS.forEach((p) => {
+    if (p.grp !== g) { g = p.grp; const d = el("div", "grp"); d.appendChild(el("h3", "", GRP[g][0])); d.appendChild(el("p", "", GRP[g][1])); box.appendChild(d); }
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t));
+    h.appendChild(el("span", "src-tag " + TAG[p.tag][0], TAG[p.tag][1]));
+    h.appendChild(el("span", "src", p.src + (p.pts ? " · " + p.pts : "")));
+    a.appendChild(h);
+    a.appendChild(elh("div", "prob-body", p.txt));
+    p.checks.forEach((ck, ci) => {
+      const c = el("div", "check"); c.appendChild(elh("p", "", "Chequeo rápido · " + ck.q));
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${ci}-${oi}`;
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar el procedimiento."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); b.appendChild(elh("p", "", ht)); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); p.sol.forEach((s) => sb.appendChild(elh("p", "", s))); ds.appendChild(sb); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M1", NEXT = "Pasas a M2: complejos y ecuaciones diferenciales.";
+const QUIZ = {
+  A: [
+    { t: "mc", tag: "st", src: "Como el P2 de 2025, con seno", q: "Una partícula se mueve con velocidad v(t) = t sen(t/2) m/s. ¿Cuántos metros se desplaza entre t = 0 y t = π?",
+      o: ["2π − 4", "4", "−4", "0"], a: 1,
+      e: "Partes con u = t, dv = sen(t/2) dt, v = −2 cos(t/2): ∫ = −2t cos(t/2) + 4 sen(t/2). De 0 a π: (0 + 4) − (0 + 0) = 4. 2π − 4 es la del coseno (P2 de 2025); −4 sale con el signo de v al revés." },
+    { t: "mc", tag: "st", src: "Como el P1(b) de 2026", q: "∫ sen³x cos²x dx =",
+      o: ["cos³x/3 − cos⁵x/5 + C", "−cos³x/3 + cos⁵x/5 + C", "sen⁴x/4 − sen⁶x/6 + C", "−cos³x/3 − cos⁵x/5 + C"], a: 1,
+      e: "sen es impar: sen³x cos²x = (1 − cos²x) cos²x sen x. Con u = cos x, du = −sen x dx: −∫ (u² − u⁴) du = −u³/3 + u⁵/5." },
+    { t: "mc", tag: "ex", src: "Parcial 1 2023-19, P1(c) · 5 pts", q: `${SG("0", "1")} ${F("ln y", "∛y")} dy =`,
+      o: ["9/4", "−9/4", "−3/2", "Diverge"], a: 1,
+      e: "Explota en 0. Partes con u = ln y, dv = y<sup>−1/3</sup> dy, v = (3/2)y<sup>2/3</sup>: (3/2)y<sup>2/3</sup> ln y − (9/4)y<sup>2/3</sup>. En 1 vale −9/4; cuando A → 0⁺, A<sup>2/3</sup> ln A → 0 (L'Hôpital). Converge a −9/4, negativo porque ln y < 0 entre 0 y 1." },
+    { t: "mc", tag: "st", src: "Como el P1(a) de 2026", q: `∫ ${F("x³", "√(x² + 9)")} dx =`,
+      o: ["(1/3)(x² + 9)<sup>3/2</sup> − 9√(x² + 9) + C", "(1/3)(x² + 9)<sup>3/2</sup> + 9√(x² + 9) + C", "x⁴/(4√(x² + 9)) + C", "3(x² + 9)<sup>3/2</sup> − 9√(x² + 9) + C"], a: 0,
+      e: "Con x = 3 tan θ queda 27∫ tan³θ sec θ dθ = 9 sec³θ − 27 sec θ, y sec θ = √(x² + 9)/3. Más corto: u = x² + 9, x² = u − 9, y (1/2)∫ (u − 9)u<sup>−1/2</sup> du = (1/3)u<sup>3/2</sup> − 9u<sup>1/2</sup>." },
+    { t: "mc", tag: "st", src: "Como el P2 de 2023 y de 2018", q: `La descomposición en fracciones parciales de ${F("5x² + 3x − 2", "x³ + 2x²")} es`,
+      o: ["2/x − 1/x² + 3/(x + 2)", "−1/x² + 4/(x + 2)", "1/x − 1/x² + 4/(x + 2)", "2/x + 1/x² + 3/(x + 2)"], a: 0,
+      e: "x³ + 2x² = x²(x + 2): la x se repite, así que van A/x + B/x² + C/(x + 2). 5x² + 3x − 2 = Ax(x + 2) + B(x + 2) + Cx². x = 0: −2 = 2B, B = −1. x = −2: 12 = 4C, C = 3. Coeficiente de x²: 5 = A + C, A = 2." },
+    { t: "mc", tag: "ex", src: "Parcial 1 2018-20 versión A, P4 · 6 pts", q: `¿Qué se puede concluir de ${SG("1", "∞")} ${F("sen(2x) + 1", "x² + 1")} dx?`,
+      o: ["Converge: 0 ≤ (sen(2x) + 1)/(x² + 1) ≤ 2/x², y ∫ de 1 a ∞ de 2/x² converge.", "Diverge: sen(2x) no tiene límite cuando x → ∞.", "Converge: (sen(2x) + 1)/(x² + 1) ≤ 1/x², y ∫ de 1 a ∞ de 1/x² converge.", "No se puede comparar porque el integrando a veces vale 0."], a: 0,
+      e: "sen(2x) + 1 está entre 0 y 2, y x² + 1 > x²: el integrando está entre 0 y 2/x². La C usa una cota falsa: con sen(2x) = 1 el integrando es 2/(x² + 1), mayor que 1/x² cuando x > 1. Que valga 0 en algunos puntos no estorba; basta con que no sea negativo." },
+    { t: "mc", tag: "ot", src: "Hoja 7.1 (4), con límites", q: `${SG("0", "π/2")} e<sup>x</sup> cos x dx =`,
+      o: ["e<sup>π/2</sup> − 1", "(e<sup>π/2</sup> − 1)/2", "(e<sup>π/2</sup> + 1)/2", "0"], a: 1,
+      e: "Partes dos veces y despejas: ∫ e<sup>x</sup> cos x dx = e<sup>x</sup>(sen x + cos x)/2. En π/2: e<sup>π/2</sup>/2. En 0: 1/2. Si te dio e<sup>π/2</sup> − 1, olvidaste dividir entre 2 al despejar." },
+    { t: "open", tag: "ex", src: "Parcial 1 2018-20 versión B, P3 · 12 pts", q: `Encuentre ∫ ${F("x²", "√(36 − x²)")} dx.` },
+    { t: "open", tag: "st", src: "Como el P3 de 2026, pero integrando", q: `Encuentre ∫ ${F("x³ + 2x² − 6", "x² + x − 2")} dx.` },
+    { t: "open", tag: "st", src: "Como el P1(c) de 2025", q: `Determine si ${SG("1", "∞")} ${F("ln x", "x²")} dx converge o diverge. Si converge, encuentre su valor.` }
+  ],
+  B: [
+    { t: "mc", tag: "st", src: "Como el P2 de 2025 y de 2026", q: "Una partícula se mueve con velocidad v(t) = t cos(t/3) m/s. ¿Cuántos metros se desplaza entre t = 0 y t = 3π/2?",
+      o: ["9π/2 − 9", "9π/2 + 9", "9π/2", "3π/2 − 3"], a: 0,
+      e: "u = t, dv = cos(t/3) dt, v = 3 sen(t/3): 3t sen(t/3) − 3∫ sen(t/3) dt = 3t sen(t/3) + 9 cos(t/3). En 3π/2: 9π/2 + 0. En 0: 0 + 9. Resta: 9π/2 − 9 ≈ 5,14." },
+    { t: "mc", tag: "st", src: "Como el P1(a) de 2025", q: "∫ tan³x sec⁴x dx =",
+      o: ["tan⁴x/4 + tan⁶x/6 + C", "tan⁴x/4 − tan⁶x/6 + C", "sec⁵x/5 − sec³x/3 + C", "tan⁴x sec⁵x/20 + C"], a: 0,
+      e: "sec es par: aparta sec²x y cambia el otro sec²x = 1 + tan²x. Con u = tan x: ∫ u³(1 + u²) du = u⁴/4 + u⁶/6. Si usaste u = sec x te da sec⁶x/6 − sec⁴x/4 + C, que también es correcta: difiere en una constante." },
+    { t: "mc", tag: "ex", src: "Parcial 1 2018-20 versión B, P4 · 6 pts", q: `¿Qué se puede concluir de ${SG("1", "∞")} ${F("|1 + sen(x/2)|", "x³ + 2")} dx?`,
+      o: ["Converge: 0 ≤ |1 + sen(x/2)|/(x³ + 2) ≤ 2/x³, y ∫ de 1 a ∞ de 2/x³ converge.", "Diverge: el integrando es mayor o igual que 0.", "Converge: el integrando es ≥ 1/x³, y ∫ de 1 a ∞ de 1/x³ converge.", "Diverge: se compara con 1/x."], a: 0,
+      e: "|1 + sen(x/2)| ≤ 2 y x³ + 2 > x³: por arriba con una que converge, converge. La C acota por debajo con una que converge, y eso no dice nada (además la cota es falsa cuando sen(x/2) = −1)." },
+    { t: "mc", tag: "st", src: "Como el P1(b) de 2023", q: `∫ ${F("1", "x²√(x² + 9)")} dx =`,
+      o: ["−√(x² + 9)/(9x) + C", "√(x² + 9)/(9x) + C", "−x/(9√(x² + 9)) + C", "(1/3) arctan(x/3) + C"], a: 0,
+      e: "x = 3 tan θ: ∫ 3 sec²θ/(9 tan²θ · 3 sec θ) dθ = (1/9)∫ cos θ/sen²θ dθ = −1/(9 sen θ). Con el triángulo, sen θ = x/√(x² + 9)." },
+    { t: "mc", tag: "st", src: "Como el P3 de 2025", q: `La descomposición de ${F("2x² + x + 14", "(x + 1)(x² + 4)")} es`,
+      o: ["3/(x + 1) + (2 − x)/(x² + 4)", "3/(x + 1) − 1/(x² + 4)", "3/(x + 1) + (x + 2)/(x² + 4)", "2/(x + 1) + (3 − x)/(x² + 4)"], a: 0,
+      e: "x² + 4 no factoriza: su numerador es Bx + C. 2x² + x + 14 = A(x² + 4) + (Bx + C)(x + 1). x = −1: 15 = 5A, A = 3. Coeficiente de x²: 2 = A + B, B = −1. Término independiente: 14 = 4A + C, C = 2." },
+    { t: "mc", tag: "ot", src: "Como la hoja 7.8 (1e)", q: `${SG("0", "2")} ${F("1", "(x − 1)²")} dx =`,
+      o: ["−2", "2", "Diverge", "0"], a: 2,
+      e: "1/(x − 1)² explota en x = 1, dentro de [0, 2]. Parte ahí: ∫ de 0 a 1 = lím<sub>A→1⁻</sub> [−1/(x − 1)] de 0 a A = ∞. Un pedazo diverge, así que toda diverge. El −2 sale de evaluar directo sin mirar, y no puede ser: el integrando es positivo." },
+    { t: "mc", tag: "st", src: "Como el P4 de 2023", q: "La longitud de y = x³/6 + 1/(2x) entre x = 1 y x = 2 es",
+      o: ["17/12", "13/12", "7/6", "3/2"], a: 0,
+      e: "y′ = x²/2 − 1/(2x²) y 1 + (y′)² = (x²/2 + 1/(2x²))², un cuadrado perfecto. L = [x³/6 − 1/(2x)] de 1 a 2 = (4/3 − 1/4) − (1/6 − 1/2) = 17/12. El 13/12 sale si olvidas el límite de abajo." },
+    { t: "open", tag: "ex", src: "Parcial 1 2025-10, P4 · 7 pts", q: `Determine si ${SG("3", "∞")} ${F("|sen(x<sup>2025</sup> + arctan(x − 2024))| + 1", "x − 2")} dx converge o diverge.` },
+    { t: "open", tag: "st", src: "Como el P3 de 2026, pero integrando", q: `Encuentre ∫ ${F("2x³ − x² − 4x + 5", "x² − x − 2")} dx.` },
+    { t: "open", tag: "st", src: "Como el P1(b) de 2023", q: `Encuentre ∫ ${F("√(x² − 9)", "x⁴")} dx.` }
+  ]
+};
+const MC_TOTAL = 7;
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q" + (it.t === "open" ? " open" : ""));
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span");
+    const tags = el("span", "tags"); tags.appendChild(el("span", "src-tag " + TAG[it.tag][0], TAG[it.tag][1])); tags.appendChild(el("span", "kind", (it.t === "open" ? "Abierto · " : "Opción múltiple · ") + it.src));
+    lt.appendChild(tags); lt.appendChild(document.createElement("br")); lt.appendChild(elh("span", "", it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.t === "mc") {
+      const ops = el("div", "qopts");
+      it.o.forEach((o, oi) => {
+        const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+        lab.appendChild(r); lab.appendChild(elh("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+      });
+      fs.appendChild(ops);
+      const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    } else {
+      fs.appendChild(el("p", "open-note", "Vale 1 punto. Resuélvelo en papel, con todo el procedimiento como en el parcial, y mándame la foto en el chat."));
+    }
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar la opción múltiple del quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase()), items = QUIZ[key], sets = form.querySelectorAll("fieldset.q");
+  const mcIdx = items.map((it, i) => (it.t === "mc" ? i : -1)).filter((i) => i >= 0);
+  const answers = mcIdx.map((i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta de opción múltiple." : `Te faltan ${missing} preguntas de opción múltiple.`; return; }
+  $("#msg-" + key).textContent = "";
+  let mc = 0;
+  mcIdx.forEach((i, j) => {
+    const it = items[i], fs = sets[i], ok = answers[j] === it.a; if (ok) mc++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[j]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.innerHTML = (ok ? "Correcta. " : "Incorrecta. La respuesta es la " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const can = mc + 3 >= 8, need = 8 - mc;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result" + (can ? "" : " fail"); res.textContent = "";
+  res.appendChild(el("p", "muted", "Opción múltiple"));
+  res.appendChild(el("p", "score", mc + "/" + MC_TOTAL));
+  if (can) res.appendChild(el("p", "need", (need <= 1 ? "Con 1 punto de los 3 abiertos pasas. " : `Necesitas al menos ${need} de 3 en los abiertos para pasar. `) + "Resuélvelos en papel y mándame la foto en el chat: yo los califico, sumo y marco tu plan. " + NEXT.replace("Pasas", "Si pasas, sigues")));
+  else res.appendChild(el("p", "need", `Con ${mc}/7 ya no alcanzas 8 aunque saques los 3 abiertos. Lee las explicaciones de las que fallaste, repasa esas tarjetas del repaso y ` + (key === "A" ? "haz el Quiz B." : "pídeme un Quiz C en el chat.")));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntame tu nota de opción múltiple en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!can && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, mc: mc, mcTotal: MC_TOTAL, abiertos: null, total: 10, puntaje: null, aprobado: null, estado: can ? "pendiente" : "no alcanza", respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = can ? "Intento guardado. Cuando me mandes la foto, sumo los abiertos aquí y en tu plan." : "Intento guardado.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntame tu nota de opción múltiple en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude sume los abiertos y actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att"), mc = Number(d.mc);
+    if (d.estado === "calificado") {
+      r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + nf(d.puntaje) + "/10"));
+      r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+      r.appendChild(el("span", "det", "opción múltiple " + mc + "/7 · abiertos " + nf(d.abiertos) + "/3"));
+    } else if (d.estado === "pendiente") {
+      r.appendChild(el("b", "", "Quiz " + d.quiz + " · opción múltiple " + mc + "/7"));
+      r.appendChild(el("span", "pill wait", "Esperando tu foto"));
+      r.appendChild(el("span", "det", "necesitas " + (8 - mc) + " de 3 en los abiertos"));
+    } else {
+      r.appendChild(el("b", "", "Quiz " + d.quiz + " · opción múltiple " + mc + "/7"));
+      r.appendChild(el("span", "pill no", "No alcanza"));
+    }
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = String(d.fecha || ""); }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  const failedA = list.some((d) => d.quiz === "A" && (d.estado === "no alcanza" || (d.estado === "calificado" && !d.aprobado)));
+  if (failedA && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(8).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

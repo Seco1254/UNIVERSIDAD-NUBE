@@ -70,7 +70,7 @@ La misma de siempre: módulos de 4 secciones (teoría, lab, taller y quiz de pas
 
 | Módulo | Tema | Libro | Día | Explicaciones que se reciclan |
 |---|---|---|---|---|
-| **M1** | Integración: todas las técnicas | 7.1–7.4, 7.8, 8.1 | Jue 19 – Vie 20 | [Integración: todas las técnicas](https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc) (nuevo) |
+| **M1** | Integración: todas las técnicas · [módulo de práctica y quiz](https://claude.ai/artifact/JsXvwi5CSuzngsUUsBs9Un) | 7.1–7.4, 7.8, 8.1 | Jue 19 – Vie 20 | [Integración: todas las técnicas](https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc) (nuevo) |
 | **M2** | Complejos y ecuaciones diferenciales | H, 9.1–9.5, 17.1–17.2 | Sáb 21 | [Ecuaciones separables](https://claude.ai/artifact/9tWWxyLsdzdnG7n2VFMhZH), [Lineales y Bernoulli](https://claude.ai/artifact/4SxfPSG9GFNWzYsneurM5Q), [Segundo orden y coeficientes indeterminados](https://claude.ai/artifact/HGp12FT3EM6tD3q6sxoUtH), [Coeficientes indeterminados](https://claude.ai/artifact/NHzoHae9hrPCK2gNbD2xnJ), [Simulacro Parcial 2](https://claude.ai/artifact/SJETfGkuseKRAmbDWczDRL) |
 | **M3** | Series | 11.1–11.10 | Sáb 21 | Los M1 a M7 del Parcial 3 (tabla de `CLAUDE.md`) |
 | **M4** | Paramétricas y polares | 10.1–10.4 | Dom 22 | [Paramétricas: longitud de arco y tangentes](https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw) |
@@ -91,6 +91,8 @@ La misma de siempre: módulos de 4 secciones (teoría, lab, taller y quiz de pas
 ---
 
 ## 6. Tu progreso
+
+Cada quiz tiene 7 preguntas de opción múltiple (se califican en la página) y 3 problemas abiertos que el estudiante manda en foto; Claude los califica (1, ½ o 0) y escribe `abiertos`, `puntaje`, `aprobado` y `estado: "calificado"` en el intento de la colección `intentos` del módulo, y la nota en `progreso` del plan.
 
 | Módulo | Quiz (sobre 10; se pasa con 8) | Estado |
 |---|---|---|

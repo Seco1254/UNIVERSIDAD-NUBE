@@ -36,6 +36,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth; scroll-padding-top:64px}
+.wx:has(h4:target), section:target > .sec-title{outline:2px solid var(--accent); outline-offset:4px; border-radius:6px}
 @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
 body{
   background-color:var(--paper);
@@ -698,3 +699,18 @@ section[id]{scroll-margin-top:64px}
     <p>Fuente: Parciales 1 de 2018-20, 2023-19, 2025-10 y 2026-20 (con las soluciones del semestre), el final de 2023-19 y las hojas 7.1 a 8.1 del profesor Martínez (MATE 1214, Universidad de los Andes). Todas las respuestas están verificadas con cálculo simbólico.</p>
   </footer>
 </div>
+
+<script>
+/* Los enlaces de los módulos llegan con #seccion: lleva la vista a esa sección. */
+(function () {
+  function go() {
+    var id = decodeURIComponent((location.hash || "").slice(1));
+    if (!id) return;
+    var t = document.getElementById(id);
+    if (t) t.scrollIntoView({ block: "start" });
+  }
+  window.addEventListener("hashchange", go);
+  if (document.readyState === "complete") setTimeout(go, 80);
+  else window.addEventListener("load", function () { setTimeout(go, 80); });
+})();
+</script>
