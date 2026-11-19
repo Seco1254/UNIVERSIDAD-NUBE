@@ -30,7 +30,7 @@ ol { margin:0; padding-left:20px; display:grid; gap:6px }
 </main>
 <script>
 const s = document.getElementById("s"), stepEl = document.getElementById("step");
-const P = { x: 90, y: 250 }, L = 190, Rb = 10;
+const P = { x: 210, y: 250 }, L = 190, Rb = 10;
 let t = 0, run = false, last = null;
 const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 function draw() {
@@ -38,7 +38,7 @@ function draw() {
   let ang = 0, bx, by, txt;
   if (t < hit) { bx = 330 - (330 - (P.x + Rb + 4)) * t; by = tipY0; txt = "Antes del choque: L = M·v·ℓ"; }
   else { const dt = t - hit; ang = Math.min(dt * 0.9, 1.3); bx = null; txt = "Después: giran juntas, L = I·ω"; }
-  const tipX = P.x + L * Math.sin(ang), tipY = P.y - L * Math.cos(ang);
+  const tipX = P.x - L * Math.sin(ang), tipY = P.y - L * Math.cos(ang);
   let g = `<line x1="${P.x}" y1="${P.y}" x2="${tipX}" y2="${tipY}" stroke="var(--fg)" stroke-width="12" stroke-linecap="round"/>`;
   g += `<line x1="${P.x}" y1="${P.y}" x2="${tipX}" y2="${tipY}" stroke="var(--rod)" stroke-width="8" stroke-linecap="round"/>`;
   g += `<circle cx="${P.x}" cy="${P.y}" r="8" fill="var(--bg)" stroke="#c63a3a" stroke-width="2.5"/><circle cx="${P.x}" cy="${P.y}" r="2.5" fill="var(--fg)"/>`;
@@ -49,8 +49,8 @@ function draw() {
     g += `<circle cx="${bx}" cy="${by}" r="${Rb}" fill="var(--ball)" stroke="var(--fg)" stroke-width="1.8"/>`;
     g += `<line x1="${bx - 16}" y1="${by + 22}" x2="${bx - 56}" y2="${by + 22}" stroke="var(--accent)" stroke-width="2.5"/><polygon points="${bx - 60},${by + 22} ${bx - 52},${by + 18} ${bx - 52},${by + 26}" fill="var(--accent)"/><text x="${bx - 36}" y="${by + 40}" fill="var(--accent)" font-size="13" text-anchor="middle">v</text>`;
   } else {
-    g += `<circle cx="${tipX + Rb * Math.cos(ang) }" cy="${tipY + Rb * Math.sin(ang)}" r="${Rb}" fill="var(--ball)" stroke="var(--fg)" stroke-width="1.8"/>`;
-    g += `<path d="M ${P.x + 60} ${P.y - 90} A 110 110 0 0 1 ${P.x + 100} ${P.y - 40}" fill="none" stroke="var(--accent)" stroke-width="2.5"/><text x="${P.x + 112}" y="${P.y - 70}" fill="var(--accent)" font-size="14">ω</text>`;
+    g += `<circle cx="${tipX + Rb * Math.cos(ang)}" cy="${tipY - Rb * Math.sin(ang)}" r="${Rb}" fill="var(--ball)" stroke="var(--fg)" stroke-width="1.8"/>`;
+    g += `<path d="M ${P.x + 20} ${P.y - 120} A 120 120 0 0 0 ${P.x - 60} ${P.y - 104}" fill="none" stroke="var(--accent)" stroke-width="2.5"/><polygon points="${P.x - 66},${P.y - 101} ${P.x - 54},${P.y - 112} ${P.x - 52},${P.y - 99}" fill="var(--accent)"/><text x="${P.x + 26}" y="${P.y - 120}" fill="var(--accent)" font-size="14">ω</text>`;
   }
   s.innerHTML = g; stepEl.textContent = txt;
 }
