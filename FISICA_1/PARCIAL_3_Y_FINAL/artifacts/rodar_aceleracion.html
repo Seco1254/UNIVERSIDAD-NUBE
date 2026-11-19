@@ -1,0 +1,94 @@
+<title>Aceleración al rodar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Una columna: ejemplo resuelto con letras, receta y un ejercicio con chequeo */
+:root { --bg:#f5f6fa; --card:#fff; --fg:#141a2c; --muted:#5b6377; --accent:#2f54d8; --force:#c2410c; --line:#dfe3ec; --code:#eef1f8; --ok:#15803d; --bad:#b91c1c; --ground:#dfe4f0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#10131d; --card:#181c29; --fg:#e7eaf3; --muted:#9ba3b8; --accent:#88a2ff; --force:#f59e5c; --line:#2c3245; --code:#21263a; --ok:#4ade80; --bad:#f87171; --ground:#262c40; color-scheme: dark } }
+:root[data-theme="dark"] { --bg:#10131d; --card:#181c29; --fg:#e7eaf3; --muted:#9ba3b8; --accent:#88a2ff; --force:#f59e5c; --line:#2c3245; --code:#21263a; --ok:#4ade80; --bad:#f87171; --ground:#262c40; color-scheme: dark }
+body { background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, sans-serif; padding-block:20px 32px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)) }
+main { max-width:720px; margin:0 auto; display:grid; gap:14px }
+h1 { margin:0; font-size:1.4rem; text-wrap:balance } h2 { margin:0; font-size:1.08rem }
+section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; display:grid; gap:10px; min-width:0 }
+svg { width:100%; max-width:420px; height:auto; display:block; margin:0 auto }
+ol.steps { margin:0; padding-left:20px; display:grid; gap:10px }
+.why { color:var(--muted); margin:2px 0 4px }
+.f { font-family:ui-monospace, "SF Mono", Menlo, monospace; background:var(--code); border-radius:6px; padding:7px 10px; overflow-x:auto; white-space:nowrap }
+.x { text-decoration:line-through; text-decoration-color:var(--bad); text-decoration-thickness:2px }
+.res { border-left:4px solid var(--ok); padding:8px 10px; background:var(--code); border-radius:0 6px 6px 0 }
+.opts { display:flex; flex-wrap:wrap; gap:8px }
+.opts button { font:inherit; font-family:ui-monospace, monospace; padding:7px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer }
+.opts button:focus-visible, details summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+.opts button.ok { border-color:var(--ok); color:var(--ok) } .opts button.no { border-color:var(--bad); color:var(--bad) }
+#fb { min-height:1.3em; margin:0 } details summary { cursor:pointer; font-weight:600 }
+</style>
+<main>
+  <h1>Aceleración de algo que rueda</h1>
+  <p style="margin:0;color:var(--muted)">Cómo sacar la aceleración de un cuerpo que rueda sin deslizar por un plano, con fuerzas y torque. Un ejemplo con un <b>cilindro</b> y después un ejercicio para ti.</p>
+
+  <section>
+    <h2>Las fuerzas sobre el cuerpo</h2>
+    <svg viewBox="0 0 340 210" role="img" aria-label="Cilindro en un plano inclinado con su peso, la normal y la fricción hacia arriba del plano">
+      <polygon points="20,40 320,190 20,190" fill="var(--ground)" stroke="var(--fg)" stroke-width="1.5"/>
+      <g id="body"></g>
+    </svg>
+    <ul style="margin:0;padding-left:18px;display:grid;gap:4px">
+      <li><b style="color:var(--force)">M·g·sen θ</b>: la parte del peso que lo jala plano abajo.</li>
+      <li><b style="color:var(--force)">f</b>: la fricción estática en el punto de contacto, <b>hacia arriba del plano</b>. Es la que lo hace girar.</li>
+      <li>La normal y la otra parte del peso (M·g·cos θ) se cancelan, y pasan por el centro: no hacen torque.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Ejemplo resuelto: un cilindro macizo (I = ½·M·R²)</h2>
+    <ol class="steps">
+      <li><b>Newton a lo largo del plano.</b><p class="why">Positivo plano abajo, hacia donde acelera. M·g·sen θ va a favor y la fricción f en contra.</p><div class="f">M·g·sen θ − f = M·a</div></li>
+      <li><b>Torque respecto al centro.</b><p class="why">Solo f hace girar: actúa en el borde, con brazo R. La segunda ley para giros: torque = I·α.</p><div class="f">f·R = I·α</div></li>
+      <li><b>Rodar sin deslizar: α = a/R.</b><p class="why">El centro avanza con la rapidez del borde (M3). Reemplazas α e I = ½·M·R².</p><div class="f">f·R = ½·M·R²·(a/R)</div></li>
+      <li><b>Despeja f.</b><p class="why">Divides entre R: una R de R² se va con la de abajo y la otra con la de la izquierda.</p><div class="f">f·<span class="x">R</span> = ½·M·R·<span class="x">R</span>·(a/R) → f = ½·M·a</div></li>
+      <li><b>Mete f en la ecuación de Newton.</b><p class="why">La fricción «se come» una parte de la fuerza: ½·M·a.</p><div class="f">M·g·sen θ − ½·M·a = M·a → M·g·sen θ = (3/2)·M·a</div></li>
+      <li><b>Cancela M y despeja a.</b><p class="why">Multiplicas por 2/3.</p><div class="f"><span class="x">M</span>·g·sen θ = (3/2)·<span class="x">M</span>·a → a = (2/3)·g·sen θ</div></li>
+    </ol>
+    <p class="res"><b>Resultado:</b> a = (2/3)·g·sen θ. Es menos que g·sen θ, la de un bloque sin fricción, porque parte del jalón se usa en hacerlo girar.</p>
+  </section>
+
+  <section>
+    <h2>Receta</h2>
+    <ol class="steps" style="gap:4px">
+      <li>M·g·sen θ − f = M·a</li>
+      <li>f·R = I·α con α = a/R → f = (I/R²)·a</li>
+      <li>Reemplaza f y despeja: <b>a = g·sen θ / (1 + I/(M·R²))</b></li>
+    </ol>
+    <p class="why" style="margin:0">Atajo: si I = c·M·R², entonces a = g·sen θ/(1 + c). Disco c = ½, anillo c = 1, esfera hueca c = 2/3, esfera sólida c = 2/5.</p>
+  </section>
+
+  <section>
+    <h2>Ahora tú: una esfera hueca</h2>
+    <p style="margin:0">Una esfera hueca de masa M y radio R (I = (2/3)·M·R²) rueda sin deslizar por un plano de ángulo θ. ¿Con qué aceleración baja? Hazlo con los 6 pasos del ejemplo, no con el atajo.</p>
+    <div class="opts" id="opts"></div>
+    <p id="fb" aria-live="polite"></p>
+    <details><summary>Solución paso a paso</summary>
+      <ol class="steps" style="margin-top:8px">
+        <li><div class="f">M·g·sen θ − f = M·a</div></li>
+        <li><div class="f">f·R = (2/3)·M·R²·(a/R) → f = (2/3)·M·a</div></li>
+        <li><div class="f">M·g·sen θ = M·a + (2/3)·M·a = (5/3)·M·a</div></li>
+        <li><div class="f">a = (3/5)·g·sen θ</div></li>
+      </ol>
+    </details>
+  </section>
+</main>
+<script>
+(function () {
+  const th = Math.atan2(150, 300), r = 24, s = 95, px = 20 + s * Math.cos(th), py = 40 + s * Math.sin(th);
+  const nx = Math.sin(th), ny = -Math.cos(th), cx = px + r * nx, cy = py + r * ny, ux = Math.cos(th), uy = Math.sin(th);
+  const arrow = (x1, y1, x2, y2) => { const a = Math.atan2(y2 - y1, x2 - x1), h = 9; return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--force)" stroke-width="2.5"/><polygon points="${x2},${y2} ${x2 - h * Math.cos(a - 0.4)},${y2 - h * Math.sin(a - 0.4)} ${x2 - h * Math.cos(a + 0.4)},${y2 - h * Math.sin(a + 0.4)}" fill="var(--force)"/>`; };
+  let g = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--code)" stroke="var(--fg)" stroke-width="1.8"/><circle cx="${cx}" cy="${cy}" r="2.5" fill="var(--fg)"/>`;
+  g += arrow(cx, cy, cx + 70 * ux, cy + 70 * uy) + `<text x="${cx + 74 * ux}" y="${cy + 74 * uy - 8}" fill="var(--force)" font-size="13">M·g·sen θ</text>`;
+  g += arrow(px, py, px - 55 * ux, py - 55 * uy) + `<text x="${px - 60 * ux - 4}" y="${py - 60 * uy + 16}" fill="var(--force)" font-size="13" text-anchor="end">f</text>`;
+  g += `<text x="290" y="182" fill="var(--accent)" font-size="14" text-anchor="end">θ</text>`;
+  document.getElementById("body").innerHTML = g;
+  const opts = ["g·sen θ", "(5/7)·g·sen θ", "(3/5)·g·sen θ", "(2/3)·g·sen θ"], ans = 2, box = document.getElementById("opts"), fb = document.getElementById("fb");
+  opts.forEach((o, i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = o; b.id = "o" + i;
+    b.addEventListener("click", () => { box.querySelectorAll("button").forEach((x) => (x.className = "")); if (i === ans) { b.className = "ok"; fb.textContent = "Correcto: f = (2/3)·M·a y M·g·sen θ = (5/3)·M·a."; fb.style.color = "var(--ok)"; } else { b.className = "no"; fb.textContent = "No es esa. Revisa el paso 2: f = (I/R²)·a con I = (2/3)·M·R²."; fb.style.color = "var(--bad)"; } });
+    box.appendChild(b); });
+})();
+</script>

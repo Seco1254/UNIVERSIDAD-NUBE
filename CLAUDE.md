@@ -47,6 +47,9 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | P3 · M6 · Equilibrio estático (exprés, sin lab) | https://claude.ai/artifact/LCNEgUbTrAs4JkFxqPqdoZ | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M6.html` |
 | Física 1 | P3 · M8 · Simulacro: Parcial 3 de 2026-1 (80 min, sobre 90, intentos en `intentos/`) | https://claude.ai/artifact/W86GrJodXwnMFkDBLezZsf | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M8.html` |
 | Física 1 | P3 · M7 · Momento angular (exprés, sin lab) | https://claude.ai/artifact/XfS1Yjj4ZCXZc2sZVRWqx6 | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M7.html` |
+| Física 1 | P3 · M7 · Animación bola que se pega a la varilla | https://claude.ai/artifact/MV6nynwTwZbmSTPD8hfHQS | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M7_animacion.html` |
+| Física 1 | P3 · Hoja de fórmulas para antes del parcial | https://claude.ai/artifact/Lz7TRr1LUippSkcFmudg1Y | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/hoja_formulas_P3.html` |
+| Física 1 | P3 · Aceleración al rodar (ejemplo cilindro + ejercicio esfera hueca) | https://claude.ai/artifact/E9c8uR4VdbxM5Q8n8tJiBW | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/rodar_aceleracion.html` |
 
 ## Convenciones
 
