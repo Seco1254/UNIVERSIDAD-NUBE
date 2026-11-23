@@ -1,0 +1,904 @@
+<title>Guía Final Cálculo 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: el cuaderno del curso (mismo sistema de los módulos del final, acento violeta de Cálculo). Una columna ≤ 860px: temas con enlaces a cada explicación, un simulacro resuelto con puntaje por literal, otro para hacer con rúbrica y reloj, y la hoja de fórmulas. */
+:root{
+  --paper:#f3f2f7; --surface:#ffffff; --ink:#18162a; --muted:#5c5a72; --rule:#dcdae6; --grid:rgba(24,22,42,.05);
+  --accent:#5b36c9; --accent-ink:#ffffff; --accent-soft:#ebe5fb;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+    --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#100f18; --surface:#1a1826; --ink:#ebe9f4; --muted:#a29fb8; --rule:#2f2c40; --grid:rgba(235,233,244,.04);
+  --accent:#b39cff; --accent-ink:#100f18; --accent-soft:#2a2350;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--paper)}
+.wrap{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Notación matemática */
+.m{font-family:var(--f-mono); font-size:.93em; white-space:nowrap}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.3; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.lim{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin-right:.3em}
+.lim small{font-size:.66em; white-space:nowrap}
+.sig{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin-right:.2em}
+.sig small{font-size:.62em; white-space:nowrap}
+.sig b{font-size:1.35em; font-weight:400; line-height:1.05}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.5}
+.cx,.cx .frac>span{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+sup,sub{font-size:.72em; line-height:0}
+
+/* Barra de secciones */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Encabezado */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Título de sección */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+.idea{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:baseline}
+.idea .k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); grid-column:1 / -1}
+
+/* Teoría */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+table.narrow{min-width:420px}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+.rule-box{background:var(--surface); border:1.5px solid var(--ink); border-radius:var(--r); padding:12px 14px; display:grid; gap:8px}
+.rule-box b.k{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.rule-box ul{padding-left:20px; display:grid; gap:4px}
+.tri{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.tri div{border:1px solid var(--rule); border-radius:8px; padding:10px 12px; background:var(--surface); font-size:.93rem}
+.tri div.yes{border-color:var(--green); background:var(--green-soft)}
+.tri div.bad{border-color:var(--red); background:var(--red-soft)}
+.tri div.no{border-style:dashed}
+@media (max-width:620px){ .tri{grid-template-columns:1fr} }
+
+/* El árbol de decisión */
+.flow{list-style:none; margin:0; padding:0; display:grid; counter-reset:f}
+.flow li{display:grid; grid-template-columns:2rem minmax(0,1.15fr) minmax(0,1fr); gap:4px 12px; padding:11px 12px; background:var(--surface); border:1px solid var(--rule); border-top:0; counter-increment:f; align-items:baseline}
+.flow li::before{content:counter(f); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; grid-row:1 / span 2}
+.flow li:first-child{border-top:1px solid var(--rule); border-radius:var(--r) var(--r) 0 0}
+.flow li:last-child{border-radius:0 0 var(--r) var(--r)}
+.flow .fq{font-weight:600}
+.flow .fa{font-weight:600; color:var(--green)}
+.flow .fe{grid-column:2 / -1; font-size:.87rem; color:var(--muted); line-height:1.9}
+@media (max-width:620px){ .flow li{grid-template-columns:1.6rem minmax(0,1fr)} .flow .fa{grid-column:2} .flow li::before{grid-row:1 / span 3} }
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-head.one{grid-template-columns:1fr}
+.wx-q{display:grid; gap:8px}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.3; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.mx.txt{white-space:normal; line-height:1.9; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* Desplegables */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Gráficas */
+svg text{fill:var(--ink)}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-L{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4}
+.gr-Lt{fill:var(--accent); font-family:var(--f-mono); font-size:11.5px; font-weight:500}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:1.2}
+.gr-conv{fill:var(--green-soft); fill-opacity:.75}
+.gr-div{fill:var(--red-soft); fill-opacity:.75}
+.gr-one{stroke:var(--red); stroke-width:1.6}
+.gr-onet{fill:var(--red); font-family:var(--f-mono); font-size:10px; font-weight:500}
+.gr-leg{fill:var(--muted); font-family:var(--f-body); font-size:10.5px}
+.lg-c{fill:var(--green-soft); stroke:var(--green)} .lg-d{fill:var(--red-soft); stroke:var(--red)} .lg-b{fill:var(--accent-soft); stroke:var(--accent)}
+.gr-band{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.5}
+.gr-zz{fill:none; stroke:var(--accent); stroke-width:1.3; stroke-opacity:.7}
+
+/* Lab */
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0; display:grid; gap:8px; align-content:start}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.ctl select{font:inherit; font-size:.9rem; padding:6px 8px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); width:100%}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.challenges{display:grid; gap:10px}
+.cls-stage{padding:16px; gap:14px}
+.cls-series{font-size:1.25rem; padding:18px 12px; text-align:center; background:var(--paper); border:1px solid var(--rule); border-radius:8px; overflow-x:auto; line-height:2.2}
+.cls-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:6px}
+.crit{font:inherit; font-size:.88rem; font-weight:600; text-align:left; padding:8px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; line-height:1.35}
+.crit:hover{border-color:var(--accent)}
+.crit.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.crit.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.crit:disabled{cursor:default}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.pri{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+.pri.hi{color:var(--red); border-color:currentColor}
+.prob-body{display:grid; gap:10px; min-width:0}
+.items{display:grid; gap:10px; padding-left:0; list-style:none}
+.items li{overflow-x:auto; line-height:2.2}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer; line-height:1.5; text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px; line-height:1.9}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:center; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem; line-height:1.9}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{accent-color:var(--accent); flex:0 0 auto}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px; line-height:1.9}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+/* Lab: la poligonal */
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:11px}
+.pc-curve{fill:none; stroke:var(--orange); stroke-width:3; stroke-linecap:round}
+.pc-poly{fill:none; stroke:var(--accent); stroke-width:1.6; stroke-dasharray:5 3}
+
+/* Etiquetas de origen de cada problema */
+.src-tag{font-family:var(--f-mono); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; padding:1px 8px; border-radius:99px; border:1px solid currentColor; white-space:nowrap; font-weight:500; line-height:1.6}
+.src-tag.ex{color:var(--red); background:var(--red-soft)}
+.src-tag.st{color:var(--accent); background:var(--accent-soft)}
+.src-tag.ot{color:var(--muted); border-style:dashed}
+.legend{display:grid; gap:6px; font-size:.9rem}
+.legend > span{display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline}
+
+/* Repaso: una tarjeta por técnica */
+.tech{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; gap:12px; padding:16px; min-width:0}
+.tech-h{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:4px 12px; align-items:baseline}
+.tech-n{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:1.6rem; line-height:1; color:var(--accent)}
+.tech-h h3{font-size:1.2rem}
+.go{font-size:.88rem; font-weight:600; text-decoration:none; white-space:nowrap}
+.go:hover{text-decoration:underline}
+@media (max-width:560px){ .tech-h{grid-template-columns:auto minmax(0,1fr)} .tech-h .go{grid-column:2} }
+.tech-g{display:grid; grid-template-columns:7.5rem minmax(0,1fr); gap:10px 14px; margin:0}
+.tech-g dt{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); padding-top:.25em}
+.tech-g dd{margin:0; min-width:0; line-height:1.75}
+.tech-g dd.trap{color:var(--red)}
+.tech-g dd ul{padding-left:18px; display:grid; gap:2px}
+@media (max-width:560px){ .tech-g{grid-template-columns:1fr; gap:2px} .tech-g dd{margin-bottom:10px} }
+.tech-links{font-size:.9rem; display:flex; flex-wrap:wrap; gap:4px 14px; border-top:1px dashed var(--rule); padding-top:10px; margin:0}
+.tech-links b{font-weight:600; color:var(--muted)}
+details.wxd{border:1px solid var(--rule); border-radius:8px; background:var(--paper)}
+details.wxd > summary{cursor:pointer; padding:10px 12px; font-weight:600; font-size:.93rem; list-style:none; display:flex; gap:6px 10px; align-items:baseline; flex-wrap:wrap}
+details.wxd > summary::-webkit-details-marker{display:none}
+details.wxd > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em; flex:0 0 auto}
+details.wxd[open] > summary::before{content:"−"}
+details.wxd > .wx{margin:0 10px 10px}
+.trifig{display:block}
+.tri-svg{width:100%; max-width:280px; height:auto; display:block}
+.tri-l{fill:var(--accent-soft); stroke:var(--accent); stroke-width:1.5}
+.tri-r{fill:none; stroke:var(--accent); stroke-width:1.2}
+.tri-t{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+
+/* Lab A: el clasificador */
+.cl-int{font-size:1.3rem}
+.tab[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.ctl-l{font-size:.85rem; font-weight:600}
+.seg{display:flex; gap:6px; flex-wrap:wrap}
+
+/* Lab B: el área de la impropia */
+.imp-area{fill:var(--accent-soft); stroke:var(--accent); stroke-width:.8; stroke-opacity:.6}
+.imp-curve{fill:none; stroke:var(--accent); stroke-width:2.2}
+.imp-acc{fill:none; stroke:var(--orange); stroke-width:2.2}
+.imp-lim{stroke:var(--green); stroke-width:1.5; stroke-dasharray:6 4}
+.imp-limt{fill:var(--green); font-family:var(--f-mono); font-size:11px; font-weight:500}
+.imp-dot{fill:var(--orange); stroke:var(--surface); stroke-width:1.5}
+.imp-more{fill:var(--accent); font-family:var(--f-mono); font-size:11px; font-weight:500}
+.imp-cap{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+
+/* Taller: grupos */
+.grp{display:grid; gap:4px; padding-top:8px}
+.grp h3{font-size:1.2rem}
+.grp p{color:var(--muted); font-size:.92rem}
+.prob-head .pts{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+
+/* Quiz: problemas abiertos */
+.q.open{border-style:dashed; border-color:var(--accent)}
+.q .tags{display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline}
+.open-note{font-size:.9rem; color:var(--muted); border-left:3px solid var(--accent); padding-left:10px}
+.pill.wait{background:var(--orange-soft); color:var(--orange)}
+.att .det{color:var(--muted)}
+.prob-body > *{min-width:0}
+.prob-body .m{display:block; overflow-x:auto; overflow-y:hidden; padding-block:4px}
+.q legend > span{min-width:0}
+
+/* Guía: simulacros */
+.exam-bar{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px}
+.prob .stmt{display:grid; gap:8px; min-width:0}
+details.sol{border:1px solid var(--green); border-radius:8px; background:var(--surface)}
+details.sol > summary{cursor:pointer; padding:9px 12px; font-weight:600; list-style:none; color:var(--green); display:flex; gap:8px}
+details.sol > summary::-webkit-details-marker{display:none}
+details.sol > summary::before{content:"+"; font-family:var(--f-mono); width:1em}
+details.sol[open] > summary::before{content:"−"}
+.sol-body{padding:0 12px 12px; display:grid; gap:12px; min-width:0}
+.lit{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:10px; min-width:0}
+.lit:first-child{border-top:0; padding-top:0}
+.lit h4{font-family:var(--f-display); font-weight:800; font-size:1rem; margin:0}
+.lit .wx-steps{padding:0}
+.rub{list-style:none; padding:0; margin:0; display:grid; gap:2px; font-size:.88rem; background:var(--accent-soft); border-radius:8px; padding:8px 12px}
+.rub li{display:flex; justify-content:space-between; gap:12px}
+.rub li b{font-family:var(--f-mono); font-weight:500; white-space:nowrap; color:var(--accent)}
+.rub .rt{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent)}
+.frase{font-size:.92rem}
+.grade-row{display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border-top:1px solid var(--rule); padding-top:10px}
+.grade-row label{font-size:.9rem; font-weight:600; display:flex; gap:6px; align-items:center}
+.grade-row select{font:inherit; font-size:.9rem; padding:4px 6px; border-radius:6px; border:1px solid var(--rule); background:var(--paper); color:var(--ink)}
+.timer{font-family:var(--f-mono); font-size:1.7rem; font-variant-numeric:tabular-nums; line-height:1}
+.total{display:grid; gap:6px; border:1.5px solid var(--ink); border-radius:var(--r); padding:14px 16px; background:var(--surface)}
+.total .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+
+/* Guía: fórmulas */
+.fgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px}
+.fcard{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:6px; align-content:start; min-width:0}
+.fcard h3{font-size:1rem}
+.fcard ul{padding-left:18px; margin:0; display:grid; gap:3px; font-size:.92rem; line-height:1.7}
+.roots-svg{width:100%; max-width:230px; height:auto; display:block}
+.rt-c{fill:none; stroke:var(--rule); stroke-width:1.2}
+.rt-ax{stroke:var(--muted); stroke-width:1}
+.rt-p{fill:var(--accent)}
+.rt-poly{fill:var(--accent-soft); stroke:var(--accent); stroke-width:1}
+.rt-t{fill:var(--ink); font-family:var(--f-mono); font-size:10px}
+</style>
+
+<nav class="nav" aria-label="Secciones de la guía">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/1ddns57vY2bXzXJZBAmjGU" target="_blank" rel="noopener">← Plan</a>
+    <a href="#temas">1 Temas <span>20 min</span></a>
+    <a href="#resuelto">2 Examen resuelto <span>40 min</span></a>
+    <a href="#para-ti">3 Examen para ti <span>110 min</span></a>
+    <a href="#formulas">4 Fórmulas <span>10 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cálculo 2 · Examen final · Guía de última hora</p>
+    <h1>Guía final: todo el curso en una página</h1>
+    <div class="meta">
+      <span class="chip-ref">Todo el curso</span>
+      <span>110 min · 5 problemas de 10 pts · sin calculadora ni apuntes</span>
+      <span>Para 3,5 necesitas 28/50; para 3,7, 36/50</span>
+    </div>
+    <p class="prose">Aquí están los seis temas del final con lo que tienes que saber de memoria y, para cada uno, el enlace a su explicación completa. Después vienen dos simulacros con la misma mezcla del final de 2023: uno resuelto, con el puntaje de cada literal, y otro para que lo hagas tú y te califiques con la rúbrica.</p>
+    <div class="callout">
+      <h3>Si tienes poco tiempo, en este orden</h3>
+      <ol class="steps">
+        <li><span><b>Temas (20 min):</b> lee las tarjetas. Donde dudes, abre el enlace a la explicación.</span></li>
+        <li><span><b>Examen resuelto (40 min):</b> tapa cada solución, intenta el primer paso y compara. Fíjate en cómo se reparten los puntos.</span></li>
+        <li><span><b>Examen para ti (110 min, o lo que alcances):</b> con reloj y en papel. Después te calificas con la rúbrica o me mandas las fotos.</span></li>
+        <li><span><b>Fórmulas (10 min antes de entrar):</b> lo que va de memoria.</span></li>
+      </ol>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEMAS ============ -->
+  <section id="temas" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Temas</h2><p>Los cinco problemas del final de 2023 y los números complejos, que salen dentro de otros. Cada tarjeta dice qué sale, qué tienes que saber y dónde estudiarlo.</p></div>
+
+    <div class="block">
+      <h3>El final, problema por problema</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Problema</th><th>Tema</th><th>Qué te pueden pedir</th><th>Para estudiarlo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">P1 · 10 pts</td><td>Curvas paramétricas</td><td>Longitud de arco (salió en 2023), recta tangente y normal, tangentes horizontales y verticales</td><td><a href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw#teoria" target="_blank" rel="noopener">Paramétricas ↗</a></td></tr>
+          <tr><td class="mono">P2 · 10 pts</td><td>Coordenadas polares</td><td>Área (salió en 2023), área entre dos curvas, intersecciones, longitud, pasar a cartesianas</td><td><a href="#t-polares">Tarjeta 2, aquí mismo</a></td></tr>
+          <tr><td class="mono">P3 · 10 pts</td><td>Técnicas de integración</td><td>Dos integrales: partes y fracciones parciales (2023); sustitución trigonométrica, impropias, longitud de y = f(x)</td><td><a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc" target="_blank" rel="noopener">Integración ↗</a> · <a href="https://claude.ai/artifact/JsXvwi5CSuzngsUUsBs9Un" target="_blank" rel="noopener">M1 práctica ↗</a></td></tr>
+          <tr><td class="mono">P4 · 10 pts</td><td>Series</td><td>Converge o diverge (2023: comparación en el límite y criterio de divergencia), radio e intervalo, Taylor</td><td>Módulos M1–M7 del Parcial 3 (tarjeta 4)</td></tr>
+          <tr><td class="mono">P5 · 10 pts</td><td>Ecuaciones diferenciales</td><td>Separable con condición inicial y segundo orden no homogénea (2023); lineal, Bernoulli, trayectorias ortogonales</td><td>Artefactos del Parcial 2 (tarjeta 5)</td></tr>
+          <tr><td class="mono">Dentro de otros</td><td>Números complejos</td><td>Raíces n-ésimas (Parciales 1 de 2018 y 2023) y raíces complejas de la ecuación característica</td><td><a href="#t-complejos">Tarjeta 6, aquí mismo</a></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- Tarjeta 1 -->
+    <article class="tech" aria-labelledby="c1-h">
+      <div class="tech-h"><span class="tech-n">1</span><h3 id="c1-h">Curvas paramétricas · P1</h3><a class="go" href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw#teoria" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>Qué sale</dt><dd>Final 2023 P1 (10 pts): la longitud de x = 1 + 3t², y = 4 + 2t³ con 0 ≤ t ≤ √3. Respuesta: 14. También pueden pedir la recta tangente y la normal, o dónde la tangente es horizontal o vertical (hoja 10.1, ejercicios 3 a 5).</dd>
+        <dt>Fórmulas</dt><dd><ul><li>Pendiente: <span class="m">dy/dx = (dy/dt)/(dx/dt)</span>. Normal: pendiente −1/m.</li><li>Tangente horizontal: dy/dt = 0 con dx/dt ≠ 0. Vertical: dx/dt = 0 con dy/dt ≠ 0.</li><li>Longitud: <span class="m">L = ∫ₐᵇ √<span class="rad">(dx/dt)² + (dy/dt)²</span> dt</span>.</li></ul></dd>
+        <dt>Receta</dt><dd>Deriva, eleva al cuadrado y suma, factoriza hasta que salga un cuadrado (un factor común como 36t², o un cuadrado perfecto como (eᵗ + 1)²), saca la raíz e integra, casi siempre con una sustitución u.</dd>
+        <dt>Trampa</dt><dd class="trap">√(36t²) = 6|t|, y los límites de la integral son valores de t, no de x ni de y.</dd>
+      </dl>
+      <p class="tech-links"><b>Para estudiarlo:</b> <a href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw#teoria" target="_blank" rel="noopener">Teoría ↗</a> <a href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw#wx2-h" target="_blank" rel="noopener">El P1 del final de 2023 resuelto ↗</a> <a href="https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw#quiz" target="_blank" rel="noopener">Quiz de paramétricas ↗</a></p>
+    </article>
+
+    <!-- Tarjeta 2 -->
+    <article class="tech" id="t-polares" aria-labelledby="c2-h">
+      <div class="tech-h"><span class="tech-n">2</span><h3 id="c2-h">Coordenadas polares · P2</h3><span class="src-tag st">Explicación aquí</span></div>
+      <dl class="tech-g">
+        <dt>Qué sale</dt><dd>Final 2023 P2 (10 pts): el área encerrada por r = cos θ − sen θ, 0 ≤ θ ≤ π/4. Respuesta: π/8 − 1/4 (abajo, resuelto). La hoja 10.1 trae pasar entre cartesianas y polares (7 a 9), longitud (10), área (11) e intersecciones (12).</dd>
+        <dt>Qué es</dt><dd>Un punto se ubica con r, su distancia al origen (el polo), y θ, el ángulo desde el eje x positivo. <span class="m">x = r cos θ</span>, <span class="m">y = r sen θ</span>, <span class="m">r² = x² + y²</span>, <span class="m">tan θ = y/x</span>. Una curva polar da r en función de θ.</dd>
+        <dt>Fórmulas</dt><dd><ul><li>Área: <span class="m">A = ½ ∫<sub>α</sub><sup>β</sup> r² dθ</span>. Cada pedacito es un sector de círculo, de área ½ r² Δθ.</li><li>Entre dos curvas: <span class="m">A = ½ ∫ (r<sub>afuera</sub>² − r<sub>adentro</sub>²) dθ</span>.</li><li>Longitud: <span class="m">L = ∫ √<span class="rad">r² + (dr/dθ)²</span> dθ</span>.</li><li>Intersecciones: iguala r₁ = r₂ y despeja θ. El polo (r = 0) se revisa aparte, porque cada curva puede pasar por él con un θ distinto.</li></ul></dd>
+        <dt>Receta del área</dt><dd>(1) Los límites de θ: te los dan, o salen de r = 0 o de las intersecciones. (2) Eleva r al cuadrado y simplifica con sen² + cos² = 1, 2 sen θ cos θ = sen 2θ y sen² = (1 − cos 2θ)/2. (3) Integra, evalúa y multiplica por ½.</dd>
+        <dt>Trampa</dt><dd class="trap">Olvidar el ½, integrar r en vez de r², o tomar mal los límites de un pétalo: van de un cero de r al siguiente.</dd>
+      </dl>
+      <div class="tw"><table class="narrow">
+        <thead><tr><th>Curva</th><th>Cómo se ve</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">r = a</td><td>Círculo de radio a centrado en el origen</td></tr>
+          <tr><td class="mono">r = 2a sen θ · r = 2a cos θ</td><td>Círculo de radio a que pasa por el origen (arriba · a la derecha)</td></tr>
+          <tr><td class="mono">r = a(1 ± cos θ) · a(1 ± sen θ)</td><td>Cardioide (forma de corazón)</td></tr>
+          <tr><td class="mono">r = a cos(nθ) · a sen(nθ)</td><td>Rosa: n pétalos si n es impar, 2n si n es par</td></tr>
+        </tbody>
+      </table></div>
+
+      <article class="wx" aria-labelledby="g1-h">
+        <div class="wx-head one"><div class="wx-q">
+          <span class="tag">Ejemplo resuelto · Final 2023-19, P2 (10 pts) <span class="src-tag ex">Salió en examen</span></span>
+          <h4 id="g1-h">El área del final de 2023</h4>
+          <p>Encuentre el área que encierra la curva r = cos θ − sen θ para 0 ≤ θ ≤ π/4.</p>
+        </div></div>
+        <ol class="wx-steps">
+          <li><p class="what">Arma la fórmula.</p><p class="why">El área en polares suma sectores de área ½ r² dθ. Los límites ya vienen dados.</p><div class="mx">A = <span class="frac"><span>1</span><span>2</span></span> <span class="sig"><small>π/4</small><b>∫</b><small>0</small></span> (cos θ − sen θ)² dθ</div></li>
+          <li><p class="what">Expande el cuadrado.</p><p class="why">(a − b)² = a² − 2ab + b². Después, cos²θ + sen²θ = 1 y 2 sen θ cos θ = sen 2θ.</p><div class="mx">(cos θ − sen θ)² = cos²θ − 2 sen θ cos θ + sen²θ = 1 − sen 2θ</div></li>
+          <li><p class="what">Integra.</p><p class="why">∫ sen 2θ dθ = −cos 2θ/2, así que el menos de adelante lo vuelve más.</p><div class="mx">∫ (1 − sen 2θ) dθ = θ + <span class="frac"><span>cos 2θ</span><span>2</span></span></div></li>
+          <li><p class="what">Evalúa y multiplica por ½.</p><p class="why">cos(π/2) = 0 y cos 0 = 1.</p><div class="mx">A = <span class="frac"><span>1</span><span>2</span></span>[(<span class="frac"><span>π</span><span>4</span></span> + 0) − (0 + <span class="frac"><span>1</span><span>2</span></span>)] = <span class="frac"><span>π</span><span>8</span></span> − <span class="frac"><span>1</span><span>4</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> A = π/8 − 1/4 ≈ 0,143.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> r = cos θ − sen θ es un círculo de área π/2 ≈ 1,57 (multiplica por r: x² + y² = x − y). Entre 0 y π/4 solo barre un pedazo, así que 0,143 es razonable. Más de la hoja con respuesta: (11b) r = 3 + 2 cos θ, 0 ≤ θ ≤ π, da 11π/2; (11c) r² = sen 2θ, 0 ≤ θ ≤ π/4, da 1/4; (10a) la longitud de r = 4 sen θ, 0 ≤ θ ≤ π/3, es 4π/3. El área entre dos curvas está resuelta en el P2 del examen resuelto.</p>
+      </article>
+      <p class="tech-links"><b>Para estudiarlo:</b> no hay artefacto de polares. Está todo en esta tarjeta, en el P2 de los dos simulacros y en la hoja 10.1, ejercicios 7 a 12.</p>
+    </article>
+
+    <!-- Tarjeta 3 -->
+    <article class="tech" aria-labelledby="c3-h">
+      <div class="tech-h"><span class="tech-n">3</span><h3 id="c3-h">Técnicas de integración · P3</h3><a class="go" href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc" target="_blank" rel="noopener">Explicación completa ↗</a></div>
+      <dl class="tech-g">
+        <dt>Qué sale</dt><dd>Final 2023 P3 (10 pts): ∫ x² ln x dx = (x³/3) ln x − x³/9 + C y ∫ (x² + 6)/(x(x − 3)(x + 2)) dx = −ln|x| + ln|x − 3| + ln|x + 2| + C. En los cuatro Parciales 1 salieron sustitución trigonométrica, fracciones, partes e impropia por comparación.</dd>
+        <dt>La señal</dt><dd><ul><li>Una función y su derivada multiplicando: <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#sust" target="_blank" rel="noopener">sustitución u ↗</a>.</li><li>Producto de clases distintas (polinomio por ln, eˣ o trigonométrica): <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#partes" target="_blank" rel="noopener">partes ↗</a>, con u = lo que se simplifica al derivar.</li><li>Potencias de sen y cos, o de tan y sec: <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#trig" target="_blank" rel="noopener">identidades ↗</a>.</li><li>√(a² − x²), √(a² + x²) o √(x² − a²): <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#sustrig" target="_blank" rel="noopener">sustitución trigonométrica ↗</a> (sen, tan, sec).</li><li>Cociente de polinomios: <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#fracciones" target="_blank" rel="noopener">fracciones parciales ↗</a> (si el grado de arriba no es menor, divide primero).</li><li>∞ en un límite o una función que explota: <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#impropias" target="_blank" rel="noopener">impropia ↗</a>, con límite o por comparación.</li></ul></dd>
+        <dt>Trampa</dt><dd class="trap">Dividir antes de las fracciones parciales; regresar a x después de la sustitución trigonométrica; comparar por arriba solo con una que converge.</dd>
+      </dl>
+      <p class="tech-links"><b>Para estudiarlo:</b> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc" target="_blank" rel="noopener">Integración: todas las técnicas ↗</a> <a href="https://claude.ai/artifact/6W8hDRDHhMcjy19wYkMKFc#cual" target="_blank" rel="noopener">¿Qué técnica uso? ↗</a> <a href="https://claude.ai/artifact/JsXvwi5CSuzngsUUsBs9Un#taller" target="_blank" rel="noopener">M1: taller con los parciales ↗</a> <a href="https://claude.ai/artifact/JsXvwi5CSuzngsUUsBs9Un#quiz" target="_blank" rel="noopener">M1: quiz ↗</a></p>
+    </article>
+
+    <!-- Tarjeta 4 -->
+    <article class="tech" aria-labelledby="c4-h">
+      <div class="tech-h"><span class="tech-n">4</span><h3 id="c4-h">Series · P4</h3><a class="go" href="https://claude.ai/artifact/Hwk6wh6if4YTKyEPgNBC2V#teoria" target="_blank" rel="noopener">¿Qué criterio uso? ↗</a></div>
+      <dl class="tech-g">
+        <dt>Qué sale</dt><dd>Final 2023 P4 (10 pts): Σ (4n² + 1)/(n⁵ + 2n) converge (comparación en el límite con 1/n³, L = 4) y Σ (−1)ⁿ cos(n/√(n⁴ + 2)) diverge (|aₙ| → cos 0 = 1 ≠ 0). En los Parciales 3: convergencia, radio e intervalo y Taylor siempre; telescópica dos veces.</dd>
+        <dt>El orden</dt><dd><ul><li>¿aₙ → 0? Si no, diverge (criterio de divergencia).</li><li>¿Geométrica? Σ a rⁿ converge si |r| &lt; 1 y suma a/(1 − r). ¿Telescópica? Fracciones parciales y suma parcial.</li><li>¿Se parece a 1/nᵖ? Comparación (directa o en el límite); Σ 1/nᵖ converge si p &gt; 1.</li><li>¿Factoriales o cosas a la n? Cociente. ¿Todo elevado a la n? Raíz. L &lt; 1 converge, L &gt; 1 diverge, L = 1 no dice nada.</li><li>¿Alterna? Leibniz (|aₙ| decrece a 0). Después Σ|aₙ| decide si es absoluta o condicional.</li></ul></dd>
+        <dt>Potencias</dt><dd>Radio con el cociente: lím |aₙ₊₁/aₙ| &lt; 1 da |x − a| &lt; R. Los dos extremos se revisan aparte, con las series de arriba.</dd>
+        <dt>Taylor</dt><dd>Con la geométrica: 1/(1 − u) = Σ uⁿ si |u| &lt; 1. Acomoda 1/(b + cx) hasta que quede de la forma 1/(1 − u).</dd>
+        <dt>Trampa</dt><dd class="trap">Leibniz no sirve si |aₙ| no tiende a 0 (el P4b de 2023). En los extremos del intervalo el cociente da 1: ahí no sirve.</dd>
+      </dl>
+      <p class="tech-links"><b>Para estudiarlo:</b> <a href="https://claude.ai/artifact/ETtmmaWSoyPyFuYaU6SHaC#teoria" target="_blank" rel="noopener">M1 Sucesiones ↗</a> <a href="https://claude.ai/artifact/KY9zgRfF2aiqytsvs3YZWp#teoria" target="_blank" rel="noopener">M2 Geométrica, telescópica y divergencia ↗</a> <a href="https://claude.ai/artifact/FcYHimB26pxcfGEbXNdQif#teoria" target="_blank" rel="noopener">M3 Comparación y serie p ↗</a> <a href="https://claude.ai/artifact/Hwk6wh6if4YTKyEPgNBC2V#teoria" target="_blank" rel="noopener">M4 Raíz, cociente y alternantes ↗</a> <a href="https://claude.ai/artifact/2B2r4zNC2NfohFrv2GW7Z1#teoria" target="_blank" rel="noopener">M6 Radio e intervalo ↗</a> <a href="https://claude.ai/artifact/1CqgP2hEhtPdqfHwKDdUJ8#teoria" target="_blank" rel="noopener">M7 Taylor ↗</a></p>
+    </article>
+
+    <!-- Tarjeta 5 -->
+    <article class="tech" aria-labelledby="c5-h">
+      <div class="tech-h"><span class="tech-n">5</span><h3 id="c5-h">Ecuaciones diferenciales · P5</h3><a class="go" href="https://claude.ai/artifact/SJETfGkuseKRAmbDWczDRL" target="_blank" rel="noopener">Simulacro del Parcial 2 ↗</a></div>
+      <dl class="tech-g">
+        <dt>Qué sale</dt><dd>Final 2023 P5 (10 pts): (x² + 1)y′ = 2xy, y(0) = 1, da y = x² + 1; y″ − 14y′ + 49y = 7 da y = C₁e<sup>7x</sup> + C₂x e<sup>7x</sup> + 1/7. En los tres Parciales 2 salieron separable con condición inicial, lineal, Bernoulli, trayectorias ortogonales y coeficientes indeterminados.</dd>
+        <dt>Primer orden</dt><dd><ul><li><b>Separable:</b> g(y) dy = f(x) dx; integra los dos lados, pon la + C y usa la condición inicial.</li><li><b>Lineal</b> y′ + P(x)y = Q(x): factor μ = e<sup>∫P dx</sup>; entonces (μy)′ = μQ.</li><li><b>Bernoulli</b> y′ + Py = Qyⁿ: v = y<sup>1−n</sup> la vuelve lineal.</li><li><b>Trayectorias ortogonales:</b> despeja la constante k, deriva para tener dy/dx sin k, cambia la pendiente m por −1/m y resuelve.</li></ul></dd>
+        <dt>Segundo orden</dt><dd><ul><li>Homogénea ay″ + by′ + cy = 0: raíces de ar² + br + c = 0. Dos reales: C₁e<sup>r₁x</sup> + C₂e<sup>r₂x</sup>. Doble: (C₁ + C₂x)e<sup>rx</sup>. Complejas α ± βi: e<sup>αx</sup>(C₁ cos βx + C₂ sen βx).</li><li>Particular por coeficientes indeterminados: polinomio → polinomio del mismo grado; e<sup>kx</sup> → Ae<sup>kx</sup>; sen o cos → A cos + B sen. Si y<sub>p</sub> ya está en y<sub>h</sub>, multiplica por x.</li><li>Solución: y = y<sub>h</sub> + y<sub>p</sub>. Las condiciones iniciales van al final, sobre la suma.</li></ul></dd>
+        <dt>Trampa</dt><dd class="trap">La + C va antes de despejar y. Con raíz doble, el segundo término lleva x. Si y<sub>p</sub> coincide con un término de y<sub>h</sub>, al reemplazar te da 0 = g(x): multiplica por x.</dd>
+      </dl>
+      <p class="tech-links"><b>Para estudiarlo:</b> <a href="https://claude.ai/artifact/9tWWxyLsdzdnG7n2VFMhZH" target="_blank" rel="noopener">Separables ↗</a> <a href="https://claude.ai/artifact/4SxfPSG9GFNWzYsneurM5Q" target="_blank" rel="noopener">Lineales y Bernoulli ↗</a> <a href="https://claude.ai/artifact/HGp12FT3EM6tD3q6sxoUtH" target="_blank" rel="noopener">Segundo orden ↗</a> <a href="https://claude.ai/artifact/NHzoHae9hrPCK2gNbD2xnJ" target="_blank" rel="noopener">Coeficientes indeterminados ↗</a> <a href="https://claude.ai/artifact/SJETfGkuseKRAmbDWczDRL" target="_blank" rel="noopener">Simulacro del Parcial 2 ↗</a></p>
+    </article>
+
+    <!-- Tarjeta 6 -->
+    <article class="tech" id="t-complejos" aria-labelledby="c6-h">
+      <div class="tech-h"><span class="tech-n">6</span><h3 id="c6-h">Números complejos · dentro de otros</h3><span class="src-tag st">Explicación aquí</span></div>
+      <dl class="tech-g">
+        <dt>Qué sale</dt><dd>P1 2023 P5 (5 pts): las raíces de x⁸ = 256 (abajo, resuelto). P1 2018 P6 (8 pts): las raíces sextas de 27. Y en el P5, cuando la ecuación característica tiene raíces complejas.</dd>
+        <dt>Fórmulas</dt><dd><ul><li>z = a + bi = r(cos θ + i sen θ) = r e<sup>iθ</sup>, con r = √(a² + b²), el módulo, y θ el ángulo desde el eje real.</li><li>Euler: e<sup>iθ</sup> = cos θ + i sen θ. De Moivre: zⁿ = rⁿ e<sup>inθ</sup>.</li><li>Raíces n-ésimas de ρ e<sup>iφ</sup>: <span class="m">ρ<sup>1/n</sup> e<sup>i(φ + 2πk)/n</sup></span>, con k = 0, 1, …, n − 1.</li></ul></dd>
+        <dt>Trampa</dt><dd class="trap">Son n raíces, no una. Todas tienen el mismo módulo ρ<sup>1/n</sup> y quedan separadas 2π/n alrededor de un círculo.</dd>
+      </dl>
+      <article class="wx" aria-labelledby="g2-h">
+        <div class="wx-head one"><div class="wx-q">
+          <span class="tag">Ejemplo resuelto · Parcial 1 2023-19, P5 (5 pts) <span class="src-tag ex">Salió en examen</span></span>
+          <h4 id="g2-h">Las ocho raíces de x⁸ = 256</h4>
+          <p>Encuentre todas las raíces de la ecuación x⁸ = 256. Grafique todas las soluciones en el plano complejo. Indicación: 256 = 2⁸.</p>
+        </div></div>
+        <ol class="wx-steps">
+          <li><p class="what">Escribe 256 en forma polar.</p><p class="why">Es un real positivo: módulo 256 y ángulo 0.</p><div class="mx">256 = 256 e<sup>i·0</sup></div></li>
+          <li><p class="what">Aplica la fórmula de las raíces con n = 8.</p><p class="why">256<sup>1/8</sup> = 2 porque 2⁸ = 256. El ángulo es (0 + 2πk)/8 = kπ/4.</p><div class="mx">x<sub>k</sub> = 2 e<sup>ikπ/4</sup>, k = 0, 1, …, 7</div></li>
+          <li><p class="what">Escribe cada raíz.</p><p class="why">cos(π/4) = sen(π/4) = √2/2, y 2·√2/2 = √2.</p><div class="mx txt">k = 0: 2 · k = 1: √2 + √2 i · k = 2: 2i · k = 3: −√2 + √2 i · k = 4: −2 · k = 5: −√2 − √2 i · k = 6: −2i · k = 7: √2 − √2 i</div></li>
+          <li><p class="what">Grafica.</p><p class="why">Las ocho están en el círculo de radio 2, separadas π/4 (45°): forman un octágono regular.</p>
+            <svg class="roots-svg" viewBox="0 0 200 180" role="img" aria-label="Ocho puntos sobre un círculo de radio 2, separados 45 grados, formando un octágono">
+              <line x1="20" y1="90" x2="180" y2="90" class="rt-ax"/><line x1="100" y1="12" x2="100" y2="168" class="rt-ax"/>
+              <circle cx="100" cy="90" r="62" class="rt-c"/>
+              <polygon points="162,90 143.8,46.2 100,28 56.2,46.2 38,90 56.2,133.8 100,152 143.8,133.8" class="rt-poly"/>
+              <circle cx="162" cy="90" r="4" class="rt-p"/><circle cx="143.8" cy="46.2" r="4" class="rt-p"/><circle cx="100" cy="28" r="4" class="rt-p"/><circle cx="56.2" cy="46.2" r="4" class="rt-p"/><circle cx="38" cy="90" r="4" class="rt-p"/><circle cx="56.2" cy="133.8" r="4" class="rt-p"/><circle cx="100" cy="152" r="4" class="rt-p"/><circle cx="143.8" cy="133.8" r="4" class="rt-p"/>
+              <text x="168" y="86" class="rt-t">2</text><text x="104" y="22" class="rt-t">2i</text><text x="14" y="86" class="rt-t">−2</text><text x="104" y="166" class="rt-t">−2i</text><text x="150" y="36" text-anchor="middle" class="rt-t">√2 + √2 i</text>
+            </svg></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> x = ±2, ±2i y ±√2 ± √2 i (esta última, con sus cuatro combinaciones de signos, da cuatro raíces): ocho en total.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Una ecuación de grado 8 tiene 8 raíces. Con 27 y n = 6 es igual: módulo 27<sup>1/6</sup> = √3 y ángulos kπ/3.</p>
+      </article>
+    </article>
+  </section>
+
+  <!-- ============ 2. EXAMEN RESUELTO ============ -->
+  <section id="resuelto" aria-labelledby="r-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="r-h">Examen resuelto</h2><p>Simulacro 1, con la mezcla del final de 2023. Cada solución trae el puntaje por literal, como califica el profe.</p></div>
+    <div class="exam-bar">
+      <p class="muted small">Para intentarlo antes de leer, cierra las soluciones y ábrelas una por una.</p>
+      <button class="btn ghost" type="button" id="sol-toggle">Cerrar todas las soluciones</button>
+    </div>
+    <div id="exam1" class="block"></div>
+  </section>
+
+  <!-- ============ 3. EXAMEN PARA TI ============ -->
+  <section id="para-ti" aria-labelledby="p-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="p-h">Examen para ti</h2><p>Simulacro 2: 110 minutos, 5 problemas de 10 puntos, en papel y sin apuntes. Al terminar, ábrele la solución a cada problema y califícate con la rúbrica.</p></div>
+    <div class="exam-bar">
+      <div><p class="eyebrow">Tiempo que queda</p><p class="timer" id="timer">110:00</p></div>
+      <div class="qrow"><button class="btn" type="button" id="t-start">Empezar el reloj</button><button class="btn ghost" type="button" id="t-reset">Reiniciar</button></div>
+    </div>
+    <p class="prose">Escribe la frase y la justificación de cada paso: sin justificación, cero. Si prefieres que te corrija yo, mándame las fotos en el chat y te devuelvo el puntaje por literal.</p>
+    <div id="exam2" class="block"></div>
+    <div class="total" id="total" aria-live="polite">
+      <p class="muted">Tu puntaje (con la rúbrica)</p>
+      <p class="score" id="tot-score">0/50</p>
+      <p id="tot-msg">Califica cada literal después de ver la solución.</p>
+      <div class="qrow"><button class="btn" type="button" id="save">Guardar mi nota</button><span class="muted" id="save-msg"></span></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Cuando guardes tu nota aparece aquí, y yo la paso a tu plan.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 4. FÓRMULAS ============ -->
+  <section id="formulas" aria-labelledby="f-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="f-h">Fórmulas</h2><p>Lo que va de memoria: en el final no hay hoja de fórmulas.</p></div>
+    <div class="fgrid">
+      <div class="fcard"><h3>Trigonometría</h3><ul>
+        <li>sen² + cos² = 1 · 1 + tan² = sec² · 1 + cot² = csc²</li>
+        <li>sen 2θ = 2 sen θ cos θ</li>
+        <li>cos 2θ = cos² − sen² = 1 − 2 sen² = 2 cos² − 1</li>
+        <li>sen²θ = (1 − cos 2θ)/2 · cos²θ = (1 + cos 2θ)/2</li>
+        <li>sen: 0, 1/2, √2/2, √3/2, 1 en 0, π/6, π/4, π/3, π/2 (cos al revés)</li>
+      </ul></div>
+      <div class="fcard"><h3>Derivadas</h3><ul>
+        <li>(tan x)′ = sec²x · (sec x)′ = sec x tan x</li>
+        <li>(cot x)′ = −csc²x · (csc x)′ = −csc x cot x</li>
+        <li>(arctan x)′ = 1/(1 + x²) · (arcsen x)′ = 1/√(1 − x²)</li>
+        <li>(ln|x|)′ = 1/x · (e<sup>kx</sup>)′ = k e<sup>kx</sup></li>
+      </ul></div>
+      <div class="fcard"><h3>Integrales</h3><ul>
+        <li>∫ tan x dx = ln|sec x| · ∫ cot x dx = ln|sen x|</li>
+        <li>∫ sec x dx = ln|sec x + tan x|</li>
+        <li>∫ csc x dx = ln|csc x − cot x|</li>
+        <li>∫ dx/(x² + a²) = (1/a) arctan(x/a)</li>
+        <li>∫ dx/√(a² − x²) = arcsen(x/a)</li>
+        <li>∫ u dv = uv − ∫ v du</li>
+      </ul></div>
+      <div class="fcard"><h3>Longitudes y áreas</h3><ul>
+        <li>y = f(x): L = ∫ √(1 + (y′)²) dx</li>
+        <li>Paramétrica: L = ∫ √((dx/dt)² + (dy/dt)²) dt</li>
+        <li>Polar: L = ∫ √(r² + (dr/dθ)²) dθ</li>
+        <li>Área polar: A = ½ ∫ r² dθ</li>
+        <li>x = r cos θ · y = r sen θ · r² = x² + y²</li>
+      </ul></div>
+      <div class="fcard"><h3>Series</h3><ul>
+        <li>Geométrica: Σ a rⁿ = a/(1 − r) si |r| &lt; 1</li>
+        <li>Σ 1/nᵖ converge si p &gt; 1 · ∫₁^∞ 1/xᵖ igual</li>
+        <li>(1 + 1/n)ⁿ → e · (1 + k/n)ⁿ → eᵏ · n<sup>1/n</sup> → 1</li>
+        <li>Cociente y raíz: L &lt; 1 converge, L &gt; 1 diverge</li>
+        <li>1/(1 − u) = Σ uⁿ, |u| &lt; 1 · eˣ = Σ xⁿ/n!</li>
+      </ul></div>
+      <div class="fcard"><h3>Ecuaciones</h3><ul>
+        <li>Lineal: μ = e<sup>∫P dx</sup>, (μy)′ = μQ</li>
+        <li>Bernoulli: v = y<sup>1−n</sup></li>
+        <li>Raíces r₁ ≠ r₂: C₁e<sup>r₁x</sup> + C₂e<sup>r₂x</sup></li>
+        <li>Doble r: (C₁ + C₂x)e<sup>rx</sup></li>
+        <li>α ± βi: e<sup>αx</sup>(C₁ cos βx + C₂ sen βx)</li>
+        <li>Complejos: raíces ρ<sup>1/n</sup> e<sup>i(φ + 2πk)/n</sup></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Fuente: el final de 2023-19, los parciales y quices del profesor Martínez (2018-20 a 2026-20), sus hojas 7.1 a 17.2 y 10.1, y los módulos de estudio de cada parcial. Todas las respuestas de los simulacros están verificadas con cálculo simbólico.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+/* Solo para los textos fijos de esta página, que llevan fracciones y exponentes. */
+const elh = (tag, cls, html) => { const e = el(tag, cls); e.innerHTML = html; return e; };
+const nf = (n) => String(n).replace(".", ",");
+const F = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const SG = (lo, hi) => `<span class="sig"><small>${hi}</small><b>∫</b><small>${lo}</small></span>`;
+const SUM = (lo) => `<span class="sig"><small>∞</small><b>Σ</b><small>${lo}</small></span>`;
+const TAG = { ex: ["ex", "Salió en examen"], st: ["st", "Estilo examen"], ot: ["ot", "Otro tipo"] };
+
+/* Cada paso: [qué haces, por qué, la cuenta]. */
+const EXAM1 = [
+  { n: "P1", tema: "Curvas paramétricas", tag: "st", src: "Como el P1 del final de 2023 y la hoja 10.1 (5b)",
+    txt: `<p>Considere la curva x(t) = e<sup>t</sup> − t, y(t) = 4e<sup>t/2</sup>.</p><ol class="items"><li>(a) (3 pts) Encuentre el punto donde la curva tiene tangente vertical.</li><li>(b) (7 pts) Encuentre la longitud de la curva entre t = 0 y t = 2.</li></ol>`,
+    lits: [
+      { k: "a", pts: 3, steps: [
+          ["Deriva cada coordenada.", "La derivada de e<sup>t/2</sup> es ½e<sup>t/2</sup>, por la regla de la cadena.", "dx/dt = e<sup>t</sup> − 1 · dy/dt = 2e<sup>t/2</sup>"],
+          ["Tangente vertical: dx/dt = 0 con dy/dt ≠ 0.", "La pendiente es (dy/dt)/(dx/dt): se vuelve vertical cuando el denominador es 0 y el numerador no.", "e<sup>t</sup> − 1 = 0 → t = 0 · ahí dy/dt = 2 ≠ 0"],
+          ["Halla el punto.", "Reemplaza t = 0 en x y en y.", "(e⁰ − 0, 4e⁰) = (1, 4)"]],
+        rub: [["Derivadas", 1], ["dx/dt = 0 con dy/dt ≠ 0, t = 0", 1], ["El punto (1, 4)", 1]] },
+      { k: "b", pts: 7, steps: [
+          ["Eleva al cuadrado y suma.", "(e<sup>t</sup> − 1)² = e<sup>2t</sup> − 2e<sup>t</sup> + 1 y (2e<sup>t/2</sup>)² = 4e<sup>t</sup>.", "e<sup>2t</sup> − 2e<sup>t</sup> + 1 + 4e<sup>t</sup> = e<sup>2t</sup> + 2e<sup>t</sup> + 1"],
+          ["Reconoce el cuadrado perfecto.", "a² + 2ab + b² = (a + b)² con a = e<sup>t</sup>, b = 1. Es el truco de la hoja 10.1 (5b).", "e<sup>2t</sup> + 2e<sup>t</sup> + 1 = (e<sup>t</sup> + 1)²"],
+          ["Saca la raíz.", "e<sup>t</sup> + 1 siempre es positivo.", "√<span class=\"rad\">(e<sup>t</sup> + 1)²</span> = e<sup>t</sup> + 1"],
+          ["Integra y evalúa.", "∫ e<sup>t</sup> dt = e<sup>t</sup>; en t = 0 queda e⁰ + 0 = 1.", `L = ${SG("0", "2")} (e<sup>t</sup> + 1) dt = [e<sup>t</sup> + t] de 0 a 2 = (e² + 2) − (1 + 0) = e² + 1 ≈ 8,39`]],
+        rub: [["Fórmula de longitud bien escrita", 2], ["Suma de cuadrados y cuadrado perfecto", 2], ["Raíz", 1], ["Integral y evaluación: e² + 1", 2]] }],
+    frase: "La longitud es L = ∫ de 0 a 2 de √((dx/dt)² + (dy/dt)²) dt = ∫ de 0 a 2 de √((e<sup>t</sup> + 1)²) dt = ∫ de 0 a 2 de (e<sup>t</sup> + 1) dt = e² + 1." },
+  { n: "P2", tema: "Coordenadas polares", tag: "st", src: "La hoja 10.1 (12a), con el área",
+    txt: `<p>Considere las curvas polares r = 3 sen θ y r = 1 + sen θ.</p><ol class="items"><li>(a) (3 pts) Encuentre los puntos donde se intersectan.</li><li>(b) (7 pts) Encuentre el área de la región que está dentro de r = 3 sen θ y fuera de r = 1 + sen θ.</li></ol>`,
+    lits: [
+      { k: "a", pts: 3, steps: [
+          ["Iguala los dos r.", "En una intersección los dos puntos tienen el mismo r con el mismo θ.", "3 sen θ = 1 + sen θ → 2 sen θ = 1 → sen θ = ½"],
+          ["Despeja θ entre 0 y 2π.", "El seno vale ½ en π/6 y en 5π/6. Ahí r = 3 · ½ = 3/2.", "(r, θ) = (3/2, π/6) y (3/2, 5π/6)"],
+          ["Revisa el polo aparte.", "r = 3 sen θ pasa por el origen en θ = 0 y r = 1 + sen θ en θ = 3π/2: el origen también es intersección, con θ distintos.", "El origen (0, 0)"]],
+        rub: [["Igualar y despejar sen θ = ½", 1], ["θ = π/6 y 5π/6 con r = 3/2", 1], ["El polo", 1]] },
+      { k: "b", pts: 7, steps: [
+          ["Decide cuál va afuera.", "En θ = π/2, el círculo da r = 3 y la cardioide r = 2: entre las intersecciones, el círculo está afuera.", `A = ${F("1", "2")} ${SG("π/6", "5π/6")} [(3 sen θ)² − (1 + sen θ)²] dθ`],
+          ["Expande y simplifica.", "9 sen²θ − (1 + 2 sen θ + sen²θ) = 8 sen²θ − 2 sen θ − 1, y 8 sen²θ = 4(1 − cos 2θ).", "8 sen²θ − 2 sen θ − 1 = 3 − 4 cos 2θ − 2 sen θ"],
+          ["Integra.", "∫ cos 2θ dθ = sen 2θ/2 y ∫ sen θ dθ = −cos θ.", `${F("1", "2")}[3θ − 2 sen 2θ + 2 cos θ] de π/6 a 5π/6`],
+          ["Evalúa.", "sen(5π/3) = −√3/2 y cos(5π/6) = −√3/2: arriba los √3 se cancelan. Abajo, sen(π/3) = cos(π/6) = √3/2: también.", `${F("1", "2")}[(${F("5π", "2")} + <span class="cx">√3</span> − <span class="cx">√3</span>) − (${F("π", "2")} − <span class="cx">√3</span> + <span class="cx">√3</span>)] = ${F("1", "2")} · 2π = π`]],
+        rub: [["Integral con r de afuera al cuadrado menos r de adentro al cuadrado, y límites", 2], ["Expandir y usar sen² = (1 − cos 2θ)/2", 2], ["Antiderivada", 2], ["Evaluación: π", 1]] }],
+    frase: "Las curvas se cortan en θ = π/6 y θ = 5π/6. Como entre esos ángulos 3 sen θ ≥ 1 + sen θ, el área es A = ½ ∫ de π/6 a 5π/6 de [(3 sen θ)² − (1 + sen θ)²] dθ = π." },
+  { n: "P3", tema: "Técnicas de integración", tag: "st", src: "Como el P3 del final de 2023",
+    txt: `<ol class="items"><li>(a) (5 pts) ∫ x² e<sup>x</sup> dx</li><li>(b) (5 pts) ∫ ${F("2x² − x + 4", "x³ + 4x")} dx</li></ol>`,
+    lits: [
+      { k: "a", pts: 5, steps: [
+          ["Partes con u = x².", "x² se simplifica al derivar; e<sup>x</sup> se integra igual.", "u = x², dv = e<sup>x</sup> dx → du = 2x dx, v = e<sup>x</sup> · ∫ x²e<sup>x</sup> dx = x²e<sup>x</sup> − ∫ 2x e<sup>x</sup> dx"],
+          ["Partes otra vez con u = 2x.", "La nueva integral sigue siendo polinomio por exponencial.", "∫ 2x e<sup>x</sup> dx = 2x e<sup>x</sup> − ∫ 2e<sup>x</sup> dx = 2x e<sup>x</sup> − 2e<sup>x</sup>"],
+          ["Junta y factoriza.", "Cuidado con el signo: se resta todo el paréntesis.", "x²e<sup>x</sup> − (2x e<sup>x</sup> − 2e<sup>x</sup>) + C = e<sup>x</sup>(x² − 2x + 2) + C"]],
+        rub: [["Primera vez partes", 2], ["Segunda vez partes", 2], ["Resultado con + C", 1]] },
+      { k: "b", pts: 5, steps: [
+          ["Factoriza y arma la forma.", "x³ + 4x = x(x² + 4), y x² + 4 no tiene raíces reales: su numerador es Bx + C.", `${F("2x² − x + 4", "x(x² + 4)")} = ${F("A", "x")} + ${F("Bx + C", "x² + 4")}`],
+          ["Halla A, B y C.", "Multiplica por el denominador. x = 0 da A; después compara coeficientes.", "2x² − x + 4 = A(x² + 4) + (Bx + C)x · x = 0: 4 = 4A, A = 1 · x²: 2 = A + B, B = 1 · x: −1 = C"],
+          ["Integra cada fracción.", "∫ x/(x² + 4) dx = ½ ln(x² + 4) con u = x² + 4; ∫ 1/(x² + 4) dx = ½ arctan(x/2).", "ln|x| + ½ ln(x² + 4) − ½ arctan(x/2) + C"]],
+        rub: [["Forma con (Bx + C)/(x² + 4)", 1], ["A = 1, B = 1, C = −1", 2], ["Las tres integrales", 2]] }],
+    frase: "Por partes dos veces, ∫ x²e<sup>x</sup> dx = e<sup>x</sup>(x² − 2x + 2) + C. Con fracciones parciales, (2x² − x + 4)/(x³ + 4x) = 1/x + (x − 1)/(x² + 4), y la integral es ln|x| + ½ ln(x² + 4) − ½ arctan(x/2) + C." },
+  { n: "P4", tema: "Series", tag: "st", src: "Como el P4 del final de 2023",
+    txt: `<p>Determine si cada serie converge o diverge.</p><ol class="items"><li>(a) (5 pts) ${SUM("n=1")} ${F("√n", "n² + 3")}</li><li>(b) (5 pts) ${SUM("n=1")} (−1)ⁿ (${F("n", "n + 1")})ⁿ</li></ol>`,
+    lits: [
+      { k: "a", pts: 5, steps: [
+          ["Escoge con qué comparar.", "Términos positivos. Para n grande, √n/(n² + 3) se parece a √n/n² = 1/n<sup>3/2</sup>.", "bₙ = 1/n<sup>3/2</sup>"],
+          ["Comparación en el límite.", "Divide aₙ entre bₙ: el n<sup>3/2</sup> sube y queda n²/(n² + 3).", `lím ${F("√n/(n² + 3)", "1/n<sup>3/2</sup>")} = lím ${F("n²", "n² + 3")} = 1`],
+          ["Concluye.", "El límite es un número positivo y finito, y Σ 1/n<sup>3/2</sup> converge (serie p con p = 3/2 > 1).", "Por comparación en el límite, converge"]],
+        rub: [["Escoger 1/n<sup>3/2</sup>", 1], ["Límite = 1, positivo y finito", 2], ["Serie p que converge y conclusión", 2]] },
+      { k: "b", pts: 5, steps: [
+          ["Mira el valor absoluto del término.", "Antes de pensar en Leibniz, revisa si aₙ tiende a 0.", "|aₙ| = (n/(n + 1))ⁿ = 1/(1 + 1/n)ⁿ"],
+          ["Calcula el límite.", "(1 + 1/n)ⁿ → e.", "|aₙ| → 1/e ≠ 0"],
+          ["Concluye.", "aₙ salta entre valores cerca de 1/e y −1/e: no tiende a 0.", "Por el criterio de divergencia, diverge"]],
+        rub: [["Revisar el límite de aₙ (y no usar Leibniz)", 1], ["(1 + 1/n)ⁿ → e, |aₙ| → 1/e", 2], ["Criterio de divergencia y conclusión", 2]] }],
+    frase: "(a) Como lím aₙ/(1/n<sup>3/2</sup>) = 1 y Σ 1/n<sup>3/2</sup> converge, la serie converge por comparación en el límite. (b) Como |aₙ| → 1/e ≠ 0, aₙ no tiende a 0 y la serie diverge por el criterio de divergencia." },
+  { n: "P5", tema: "Ecuaciones diferenciales", tag: "st", src: "Como el P5 del final de 2023",
+    txt: `<ol class="items"><li>(a) (5 pts) Resuelva x y′ + 2y = x², con y(1) = 1, para x > 0.</li><li>(b) (5 pts) Encuentre la solución general de y″ + 4y = 8x.</li></ol>`,
+    lits: [
+      { k: "a", pts: 5, steps: [
+          ["Ponla en forma lineal.", "Divide entre x para que y′ quede sola.", "y′ + (2/x) y = x"],
+          ["Factor integrante.", "μ = e<sup>∫P dx</sup> con P = 2/x, y e<sup>2 ln x</sup> = x².", "μ = e<sup>2 ln x</sup> = x²"],
+          ["Multiplica e integra.", "El lado izquierdo queda como la derivada de μy.", "(x²y)′ = x³ → x²y = x⁴/4 + C → y = x²/4 + C/x²"],
+          ["Usa la condición inicial.", "y(1) = 1.", "1/4 + C = 1 → C = 3/4 → y = x²/4 + 3/(4x²)"]],
+        rub: [["Forma lineal y μ = x²", 2], ["(x²y)′ = x³ e integración con + C", 2], ["Condición inicial", 1]] },
+      { k: "b", pts: 5, steps: [
+          ["Ecuación característica.", "r² + 4 = 0 da raíces complejas: α = 0, β = 2.", "r = ±2i → y<sub>h</sub> = C₁ cos 2x + C₂ sen 2x"],
+          ["Propón y<sub>p</sub>.", "g(x) = 8x es un polinomio de grado 1, y no está en y<sub>h</sub>.", "y<sub>p</sub> = Ax + B, y<sub>p</sub>″ = 0"],
+          ["Reemplaza y compara.", "0 + 4(Ax + B) = 8x.", "4A = 8 → A = 2 · 4B = 0 → B = 0 · y<sub>p</sub> = 2x"],
+          ["Suma.", "La solución general es y<sub>h</sub> + y<sub>p</sub>.", "y = C₁ cos 2x + C₂ sen 2x + 2x"]],
+        rub: [["Raíces ±2i y y<sub>h</sub>", 2], ["y<sub>p</sub> = Ax + B y coeficientes", 2], ["Solución general", 1]] }],
+    frase: "(a) Con μ = x², (x²y)′ = x³, y la condición y(1) = 1 da y = x²/4 + 3/(4x²). (b) Las raíces de r² + 4 = 0 son ±2i y y<sub>p</sub> = 2x, así que y = C₁ cos 2x + C₂ sen 2x + 2x." }
+];
+
+const EXAM2 = [
+  { n: "P1", tema: "Curvas paramétricas", tag: "st", src: "Como el P1 del final de 2023 y la hoja 10.1 (3)",
+    txt: `<p>Considere la curva x(t) = cos³t, y(t) = sen³t.</p><ol class="items"><li>(a) (3 pts) Encuentre la recta tangente en t = π/4.</li><li>(b) (7 pts) Encuentre la longitud de la curva entre t = 0 y t = π/2.</li></ol>`,
+    lits: [
+      { k: "a", pts: 3, chk: { opts: ["y = −x + √2/2", "y = x", "y = −x + √2/4", "y = x − √2/2"], a: 0 }, steps: [
+          ["Deriva.", "Regla de la cadena: (cos³t)′ = 3cos²t · (−sen t).", "dx/dt = −3cos²t sen t · dy/dt = 3 sen²t cos t"],
+          ["Pendiente en t = π/4.", "Se cancelan 3, un sen y un cos: queda −tan t.", "dy/dx = −tan t = −1 en t = π/4"],
+          ["Punto y recta.", "cos(π/4) = sen(π/4) = √2/2 y (√2/2)³ = √2/4.", "(√2/4, √2/4) · y − √2/4 = −(x − √2/4) → y = −x + √2/2"]],
+        rub: [["Derivadas", 1], ["Pendiente −1", 1], ["Punto y recta", 1]] },
+      { k: "b", pts: 7, chk: { opts: ["3/2", "3", "6", "3/4"], a: 0 }, steps: [
+          ["Eleva al cuadrado y suma.", "Saca el factor común 9 sen²t cos²t.", "9cos⁴t sen²t + 9 sen⁴t cos²t = 9 sen²t cos²t (cos²t + sen²t) = 9 sen²t cos²t"],
+          ["Saca la raíz.", "Entre 0 y π/2, sen t y cos t son positivos.", "√<span class=\"rad\">9 sen²t cos²t</span> = 3 sen t cos t"],
+          ["Integra.", "u = sen t, du = cos t dt, con u de 0 a 1.", `L = ${SG("0", "π/2")} 3 sen t cos t dt = ${F("3", "2")} sen²t de 0 a π/2 = ${F("3", "2")}`]],
+        rub: [["Fórmula de longitud", 2], ["Suma de cuadrados con factor común", 2], ["Raíz con el signo bien justificado", 1], ["Integral: 3/2", 2]] }] },
+  { n: "P2", tema: "Coordenadas polares", tag: "st", src: "Como el P2 del final de 2023 y la hoja 10.1 (9) y (11)",
+    txt: `<ol class="items"><li>(a) (3 pts) Escriba r = 4 sen θ en coordenadas cartesianas e identifique la curva.</li><li>(b) (7 pts) Encuentre el área que encierra un pétalo de la rosa r = 3 cos(2θ).</li></ol>`,
+    lits: [
+      { k: "a", pts: 3, chk: { opts: ["x² + (y − 2)² = 4", "x² + y² = 4", "(x − 2)² + y² = 4", "y = 4"], a: 0 }, steps: [
+          ["Multiplica por r.", "Así aparecen r² y r sen θ, que sí se pasan a x y y.", "r² = 4r sen θ → x² + y² = 4y"],
+          ["Completa el cuadrado.", "y² − 4y = (y − 2)² − 4.", "x² + (y − 2)² = 4"],
+          ["Identifica.", "Es la forma (x − h)² + (y − k)² = R².", "Círculo de centro (0, 2) y radio 2"]],
+        rub: [["Multiplicar por r y sustituir", 1], ["Completar el cuadrado", 1], ["Identificar centro y radio", 1]] },
+      { k: "b", pts: 7, chk: { opts: ["9π/8", "9π/4", "9π/16", "3π/4"], a: 0 }, steps: [
+          ["Límites del pétalo.", "Un pétalo va de un cero de r al siguiente: cos 2θ = 0 en θ = ±π/4.", "−π/4 ≤ θ ≤ π/4"],
+          ["Arma la integral.", "A = ½ ∫ r² dθ.", `A = ${F("1", "2")} ${SG("−π/4", "π/4")} 9 cos²(2θ) dθ`],
+          ["Ángulo doble.", "cos²(2θ) = (1 + cos 4θ)/2.", `A = ${F("9", "4")} ${SG("−π/4", "π/4")} (1 + cos 4θ) dθ = ${F("9", "4")}[θ + ${F("sen 4θ", "4")}] de −π/4 a π/4`],
+          ["Evalúa.", "sen(±π) = 0.", `A = ${F("9", "4")} · ${F("π", "2")} = ${F("9π", "8")}`]],
+        rub: [["Límites ±π/4", 2], ["½ ∫ r² dθ bien armada", 2], ["Ángulo doble e integral", 2], ["Resultado 9π/8", 1]] }] },
+  { n: "P3", tema: "Técnicas de integración", tag: "st", src: "Como el P1 de 2025 y el P3 del final de 2023",
+    txt: `<ol class="items"><li>(a) (5 pts) ∫ ${F("x³", "√(16 − x²)")} dx</li><li>(b) (5 pts) ∫ ${F("x² + 2x − 1", "x³ − x")} dx</li></ol>`,
+    lits: [
+      { k: "a", pts: 5, chk: { opts: ["(16 − x²)<sup>3/2</sup>/3 − 16√(16 − x²) + C", "(16 − x²)<sup>3/2</sup>/3 + 16√(16 − x²) + C", "−64 cos θ + (64/3)cos³θ + C", "x⁴/(4√(16 − x²)) + C"], a: 0 }, steps: [
+          ["Sustitución con seno.", "√(a² − x²) con a = 4.", "x = 4 sen θ, dx = 4 cos θ dθ, √(16 − x²) = 4 cos θ"],
+          ["Simplifica.", "x³ = 64 sen³θ; el 4 cos θ de abajo se cancela con el de dx.", `∫ ${F("64 sen³θ", "<span class=\"cx\">4 cos θ</span>")} <span class="cx">4 cos θ</span> dθ = 64 ∫ sen³θ dθ`],
+          ["Potencia impar del seno.", "sen³θ = (1 − cos²θ) sen θ, con u = cos θ, du = −sen θ dθ.", "64 ∫ (1 − cos²θ) sen θ dθ = −64 cos θ + (64/3) cos³θ"],
+          ["Regresa a x.", "Triángulo con sen θ = x/4: cos θ = √(16 − x²)/4.", "−16√(16 − x²) + (16 − x²)<sup>3/2</sup>/3 + C"]],
+        rub: [["Sustitución y raíz", 1], ["Integral en θ: 64 ∫ sen³θ dθ", 1], ["Integrar la potencia impar", 2], ["Regresar a x", 1]] },
+      { k: "b", pts: 5, chk: { opts: ["ln|x| + ln|x − 1| − ln|x + 1| + C", "−ln|x| + ln|x − 1| + ln|x + 1| + C", "ln|x| − ln|x − 1| + ln|x + 1| + C", "ln|x³ − x| + C"], a: 0 }, steps: [
+          ["Factoriza.", "Saca x y después diferencia de cuadrados.", "x³ − x = x(x − 1)(x + 1)"],
+          ["Halla A, B y C.", "x² + 2x − 1 = A(x − 1)(x + 1) + Bx(x + 1) + Cx(x − 1); evalúa en las raíces.", "x = 0: −1 = −A, A = 1 · x = 1: 2 = 2B, B = 1 · x = −1: −2 = 2C, C = −1"],
+          ["Integra.", "Cada fracción da un logaritmo.", "ln|x| + ln|x − 1| − ln|x + 1| + C"]],
+        rub: [["Factorizar y forma", 1], ["A = 1, B = 1, C = −1", 2], ["Integrales", 2]] }] },
+  { n: "P4", tema: "Series", tag: "st", src: "Como los Parciales 3 (convergencia, y radio e intervalo)",
+    txt: `<ol class="items"><li>(a) (5 pts) Determine si ${SUM("n=1")} (−1)ⁿ ${F("n", "n² + 1")} converge absolutamente, converge condicionalmente o diverge.</li><li>(b) (5 pts) Encuentre el radio y el intervalo de convergencia de ${SUM("n=1")} ${F("(x − 2)ⁿ", "n 3ⁿ")}.</li></ol>`,
+    lits: [
+      { k: "a", pts: 5, chk: { opts: ["Converge condicionalmente", "Converge absolutamente", "Diverge", "No se puede decidir"], a: 0 }, steps: [
+          ["Valor absoluto: compara con 1/n.", "n/(n² + 1) se parece a 1/n para n grande.", "lím (n/(n² + 1))/(1/n) = lím n²/(n² + 1) = 1 · Σ 1/n diverge → Σ |aₙ| diverge"],
+          ["Leibniz para la alternante.", "bₙ = n/(n² + 1) → 0, y decrece porque su derivada (1 − n²)/(n² + 1)² ≤ 0 para n ≥ 1.", "Σ (−1)ⁿ bₙ converge"],
+          ["Concluye.", "Converge, pero no absolutamente.", "Converge condicionalmente"]],
+        rub: [["Σ |aₙ| diverge (comparación con 1/n)", 2], ["Leibniz con sus dos condiciones", 2], ["Conclusión", 1]] },
+      { k: "b", pts: 5, chk: { opts: ["R = 3, [−1, 5)", "R = 3, (−1, 5)", "R = 1/3, (5/3, 7/3)", "R = 3, (−1, 5]"], a: 0 }, steps: [
+          ["Criterio del cociente.", "n/(n + 1) → 1.", `lím |${F("(x − 2)ⁿ⁺¹", "(n + 1)3ⁿ⁺¹")} · ${F("n 3ⁿ", "(x − 2)ⁿ")}| = ${F("|x − 2|", "3")} &lt; 1 → |x − 2| &lt; 3, R = 3`],
+          ["Extremo x = 5.", "x − 2 = 3: los 3ⁿ se cancelan.", "Σ 1/n: armónica, diverge"],
+          ["Extremo x = −1.", "x − 2 = −3.", "Σ (−1)ⁿ/n: converge por Leibniz"],
+          ["Intervalo.", "Incluye −1, no incluye 5.", "[−1, 5)"]],
+        rub: [["Cociente y R = 3", 2], ["Extremo x = 5", 1], ["Extremo x = −1", 1], ["Intervalo [−1, 5)", 1]] }] },
+  { n: "P5", tema: "Ecuaciones diferenciales", tag: "st", src: "Como el P5 del final de 2023",
+    txt: `<ol class="items"><li>(a) (5 pts) Resuelva dy/dx = ${F("x e<sup>x²</sup>", "y")}, con y(0) = 2.</li><li>(b) (5 pts) Encuentre la solución general de y″ − 3y′ + 2y = 4e<sup>x</sup>.</li></ol>`,
+    lits: [
+      { k: "a", pts: 5, chk: { opts: ["y = √(e<sup>x²</sup> + 3)", "y = e<sup>x²</sup> + 1", "y = √(e<sup>x²</sup>) + 1", "y = √(2e<sup>x²</sup> + 2)"], a: 0 }, steps: [
+          ["Separa.", "Pasa la y a multiplicar al dy.", "y dy = x e<sup>x²</sup> dx"],
+          ["Integra los dos lados.", "A la derecha, u = x², du = 2x dx.", "y²/2 = e<sup>x²</sup>/2 + C"],
+          ["Condición inicial.", "y(0) = 2: 2 = 1/2 + C.", "C = 3/2 → y² = e<sup>x²</sup> + 3"],
+          ["Despeja con el signo correcto.", "y(0) = 2 > 0: va la raíz positiva.", "y = √(e<sup>x²</sup> + 3)"]],
+        rub: [["Separar", 1], ["Integrar con + C", 2], ["Condición inicial y signo de la raíz", 2]] },
+      { k: "b", pts: 5, chk: { opts: ["y = C₁e<sup>x</sup> + C₂e<sup>2x</sup> − 4x e<sup>x</sup>", "y = C₁e<sup>x</sup> + C₂e<sup>2x</sup> − 4e<sup>x</sup>", "y = C₁e<sup>x</sup> + C₂e<sup>2x</sup> + 4x e<sup>x</sup>", "y = C₁e<sup>−x</sup> + C₂e<sup>−2x</sup> − 4x e<sup>x</sup>"], a: 0 }, steps: [
+          ["Homogénea.", "r² − 3r + 2 = (r − 1)(r − 2).", "r = 1, 2 → y<sub>h</sub> = C₁e<sup>x</sup> + C₂e<sup>2x</sup>"],
+          ["Propón y<sub>p</sub>.", "Ae<sup>x</sup> ya está en y<sub>h</sub> (daría 0 = 4e<sup>x</sup>): multiplica por x.", "y<sub>p</sub> = Ax e<sup>x</sup> · y<sub>p</sub>′ = A(x + 1)e<sup>x</sup> · y<sub>p</sub>″ = A(x + 2)e<sup>x</sup>"],
+          ["Reemplaza.", "Los términos con x se cancelan.", "A[(x + 2) − 3(x + 1) + 2x]e<sup>x</sup> = −A e<sup>x</sup> = 4e<sup>x</sup> → A = −4"],
+          ["Suma.", "y = y<sub>h</sub> + y<sub>p</sub>.", "y = C₁e<sup>x</sup> + C₂e<sup>2x</sup> − 4x e<sup>x</sup>"]],
+        rub: [["Raíces 1 y 2, y<sub>h</sub>", 2], ["y<sub>p</sub> = Ax e<sup>x</sup> (multiplicar por x)", 1], ["A = −4 y solución general", 2]] }] }
+];
+
+function stepsHTML(steps) {
+  return `<ol class="wx-steps">${steps.map(([w, y, m]) => `<li><p class="what">${w}</p>${y ? `<p class="why">${y}</p>` : ""}${m ? `<div class="mx">${m}</div>` : ""}</li>`).join("")}</ol>`;
+}
+function rubHTML(r, pts) {
+  return `<ul class="rub"><li><span class="rt">Puntaje del literal</span><b>${pts} pts</b></li>${r.map(([t, p]) => `<li><span>${t}</span><b>${nf(p)}</b></li>`).join("")}</ul>`;
+}
+function renderExam(box, exam, mode) {
+  exam.forEach((p) => {
+    const a = el("article", "prob"); a.id = mode + "-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.tema + " · 10 pts"));
+    h.appendChild(el("span", "src-tag " + TAG[p.tag][0], TAG[p.tag][1])); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    a.appendChild(elh("div", "prob-body stmt", p.txt));
+    if (mode === "e2") {
+      p.lits.forEach((l, li) => {
+        const c = el("div", "check"); c.appendChild(el("p", "", "Chequeo rápido de tu respuesta · (" + l.k + ")"));
+        const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+        l.chk.opts.forEach((o, oi) => {
+          const b = elh("button", "opt", o); b.type = "button"; b.id = `ck-${p.n}-${li}-${oi}`;
+          b.addEventListener("click", () => {
+            opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+            if (oi === l.chk.a) { b.classList.add("right"); fb.textContent = "Coincide con la respuesta. Revisa en la solución si tu procedimiento tiene todo lo que da puntos."; fb.className = "fb ok"; }
+            else { b.classList.add("wrong"); fb.textContent = "No coincide. Revisa tus cuentas antes de abrir la solución."; fb.className = "fb no"; }
+          });
+          opts.appendChild(b);
+        });
+        c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+      });
+    }
+    const d = el("details", "sol"); if (mode === "e1") d.open = true;
+    d.appendChild(el("summary", "", mode === "e1" ? "Solución con puntaje por literal" : "Solución y rúbrica (ábrela cuando termines)"));
+    const sb = el("div", "sol-body");
+    p.lits.forEach((l) => { sb.appendChild(elh("div", "lit", `<h4>(${l.k}) · ${l.pts} pts</h4>${stepsHTML(l.steps)}${rubHTML(l.rub, l.pts)}`)); });
+    if (p.frase) sb.appendChild(elh("div", "lit", `<h4>Así se escribe en el examen</h4><div class="mx txt frase">${p.frase}</div>`));
+    d.appendChild(sb); a.appendChild(d);
+    if (mode === "e2") {
+      const g = el("div", "grade-row"); g.appendChild(el("span", "muted small", "Tu puntaje:"));
+      p.lits.forEach((l) => {
+        const lab = el("label"); lab.appendChild(document.createTextNode("(" + l.k + ")"));
+        const s = el("select"); s.id = `g-${p.n}-${l.k}`; s.dataset.max = String(l.pts);
+        const o0 = el("option", "", "—"); o0.value = ""; s.appendChild(o0);
+        for (let v = 0; v <= l.pts; v += 0.5) { const o = el("option", "", nf(v)); o.value = String(v); s.appendChild(o); }
+        s.addEventListener("change", total);
+        lab.appendChild(s); lab.appendChild(document.createTextNode("/ " + l.pts)); g.appendChild(lab);
+      });
+      a.appendChild(g);
+    }
+    box.appendChild(a);
+  });
+}
+renderExam($("#exam1"), EXAM1, "e1");
+renderExam($("#exam2"), EXAM2, "e2");
+
+let solsOpen = true;
+$("#sol-toggle").addEventListener("click", () => {
+  solsOpen = !solsOpen;
+  document.querySelectorAll("#exam1 details.sol").forEach((d) => (d.open = solsOpen));
+  $("#sol-toggle").textContent = solsOpen ? "Cerrar todas las soluciones" : "Abrir todas las soluciones";
+});
+
+/* Reloj de 110 minutos */
+let left = 110 * 60, tick = null;
+const showT = () => { const m = Math.floor(left / 60), s = left % 60; $("#timer").textContent = m + ":" + String(s).padStart(2, "0"); };
+$("#t-start").addEventListener("click", () => {
+  if (tick) { clearInterval(tick); tick = null; $("#t-start").textContent = "Seguir"; return; }
+  $("#t-start").textContent = "Pausar";
+  tick = setInterval(() => { if (left > 0) { left--; showT(); } else { clearInterval(tick); tick = null; $("#timer").textContent = "¡Tiempo!"; $("#t-start").textContent = "Empezar el reloj"; } }, 1000);
+});
+$("#t-reset").addEventListener("click", () => { if (tick) clearInterval(tick); tick = null; left = 110 * 60; showT(); $("#t-start").textContent = "Empezar el reloj"; });
+
+/* Puntaje con la rúbrica */
+function readScores() {
+  const pts = {}; let sum = 0, done = 0, n = 0;
+  document.querySelectorAll("#exam2 select").forEach((s) => { n++; if (s.value !== "") { const v = Number(s.value); pts[s.id.slice(2)] = v; sum += v; done++; } });
+  return { pts, sum, done, n };
+}
+function total() {
+  const { sum, done, n } = readScores();
+  $("#tot-score").textContent = nf(sum) + "/50";
+  const nota = sum / 10, def = Math.round((2.7515 + 0.25 * nota) * 10 + 1e-9) / 10;
+  $("#tot-msg").textContent = done < n ? `Llevas ${done} de ${n} literales calificados.` : `Nota del final: ${nf(nota % 1 ? nota : nota.toFixed(1))}. Con esto tu definitiva quedaría en ${nf(def.toFixed(1))}` + (sum >= 36 ? ": cumples la meta de 3,7." : sum >= 28 ? ": llegas a 3,5; para 3,7 necesitas 36." : ". Repasa los literales donde perdiste más puntos.");
+}
+let db = null;
+$("#save").addEventListener("click", async () => {
+  const { pts, sum, done, n } = readScores();
+  if (done < n) { $("#save-msg").textContent = "Califica los " + n + " literales antes de guardar."; return; }
+  if (!db) { $("#save-msg").textContent = "No se pudo guardar en esta vista. Cuéntame tu puntaje en el chat."; return; }
+  $("#save").disabled = true; $("#save-msg").textContent = "Guardando…";
+  try { await db.collection("intentos").add({ examen: "Simulacro 2", puntos: pts, total: sum, nota: sum / 10, fecha: new Date().toISOString() }); $("#save-msg").textContent = "Guardado. Lo paso a tu plan."; }
+  catch (e) { $("#save-msg").textContent = "No se pudo guardar. Cuéntame tu puntaje en el chat."; }
+  $("#save").disabled = false;
+});
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Cuando guardes tu nota aparece aquí, y yo la paso a tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att"); const s = Number(d.total);
+    r.appendChild(el("b", "", (d.examen || "Simulacro") + " · " + nf(s) + "/50"));
+    r.appendChild(el("span", "pill " + (s >= 36 ? "ok" : "no"), s >= 36 ? "Meta cumplida" : "Debajo de 36"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = String(d.fecha || ""); }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+}
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

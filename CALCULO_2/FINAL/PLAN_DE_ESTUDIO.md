@@ -74,7 +74,7 @@ La misma de siempre: módulos de 4 secciones (teoría, lab, taller y quiz de pas
 | **M2** | Complejos y ecuaciones diferenciales | H, 9.1–9.5, 17.1–17.2 | Sáb 21 | [Ecuaciones separables](https://claude.ai/artifact/9tWWxyLsdzdnG7n2VFMhZH), [Lineales y Bernoulli](https://claude.ai/artifact/4SxfPSG9GFNWzYsneurM5Q), [Segundo orden y coeficientes indeterminados](https://claude.ai/artifact/HGp12FT3EM6tD3q6sxoUtH), [Coeficientes indeterminados](https://claude.ai/artifact/NHzoHae9hrPCK2gNbD2xnJ), [Simulacro Parcial 2](https://claude.ai/artifact/SJETfGkuseKRAmbDWczDRL) |
 | **M3** | Series | 11.1–11.10 | Sáb 21 | Los M1 a M7 del Parcial 3 (tabla de `CLAUDE.md`) |
 | **M4** | Paramétricas y polares | 10.1–10.4 | Dom 22 | [Paramétricas: longitud de arco y tangentes](https://claude.ai/artifact/Quu7Z3GN228pQgZbUk1Srw) |
-| **M5** | Simulacro (110 min, sobre 50), opcional | Todo | Dom 22 | Meta: 36/50 |
+| **M5** | Simulacro (110 min, sobre 50), opcional · [Guía final con dos simulacros](https://claude.ai/artifact/3h7Vpnm1RfAbXGxNBb8gfg) | Todo | Dom 22 | Meta: 36/50 |
 
 ---
 
