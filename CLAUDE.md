@@ -50,6 +50,7 @@ Cada tema se estudia en **módulos** de 4 secciones, en este orden:
 | Física 1 | P3 · M7 · Animación bola que se pega a la varilla | https://claude.ai/artifact/MV6nynwTwZbmSTPD8hfHQS | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/M7_animacion.html` |
 | Física 1 | P3 · Hoja de fórmulas para antes del parcial | https://claude.ai/artifact/Lz7TRr1LUippSkcFmudg1Y | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/hoja_formulas_P3.html` |
 | Física 1 | P3 · Aceleración al rodar (ejemplo cilindro + ejercicio esfera hueca) | https://claude.ai/artifact/E9c8uR4VdbxM5Q8n8tJiBW | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/rodar_aceleracion.html` |
+| Física 1 | Final · F1 · Movimiento armónico simple (intentos en `intentos/`) | https://claude.ai/artifact/GAfGE1syvRGAE59Rqn81jJ | `FISICA_1/PARCIAL_3_Y_FINAL/artifacts/F1.html` |
 
 ## Convenciones
 

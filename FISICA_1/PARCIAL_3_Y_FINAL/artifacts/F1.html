@@ -1,0 +1,1029 @@
+<title>F1 Movimiento armónico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; módulo F1 del examen final. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+
+/* Figuras de rotación e inercia */
+.sv-mass{fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6}
+.sv-axis{fill:var(--surface); stroke:var(--red); stroke-width:2}
+.sv-rod{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-disk{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.8}
+.sv-ring{stroke:var(--ink); stroke-width:6; fill:none}
+.sv-ring2{stroke:var(--ink); stroke-width:3.5; fill:none}
+.sv-plate{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.callout ul,.callout ol{padding-left:20px; display:grid; gap:4px}
+.prob-group{display:grid; gap:4px; margin:10px 0 2px; padding-top:10px; border-top:2px solid var(--ink)}
+.prob-group h3{font-family:var(--f-display); font-size:1.12rem}
+.prob-group p{margin:0; color:var(--muted); font-size:.95rem}
+.chip-opt{font-family:var(--f-mono); font-size:.72rem; color:var(--muted); border:1px dashed var(--muted); padding:1px 6px; border-radius:4px}
+.lab-h{font-size:1rem; margin:4px 0 -4px}
+.ibar{display:flex; height:14px; border-radius:6px; overflow:hidden; background:var(--paper); border:1px solid var(--rule)}
+.ibar span{display:block; height:100%; transition:width .25s}
+.ibar span:first-child{background:var(--accent)}
+.ibar span:last-child{background:var(--orange)}
+.key{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+.mini{min-width:0; font-size:.8rem}
+.mini th,.mini td{padding:5px 6px}
+.mini td{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+.mini tr.win td{background:var(--green-soft)}
+.key i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>50 min</span></a>
+    <a href="#lab">2 Lab <span>15 min</span></a>
+    <a href="#taller">3 Taller <span>50 min</span></a>
+    <a href="#quiz">4 Quiz <span>15 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Examen final · <b>Paso 1</b> · módulo F1 de F6</p>
+    <h1>Oscilaciones I: movimiento armónico simple</h1>
+    <div class="meta">
+      <span class="chip-hot">Final: lunes 30, 15:00</span>
+      <span>Martes 24: teoría y lab · miércoles 25: taller y quiz</span>
+      <span>Libro: 14.1 a 14.4</span>
+    </div>
+    <p class="prose">Un bloque pegado a un resorte que va y viene, un carro con amortiguadores que rebota, una cuerda de guitarra: todo lo que <b>oscila</b> alrededor de un punto de equilibrio. En este módulo aprendes el caso más importante, el <b>movimiento armónico simple</b> (MAS) de una masa en un resorte: cuánto tarda en ir y volver, dónde va más rápido y cómo se reparte su energía.</p>
+    <div class="shortcut">
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a F2.</p>
+      <a class="btn" href="#quiz">Ir al quiz</a>
+    </div>
+    <div class="callout">
+      <h3>Por qué este módulo va primero</h3>
+      <ul>
+        <li>El capítulo 14 <b>solo entra en el final</b>: no salió en ningún parcial y en Bloque Neón no hay diapositivas. Se vio en las clases del 10, 12, 17 y 24 de noviembre.</li>
+        <li>Como no hay finales anteriores, el taller tiene problemas del tipo del libro y uno que mezcla un choque (Parcial 3) con un resorte que oscila. Esa mezcla es muy de final.</li>
+        <li>Usa cosas que ya sabes: la ley de Hooke y la energía del resorte del Parcial 2, y el momento lineal del Parcial 3.</li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué es oscilar, el resorte y su periodo, la posición en el tiempo, la energía y el resorte vertical. Seis ejemplos resueltos, solo con letras.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">x</td><td>«equis»</td><td>Posición del bloque medida <b>desde el punto de equilibrio</b> (donde el resorte no lo empuja). Positiva a la derecha.</td><td>m</td></tr>
+          <tr><td class="mono">A</td><td>«a»</td><td>Amplitud: lo más lejos que llega del equilibrio. Oscila entre −A y +A.</td><td>m</td></tr>
+          <tr><td class="mono">t</td><td>«te»</td><td>Tiempo.</td><td>s</td></tr>
+          <tr><td class="mono">T</td><td>«te mayúscula»</td><td>Periodo: lo que tarda una oscilación completa (ir y volver al mismo punto, en el mismo sentido).</td><td>s</td></tr>
+          <tr><td class="mono">f</td><td>«efe»</td><td>Frecuencia: cuántas oscilaciones completas da en un segundo. f = 1/T.</td><td>Hz = 1/s</td></tr>
+          <tr><td class="mono">ω</td><td>«omega»</td><td>Frecuencia angular: ω = 2π·f. Ojo: en M3 la ω era la velocidad angular de algo que gira. Aquí <b>nada gira</b>; ω solo mide qué tan rápido oscila.</td><td>rad/s</td></tr>
+          <tr><td class="mono">φ</td><td>«fi»</td><td>Fase inicial: un ángulo que dice en qué parte de la oscilación arranca en t = 0.</td><td>rad</td></tr>
+          <tr><td class="mono">k</td><td>«ka»</td><td>Constante del resorte (Parcial 2): qué tan duro es. Fuerza de Hooke: F = −k·x.</td><td>N/m</td></tr>
+          <tr><td class="mono">M</td><td>«eme»</td><td>Masa del bloque, con M mayúscula (la m minúscula es para metros). En el examen sale como m minúscula.</td><td>kg</td></tr>
+          <tr><td class="mono">v, a</td><td>«ve», «a»</td><td>Velocidad y aceleración del bloque.</td><td>m/s, m/s²</td></tr>
+          <tr><td class="mono">v<sub>máx</sub>, a<sub>máx</sub></td><td>«ve máxima», «a máxima»</td><td>Los valores más grandes que alcanzan la rapidez y la aceleración.</td><td>m/s, m/s²</td></tr>
+          <tr><td class="mono">K, U, E</td><td>«ka», «u», «e»</td><td>Energía cinética ½·M·v², energía del resorte ½·k·x² y energía total E = K + U.</td><td>J</td></tr>
+          <tr><td class="mono">d</td><td>«de»</td><td>Cuánto se estira un resorte vertical cuando le cuelgas el bloque y queda quieto.</td><td>m</td></tr>
+          <tr><td class="mono">g</td><td>«ge»</td><td>Aceleración de la gravedad.</td><td>m/s²</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout">
+      <h3>Cómo leer los ejemplos</h3>
+      <p>Cada paso dice <b>qué haces</b> (en negrita), <b>por qué</b> (en gris) y la <b>cuenta</b> (en el recuadro). Las energías van en una tabla de dos momentos. Si algo se cancela, aparece <span class="cx">tachado</span>.</p>
+    </div>
+
+    <div class="block">
+      <h3>1. Qué es oscilar: amplitud, periodo y frecuencia</h3>
+      <p class="prose">Piensa en un bloque sobre una mesa sin fricción, pegado a un resorte. Si no lo tocas, se queda quieto en su <b>punto de equilibrio</b>: ahí el resorte no está ni estirado ni comprimido. Si lo jalas hacia la derecha y lo sueltas, el resorte lo devuelve; pero llega al equilibrio con rapidez, se pasa, comprime el resorte, el resorte lo frena y lo devuelve otra vez. Va y viene para siempre (sin fricción). Eso es <b>oscilar</b>.</p>
+      <p class="prose">Tres números describen cualquier oscilación:</p>
+      <ul class="prose">
+        <li><b>Amplitud A:</b> lo más lejos que llega del equilibrio. El bloque se mueve entre −A y +A.</li>
+        <li><b>Periodo T:</b> lo que tarda una oscilación completa: de +A a −A y de vuelta a +A.</li>
+        <li><b>Frecuencia f = 1/T:</b> cuántas oscilaciones da por segundo. Si tarda medio segundo en cada una, da 2 por segundo.</li>
+      </ul>
+      <p class="prose">Además se usa la <b>frecuencia angular ω = 2π·f = 2π/T</b>. ¿Por qué el 2π? Porque, como vas a ver en la sección 3, la posición sigue un coseno, y el coseno se repite cada 2π radianes. ω dice cuántos radianes de ese coseno avanzan por segundo.</p>
+      <div class="eq"><span><b>f = <span class="frac"><span>1</span><span>T</span></span><br>ω = 2π·f = <span class="frac"><span>2π</span><span>T</span></span></b></span><span>T en segundos, f en hertz (Hz = 1/s), ω en rad/s.</span></div>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1</span>
+            <h4 id="wx1-h">Contar oscilaciones</h4>
+            <p>Un bloque pegado a un resorte da N oscilaciones completas en un tiempo Δt (se lee «delta te»: un intervalo de tiempo).</p>
+            <p><b>Pregunta:</b> ¿cuánto valen el periodo T, la frecuencia f y la frecuencia angular ω?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej1"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">El periodo es el tiempo de una sola oscilación.</p><p class="why">Si N oscilaciones tardan Δt, cada una tarda Δt repartido en N partes iguales.</p><div class="mx">T = <span class="frac"><span>Δt</span><span>N</span></span></div></li>
+          <li><p class="what">La frecuencia es el inverso del periodo.</p><p class="why">Invertir una fracción es voltearla. También se lee directo: N oscilaciones en Δt segundos.</p><div class="mx">f = <span class="frac"><span>1</span><span>T</span></span> = <span class="frac"><span>N</span><span>Δt</span></span></div></li>
+          <li><p class="what">La frecuencia angular es 2π veces la frecuencia.</p><div class="mx">ω = 2π·f = <span class="frac"><span>2π·N</span><span>Δt</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> T = Δt/N, f = N/Δt y ω = 2π·N/Δt.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Más oscilaciones en el mismo tiempo (N más grande) quiere decir oscilaciones más cortas: T baja y f sube.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>2. El resorte: por qué oscila y cuánto tarda</h3>
+      <p class="prose">La fuerza del resorte es la de Hooke del Parcial 2: <b>F = −k·x</b>. El signo menos es la clave: si el bloque está a la derecha (x positivo), la fuerza va a la izquierda; si está a la izquierda (x negativo), la fuerza va a la derecha. <b>Siempre apunta hacia el equilibrio.</b> A una fuerza así se le llama <b>fuerza restauradora</b>.</p>
+      <p class="prose">Con la segunda ley de Newton (la mesa no tiene fricción, y el peso y la normal se cancelan):</p>
+      <div class="eq"><span><b>M·a = −k·x   →   a = −<span class="frac"><span>k</span><span>M</span></span>·x</b></span><span>La aceleración es proporcional a la posición y va al revés. Eso es lo que define un MAS.</span></div>
+      <p class="prose">Cada vez que te encuentres <b>a = −(algo)·x</b>, ese «algo» es ω². Para el resorte:</p>
+      <div class="eq"><span><b>ω = √<span class="rad"><span class="frac"><span>k</span><span>M</span></span></span><br>T = <span class="frac"><span>2π</span><span>ω</span></span> = 2π·√<span class="rad"><span class="frac"><span>M</span><span>k</span></span></span></b></span><span>Un resorte más duro (k grande) oscila más rápido; un bloque más pesado (M grande), más lento.</span></div>
+      <div class="callout">
+        <h3>El periodo no depende de la amplitud</h3>
+        <p>En T = 2π·√(M/k) no aparece A. Si lo estiras el doble, recorre el doble de camino, pero el resorte lo jala el doble de fuerte y va el doble de rápido: tarda lo mismo. Esto lo preguntan mucho como pregunta conceptual.</p>
+      </div>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2</span>
+            <h4 id="wx2-h">Cambiar el bloque por uno más pesado</h4>
+            <p>Un bloque de masa M oscila pegado a un resorte de constante k sobre una mesa sin fricción.</p>
+            <p><b>Pregunta:</b> ¿cuánto vale su periodo T? Si cambias el bloque por uno de masa 4M, ¿cuál es el nuevo periodo?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej2"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Encuentra ω con Newton.</p><p class="why">La única fuerza horizontal es la del resorte: M·a = −k·x, o sea a = −(k/M)·x. Lo que multiplica a −x es ω².</p><div class="mx">ω² = <span class="frac"><span>k</span><span>M</span></span><span class="ar">→</span>ω = √<span class="rad"><span class="frac"><span>k</span><span>M</span></span></span></div></li>
+          <li><p class="what">Pasa de ω a T.</p><p class="why">ω = 2π/T, así que T = 2π/ω. Dividir entre √(k/M) es multiplicar por √(M/k).</p><div class="mx">T = <span class="frac"><span>2π</span><span>ω</span></span> = 2π·√<span class="rad"><span class="frac"><span>M</span><span>k</span></span></span></div></li>
+          <li><p class="what">Con el bloque de 4M, cambia M por 4M.</p><p class="why">El 4 sale de la raíz como un 2, porque √4 = 2.</p><div class="mx">T<sub>nuevo</sub> = 2π·√<span class="rad"><span class="frac"><span>4·M</span><span>k</span></span></span> = 2·2π·√<span class="rad"><span class="frac"><span>M</span><span>k</span></span></span> = 2·T</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> T = 2π·√(M/k). Con 4M, el periodo se duplica: 2·T.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Un bloque más pesado le cuesta más al resorte moverlo: oscila más lento. Pero no 4 veces más lento, sino 2, por la raíz.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>3. La posición en el tiempo: x(t)</h3>
+      <p class="prose">La función que cumple «la aceleración es −ω² por la posición» es un coseno. La posición del bloque en cada instante es:</p>
+      <div class="eq"><span><b>x(t) = A·cos(ω·t + φ)</b></span><span>El coseno va entre −1 y 1, así que x va entre −A y +A. La calculadora en <b>radianes</b>.</span></div>
+      <p class="prose">Derivando una vez sale la velocidad y derivando otra vez, la aceleración. La derivada de cos(ω·t + φ) es −ω·sen(ω·t + φ) por la regla de la cadena:</p>
+      <div class="eq"><span><b>v(t) = −A·ω·sen(ω·t + φ)<br>a(t) = −A·ω²·cos(ω·t + φ) = −ω²·x</b></span><span>Comprueba: la aceleración sale −ω²·x, como pedía Newton.</span></div>
+      <p class="prose">Como el seno y el coseno valen como mucho 1:</p>
+      <div class="eq"><span><b>v<sub>máx</sub> = A·ω<br>a<sub>máx</sub> = A·ω²</b></span><span>La rapidez es máxima al pasar por el equilibrio (x = 0). La aceleración es máxima en los extremos (x = ±A), donde el bloque se detiene un instante.</span></div>
+      <p class="prose"><b>¿Y A y φ de dónde salen?</b> De cómo arrancas el movimiento: la posición x₀ y la velocidad v₀ en t = 0. Reemplazas t = 0 en x(t) y en v(t):</p>
+      <div class="eq"><span><b>x₀ = A·cos φ<br>v₀ = −A·ω·sen φ</b></span><span>Dos ecuaciones, dos incógnitas: A y φ.</span></div>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3</span>
+            <h4 id="wx3-h">Estirarlo y soltarlo</h4>
+            <p>Un bloque de masa M en un resorte de constante k se jala una distancia D a la derecha del equilibrio y se suelta desde el reposo en t = 0.</p>
+            <p><b>Pregunta:</b> ¿cuánto valen A y φ? Escribe x(t) y encuentra v<sub>máx</sub> y a<sub>máx</sub>.</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej3"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escribe las condiciones iniciales.</p><p class="why">En t = 0 está en x = D y quieto (se suelta desde el reposo).</p><div class="mx">x₀ = D<span class="ar">y</span>v₀ = 0</div></li>
+          <li><p class="what">La velocidad inicial da φ.</p><p class="why">0 = −A·ω·sen φ. A y ω no son cero, así que sen φ = 0. Tomamos φ = 0 (el otro, φ = π, daría A negativa).</p><div class="mx">0 = −A·ω·sen φ<span class="ar">→</span>φ = 0</div></li>
+          <li><p class="what">La posición inicial da A.</p><p class="why">cos 0 = 1.</p><div class="mx">D = A·cos 0 = A<span class="ar">→</span>A = D</div></li>
+          <li><p class="what">Escribe x(t).</p><p class="why">ω = √(k/M) del ejemplo 2.</p><div class="mx">x(t) = D·cos(ω·t)<span class="ar">con</span>ω = √<span class="rad"><span class="frac"><span>k</span><span>M</span></span></span></div></li>
+          <li><p class="what">Rapidez y aceleración máximas.</p><p class="why">v<sub>máx</sub> = A·ω y a<sub>máx</sub> = A·ω², con A = D y ω² = k/M.</p><div class="mx">v<sub>máx</sub> = D·√<span class="rad"><span class="frac"><span>k</span><span>M</span></span></span><span class="ar">y</span>a<sub>máx</sub> = D·<span class="frac"><span>k</span><span>M</span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> A = D, φ = 0, x(t) = D·cos(√(k/M)·t), v<sub>máx</sub> = D·√(k/M) y a<sub>máx</sub> = k·D/M.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> En el extremo, el resorte está estirado D y empuja con k·D; Newton da a = k·D/M. Es justo a<sub>máx</sub>. <b>Regla rápida:</b> si lo sueltas desde el reposo, la amplitud es lo que lo estiraste.</p>
+      </article>
+      <article class="wx" aria-labelledby="wx4-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 4</span>
+            <h4 id="wx4-h">Un golpe desde el equilibrio</h4>
+            <p>El mismo bloque está quieto en el equilibrio. En t = 0, un golpe le da una rapidez v₀ hacia la derecha.</p>
+            <p><b>Pregunta:</b> ¿cuánto valen A y φ? Escribe x(t).</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej4"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Condiciones iniciales.</p><p class="why">Arranca en el equilibrio, moviéndose a la derecha (positivo).</p><div class="mx">x₀ = 0<span class="ar">y</span>v₀ = +v₀</div></li>
+          <li><p class="what">La posición inicial da φ.</p><p class="why">0 = A·cos φ, así que cos φ = 0: φ = π/2 o φ = −π/2.</p><div class="mx">0 = A·cos φ<span class="ar">→</span>φ = ±<span class="frac"><span>π</span><span>2</span></span></div></li>
+          <li><p class="what">La velocidad decide el signo.</p><p class="why">v₀ = −A·ω·sen φ tiene que ser positiva. Con φ = −π/2, sen φ = −1 y queda v₀ = +A·ω. Con φ = +π/2 saldría negativa.</p><div class="mx">φ = −<span class="frac"><span>π</span><span>2</span></span><span class="ar">→</span>v₀ = −A·ω·(−1) = A·ω</div></li>
+          <li><p class="what">Despeja A.</p><p class="why">A = v₀/ω, y dividir entre √(k/M) es multiplicar por √(M/k).</p><div class="mx">A = <span class="frac"><span>v₀</span><span>ω</span></span> = v₀·√<span class="rad"><span class="frac"><span>M</span><span>k</span></span></span></div></li>
+          <li><p class="what">Escribe x(t).</p><p class="why">cos(θ − π/2) = sen θ: el coseno corrido un cuarto de vuelta es un seno.</p><div class="mx">x(t) = A·cos(ω·t − <span class="frac"><span>π</span><span>2</span></span>) = v₀·√<span class="rad"><span class="frac"><span>M</span><span>k</span></span></span>·sen(ω·t)</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> A = v₀·√(M/k), φ = −π/2 y x(t) = A·sen(ω·t).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Pasa por el equilibrio con la rapidez máxima: v₀ = v<sub>máx</sub> = A·ω. Más rápido el golpe, más lejos llega.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>4. La energía en el MAS</h3>
+      <p class="prose">Sin fricción, la energía mecánica se conserva (Parcial 2). En el MAS va y viene entre el resorte y el bloque:</p>
+      <ul class="prose">
+        <li><b>En los extremos (x = ±A):</b> el bloque está quieto un instante. Toda la energía está en el resorte: ½·k·A².</li>
+        <li><b>En el equilibrio (x = 0):</b> el resorte no está estirado. Toda la energía es cinética: ½·M·v<sub>máx</sub>².</li>
+        <li><b>En cualquier otro punto:</b> una parte y una parte, y la suma siempre da lo mismo.</li>
+      </ul>
+      <div class="eq"><span><b>E = ½·k·A² = ½·M·v² + ½·k·x²</b></span><span>La energía total solo depende de k y de A. Si duplicas la amplitud, la energía se cuadruplica.</span></div>
+      <p class="prose">De ahí sale la rapidez en cualquier posición, <b>sin necesitar el tiempo</b>: v = ω·√(A² − x²). Esta es la herramienta más rápida cuando te preguntan «¿con qué rapidez pasa por tal punto?».</p>
+      <article class="wx" aria-labelledby="wx5-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 5</span>
+            <h4 id="wx5-h">La rapidez a mitad de camino</h4>
+            <p>Un bloque de masa M oscila en un resorte de constante k con amplitud A, sin fricción.</p>
+            <p><b>Pregunta:</b> ¿con qué rapidez pasa por x = A/2?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej5"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Escoge los dos momentos.</p><p class="why">«Inicio»: en el extremo x = A, donde sabes que está quieto. «Final»: cuando pasa por x = A/2.</p></li>
+          <li><p class="what">Llena la tabla de energía.</p><p class="why">K = ½·M·v² y U = ½·k·x². En x = A/2, el cuadrado da A²/4, y ½·k·A²/4 = k·A²/8.</p><div class="tw"><table class="etab"><thead><tr><th></th><th>En x = A</th><th>En x = A/2</th></tr></thead><tbody><tr><td>K = ½·M·v²</td><td>0</td><td>½·M·v²</td></tr><tr><td>U = ½·k·x²</td><td>½·k·A²</td><td><span class="frac"><span>1</span><span>8</span></span>·k·A²</td></tr><tr class="tot"><td>Total</td><td>½·k·A²</td><td>½·M·v² + <span class="frac"><span>1</span><span>8</span></span>·k·A²</td></tr></tbody></table></div></li>
+          <li><p class="what">Iguala los totales y pasa el término del resorte a la izquierda.</p><p class="why">½ − ⅛ = 4/8 − 1/8 = 3/8.</p><div class="mx">½·k·A² = ½·M·v² + <span class="frac"><span>1</span><span>8</span></span>·k·A²<span class="ar">→</span>½·M·v² = <span class="frac"><span>3</span><span>8</span></span>·k·A²</div></li>
+          <li><p class="what">Despeja v².</p><p class="why">Multiplicas por 2 y divides entre M: (3/8)·2 = 3/4.</p><div class="mx">v² = <span class="frac"><span>3</span><span>4</span></span>·<span class="frac"><span>k</span><span>M</span></span>·A²</div></li>
+          <li><p class="what">Saca raíz.</p><p class="why">√(3/4) = √3/2, √(A²) = A, y √(k/M) = ω.</p><div class="mx">v = <span class="frac"><span>√3</span><span>2</span></span>·A·√<span class="rad"><span class="frac"><span>k</span><span>M</span></span></span> = <span class="frac"><span>√3</span><span>2</span></span>·v<sub>máx</sub></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> v = (√3/2)·A·√(k/M), cerca del 87 % de la rapidez máxima.</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> A mitad de camino el resorte solo guarda un cuarto de la energía (porque x² = A²/4); los otros tres cuartos son cinéticos. Por eso va casi a la rapidez máxima.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>5. El resorte vertical</h3>
+      <p class="prose">Si cuelgas el bloque de un resorte vertical, el resorte se estira una distancia d hasta que su fuerza hacia arriba iguala el peso. Ese es el <b>nuevo equilibrio</b>. Si lo jalas un poco más y lo sueltas, oscila alrededor de ese punto con <b>la misma ω = √(k/M)</b>: el peso solo corre el centro de la oscilación.</p>
+      <article class="wx" aria-labelledby="wx6-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 6</span>
+            <h4 id="wx6-h">Un bloque colgado</h4>
+            <p>Cuando cuelgas un bloque de masa M de un resorte vertical, el resorte se estira una distancia d y el bloque queda quieto. Después lo jalas un poco hacia abajo y lo sueltas.</p>
+            <p><b>Pregunta:</b> ¿por qué oscila como un MAS? ¿Cuál es su periodo?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej6"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">En el equilibrio, las fuerzas se cancelan.</p><p class="why">El resorte, estirado d, empuja hacia arriba con k·d. El peso jala hacia abajo con M·g.</p><div class="mx">k·d = M·g<span class="ar">→</span>k = <span class="frac"><span>M·g</span><span>d</span></span></div></li>
+          <li><p class="what">Mide la posición desde el nuevo equilibrio.</p><p class="why">Llama y a lo que está por debajo del equilibrio (positivo hacia abajo). El resorte está estirado d + y en total.</p><div class="mx">F<sub>neta</sub> = M·g − k·(d + y) = M·g − k·d − k·y</div></li>
+          <li><p class="what">El peso y el k·d se cancelan.</p><p class="why">Por el paso 1, M·g = k·d. Queda la misma fuerza restauradora del resorte horizontal.</p><div class="mx">F<sub>neta</sub> = <span class="cx">M·g</span> − <span class="cx">k·d</span> − k·y = −k·y</div></li>
+          <li><p class="what">Entonces ω es la de siempre. Reemplaza k.</p><p class="why">La M de arriba se va con la de abajo.</p><div class="mx">ω = √<span class="rad"><span class="frac"><span>k</span><span>M</span></span></span> = √<span class="rad"><span class="frac"><span><span class="cx">M</span>·g</span><span>d·<span class="cx">M</span></span></span></span> = √<span class="rad"><span class="frac"><span>g</span><span>d</span></span></span></div></li>
+          <li><p class="what">El periodo.</p><div class="mx">T = <span class="frac"><span>2π</span><span>ω</span></span> = 2π·√<span class="rad"><span class="frac"><span>d</span><span>g</span></span></span></div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> oscila como un MAS alrededor del nuevo equilibrio, con T = 2π·√(d/g).</div>
+        <p class="wx-chk"><b>¿Tiene sentido?</b> Basta con saber cuánto se estira para conocer el periodo, sin saber ni M ni k. Un resorte que se estira mucho (d grande) es blando y oscila lento.</p>
+      </article>
+    </div>
+
+    <div class="callout">
+      <h3>Receta: problemas de masa–resorte</h3>
+      <ol>
+        <li><b>ω:</b> con Newton, busca a = −ω²·x. Para un resorte, ω = √(k/M); si cuelga y se estira d, ω = √(g/d). Después T = 2π/ω y f = 1/T.</li>
+        <li><b>A:</b> si lo sueltas desde el reposo, A es lo que lo estiraste. Si no, usa energía: ½·k·A² = ½·M·v₀² + ½·k·x₀².</li>
+        <li><b>Máximos:</b> v<sub>máx</sub> = A·ω en el equilibrio; a<sub>máx</sub> = A·ω² en los extremos.</li>
+        <li><b>Rapidez en un punto:</b> tabla de energía entre el extremo y ese punto.</li>
+        <li><b>Si te piden x(t):</b> x₀ = A·cos φ y v₀ = −A·ω·sen φ dan A y φ.</li>
+      </ol>
+    </div>
+
+    <div class="callout trap"><h3>Trampas típicas</h3>
+      <p>Confundir ω con f: ω = 2π·f. Si te piden «frecuencia» en Hz, divide ω entre 2π.</p>
+      <p>Creer que el periodo depende de la amplitud: no depende.</p>
+      <p>Calculadora en grados cuando calculas cos(ω·t + φ): ω·t está en radianes.</p>
+      <p>En el resorte vertical, medir x desde el largo natural del resorte en vez de desde el nuevo equilibrio.</p>
+      <p>Si duplicas la amplitud, la energía no se duplica: se cuadruplica (va con A²).</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab: el bloque en el resorte</h2><p>Mueve la masa, la constante del resorte y la amplitud, y suéltalo. Arriba ves el bloque; abajo, la gráfica de x contra t; a un lado, cómo se reparte la energía. Va en tiempo real.</p></div>
+    <div class="lab">
+      <div class="lab-stage"><div id="o-svg" class="lab-fig"></div></div>
+      <div class="lab-side">
+        <div class="ctl"><label for="o-m" id="o-m-lab">Masa M = 1 kg</label><input type="range" id="o-m" min="0.5" max="4" step="0.5" value="1"></div>
+        <div class="ctl"><label for="o-k" id="o-k-lab">Constante k = 20 N/m</label><input type="range" id="o-k" min="5" max="80" step="5" value="20"></div>
+        <div class="ctl"><label for="o-a" id="o-a-lab">Amplitud A = 0,20 m</label><input type="range" id="o-a" min="0.05" max="0.25" step="0.05" value="0.2"></div>
+        <div class="qrow"><button type="button" class="btn" id="o-go">Soltar</button><button type="button" class="btn ghost" id="o-reset">Reiniciar</button></div>
+        <div class="readout" aria-live="off">
+          <table class="mini"><tbody id="o-tab"></tbody></table>
+          <p class="lab-h"><b>Energía</b></p>
+          <div class="ibar" aria-hidden="true"><span id="o-k-bar" style="width:0%"></span><span id="o-u-bar" style="width:100%"></span></div>
+          <div class="key"><span><i style="background:var(--accent)"></i>K, del bloque</span><span><i style="background:var(--orange)"></i>U, del resorte</span></div>
+          <div class="status" id="o-status" aria-live="polite">Estirado a x = +A, listo para soltar</div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Retos del lab</h3>
+      <p class="muted">Predice primero y después compruébalo en el lab.</p>
+      <div class="challenges">
+        <details class="rev"><summary>Reto 1 · Duplica la amplitud. ¿Cambia el periodo? ¿Y la rapidez máxima?</summary>
+          <div class="rev-body"><p><b>El periodo no cambia; la rapidez máxima se duplica</b> (v<sub>máx</sub> = A·ω). Mira la tabla: T queda igual.</p></div></details>
+        <details class="rev"><summary>Reto 2 · Cuadruplica la masa (de 1 a 4 kg). ¿Qué le pasa al periodo?</summary>
+          <div class="rev-body"><p><b>Se duplica:</b> T = 2π·√(M/k), y √4 = 2. Es el ejemplo 2.</p></div></details>
+        <details class="rev"><summary>Reto 3 · ¿Dónde está el bloque cuando la barra de energía es toda azul? ¿Y toda naranja?</summary>
+          <div class="rev-body"><p><b>Toda azul (solo K): pasando por el equilibrio,</b> con la rapidez máxima. <b>Toda naranja (solo U): en los extremos,</b> quieto un instante.</p></div></details>
+        <details class="rev"><summary>Reto 4 · ¿En qué posición la barra queda mitad azul y mitad naranja?</summary>
+          <div class="rev-body"><p><b>En x = ±A/√2 ≈ ±0,71·A.</b> K = U quiere decir ½·k·x² = ½ de ½·k·A², o sea x² = A²/2. No es en A/2: ahí el resorte solo tiene un cuarto.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>No hay parciales anteriores de este tema: son problemas del tipo del libro, en el orden de la teoría, y al final uno tipo final que mezcla un choque con el MAS.</p></div>
+    <p class="prose">Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas o conceptuales y 2 tipo examen. Pasas a F2 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo. Repasa primero las explicaciones de las que fallaste.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: F2 · Péndulos, oscilaciones amortiguadas y forzadas.</p>
+    <p>Fuentes: Young &amp; Freedman 14.1 a 14.4 y el programa del curso (clases del 10 al 24 de noviembre). No hay diapositivas ni parciales de este tema.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Utilidades de figuras ---------- */
+const DEG = Math.PI / 180;
+const sb = (base, s, rest = "") => `${base}<tspan dy="3" font-size="9">${s}</tspan><tspan dy="-3">${rest}</tspan>`;
+const nf = (v) => (Math.round(v * 100) / 100).toString().replace(".", ",").replace("-", "−");
+function axisMark(x, y, lab = "eje") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="8" class="sv-axis"/><circle cx="${f1(x)}" cy="${f1(y)}" r="2.2" class="sv-axle"/>` + (lab ? T(x - 11, y + 20, lab, "sv-tl", "end") : ""); }
+function mass(x, y, lab, r = 8, dx = 12, dy = -8, anchor = "start") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" class="sv-mass"/>` + T(x + dx, y + dy, lab, "sv-t", anchor); }
+function block(cx, yb, w, h, lab, cls = "sv-block") { return `<rect x="${f1(cx - w / 2)}" y="${f1(yb - h)}" width="${f1(w)}" height="${f1(h)}" class="${cls}"/>` + (lab ? T(cx, yb - h / 2 + 4, lab, "sv-lab", "middle") : ""); }
+function curvedArrow(cx, cy, r, a0, a1, cls = "a-v") {
+  const p = (a) => [cx + r * Math.cos(a * DEG), cy - r * Math.sin(a * DEG)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1), ccw = a1 > a0;
+  let g = `<path d="M ${f1(x0)} ${f1(y0)} A ${r} ${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} ${ccw ? 0 : 1} ${f1(x1)} ${f1(y1)}" class="sv-arc"/>`;
+  const s = ccw ? 1 : -1, tx = -Math.sin(a1 * DEG) * s, ty = -Math.cos(a1 * DEG) * s;
+  return g + arrowSvg(x1 - tx * 12, y1 - ty * 12, x1 + tx * 2, y1 + ty * 2, cls);
+}
+/* ---------- Figuras de F1 ---------- */
+function zig(x1, y1, x2, y2, n = 9, amp = 7) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, px = -uy, py = ux, lead = Math.min(8, L * 0.12), body = L - 2 * lead;
+  const pts = [[x1, y1], [x1 + ux * lead, y1 + uy * lead]];
+  for (let i = 0; i < n * 2; i++) { const s = lead + body * (i + 0.5) / (n * 2), sg = i % 2 ? -1 : 1; pts.push([x1 + ux * s + px * amp * sg, y1 + uy * s + py * amp * sg]); }
+  pts.push([x2 - ux * lead, y2 - uy * lead], [x2, y2]);
+  return `<polyline points="${pts.map((p) => f1(p[0]) + "," + f1(p[1])).join(" ")}" class="sv-spring"/>`;
+}
+/* una fila: pared, resorte, bloque sobre el piso. pos: posición del bloque en unidades de A */
+function springRow(y, o = {}) {
+  const X0 = o.X0 ?? 170, Ap = o.Ap ?? 80, w = o.w ?? 38, h = o.h ?? 30, pos = o.pos ?? 0, bx = X0 + pos * Ap;
+  let g = `<line x1="18" y1="${y}" x2="${o.floorEnd ?? 306}" y2="${y}" class="sv-line"/><line x1="18" y1="${y - 62}" x2="18" y2="${y}" class="sv-line"/>`;
+  for (let yy = y - 58; yy <= y - 4; yy += 9) g += `<line x1="18" y1="${yy}" x2="11" y2="${yy + 6}" class="sv-hatch"/>`;
+  if (o.marks) {
+    g += `<line x1="${X0}" y1="${y - h - 16}" x2="${X0}" y2="${y}" class="sv-dash"/>`;
+    [-1, 0, 1].forEach((s) => { const xx = X0 + s * Ap; g += `<line x1="${f1(xx)}" y1="${y}" x2="${f1(xx)}" y2="${y + 6}" class="sv-line"/>` + T(xx, y + 19, s === 0 ? "0" : (s < 0 ? "−A" : "+A"), "sv-t", "middle"); });
+  }
+  if (o.xmark) { const xx = X0 + o.xmark.pos * Ap; g += `<line x1="${f1(xx)}" y1="${y}" x2="${f1(xx)}" y2="${y + 6}" class="sv-line"/>` + `<line x1="${f1(xx)}" y1="${y + 6}" x2="${f1(xx)}" y2="${y + 22}" class="sv-thin"/>` + T(xx, y + 34, o.xmark.lab, "sv-t t-f", "middle"); }
+  (o.ghosts || []).forEach((p) => { g += `<rect x="${f1(X0 + p * Ap - w / 2)}" y="${y - h}" width="${w}" height="${h}" class="sv-ghost"/>`; });
+  g += zig(18, y - h / 2, bx - w / 2, y - h / 2, o.coils ?? 9);
+  g += block(bx, y, w, h, o.M ?? "M");
+  if (o.k !== false) g += T(o.kx ?? 60, y - h - 8, o.k ?? "k", "sv-t", "middle");
+  if (o.v) { const d = o.v.dir || 1, x0 = bx + d * (w / 2 + 5); g += arrowSvg(x0, y - h / 2, x0 + d * 38, y - h / 2, "a-v") + T(x0 + d * 19, y - h / 2 - 9, o.v.lab, "sv-t t-v", "middle"); }
+  if (o.dim) { const xa = X0 + o.dim.from * Ap, xb = X0 + o.dim.to * Ap, yy = y - h - 24; g += `<line x1="${f1(xa)}" y1="${yy}" x2="${f1(xb)}" y2="${yy}" class="sv-dim"/><line x1="${f1(xa)}" y1="${yy - 4}" x2="${f1(xa)}" y2="${yy + 4}" class="sv-dim"/><line x1="${f1(xb)}" y1="${yy - 4}" x2="${f1(xb)}" y2="${yy + 4}" class="sv-dim"/>` + T((xa + xb) / 2, yy - 6, o.dim.lab, "sv-t", "middle"); }
+  if (o.note) g += T(o.noteX ?? 306, y - h - 30, o.note, "sv-tl", o.noteAnchor ?? "end");
+  return g;
+}
+const svgWrap = (h, g, aria) => `<svg viewBox="0 0 320 ${h}" role="img" aria-label="${aria}">${g}</svg>`;
+function resorteSvg(o = {}) { return svgWrap(o.H ?? 140, springRow(o.y ?? 96, o), o.aria || "Un bloque de masa M sobre una mesa sin fricción, pegado a un resorte de constante k sujeto a una pared"); }
+function dosResortesSvg(a, b, aria) {
+  return svgWrap(196, T(306, 16, a.title, "sv-tl", "end") + springRow(74, a) + T(306, 114, b.title, "sv-tl", "end") + springRow(172, b), aria);
+}
+function xtSvg() {
+  const x0 = 34, xe = 304, yc = 104, Ay = 52, Tp = 108;
+  let g = `<line x1="${x0}" y1="${yc}" x2="${xe}" y2="${yc}" class="sv-line"/><line x1="${x0}" y1="20" x2="${x0}" y2="186" class="sv-line"/>`;
+  g += T(xe, yc - 8, "t", "sv-t", "end") + T(x0 - 8, 26, "x", "sv-t", "end");
+  let d = "";
+  for (let px = 0; px <= xe - x0; px += 2) d += (px ? " L " : "M ") + f1(x0 + px) + " " + f1(yc - Ay * Math.cos(2 * Math.PI * px / Tp));
+  g += `<path d="${d}" class="sv-arc" style="stroke-width:2.4"/>`;
+  g += `<line x1="${x0}" y1="${yc - Ay}" x2="${xe}" y2="${yc - Ay}" class="sv-dash"/><line x1="${x0}" y1="${yc + Ay}" x2="${xe}" y2="${yc + Ay}" class="sv-dash"/>`;
+  g += T(x0 - 6, yc - Ay + 4, "+A", "sv-t", "end") + T(x0 - 6, yc + Ay + 4, "−A", "sv-t", "end");
+  const ty = yc - Ay - 16;
+  g += `<line x1="${x0}" y1="${ty}" x2="${x0 + Tp}" y2="${ty}" class="sv-dim"/><line x1="${x0}" y1="${ty - 5}" x2="${x0}" y2="${ty + 5}" class="sv-dim"/><line x1="${x0 + Tp}" y1="${ty - 5}" x2="${x0 + Tp}" y2="${ty + 5}" class="sv-dim"/>` + T(x0 + Tp / 2, ty - 6, "T: una oscilación", "sv-tl", "middle");
+  g += `<line x1="${x0 + Tp * 1.5}" y1="${yc}" x2="${x0 + Tp * 1.5}" y2="${yc + Ay}" class="sv-dim"/>` + T(x0 + Tp * 1.5 - 6, yc + Ay / 2 + 4, "A", "sv-t", "end");
+  return svgWrap(196, g, "Gráfica de la posición x contra el tiempo t: un coseno que oscila entre +A y −A y se repite cada periodo T");
+}
+function verticalSvg(o = {}) {
+  const top = 16, nat = 84, dpx = 36, bh = 30, xL = 92, xR = 206;
+  let g = `<line x1="40" y1="${top}" x2="290" y2="${top}" class="sv-line"/>`;
+  for (let x = 44; x <= 288; x += 10) g += `<line x1="${x}" y1="${top}" x2="${x - 6}" y2="${top - 7}" class="sv-hatch"/>`;
+  g += zig(xL, top, xL, nat, 8, 7) + T(xL, nat + 18, "sin el bloque", "sv-tl", "middle");
+  g += `<line x1="70" y1="${nat}" x2="272" y2="${nat}" class="sv-dash"/>`;
+  g += zig(xR, top, xR, nat + dpx, 8, 7) + block(xR, nat + dpx + bh, 40, bh, "M");
+  g += `<line x1="248" y1="${nat}" x2="248" y2="${nat + dpx}" class="sv-dim"/>` + T(254, nat + dpx / 2 + 4, "d", "sv-t");
+  if (!o.D) g += T(xR, nat + dpx + bh + 18, "quieto: en equilibrio", "sv-tl", "middle");
+  else {
+    const yD = nat + dpx + 44;
+    g += T(xR - 28, nat + dpx + 20, "en equilibrio", "sv-tl", "end");
+    g += `<rect x="${xR - 20}" y="${yD}" width="40" height="${bh}" class="sv-ghost"/>` + `<line x1="272" y1="${nat + dpx}" x2="272" y2="${yD}" class="sv-dim"/>` + T(278, (nat + dpx + yD) / 2 + 4, "D", "sv-t");
+    g += T(xR - 28, yD + 20, "se baja D y se suelta", "sv-tl", "end");
+  }
+  const kY = o.D ? 220 : 190;
+  g += T(40, kY, "k", "sv-t") + T(52, kY, "= constante del resorte", "sv-tl");
+  return svgWrap(o.D ? 230 : 200, g, o.D ? "Un resorte vertical sin carga y el mismo resorte con un bloque M que lo estira d; después el bloque se baja una distancia D más y se suelta" : "Un resorte vertical sin carga y el mismo resorte con un bloque M colgado que lo estira una distancia d hasta quedar quieto");
+}
+function choqueSvg(o = {}) {
+  let g = springRow(110, { X0: 130, M: o.M || "M", w: o.M === "3M" ? 44 : 38, note: "quieto en el equilibrio", noteX: 130, noteAnchor: "middle" });
+  g += `<circle cx="268" cy="96" r="12" class="sv-mass"/>` + T(268, 100, "M", "sv-lab", "middle");
+  g += arrowSvg(252, 72, 206, 72, "a-v") + T(229, 64, "v₀", "sv-t t-v", "middle");
+  g += T(268, 134, "plastilina: se pega", "sv-tl", "middle");
+  return svgWrap(144, g, `Un bloque de masa ${o.M || "M"} quieto en el equilibrio de un resorte; una bola de plastilina de masa M llega con rapidez v₀ y se pega`);
+}
+const FIG = {
+  ej1: () => xtSvg(),
+  ej2: () => dosResortesSvg({ M: "M", title: "bloque M" }, { M: "4M", w: 48, title: "bloque 4M, mismo resorte" }, "Dos resortes iguales de constante k: uno con un bloque M y otro con un bloque 4M"),
+  ej3: () => resorteSvg({ pos: 1, marks: true, ghosts: [0], dim: { from: 0, to: 1, lab: "D" }, note: "se suelta desde el reposo", noteX: 20, noteAnchor: "start", H: 150, y: 110, aria: "Un bloque en un resorte, jalado una distancia D a la derecha del equilibrio; se suelta desde el reposo" }),
+  ej4: () => resorteSvg({ pos: 0, v: { lab: "v₀" }, note: "en el equilibrio, recibe un golpe", aria: "Un bloque en el equilibrio de un resorte recibe un golpe que le da rapidez v₀ hacia la derecha" }),
+  ej5: () => resorteSvg({ pos: 0.5, marks: true, xmark: { pos: 0.5, lab: "x = A/2" }, v: { lab: "v = ?", dir: 1 }, H: 150, aria: "Un bloque que oscila con amplitud A pasa por la posición x = A/2" }),
+  ej6: () => verticalSvg()
+};
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+
+/* ---------- Lab: el bloque en el resorte ---------- */
+const OS = { M: 1, k: 20, A: 0.2, t: 0, run: false, last: null, started: false };
+const om = () => Math.sqrt(OS.k / OS.M);
+const per = () => 2 * Math.PI / om();
+function drawOsc() {
+  const w = om(), x = OS.A * Math.cos(w * OS.t), Ap = 400 * OS.A, X0 = 175;
+  let g = springRow(92, { X0, Ap, pos: x / OS.A, marks: true, M: "M", k: "k", coils: 10 });
+  const gx0 = 34, gx1 = 318, yc = 204, Ay = 220 * OS.A, W = 2.5 * per();
+  g += `<line x1="${gx0}" y1="${yc}" x2="${gx1}" y2="${yc}" class="sv-thin"/><line x1="${gx0}" y1="${yc - 60}" x2="${gx0}" y2="${yc + 60}" class="sv-line"/>`;
+  g += `<line x1="${gx0}" y1="${f1(yc - Ay)}" x2="${gx1}" y2="${f1(yc - Ay)}" class="sv-dash"/><line x1="${gx0}" y1="${f1(yc + Ay)}" x2="${gx1}" y2="${f1(yc + Ay)}" class="sv-dash"/>`;
+  g += T(gx0 - 5, yc - Ay + 4, "+A", "sv-tl", "end") + T(gx0 - 5, yc + Ay + 4, "−A", "sv-tl", "end") + T(gx0 + 8, yc - 62, "x", "sv-t") + T(gx1, yc + 76, "t", "sv-t", "end");
+  if (OS.started) {
+    const t0 = Math.max(0, OS.t - W); let d = "";
+    for (let i = 0; i <= 140; i++) { const tau = t0 + (OS.t - t0) * i / 140, px = gx0 + (tau - t0) / W * (gx1 - gx0); d += (i ? " L " : "M ") + f1(px) + " " + f1(yc - 220 * OS.A * Math.cos(w * tau)); }
+    g += `<path d="${d}" class="sv-arc" style="stroke-width:2.2"/>`;
+    const pxNow = gx0 + (OS.t - t0) / W * (gx1 - gx0);
+    g += `<circle cx="${f1(pxNow)}" cy="${f1(yc - 220 * x)}" r="4" class="sv-mass"/>`;
+  }
+  $("#o-svg").innerHTML = `<svg viewBox="0 0 330 280" role="img" aria-label="Bloque que oscila en un resorte horizontal y gráfica de su posición contra el tiempo">${g}</svg>`;
+  const v = -OS.A * w * Math.sin(w * OS.t), K = Math.sin(w * OS.t) ** 2;
+  $("#o-k-bar").style.width = (100 * K).toFixed(1) + "%"; $("#o-u-bar").style.width = (100 * (1 - K)).toFixed(1) + "%";
+  $("#o-tab").innerHTML = [["Periodo T", fmt(per()) + " s"], ["Frecuencia f", fmt(1 / per()) + " Hz"], ["ω = √(k/M)", fmt(w) + " rad/s"], ["v<sub>máx</sub> = A·ω", fmt(OS.A * w) + " m/s"], ["a<sub>máx</sub> = A·ω²", fmt(OS.A * w * w) + " m/s²"], ["Ahora: x", fmt(x) + " m"], ["Ahora: v", fmt(v) + " m/s"]].map(([a, b]) => `<tr><th scope="row" style="text-align:left">${a}</th><td>${b}</td></tr>`).join("");
+}
+function oStatus(t) { $("#o-status").textContent = t; }
+function oReset() { OS.run = false; OS.t = 0; OS.last = null; OS.started = false; $("#o-go").textContent = "Soltar"; oStatus("Estirado a x = +A, listo para soltar"); drawOsc(); }
+function oFrame(now) {
+  if (!OS.run) return;
+  if (OS.last == null) OS.last = now;
+  OS.t += Math.min(0.05, (now - OS.last) / 1000); OS.last = now;
+  const x = Math.cos(om() * OS.t);
+  oStatus(Math.abs(x) > 0.97 ? "En un extremo: quieto un instante, toda la energía en el resorte" : Math.abs(x) < 0.1 ? "Pasando por el equilibrio: rapidez máxima" : "Oscilando");
+  drawOsc(); requestAnimationFrame(oFrame);
+}
+[["o-m", "M", (v) => "Masa M = " + nf(v) + " kg"], ["o-k", "k", (v) => "Constante k = " + nf(v) + " N/m"], ["o-a", "A", (v) => "Amplitud A = " + fmt(v) + " m"]].forEach(([id, key, lab]) => {
+  $("#" + id).addEventListener("input", (e) => { OS[key] = +e.target.value; $("#" + id + "-lab").textContent = lab(OS[key]); oReset(); });
+});
+$("#o-go").addEventListener("click", () => {
+  if (OS.run) { OS.run = false; $("#o-go").textContent = "Seguir"; oStatus("En pausa"); return; }
+  OS.run = true; OS.started = true; OS.last = null; $("#o-go").textContent = "Pausa";
+  requestAnimationFrame(oFrame);
+});
+$("#o-reset").addEventListener("click", oReset);
+oReset();
+
+/* ---------- Taller ---------- */
+const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const rt = (x) => `√<span class="rad">${x}</span>`;
+const tch = (t) => `<span class="cx">${t}</span>`;
+const etab = (c1, c2, rows, tot) => `<div class="tw"><table class="etab"><thead><tr><th></th><th>${c1}</th><th>${c2}</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}<tr class="tot"><td>Total</td><td>${tot[0]}</td><td>${tot[1]}</td></tr></tbody></table></div>`;
+const PROBS = [
+  { group: "Problemas tipo libro · en el orden de la teoría", note: "No hay parciales anteriores del cap. 14. Estos cinco cubren lo que se puede preguntar: periodo, máximos, amplitud con energía, resorte vertical y un choque que termina en MAS." },
+  { n: "T1", t: "Lo básico de un bloque en un resorte", src: "Tipo libro 14.2",
+    fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0], note: "se suelta desde el reposo", noteX: 20, noteAnchor: "start", H: 150, y: 110, aria: "Un bloque M en un resorte k, estirado hasta +A y soltado desde el reposo" }),
+    txt: "Un bloque de masa M está pegado a un resorte de constante k sobre una mesa sin fricción. Se estira una distancia A desde el equilibrio y se suelta desde el reposo. Encuentra: (a) el periodo T y la frecuencia f; (b) la rapidez máxima y dónde ocurre; (c) la aceleración máxima y dónde ocurre.",
+    hints: ["ω sale de Newton: M·a = −k·x. Después T = 2π/ω y f = 1/T.", "Se suelta desde el reposo: la amplitud es A. v_máx = A·ω y a_máx = A·ω²."],
+    sol: [{ w: "ω con Newton.", y: "La única fuerza horizontal es la del resorte: M·a = −k·x, así que a = −(k/M)·x y ω² = k/M.", m: `ω = ${rt(fr("k", "M"))}` },
+      { w: "(a) Periodo y frecuencia.", y: "T = 2π/ω y f = 1/T: la frecuencia es la misma fracción volteada.", m: `T = 2π·${rt(fr("M", "k"))}<span class="ar">y</span>f = ${fr("1", "2π")}·${rt(fr("k", "M"))}` },
+      { w: "(b) Rapidez máxima.", y: "v_máx = A·ω. Ocurre al pasar por el equilibrio (x = 0), donde el resorte ya no guarda energía y toda es cinética.", m: `v<sub>máx</sub> = A·${rt(fr("k", "M"))}` },
+      { w: "(c) Aceleración máxima.", y: "a_máx = A·ω² = A·k/M. Ocurre en los extremos (x = ±A), donde el resorte está más estirado o comprimido y empuja más fuerte.", m: `a<sub>máx</sub> = ${fr("k·A", "M")}` }],
+    res: "T = 2π·√(M/k), f = (1/2π)·√(k/M), v_máx = A·√(k/M) en x = 0 y a_máx = k·A/M en x = ±A.",
+    checks: [{ q: "(a) ¿Cuánto vale la frecuencia f?", opts: ["(1/2π)·√(k/M)", "2π·√(k/M)", "√(k/M)", "(1/2π)·√(M/k)"], a: 0 }] },
+  { n: "T2", t: "La amplitud cuando ya va rápido", src: "Tipo libro 14.3 · amplitud con energía",
+    fig: () => resorteSvg({ pos: 0.55, marks: true, v: { lab: "v₀", dir: 1 }, dim: { from: 0, to: 0.55, lab: "x₀" }, H: 150, y: 110, aria: "Un bloque en un resorte, en la posición x₀ a la derecha del equilibrio, moviéndose hacia la derecha con rapidez v₀" }),
+    txt: "El bloque del T1 (masa M, resorte k, sin fricción) está en la posición x₀, a la derecha del equilibrio, y en ese instante va con rapidez v₀ alejándose del equilibrio. ¿Cuál es la amplitud A de la oscilación? ¿Es mayor o menor que x₀?",
+    hints: ["Usa energía entre el instante dado y el extremo, donde el bloque se detiene (v = 0, x = A).", "½·k·A² = ½·M·v₀² + ½·k·x₀²."],
+    sol: [{ w: "Escoge los dos momentos.", y: "«Inicio»: el instante del enunciado (x₀, v₀). «Final»: el extremo x = A, donde el bloque se detiene un instante." },
+      { w: "Tabla de energía.", y: "No hay fricción: el total se conserva.", m: etab("En x₀", "En x = A", [["K = ½·M·v²", "½·M·v₀²", "0"], ["U = ½·k·x²", "½·k·x₀²", "½·k·A²"]], ["½·M·v₀² + ½·k·x₀²", "½·k·A²"]) },
+      { w: "Iguala y cancela el ½.", y: "Todos los términos tienen ½: multiplicas todo por 2.", m: `${tch("½")}·k·A² = ${tch("½")}·M·v₀² + ${tch("½")}·k·x₀²<span class="ar">→</span>k·A² = M·v₀² + k·x₀²` },
+      { w: "Divide entre k y saca raíz.", m: `A² = x₀² + ${fr("M", "k")}·v₀²<span class="ar">→</span>A = ${rt(`x₀² + ${fr("M·v₀²", "k")}`)}` },
+      { w: "¿Mayor o menor que x₀?", y: "Dentro de la raíz, a x₀² se le suma algo positivo. Tiene sentido: además de estar estirado, el bloque tiene energía cinética, que todavía lo lleva más lejos." }],
+    res: "A = √(x₀² + M·v₀²/k), mayor que x₀.",
+    checks: [{ q: "¿Cuánto vale A?", opts: ["x₀ + v₀·√(M/k)", "√(x₀² + M·v₀²/k)", "√(x₀² + k·v₀²/M)", "x₀"], a: 1 }] },
+  { n: "T3", t: "¿Dónde va a la mitad de la rapidez máxima?", src: "Tipo libro 14.3 · energía",
+    fig: () => resorteSvg({ pos: 0.87, marks: true, xmark: { pos: 0.87, lab: "x = ?" }, v: { lab: "½·vmáx", dir: 1 }, H: 150, aria: "Un bloque que oscila con amplitud A, en una posición x desconocida donde su rapidez es la mitad de la máxima" }),
+    txt: "Un bloque de masa M oscila en un resorte de constante k con amplitud A, sin fricción. ¿En qué posiciones x su rapidez es la mitad de la rapidez máxima?",
+    hints: ["En el equilibrio toda la energía es cinética: ½·M·v_máx² = ½·k·A².", "Si la rapidez es la mitad, la energía cinética es un cuarto: (½)² = ¼. El resto está en el resorte."],
+    sol: [{ w: "La energía total, de dos formas.", y: "En el extremo es toda del resorte; en el equilibrio, toda cinética. Las dos son la misma E.", m: `E = ½·k·A² = ½·M·v<sub>máx</sub>²` },
+      { w: "La cinética cuando v = v_máx/2.", y: "El cuadrado de ½ es ¼: la cinética es un cuarto de E.", m: `K = ½·M·(${fr("v<sub>máx</sub>", "2")})² = ${fr("1", "4")}·½·M·v<sub>máx</sub>² = ${fr("1", "4")}·E` },
+      { w: "Tabla de energía.", y: "«Inicio»: el extremo. «Final»: el punto x que buscas.", m: etab("En x = A", "En x", [["K", "0", `${fr("1", "4")}·½·k·A²`], ["U = ½·k·x²", "½·k·A²", "½·k·x²"]], ["½·k·A²", `${fr("1", "4")}·½·k·A² + ½·k·x²`]) },
+      { w: "Iguala y cancela ½·k.", y: "Los tres términos tienen ½·k.", m: `${tch("½·k")}·A² = ${fr("1", "4")}·${tch("½·k")}·A² + ${tch("½·k")}·x²<span class="ar">→</span>x² = ${fr("3", "4")}·A²` },
+      { w: "Saca raíz.", y: "√(3/4) = √3/2, y la x puede ser a la derecha o a la izquierda.", m: `x = ±${fr("√3", "2")}·A ≈ ±0,87·A` }],
+    res: "x = ±(√3/2)·A, cerca de los extremos.",
+    checks: [{ q: "¿En qué x?", opts: ["±A/2", "±(√3/2)·A", "±A/√2", "±A/4"], a: 1 }] },
+  { n: "T4", t: "El bloque colgado que se baja un poco más", src: "Tipo libro 14.4 · resorte vertical",
+    fig: () => verticalSvg({ D: true }),
+    txt: "Un bloque de masa M cuelga de un resorte vertical, que se estira una distancia d hasta que el bloque queda quieto. Después se baja el bloque una distancia D más y se suelta desde el reposo. Encuentra: (a) el periodo; (b) la amplitud; (c) la rapidez máxima.",
+    hints: ["Equilibrio: k·d = M·g, así que k = M·g/d y ω = √(g/d) (ejemplo 6).", "Oscila alrededor del punto donde estaba quieto. Se suelta desde el reposo a D de ese punto: A = D."],
+    sol: [{ w: "El resorte en el equilibrio.", y: "Quieto: la fuerza del resorte iguala el peso.", m: `k·d = M·g<span class="ar">→</span>k = ${fr("M·g", "d")}` },
+      { w: "(a) ω y el periodo.", y: "ω = √(k/M) y la M se cancela.", m: `ω = ${rt(fr(`${tch("M")}·g`, `d·${tch("M")}`))} = ${rt(fr("g", "d"))}<span class="ar">→</span>T = 2π·${rt(fr("d", "g"))}` },
+      { w: "(b) La amplitud.", y: "La oscilación es alrededor del nuevo equilibrio. Se suelta desde el reposo a una distancia D de él: lo más lejos que llega es D.", m: `A = D` },
+      { w: "(c) La rapidez máxima.", y: "v_máx = A·ω. Ocurre al pasar por el punto donde estaba quieto.", m: `v<sub>máx</sub> = D·${rt(fr("g", "d"))}` }],
+    res: "T = 2π·√(d/g), A = D y v_máx = D·√(g/d).",
+    checks: [{ q: "(c) ¿Cuánto vale la rapidez máxima?", opts: ["D·√(g/d)", "√(2·g·D)", "d·√(g/D)", "D·√(d/g)"], a: 0 }] },
+  { group: "Tipo final · mezcla con el Parcial 3", note: "Así se puede ver un problema del final: primero un choque (solo momento lineal, como en M1 del Parcial 3) y después un MAS." },
+  { n: "T5", t: "La plastilina que se pega al bloque del resorte", src: "Tipo final · choque + MAS",
+    fig: () => choqueSvg(),
+    txt: "Un bloque de masa M está quieto en el equilibrio, pegado a un resorte de constante k sobre una mesa sin fricción. Una bola de plastilina, también de masa M, llega con rapidez v₀ y se pega al bloque. Encuentra: (a) la rapidez de los dos justo después del choque; (b) la amplitud de la oscilación; (c) el periodo; (d) qué fracción de la energía cinética de la plastilina se pierde en el choque.",
+    hints: ["(a) En el choque solo se conserva el momento lineal, no la energía (salen pegados). El resorte no empuja en ese instante: el bloque está en el equilibrio.", "(b) Después del choque sí se conserva la energía: la cinética de los dos (masa 2M) se vuelve ½·k·A² en el extremo. (c) La masa que oscila ahora es 2M."],
+    sol: [{ w: "(a) Momento lineal en el choque.", y: "Salen pegados: choque perfectamente inelástico. Antes solo se mueve la plastilina; después se mueven los dos juntos con V.", m: `M·v₀ = (M + M)·V<span class="ar">→</span>V = ${fr("v₀", "2")}` },
+      { w: "(b) Energía después del choque.", y: "«Inicio»: justo después del choque, en el equilibrio, con rapidez V. «Final»: el extremo, quietos. La masa que oscila es 2M.", m: etab("Justo después (x = 0)", "En x = A", [["K", `½·2M·(${fr("v₀", "2")})²`, "0"], ["U = ½·k·x²", "0", "½·k·A²"]], [`${fr("1", "4")}·M·v₀²`, "½·k·A²"]) },
+      { w: "Despeja A.", y: "½·2M·(v₀²/4) = M·v₀²/4. Multiplicas por 2 y divides entre k.", m: `${fr("1", "4")}·M·v₀² = ½·k·A²<span class="ar">→</span>A² = ${fr("M·v₀²", "2·k")}<span class="ar">→</span>A = v₀·${rt(fr("M", "2·k"))}` },
+      { w: "(c) El periodo, con la masa nueva.", y: "Oscilan juntos los dos: la masa es 2M.", m: `T = 2π·${rt(fr("2·M", "k"))}` },
+      { w: "(d) La energía que se pierde en el choque.", y: "Antes: ½·M·v₀². Después: ¼·M·v₀² (paso b). Se pierde la mitad. Es la fracción M₂/(M₁ + M₂) = M/(2M) de M1 del Parcial 3.", m: `${fr("K<sub>después</sub>", "K<sub>antes</sub>")} = ${fr(`${fr("1", "4")}·${tch("M·v₀²")}`, `${fr("1", "2")}·${tch("M·v₀²")}`)} = ${fr("1", "2")}<span class="ar">→</span>se pierde ${fr("1", "2")}` }],
+    res: "V = v₀/2, A = v₀·√(M/(2k)), T = 2π·√(2M/k) y se pierde la mitad de la energía cinética.",
+    checks: [{ q: "(b) ¿Cuánto vale la amplitud?", opts: ["v₀·√(M/k)", "v₀·√(M/(2k))", "v₀·√(2M/k)", "(v₀/2)·√(M/(4k))"], a: 1 },
+      { q: "(c) ¿Cuánto vale el periodo?", opts: ["2π·√(M/k)", "2π·√(2M/k)", "π·√(M/k)", "2π·√(M/(2k))"], a: 1 }] }
+];
+
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    if (p.group) { const gr = el("div", "prob-group"); gr.appendChild(el("h3", "", p.group)); if (p.note) gr.appendChild(el("p", "", p.note)); box.appendChild(gr); return; }
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck) => {
+      const c = el("div", "check"); const cq = el("p"); cq.innerHTML = "Chequeo rápido · " + ck.q; c.appendChild(cq);
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button";
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb2 = el("div", "rev-body"); sb2.innerHTML = stepsHtml(p.sol) + `<div class="wx-res"><b>Resultado:</b> ${p.res}</div>`; ds.appendChild(sb2); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+
+/* ---------- Quiz ---------- */
+const MOD = "F1", NEXT = "Aprobado. Pasas a F2 · Péndulos, oscilaciones amortiguadas y forzadas.";
+const ampFig = () => dosResortesSvg({ pos: 1, Ap: 48, X0: 150, ghosts: [0], title: "estirado A" }, { pos: 2, Ap: 48, X0: 150, ghosts: [0], title: "estirado 2A" }, "El mismo bloque y el mismo resorte: arriba estirado una distancia A, abajo estirado 2A");
+const QUIZ = {
+  A: [
+    { k: "Conceptual", fig: ampFig, q: "Un bloque en un resorte oscila con amplitud A. Si se suelta desde el doble de distancia (amplitud 2A), ¿qué le pasa al periodo?",
+      o: ["Se duplica", "Se reduce a la mitad", "No cambia", "Aumenta √2 veces"], a: 2,
+      e: "T = 2π·√(M/k) no depende de A. Recorre el doble, pero el resorte lo empuja el doble de fuerte y va el doble de rápido." },
+    { k: "Conceptual", fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0, -1], H: 140, aria: "Un bloque que oscila entre −A y +A" }), q: "Durante la oscilación, ¿dónde es máxima la rapidez del bloque y dónde es máxima su aceleración?",
+      o: ["Rapidez máxima en x = 0; aceleración máxima en x = ±A", "Las dos son máximas en x = 0", "Las dos son máximas en x = ±A", "Rapidez máxima en x = ±A; aceleración máxima en x = 0"], a: 0,
+      e: "En x = 0 toda la energía es cinética: rapidez máxima. En x = ±A el resorte está más estirado y empuja más: a = −ω²·x es máxima, aunque el bloque esté quieto un instante." },
+    { k: "Corta", fig: () => FIG.ej2(), q: "Un bloque de masa M en un resorte de constante k oscila con periodo T. Si se cambia por un bloque de masa 4M en el mismo resorte, el nuevo periodo es:",
+      o: ["T/2", "T", "2T", "4T"], a: 2,
+      e: "T = 2π·√(M/k). Con 4M sale √4 = 2: el periodo se duplica." },
+    { k: "Tipo examen", fig: () => FIG.ej5(), q: "Un bloque de masa M oscila en un resorte de constante k con amplitud A. ¿Con qué rapidez pasa por x = A/2?",
+      o: ["½·A·√(k/M)", "(√3/2)·A·√(k/M)", "A·√(k/M)", "(3/4)·A·√(k/M)"], a: 1,
+      e: "½·k·A² = ½·M·v² + ½·k·(A/2)². El resorte guarda un cuarto: ½·M·v² = (3/4)·½·k·A², así que v² = (3/4)·(k/M)·A²." },
+    { k: "Tipo examen", fig: () => verticalSvg(), q: "Un bloque cuelga de un resorte vertical y lo estira una distancia d hasta quedar quieto. Si se jala un poco hacia abajo y se suelta, ¿cuál es el periodo de la oscilación?",
+      o: ["2π·√(d/g)", "2π·√(g/d)", "√(d/g)", "2π·√(2d/g)"], a: 0,
+      e: "En el equilibrio k·d = M·g, así que k/M = g/d y ω = √(g/d). T = 2π/ω = 2π·√(d/g)." }
+  ],
+  B: [
+    { k: "Conceptual", fig: ampFig, q: "Si la amplitud de un bloque en un resorte se duplica, la energía total de la oscilación:",
+      o: ["Se duplica", "Se cuadruplica", "No cambia", "Se reduce a la mitad"], a: 1,
+      e: "E = ½·k·A². Con 2A, (2A)² = 4·A²: la energía se cuadruplica." },
+    { k: "Conceptual", fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0], H: 140, aria: "Un bloque en el extremo x = +A de su oscilación" }), q: "Cuando el bloque está en el extremo x = +A, ¿cómo son su velocidad y su aceleración?",
+      o: ["v = 0 y la aceleración es máxima, hacia el equilibrio", "v es máxima y a = 0", "v = 0 y a = 0", "v es máxima y la aceleración es máxima, hacia afuera"], a: 0,
+      e: "En el extremo se detiene un instante (v = 0), pero el resorte está estirado al máximo y lo jala hacia el equilibrio: a = −ω²·A." },
+    { k: "Corta", fig: () => dosResortesSvg({ M: "M", k: "k", title: "resorte k" }, { M: "M", k: "4k", title: "resorte 4k, mismo bloque" }, "El mismo bloque M en dos resortes: uno de constante k y otro de constante 4k"), q: "Un bloque oscila con frecuencia f en un resorte de constante k. En un resorte de constante 4k, el mismo bloque oscila con frecuencia:",
+      o: ["f/2", "f", "2f", "4f"], a: 2,
+      e: "f = (1/2π)·√(k/M). Con 4k sale √4 = 2: la frecuencia se duplica (el resorte más duro lo hace oscilar más rápido)." },
+    { k: "Tipo examen", fig: () => resorteSvg({ pos: 0.71, marks: true, xmark: { pos: 0.71, lab: "x = ?" }, H: 150, aria: "Un bloque que oscila con amplitud A, en una posición x desconocida" }), q: "Un bloque oscila en un resorte con amplitud A. ¿En qué posiciones la energía cinética del bloque es igual a la energía guardada en el resorte?",
+      o: ["x = ±A/2", "x = ±A/√2", "x = ±A/4", "x = 0"], a: 1,
+      e: "Si K = U, cada una es la mitad de E: ½·k·x² = ½·(½·k·A²), así que x² = A²/2 y x = ±A/√2 ≈ ±0,71·A." },
+    { k: "Tipo examen", fig: () => choqueSvg({ M: "3M" }), q: "Un bloque de masa 3M está quieto en el equilibrio de un resorte de constante k, sin fricción. Una bola de plastilina de masa M llega con rapidez v₀ y se pega. ¿Con qué amplitud oscilan?",
+      o: ["(v₀/2)·√(M/k)", "(v₀/4)·√(M/k)", "v₀·√(M/k)", "v₀·√(3M/k)"], a: 0,
+      e: "Choque: M·v₀ = 4M·V, V = v₀/4. Energía después: ½·4M·(v₀/4)² = ½·k·A², o sea M·v₀²/8 = ½·k·A² y A² = M·v₀²/(4k). A = (v₀/2)·√(M/k)." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

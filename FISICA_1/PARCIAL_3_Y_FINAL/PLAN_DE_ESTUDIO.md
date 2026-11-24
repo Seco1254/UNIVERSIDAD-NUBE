@@ -121,13 +121,14 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 
 ### Fase 2 · Examen final
 
-> **Ajuste del 24 de noviembre.** La fase 2 original (20 al 29) no alcanzó a empezar. Arranca el miércoles 25: lo nuevo (oscilaciones) va primero y los repasos de los parciales son módulos cortos. Prioridades del material del final: 1) cap. 14, porque solo entra en el final; 2) P3 (sin nota) y P2 (tu parcial más bajo); 3) gravitación y P1.
+> **Ajuste del 24 de noviembre.** La fase 2 original (20 al 29) no alcanzó a empezar. Arranca el martes 24: lo nuevo (oscilaciones) va primero y los repasos de los parciales son módulos cortos. Prioridades del material del final: 1) cap. 14, porque solo entra en el final; 2) P3 (sin nota) y P2 (tu parcial más bajo); 3) gravitación y P1.
 
 | Día | Carga | Qué |
 |---|---|---|
-| Mié 25 nov | Media · 2,5–3 h | **F1** movimiento armónico simple, completo |
-| Jue 26 nov | Liviana · 1–1,5 h | Clase de repaso general (12:30): pregunta por hoja de fórmulas, calculadora y salón · **F2** teoría y lab |
-| Vie 27 nov | Suave · ~2 h | **F2** taller y quiz · **F3** repaso P3 + gravitación (con los quizzes de M6 y M7) · evaluación de cursos antes de las 11:59 p. m. |
+| Mar 24 nov | Liviana · 1–1,5 h | **F1** movimiento armónico simple: teoría y lab |
+| Mié 25 nov | Media · 2,5–3 h | **F1** taller y quiz · **F2** péndulos, amortiguadas y forzadas: teoría y lab |
+| Jue 26 nov | Liviana · 1–1,5 h | Clase de repaso general (12:30): pregunta por hoja de fórmulas, calculadora y salón · **F2** taller y quiz |
+| Vie 27 nov | Suave · ~2 h | **F3** repaso P3 + gravitación (con los quizzes de M6 y M7) · evaluación de cursos antes de las 11:59 p. m. |
 | Sáb 28 nov | Pesada · 4–5 h | **F4** repaso P2 · **F5** repaso P1 |
 | Dom 29 nov | Pesada · 4–5 h | **F6** simulacro final (3 h) + corrección · en la noche, el simulacro de Bloque Neón |
 | **Lun 30 nov** | — | En la mañana, la hoja de fórmulas del final (y el simulacro de BN antes de las 2:00 p. m. si no lo hiciste) · **EXAMEN FINAL (15:00)** |
