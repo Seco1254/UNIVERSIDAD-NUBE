@@ -1,0 +1,868 @@
+<title>M1 Balanceo de línea</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: estación de trabajo. Una columna (≤ 920px) sobre piso gris acero, como el plan: teoría con ejemplos paso a paso, un balanceador que corre el algoritmo paso a paso, taller con chequeo de respuestas y quiz guardado. */
+:root{
+  --floor:#e9ecef; --panel:#ffffff; --ink:#16191d; --muted:#59616b; --rule:#d3d8de; --line:rgba(22,25,29,.06);
+  --accent:#d24a0f; --accent-ink:#ffffff; --accent-soft:#fde3d4;
+  --safety:#ffd23f; --safety-ink:#2b2300;
+  --red:#c0352b; --red-soft:#f9e1de; --green:#1d7a4f; --green-soft:#d9f0e4; --orange:#b4600b;
+  --s1:#2f6fd6; --s2:#d24a0f; --s3:#1d8a5a; --s4:#8a4fd1; --s5:#b8860b; --s6:#c2367a;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --floor:#111316; --panel:#1a1d21; --ink:#e7e9ec; --muted:#9aa2ac; --rule:#2d3238; --line:rgba(231,233,236,.04);
+    --accent:#ff8a4f; --accent-ink:#111316; --accent-soft:#3a2216;
+    --safety:#6b5800; --safety-ink:#fff4c4;
+    --red:#ff8b80; --red-soft:#3a1d1b; --green:#5fd29b; --green-soft:#13301f; --orange:#f0a95a;
+    --s1:#6fa3ff; --s2:#ff8a4f; --s3:#4fd194; --s4:#b996ff; --s5:#e6c25a; --s6:#ff7fb6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --floor:#111316; --panel:#1a1d21; --ink:#e7e9ec; --muted:#9aa2ac; --rule:#2d3238; --line:rgba(231,233,236,.04);
+  --accent:#ff8a4f; --accent-ink:#111316; --accent-soft:#3a2216;
+  --safety:#6b5800; --safety-ink:#fff4c4;
+  --red:#ff8b80; --red-soft:#3a1d1b; --green:#5fd29b; --green-soft:#13301f; --orange:#f0a95a;
+  --s1:#6fa3ff; --s2:#ff8a4f; --s3:#4fd194; --s4:#b996ff; --s5:#e6c25a; --s6:#ff7fb6;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background-color:var(--floor); background-image:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 64px); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6}
+.wrap{max-width:920px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:28px 64px; display:grid; grid-template-columns:minmax(0,1fr); gap:40px}
+.wrap > *, section{min-width:0}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.08}
+h1{font-size:clamp(2.6rem,9vw,4.4rem); font-weight:800; text-transform:uppercase}
+h2{font-size:1.9rem; font-weight:700; text-transform:uppercase}
+h3{font-size:1.35rem; font-weight:700}
+h4{font-size:1.1rem; font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.prose{max-width:68ch}
+b{font-weight:700}
+
+.top{display:grid; gap:12px; border-top:6px solid var(--ink); padding-top:16px}
+.hazard{height:8px; background:repeating-linear-gradient(-45deg,var(--safety) 0 10px,var(--ink) 10px 20px); border-radius:2px; max-width:220px}
+.lede{font-size:1.08rem; max-width:64ch}
+.nav{display:flex; flex-wrap:wrap; gap:8px}
+.nav a{font-family:var(--f-mono); font-size:.8rem; text-decoration:none; color:var(--ink); border:1px solid var(--rule); background:var(--panel); padding:5px 10px; border-radius:var(--r)}
+.nav a:hover{border-color:var(--accent)}
+.meta{display:flex; flex-wrap:wrap; gap:6px 18px; font-size:.88rem; color:var(--muted)}
+
+.sec-title{display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 14px; align-items:baseline; border-top:3px solid var(--ink); padding-top:12px}
+.sec-num{font-family:var(--f-display); font-weight:800; font-size:2.6rem; line-height:.8; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); max-width:66ch}
+section{display:grid; gap:22px}
+.block{display:grid; gap:12px}
+
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--panel)}
+table{border-collapse:collapse; width:100%; font-size:.92rem}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--floor); white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.mono, .num{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+tr.no td{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--red)}
+tr.close td{border-bottom:2px solid var(--ink)}
+
+.eq{display:grid; gap:4px; background:var(--panel); border:1px solid var(--rule); border-left:5px solid var(--accent); border-radius:var(--r); padding:12px 16px}
+.eq > span:first-child{font-family:var(--f-mono); font-size:1.05rem; font-weight:600}
+.eq > span + span{font-size:.92rem; color:var(--muted)}
+
+.wx{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); overflow:hidden}
+.wx-head{padding:12px 16px; border-bottom:1px solid var(--rule); background:var(--floor); display:grid; gap:6px}
+.tag{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.steps{list-style:none; margin:0; padding:0; counter-reset:st}
+.steps > li{display:grid; grid-template-columns:2.2rem minmax(0,1fr); gap:10px; padding:12px 16px; border-bottom:1px dashed var(--rule); counter-increment:st}
+.steps > li:last-child{border-bottom:0}
+.steps > li::before{content:counter(st); font-family:var(--f-display); font-weight:800; font-size:1.4rem; color:var(--accent); line-height:1.1}
+.stp{display:grid; gap:4px; min-width:0}
+.stp .why{color:var(--muted); font-size:.92rem}
+.stp .calc{font-family:var(--f-mono); font-size:.92rem; background:var(--floor); border-radius:4px; padding:6px 10px; overflow-x:auto}
+.wx-res{padding:12px 16px; background:var(--accent-soft); font-weight:600}
+
+.fig{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:10px; overflow-x:auto}
+.fig svg{display:block; max-width:100%; height:auto; margin:0 auto}
+.fig figcaption{font-size:.85rem; color:var(--muted); margin-top:6px; text-align:center}
+figure{margin:0}
+svg text{font-family:var(--f-mono)}
+.g-edge{stroke:var(--muted); stroke-width:1.6; fill:none}
+.g-node{fill:var(--panel); stroke:var(--ink); stroke-width:2}
+.g-lbl{fill:var(--ink); font-size:14px; font-weight:600; text-anchor:middle; dominant-baseline:central}
+.g-t{fill:var(--muted); font-size:11px; text-anchor:middle}
+.ah{fill:var(--muted)}
+.bar-bg{fill:var(--floor); stroke:var(--rule)}
+.bar-txt{fill:var(--ink); font-size:12px}
+.bar-c{stroke:var(--red); stroke-width:2; stroke-dasharray:5 4}
+.bar-c-t{fill:var(--red); font-size:11px}
+.stn-1{fill:var(--s1)} .stn-2{fill:var(--s2)} .stn-3{fill:var(--s3)} .stn-4{fill:var(--s4)} .stn-5{fill:var(--s5)} .stn-6{fill:var(--s6)}
+.nst-1{stroke:var(--s1)} .nst-2{stroke:var(--s2)} .nst-3{stroke:var(--s3)} .nst-4{stroke:var(--s4)} .nst-5{stroke:var(--s5)} .nst-6{stroke:var(--s6)}
+.g-node.has{stroke-width:4}
+
+.recipe{background:var(--ink); color:var(--floor); border-radius:var(--r); padding:16px 18px; display:grid; gap:10px}
+.recipe h3{color:var(--floor)}
+.recipe ol{margin:0; padding-left:22px; display:grid; gap:6px}
+.recipe code{font-family:var(--f-mono); background:rgba(127,127,127,.25); padding:0 5px; border-radius:3px}
+.traps{background:var(--red-soft); border-radius:var(--r); padding:14px 16px; display:grid; gap:8px}
+.traps ul{margin:0; padding-left:20px; display:grid; gap:4px}
+
+/* Lab */
+.lab{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:14px; display:grid; gap:14px}
+.ctrls{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:end}
+.ctrl{display:grid; gap:4px; font-size:.85rem}
+.ctrl label{color:var(--muted); font-family:var(--f-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em}
+select,input[type=number],input[type=text]{font:inherit; font-family:var(--f-mono); font-size:.9rem; background:var(--floor); color:var(--ink); border:1px solid var(--rule); border-radius:4px; padding:6px 8px}
+input[type=number]{width:6.5em}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.92rem; padding:8px 13px; border-radius:var(--r); background:var(--accent); color:var(--accent-ink); border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.5; cursor:default; filter:none}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.lab-grid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px}
+.say{background:var(--floor); border-radius:var(--r); padding:10px 12px; font-size:.95rem; min-height:3.2em}
+.kpis{display:flex; flex-wrap:wrap; gap:8px 22px}
+.kpi{display:grid}
+.kpi b{font-family:var(--f-display); font-size:1.6rem; line-height:1; font-variant-numeric:tabular-nums}
+.kpi span{font-size:.78rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); display:grid; overflow:hidden}
+.prob-head{padding:14px 16px; display:grid; gap:8px; border-bottom:1px solid var(--rule)}
+.prob-body{padding:14px 16px; display:grid; gap:14px}
+.src{font-family:var(--f-mono); font-size:.72rem; color:var(--muted)}
+.lit{display:grid; gap:8px; border-left:3px solid var(--rule); padding-left:12px}
+.lit.ok{border-left-color:var(--green)} .lit.bad{border-left-color:var(--red)}
+.lit-row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.lit-row label{font-size:.85rem; color:var(--muted)}
+.grid-in{display:flex; flex-wrap:wrap; gap:6px 10px}
+.grid-in span{display:inline-flex; gap:4px; align-items:center; font-family:var(--f-mono); font-size:.85rem}
+.grid-in input{width:3.4em}
+.fb{font-size:.88rem}
+.fb.ok{color:var(--green)} .fb.bad{color:var(--red)}
+.reveals{display:grid; gap:8px}
+details.rev{border:1px solid var(--rule); border-radius:var(--r); background:var(--floor)}
+details.rev summary{cursor:pointer; padding:8px 12px; font-weight:600; font-size:.92rem}
+.rev-body{padding:4px 14px 14px; display:grid; gap:10px; font-size:.95rem}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--panel); padding:14px 16px; margin:0; display:grid; gap:10px; min-width:0}
+fieldset.q legend{display:flex; gap:10px; align-items:flex-start; padding:0; font-weight:600; float:left; width:100%}
+.qn{font-family:var(--f-display); font-size:1.5rem; line-height:1; color:var(--accent)}
+.kind{font-family:var(--f-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:500}
+.qfig{clear:both}
+.qopts{display:grid; gap:6px; clear:both}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:var(--r); cursor:pointer}
+.qopt:hover{border-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; padding:8px 10px; border-radius:var(--r)}
+.qexp.ok{background:var(--green-soft)} .qexp.no{background:var(--red-soft)}
+.qrow{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+.result{border-radius:var(--r); padding:14px 16px; display:grid; gap:8px}
+.result.pass{background:var(--green-soft)} .result.fail{background:var(--red-soft)}
+.score{font-family:var(--f-display); font-size:2.4rem; font-weight:800; line-height:1}
+.attempts{display:grid; gap:6px}
+.att{display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:8px 12px}
+.pill{font-size:.75rem; font-weight:600; padding:2px 9px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)} .pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.85rem; color:var(--muted); border-top:1px solid var(--rule); padding-top:14px; display:grid; gap:4px}
+
+.block,.prob-head,.prob-body,.rev-body,.lit,.lab,.stp,section,.quiz,fieldset.q,.result{grid-template-columns:minmax(0,1fr)}
+svg{max-width:100%; height:auto}
+@media (max-width:700px){ .lab-grid{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:560px){ .steps > li{grid-template-columns:1.6rem minmax(0,1fr); padding:10px 12px} .sec-title{grid-template-columns:minmax(0,1fr)} .sec-title p{grid-column:1} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="hazard" aria-hidden="true"></div>
+    <p class="eyebrow">IIND-2205 · Parcial final · Módulo 1 de 6</p>
+    <h1>Balanceo de línea</h1>
+    <p class="lede">Repartir las tareas de una línea de producción entre estaciones para cumplir la demanda con el menor desperdicio de tiempo. Lo estudias antes de la complementaria de repaso del martes 24 a las 11:00, para llegar a ella sabiendo de qué hablan.</p>
+    <div class="meta"><span>≈ 1 h 45 en total</span><span>Teoría 45 min · Lab 15 min · Taller 35 min · Quiz 10 min</span></div>
+    <nav class="nav" aria-label="Secciones"><a href="#teoria">1 · Teoría</a><a href="#lab">2 · Lab</a><a href="#taller">3 · Taller</a><a href="#quiz">4 · Quiz</a></nav>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Siete ideas, cada una con su ejemplo resuelto paso a paso. Al final, la receta para el examen. Los ejemplos llevan números pequeños porque el algoritmo consiste en comparar tiempos.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">t<sub>j</sub></td><td>«te jota»</td><td>Tiempo de la tarea j: lo que tarda un operario en hacerla una vez. La j es el nombre de la tarea (A, B, C…).</td><td>min</td></tr>
+          <tr><td class="mono">Σ</td><td>«sigma»</td><td>«Sume todos». Σt<sub>j</sub> es la suma de los tiempos de todas las tareas.</td><td>—</td></tr>
+          <tr><td class="mono">T</td><td>«te mayúscula»</td><td>Tiempo total de trabajo por unidad: T = Σt<sub>j</sub>.</td><td>min/und</td></tr>
+          <tr><td class="mono">TD</td><td>«te de»</td><td>Tiempo disponible: cuánto trabaja la línea en el periodo. Una jornada de 8 h son 480 min.</td><td>min/día (o /mes)</td></tr>
+          <tr><td class="mono">D</td><td>«de»</td><td>Demanda: cuántas unidades hay que producir en ese mismo periodo.</td><td>und/día (o /mes)</td></tr>
+          <tr><td class="mono">C</td><td>«ce»</td><td>Tiempo de ciclo requerido: lo máximo que puede demorarse cada estación con una unidad para cumplir la demanda.</td><td>min/und</td></tr>
+          <tr><td class="mono">N<sub>min</sub></td><td>«ene mínimo»</td><td>Número mínimo teórico de estaciones. En las diapositivas sale como N<sub>t</sub>.</td><td>estaciones</td></tr>
+          <tr><td class="mono">⌈x⌉</td><td>«techo de x»</td><td>Redondear hacia arriba al siguiente entero: ⌈3,2⌉ = 4 y ⌈3⌉ = 3.</td><td>—</td></tr>
+          <tr><td class="mono">t<sub>acum</sub></td><td>«te acumulado»</td><td>Suma de los tiempos de las tareas que ya pusiste en una estación.</td><td>min</td></tr>
+          <tr><td class="mono">DI</td><td>«de i»</td><td>Disponible de la estación: lo que le queda antes de llegar a C. DI = C − t<sub>acum</sub>.</td><td>min</td></tr>
+          <tr><td class="mono">N<sub>real</sub></td><td>«ene real»</td><td>Estaciones que de verdad quedaron al balancear.</td><td>estaciones</td></tr>
+          <tr><td class="mono">C<sub>real</sub></td><td>«ce real»</td><td>Tiempo de la estación más cargada. Es el ritmo real de la línea: sale una unidad cada C<sub>real</sub> minutos.</td><td>min/und</td></tr>
+          <tr><td class="mono">TH</td><td>«te hache» (<i>throughput</i>)</td><td>Tasa de producción: TH = 1/C<sub>real</sub>. Por 60 queda en unidades por hora.</td><td>und/min</td></tr>
+          <tr><td class="mono">T<sub>ocio</sub></td><td>«te ocio»</td><td>Tiempo ocioso por ciclo: lo que las estaciones pasan esperando mientras sale una unidad.</td><td>min/ciclo</td></tr>
+          <tr><td class="mono">η</td><td>«eta»</td><td>Eficiencia de la línea: qué fracción del tiempo pagado se usa trabajando.</td><td>%</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>1. Qué es una línea y qué significa balancearla</h3>
+      <p class="prose">Una <b>línea de producción</b> es una fila de estaciones. Cada estación es un operario (o una máquina) que hace algunas de las tareas del producto, y cada unidad pasa por todas las estaciones en orden. Todas trabajan a la vez, cada una sobre una unidad distinta, como en un lavadero de carros.</p>
+      <p class="prose">La línea solo puede avanzar al ritmo de su estación más lenta: si la estación 2 se demora 9 minutos y las otras 5, cada 9 minutos sale una unidad y las otras pasan 4 minutos esperando. <b>Balancear</b> es repartir las tareas para que ninguna estación pase del tiempo que la demanda permite y la espera sea la menor posible.</p>
+      <figure class="fig" id="fig-linea"></figure>
+    </div>
+
+    <div class="block">
+      <h3>2. El tiempo de ciclo requerido</h3>
+      <p class="prose">Si en una jornada hay que sacar D unidades y la jornada dura TD minutos, cada unidad tiene que salir, como máximo, cada TD/D minutos. Ese es el <b>tiempo de ciclo requerido</b>: ninguna estación puede pasarse de él.</p>
+      <div class="eq"><span>C = TD / D</span><span>Antes de dividir, pon TD y D en el mismo periodo (los dos por día, o los dos por mes) y TD en minutos.</span></div>
+      <article class="wx" aria-labelledby="ex1-h">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 1 · El Arbolito (clase)</span><p id="ex1-h">Una recicladora trabaja 8 horas al día, procesa el papel en lotes de 15 kg y cada día debe producir 120 kg. ¿Cuál es el tiempo de ciclo requerido?</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Paso el tiempo disponible a minutos.</b><span class="why">Por qué: las tareas están en minutos, así que todo debe ir en minutos.</span><span class="calc">TD = 8 h × 60 min/h = 480 min/día</span></div></li>
+          <li><div class="stp"><b>Paso la demanda a unidades de producto.</b><span class="why">Por qué: la línea no produce kilos sueltos sino lotes de 15 kg; la «unidad» aquí es el lote.</span><span class="calc">D = 120 kg/día ÷ 15 kg/lote = 8 lotes/día</span></div></li>
+          <li><div class="stp"><b>Divido.</b><span class="why">Por qué: es la definición de C, con los dos datos por día.</span><span class="calc">C = 480 min/día ÷ 8 lotes/día = 60 min/lote</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: cada estación puede trabajar, como máximo, 60 minutos por lote.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>3. El número mínimo de estaciones</h3>
+      <p class="prose">Cada unidad necesita T minutos de trabajo en total, y cada estación aporta como máximo C minutos por unidad. Entonces se necesitan al menos T/C estaciones. Como no existen fracciones de estación, se redondea <b>siempre hacia arriba</b>: con una estación menos, el trabajo no cabe.</p>
+      <div class="eq"><span>N<sub>min</sub> = ⌈ T / C ⌉&nbsp;&nbsp;&nbsp;con&nbsp;&nbsp;T = Σt<sub>j</sub></span><span>Es un piso teórico. Por culpa de las precedencias, muchas veces el balanceo real necesita más estaciones.</span></div>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 2 · El Arbolito</span><p>Las tareas tardan A = 30, B = 20, C = 40, D = 25, E = 15, F = 30 y G = 20 minutos, y C = 60 min/lote. ¿Cuántas estaciones se necesitan como mínimo?</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Sumo los tiempos de todas las tareas.</b><span class="why">Por qué: T es todo el trabajo que necesita un lote.</span><span class="calc">T = 30 + 20 + 40 + 25 + 15 + 30 + 20 = 180 min/lote</span></div></li>
+          <li><div class="stp"><b>Divido entre C y redondeo hacia arriba.</b><span class="why">Por qué: cada estación aporta 60 min por lote como máximo.</span><span class="calc">N<sub>min</sub> = ⌈180 / 60⌉ = ⌈3⌉ = 3 estaciones</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: al menos 3 estaciones. Ojo: 180/60 dio exacto; si hubiera dado 3,1, serían 4.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>4. El grafo de precedencias y las sucesoras</h3>
+      <p class="prose">Unas tareas no pueden empezar antes de que terminen otras: no puedes pintar una pieza que no se ha cortado. La tabla de <b>precedencias</b> dice qué tareas tienen que estar hechas antes de cada una. El <b>grafo</b> la dibuja: cada tarea es un círculo y una flecha de X a Y dice «X va antes que Y».</p>
+      <p class="prose">Las <b>sucesoras</b> de una tarea son <b>todas</b> las que vienen después siguiendo flechas, no solo las inmediatas. Así cuentan en las notas técnicas del curso. Una tarea con muchas sucesoras «destapa» mucho trabajo, por eso la regla «más sucesoras» la pone primero.</p>
+      <figure class="fig" id="fig-arbolito"><figcaption>Grafo de El Arbolito. Debajo de cada tarea, su tiempo.</figcaption></figure>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 3 · Sucesoras en El Arbolito</span><p>Precedencias: C necesita A y B; D necesita C; E necesita B; F necesita E; G necesita D y F. ¿Cuántas sucesoras tiene B?</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Sigo todas las flechas que salen de B.</b><span class="why">Por qué: las sucesoras son todas las tareas a las que se llega desde B.</span><span class="calc">B → C → D → G&nbsp;&nbsp;y&nbsp;&nbsp;B → E → F → G</span></div></li>
+          <li><div class="stp"><b>Junto las tareas sin repetir.</b><span class="why">Por qué: G aparece por los dos caminos, pero es una sola tarea.</span><span class="calc">{C, D, E, F, G} → 5 sucesoras</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: B tiene 5 sucesoras. Las demás: A 3, C 2, E 2, D 1, F 1 y G 0.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>5. El algoritmo de asignación</h3>
+      <p class="prose">Se llenan las estaciones una por una. En cada momento solo puedes escoger entre las tareas <b>factibles</b>: las que ya tienen asignadas todas sus predecesoras y caben en lo que le queda a la estación (t<sub>j</sub> ≤ DI). Entre las factibles decide la <b>regla primaria</b>; si dos empatan, la <b>secundaria</b>; si siguen empatadas, el orden alfabético.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Regla</th><th>Entre las factibles, escoge…</th></tr></thead>
+        <tbody>
+          <tr><td>Mayor tiempo</td><td>la que más tarda</td></tr>
+          <tr><td>Menor tiempo</td><td>la que menos tarda</td></tr>
+          <tr><td>Más sucesoras</td><td>la que tiene más sucesoras (todas, no solo las inmediatas)</td></tr>
+          <tr><td>Orden lexicográfico</td><td>la primera en orden alfabético</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose">Si la tarea que gana por las reglas no cabe, se marca «NO» y se prueba la siguiente en el orden de las reglas. Cuando ninguna cabe, se cierra la estación y se abre otra con DI = C. Así se ve en la tabla del profe:</p>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 4 · El Arbolito, C = 60</span><p>Balancea con regla primaria <b>mayor tiempo</b> y secundaria <b>más sucesoras</b>.</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Estación 1, DI = 60. Factibles: A y B</b> (ninguna tiene predecesoras).<span class="why">Regla primaria: A tarda 30 y B 20, gana A.</span><span class="calc">A → t<sub>acum</sub> = 30, DI = 60 − 30 = 30</span></div></li>
+          <li><div class="stp"><b>Factibles: B.</b> C todavía no, porque le falta B.<span class="why">B tarda 20 ≤ 30, cabe.</span><span class="calc">B → t<sub>acum</sub> = 50, DI = 10</span></div></li>
+          <li><div class="stp"><b>Factibles por precedencia: C y E</b>, pero C (40) y E (15) no caben en 10.<span class="why">Ninguna cabe: cierro la estación 1 con 50 min.</span><span class="calc">Estación 1 = {A, B}, 50 min</span></div></li>
+          <li><div class="stp"><b>Estación 2, DI = 60. Factibles: C y E.</b><span class="why">Mayor tiempo: C (40).</span><span class="calc">C → t<sub>acum</sub> = 40, DI = 20</span></div></li>
+          <li><div class="stp"><b>Factibles: D (25) y E (15).</b><span class="why">Gana D por mayor tiempo, pero 25 > 20: no cabe, se marca NO. Pruebo la siguiente, E.</span><span class="calc">E → t<sub>acum</sub> = 55, DI = 5</span></div></li>
+          <li><div class="stp"><b>Factibles: D (25) y F (30). Ninguna cabe en 5.</b><span class="why">Cierro la estación 2.</span><span class="calc">Estación 2 = {C, E}, 55 min</span></div></li>
+          <li><div class="stp"><b>Estación 3, DI = 60. Factibles: D y F.</b><span class="why">Mayor tiempo: F (30). Después D (25) cabe en los 30 que quedan.</span><span class="calc">F → 30, DI = 30; D → 55, DI = 5</span></div></li>
+          <li><div class="stp"><b>Estación 4. Factible: G</b> (ya están D y F).<span class="why">Es la única tarea que queda.</span><span class="calc">Estación 4 = {G}, 20 min</span></div></li>
+        </ol>
+        <div class="tw" style="margin:0 16px 12px"><table>
+          <thead><tr><th>Estación</th><th>Factibles</th><th>Tarea</th><th>t<sub>j</sub></th><th>t<sub>acum</sub></th><th>DI</th><th>¿Asignar?</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">1</td><td class="mono">{A, B}</td><td class="mono">A</td><td class="mono">30</td><td class="mono">30</td><td class="mono">30</td><td>Sí</td></tr>
+            <tr class="close"><td class="mono">1</td><td class="mono">{B}</td><td class="mono">B</td><td class="mono">20</td><td class="mono">50</td><td class="mono">10</td><td>Sí</td></tr>
+            <tr><td class="mono">2</td><td class="mono">{C, E}</td><td class="mono">C</td><td class="mono">40</td><td class="mono">40</td><td class="mono">20</td><td>Sí</td></tr>
+            <tr class="no"><td class="mono">2</td><td class="mono">{D, E}</td><td class="mono">D</td><td class="mono">25</td><td class="mono">65</td><td class="mono">−5</td><td>No</td></tr>
+            <tr class="close"><td class="mono">2</td><td class="mono">{D, E}</td><td class="mono">E</td><td class="mono">15</td><td class="mono">55</td><td class="mono">5</td><td>Sí</td></tr>
+            <tr><td class="mono">3</td><td class="mono">{D, F}</td><td class="mono">F</td><td class="mono">30</td><td class="mono">30</td><td class="mono">30</td><td>Sí</td></tr>
+            <tr class="close"><td class="mono">3</td><td class="mono">{D}</td><td class="mono">D</td><td class="mono">25</td><td class="mono">55</td><td class="mono">5</td><td>Sí</td></tr>
+            <tr><td class="mono">4</td><td class="mono">{G}</td><td class="mono">G</td><td class="mono">20</td><td class="mono">20</td><td class="mono">40</td><td>Sí</td></tr>
+          </tbody>
+        </table></div>
+        <p class="wx-res">Resultado: 4 estaciones: {A, B} 50 · {C, E} 55 · {F, D} 55 · {G} 20. Necesitamos 4 aunque N<sub>min</sub> = 3: las precedencias no dejaron llenar mejor.</p>
+      </article>
+      <figure class="fig" id="fig-arbolito-st"><figcaption>El mismo grafo, coloreado por estación, y la carga de cada estación contra C = 60.</figcaption></figure>
+    </div>
+
+    <div class="block">
+      <h3>6. Restricciones: tareas juntas o separadas</h3>
+      <p class="prose">Los parciales casi siempre agregan una o dos restricciones. Se manejan así:</p>
+      <ul class="prose" style="margin:0; padding-left:20px; display:grid; gap:6px">
+        <li><b>«X y Y deben ir en la misma estación».</b> Trátalas como un <b>bloque</b>. Cuando le toque a X por las reglas, solo la asignas si caben las dos (t<sub>X</sub> + t<sub>Y</sub> ≤ DI) y si Y ya tiene listas todas sus otras predecesoras; entonces pones X y enseguida Y. Si no, X no es factible en esa estación.</li>
+        <li><b>«X y Y no pueden ir en la misma estación».</b> Si X ya está en la estación, Y no es factible ahí, aunque quepa. Se va a la siguiente estación.</li>
+      </ul>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 5 · Un bloque que no cabe</span><p>En la estación 2 queda DI = 10,35 min. Las factibles son D (10 min) y E (5 min), y D y E deben ir juntas. ¿Se puede asignar algo?</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Miro el bloque completo, no cada tarea sola.</b><span class="why">Por qué: si pongo E, D tiene que ir en la misma estación, y al revés.</span><span class="calc">t<sub>D</sub> + t<sub>E</sub> = 10 + 5 = 15 min</span></div></li>
+          <li><div class="stp"><b>Comparo con lo que queda.</b><span class="why">15 > 10,35: el bloque no cabe, así que ni D ni E son factibles aquí.</span><span class="calc">Se cierra la estación y el bloque D + E abre la siguiente.</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: ninguna. Es justo lo que pasa en la actividad de 2026-10 (taller T2).</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>7. Cómo se mide el balanceo</h3>
+      <p class="prose">Ya repartidas las tareas, se cuentan las estaciones (N<sub>real</sub>) y se busca la más cargada (C<sub>real</sub>). Con eso salen los cuatro indicadores que siempre piden.</p>
+      <div class="eq"><span>TH = 1 / C<sub>real</sub>&nbsp;&nbsp;(und/min; × 60 → und/hora)</span><span>La línea saca una unidad cada C<sub>real</sub> minutos, no cada C.</span></div>
+      <div class="eq"><span>T<sub>ocio</sub> = N<sub>real</sub> · C<sub>real</sub> − T = Σ (C<sub>real</sub> − t<sub>acum</sub>)</span><span>Es por ciclo (por unidad). Por día: T<sub>ocio</sub> × (TD / C<sub>real</sub>), porque en un día caben TD / C<sub>real</sub> ciclos.</span></div>
+      <div class="eq"><span>η = T / (N<sub>real</sub> · C<sub>real</sub>) = T / (T + T<sub>ocio</sub>)</span><span>Arriba, el tiempo que se trabaja por unidad; abajo, el tiempo que se paga (N<sub>real</sub> operarios durante C<sub>real</sub> minutos).</span></div>
+      <div class="eq"><span>Tasa máxima posible: C<sub>min</sub> = la tarea más larga (o el bloque «juntas» más largo)</span><span>Para producir lo más rápido posible, cada tarea va sola en su estación; el ciclo no puede bajar de la tarea más larga.</span></div>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 6 · Indicadores de El Arbolito</span><p>Con el balanceo del ejemplo 4 (estaciones de 50, 55, 55 y 20 min; T = 180), calcula C<sub>real</sub>, la tasa, el tiempo ocioso y la eficiencia.</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Busco la estación más cargada.</b><span class="why">Por qué: esa estación marca el ritmo de toda la línea.</span><span class="calc">C<sub>real</sub> = máx(50, 55, 55, 20) = 55 min/lote</span></div></li>
+          <li><div class="stp"><b>Calculo la tasa.</b><span class="why">Por qué: sale un lote cada 55 minutos.</span><span class="calc">TH = 1/55 = 0,0182 lotes/min → × 60 = 1,09 lotes/hora</span></div></li>
+          <li><div class="stp"><b>Calculo el tiempo ocioso por ciclo.</b><span class="why">Por qué: en cada ciclo de 55 min, cada estación espera lo que le falta para 55.</span><span class="calc">T<sub>ocio</sub> = (55 − 50) + (55 − 55) + (55 − 55) + (55 − 20) = 5 + 0 + 0 + 35 = 40 min<br>Comprobación: 4 × 55 − 180 = 220 − 180 = 40 min</span></div></li>
+          <li><div class="stp"><b>Calculo la eficiencia.</b><span class="why">Por qué: de los 220 min-estación que se pagan por lote, solo 180 son trabajo.</span><span class="calc">η = 180 / (4 × 55) = 180 / 220 = 0,8182 → 81,82 %</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: C<sub>real</sub> = 55 min/lote, 1,09 lotes/hora, 40 min de ocio por lote y 81,82 % de eficiencia (en la diapositiva, 81,81 % por redondeo).</p>
+      </article>
+    </div>
+
+    <div class="recipe">
+      <h3>Receta para el examen</h3>
+      <ol>
+        <li>Pon TD y D en el mismo periodo y TD en minutos. <code>C = TD / D</code>.</li>
+        <li><code>T = Σt</code> y <code>N<sub>min</sub> = ⌈T / C⌉</code> (siempre hacia arriba).</li>
+        <li>Dibuja el grafo. Si la regla usa sucesoras, cuéntalas todas (siguiendo flechas) y anótalas al lado de cada tarea.</li>
+        <li>Arma la tabla: estación, factibles, tarea, t, t<sub>acum</sub>, DI, ¿asignar? Factible = predecesoras listas y cabe. Desempata con la secundaria y luego por alfabeto.</li>
+        <li>Revisa las restricciones en cada paso: «juntas» = bloque; «separadas» = no en la misma estación.</li>
+        <li>Al final: <code>N<sub>real</sub></code>, <code>C<sub>real</sub> = máx t<sub>acum</sub></code>, <code>TH = 1/C<sub>real</sub></code>, <code>T<sub>ocio</sub> = N<sub>real</sub>·C<sub>real</sub> − T</code>, <code>η = T/(N<sub>real</sub>·C<sub>real</sub>)</code>.</li>
+        <li>Hazlo en Excel: una columna por dato de la tabla y una fórmula para DI.</li>
+      </ol>
+    </div>
+    <div class="traps">
+      <h4>Trampas frecuentes</h4>
+      <ul>
+        <li>Calcular la tasa con C en vez de C<sub>real</sub>. La línea va al ritmo de la estación más cargada.</li>
+        <li>Contar solo las sucesoras inmediatas. Son todas las que vienen después.</li>
+        <li>Redondear N<sub>min</sub> hacia abajo: 4,19 son 5 estaciones.</li>
+        <li>Asignar una tarea cuya predecesora está en una estación <i>posterior</i>: imposible. Las predecesoras siempre en la misma estación o en una anterior.</li>
+        <li>Olvidar las unidades del ciclo: si la demanda es por mes, TD también va por mes.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab · el balanceador</h2><p>Escoge una línea y las reglas, y corre el algoritmo paso a paso. Mira cómo se llenan las estaciones contra C y cómo cambia la eficiencia si cambias las reglas.</p></div>
+    <div class="lab">
+      <div class="ctrls">
+        <div class="ctrl"><label for="lab-set">Línea</label><select id="lab-set"></select></div>
+        <div class="ctrl"><label for="lab-r1">Regla primaria</label><select id="lab-r1"></select></div>
+        <div class="ctrl"><label for="lab-r2">Regla secundaria</label><select id="lab-r2"></select></div>
+        <div class="ctrl"><label for="lab-c">C (min/und)</label><input type="number" id="lab-c" min="1" step="0.01"></div>
+        <button class="btn" type="button" id="lab-step">Siguiente paso</button>
+        <button class="btn ghost" type="button" id="lab-all">Hasta el final</button>
+        <button class="btn ghost" type="button" id="lab-reset">Reiniciar</button>
+      </div>
+      <p class="muted" id="lab-desc" style="font-size:.9rem"></p>
+      <p class="say" id="lab-say" aria-live="polite"></p>
+      <div class="lab-grid">
+        <figure class="fig" id="lab-graph" style="margin:0"></figure>
+        <figure class="fig" id="lab-bars" style="margin:0"></figure>
+      </div>
+      <div class="kpis" id="lab-kpis"></div>
+      <div class="tw"><table>
+        <thead><tr><th>Estación</th><th>Factibles</th><th>Tarea</th><th>t</th><th>t acum</th><th>DI</th><th>¿Asignar?</th></tr></thead>
+        <tbody id="lab-rows"></tbody>
+      </table></div>
+      <p class="muted" style="font-size:.88rem">Prueba esto: en El Arbolito cambia a «menor tiempo» y mira si la eficiencia sube o baja. En Boggate pon C = 5 (la tarea más larga): es la tasa máxima posible.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>El pre-parcial de 2026-10, la actividad de 2026-10 con su solución oficial y un ejercicio de clase. Resuélvelos en Excel y usa el chequeo de cada literal. Si fallas, abre la pista antes de la solución. Si quieres que te corrija el desarrollo, mándame una foto o pega tu tabla en el chat.</p></div>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas y 2 tipo parcial. Pasas con 4/5 o más. Si no, lee las explicaciones de las que fallaste y haz el Quiz B.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" class="block" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Siguiente:</b> M2 · Planeación agregada, también antes de la complementaria de las 11:00.</p>
+    <p>Fuentes: diapositivas y notas técnicas de balanceo de línea (clase y ejercicios: El Arbolito, Boggate), pre-parcial de balanceo y planeación de 2026-10 (ModAndes) y Actividad 11 de 2026-10 con su solución oficial (Distribuidora El Faro). Todos los resultados los verifiqué con un solucionador.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (x, d = 2) => (Math.round(x * 10 ** d) / 10 ** d).toLocaleString("es-CO", { maximumFractionDigits: d });
+
+/* ---------- Datos de las líneas ---------- */
+const SETS = {
+  arbolito: { name: "El Arbolito (clase)", C: 60, r1: "max", r2: "suc", unit: "lote",
+    desc: "Recicladora: 8 h/día, 8 lotes/día → C = 60 min/lote. Sin restricciones.",
+    t: { A: 30, B: 20, C: 40, D: 25, E: 15, F: 30, G: 20 },
+    p: { A: [], B: [], C: ["A", "B"], D: ["C"], E: ["B"], F: ["E"], G: ["D", "F"] } },
+  modandes: { name: "ModAndes (pre-parcial 2026-10)", C: 20, r1: "suc", r2: "max", unit: "und",
+    desc: "Pantalones: 24 und/día en 8 h → C = 20 min/und. D y G juntas; I y J juntas.",
+    t: { A: 5, B: 7, C: 5, D: 8, E: 4, F: 6, G: 9, H: 6, I: 7, J: 6 },
+    p: { A: [], B: ["A"], C: ["A"], D: ["B"], E: ["B", "C"], F: ["C"], G: ["D", "E"], H: ["E", "F"], I: ["F"], J: ["G", "H", "I"] },
+    together: [["D", "G"], ["I", "J"]] },
+  faro: { name: "El Faro (Actividad 11 de 2026-10)", C: 12000 / 620, r1: "min", r2: "lex", unit: "kit",
+    desc: "Kits publicitarios: 620 kits/mes, 25 días de 8 h → C = 19,35 min/kit. D y E juntas; I y G separadas.",
+    t: { A: 12, B: 6, C: 9, D: 10, E: 5, F: 4, G: 12, H: 11, I: 5, J: 7 },
+    p: { A: [], B: ["A"], C: ["A"], D: ["B"], E: ["B", "C"], F: ["D"], G: ["E"], H: ["E"], I: ["H"], J: ["F", "G", "I"] },
+    together: [["D", "E"]], apart: [["I", "G"]] },
+  boggate: { name: "Boggate (clase)", C: 5, r1: "max", r2: "suc", unit: "cepillo",
+    desc: "Cepillos: se busca la tasa máxima → C = la tarea más larga = 5 min.",
+    t: { A: 5, B: 4, C: 2, D: 4, E: 1, F: 1, G: 2 },
+    p: { A: [], B: ["A"], C: ["A"], D: ["A"], E: ["B", "C"], F: ["D"], G: ["E", "F"] } }
+};
+const RULES = { max: "Mayor tiempo", min: "Menor tiempo", suc: "Más sucesoras", lex: "Orden alfabético" };
+
+function successors(p) {
+  const keys = Object.keys(p), out = {};
+  keys.forEach((k) => {
+    const seen = new Set(), stack = [k];
+    while (stack.length) { const x = stack.pop(); keys.forEach((j) => { if (p[j].includes(x) && !seen.has(j)) { seen.add(j); stack.push(j); } }); }
+    out[k] = seen.size;
+  });
+  return out;
+}
+/* Corre el algoritmo y devuelve cada paso (filas de la tabla del profe). */
+function runBalance(set, C, rules) {
+  const t = set.t, p = set.p, S = successors(p), keys = Object.keys(t);
+  const partner = {}; (set.together || []).forEach(([a, b]) => { partner[a] = b; partner[b] = a; });
+  const forbid = {}; (set.apart || []).forEach(([a, b]) => { (forbid[a] = forbid[a] || []).push(b); (forbid[b] = forbid[b] || []).push(a); });
+  const keyOf = (k) => rules.map((r) => r === "suc" ? -S[k] : r === "max" ? -t[k] : r === "min" ? t[k] : 0);
+  const cmp = (a, b) => { const ka = keyOf(a), kb = keyOf(b); for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i]) return ka[i] - kb[i]; return a < b ? -1 : 1; };
+  const done = new Set(), stations = [], rows = [], station = {};
+  let guard = 0;
+  while (done.size < keys.length && guard++ < 50) {
+    const st = []; let acc = 0; const sn = stations.length + 1;
+    while (true) {
+      const avail = keys.filter((k) => !done.has(k) && p[k].every((q) => done.has(q))).sort(cmp);
+      let chosen = null; const tried = [];
+      for (const k of avail) {
+        if ((forbid[k] || []).some((f) => st.includes(f))) { tried.push({ sn, avail: avail.slice(), k, tk: t[k], acc: null, di: null, ok: false, note: k + " no puede ir con " + forbid[k].filter((f) => st.includes(f)).join(", ") }); continue; }
+        if (partner[k] && !done.has(partner[k])) {
+          const q = partner[k];
+          const ready = p[q].every((x) => done.has(x) || x === k);
+          if (!ready) continue;
+          if (t[k] + t[q] <= C - acc + 1e-9) { chosen = [k, q]; break; }
+          tried.push({ sn, avail: avail.slice(), k: k + "+" + q, tk: t[k] + t[q], acc: acc + t[k] + t[q], di: C - acc - t[k] - t[q], ok: false, note: "el bloque " + k + "+" + q + " no cabe" });
+          continue;
+        }
+        if (t[k] <= C - acc + 1e-9) { chosen = [k]; break; }
+        tried.push({ sn, avail: avail.slice(), k, tk: t[k], acc: acc + t[k], di: C - acc - t[k], ok: false, note: k + " no cabe" });
+      }
+      if (!chosen) break;
+      tried.forEach((r) => rows.push(r));
+      chosen.forEach((k, i) => { acc += t[k]; st.push(k); done.add(k); station[k] = sn; rows.push({ sn, avail: i === 0 ? avail.slice() : [k], k, tk: t[k], acc, di: C - acc, ok: true, note: i === 1 ? k + " va en bloque con " + chosen[0] : "" }); });
+    }
+    if (!st.length) break;
+    stations.push({ tasks: st, load: acc });
+  }
+  const T = keys.reduce((s, k) => s + t[k], 0), N = stations.length, Cr = Math.max(...stations.map((s) => s.load));
+  return { S, rows, stations, station, T, N, Cr, Nmin: Math.ceil(T / C - 1e-9), ocio: N * Cr - T, eff: T / (N * Cr) };
+}
+
+/* ---------- Dibujos ---------- */
+function layout(p) {
+  const keys = Object.keys(p), lvl = {};
+  const L = (k) => lvl[k] != null ? lvl[k] : (lvl[k] = p[k].length ? 1 + Math.max(...p[k].map(L)) : 0);
+  keys.forEach(L);
+  const cols = {}; keys.forEach((k) => (cols[lvl[k]] = cols[lvl[k]] || []).push(k));
+  return { lvl, cols, nLvl: Math.max(...keys.map((k) => lvl[k])) + 1 };
+}
+function graphSvg(set, opts = {}) {
+  const { cols, nLvl } = layout(set.p);
+  const dx = opts.dx || 92, dy = opts.dy || 66, r = 18;
+  const maxRows = Math.max(...Object.values(cols).map((c) => c.length));
+  const W = (nLvl - 1) * dx + 70, H = (maxRows - 1) * dy + 76;
+  const pos = {};
+  Object.entries(cols).forEach(([l, ks]) => { const off = (H - (ks.length - 1) * dy) / 2 - 6; ks.forEach((k, i) => (pos[k] = [35 + l * dx, off + i * dy])); });
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="${opts.aria || "Grafo de precedencias"}"><defs><marker id="ah${opts.id || ""}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker></defs>`;
+  Object.keys(set.p).forEach((k) => set.p[k].forEach((q) => {
+    const [x1, y1] = pos[q], [x2, y2] = pos[k], d = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / d, uy = (y2 - y1) / d;
+    s += `<line class="g-edge" x1="${x1 + ux * r}" y1="${y1 + uy * r}" x2="${x2 - ux * (r + 3)}" y2="${y2 - uy * (r + 3)}" marker-end="url(#ah${opts.id || ""})"/>`;
+  }));
+  Object.keys(set.p).forEach((k) => {
+    const [x, y] = pos[k], sn = opts.station && opts.station[k];
+    s += `<circle class="g-node${sn ? " has nst-" + (((sn - 1) % 6) + 1) : ""}" cx="${x}" cy="${y}" r="${r}"/><text class="g-lbl" x="${x}" y="${y}">${k}</text>`;
+    if (!opts.noTimes) s += `<text class="g-t" x="${x}" y="${y + r + 13}">${set.t[k]}${opts.suc ? " · " + opts.suc[k] + "s" : ""}</text>`;
+  });
+  return s + `</svg>`;
+}
+function barsSvg(stations, C, opts = {}) {
+  const n = Math.max(stations.length, 1), rowH = 30, W = 420, x0 = 74, maxV = Math.max(C, ...stations.map((s) => s.load)) * 1.12;
+  const H = n * rowH + 34, sx = (v) => x0 + (v / maxV) * (W - x0 - 12);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="${opts.aria || "Carga de cada estación contra el tiempo de ciclo"}">`;
+  stations.forEach((st, i) => {
+    const y = 8 + i * rowH;
+    s += `<rect class="bar-bg" x="${x0}" y="${y}" width="${sx(maxV) - x0}" height="20" rx="3"/>`;
+    s += `<rect class="stn-${(i % 6) + 1}" x="${x0}" y="${y}" width="${Math.max(0, sx(st.load) - x0)}" height="20" rx="3"/>`;
+    s += `<text class="bar-txt" x="6" y="${y + 14}">Est. ${i + 1}</text>`;
+    s += `<text class="bar-txt" x="${Math.min(sx(st.load) + 4, W - 70)}" y="${y + 14}">${st.tasks.join("")} · ${fmt(st.load, 2)}</text>`;
+  });
+  const cx = sx(C);
+  s += `<line class="bar-c" x1="${cx}" y1="2" x2="${cx}" y2="${n * rowH + 8}"/><text class="bar-c-t" x="${Math.min(cx, W - 60)}" y="${n * rowH + 26}" text-anchor="middle">C = ${fmt(C, 2)}</text>`;
+  return s + `</svg>`;
+}
+function lineSvg() {
+  const loads = [5, 9, 5], C = 9, W = 460, H = 150;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Línea con tres estaciones de 5, 9 y 5 minutos: la estación 2 marca el ritmo"><defs><marker id="ahl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker></defs>`;
+  loads.forEach((v, i) => {
+    const x = 30 + i * 150;
+    s += `<rect class="bar-bg" x="${x}" y="20" width="110" height="80" rx="6"/>`;
+    s += `<text class="bar-txt" x="${x + 55}" y="40" text-anchor="middle">Estación ${i + 1}</text>`;
+    s += `<rect class="bar-bg" x="${x + 10}" y="58" width="90" height="16" rx="3"/><rect class="stn-${i + 1}" x="${x + 10}" y="58" width="${90 * v / C}" height="16" rx="3"/>`;
+    s += `<text class="bar-txt" x="${x + 55}" y="92" text-anchor="middle">${v} min${v < C ? " · espera " + (C - v) : ""}</text>`;
+    if (i < 2) s += `<line class="g-edge" x1="${x + 114}" y1="60" x2="${x + 146}" y2="60" marker-end="url(#ahl)"/>`;
+  });
+  s += `<text class="bar-c-t" x="${W / 2}" y="130" text-anchor="middle">Sale una unidad cada 9 min: la estación 2 marca el ritmo</text>`;
+  return s + `</svg>`;
+}
+
+/* ---------- Figuras de teoría ---------- */
+(function () {
+  $("#fig-linea").innerHTML = lineSvg();
+  const A = SETS.arbolito;
+  const g = el("div"); g.innerHTML = graphSvg(A, { id: "a1", aria: "Grafo de precedencias de El Arbolito" });
+  $("#fig-arbolito").prepend(g);
+  const res = runBalance(A, 60, ["max", "suc"]);
+  const g2 = el("div"); g2.style.display = "grid"; g2.style.gap = "10px";
+  g2.innerHTML = graphSvg(A, { id: "a2", station: res.station, aria: "Grafo de El Arbolito coloreado por estación" }) + barsSvg(res.stations, 60);
+  $("#fig-arbolito-st").prepend(g2);
+})();
+
+/* ---------- Lab ---------- */
+const lab = { key: "arbolito", res: null, shown: 0 };
+(function initLab() {
+  const ss = $("#lab-set"); Object.entries(SETS).forEach(([k, v]) => { const o = el("option", "", v.name); o.value = k; ss.appendChild(o); });
+  ["#lab-r1", "#lab-r2"].forEach((id, i) => { const s = $(id); Object.entries(RULES).forEach(([k, v]) => { const o = el("option", "", v); o.value = k; s.appendChild(o); }); });
+  ss.addEventListener("change", () => { lab.key = ss.value; const S = SETS[lab.key]; $("#lab-r1").value = S.r1; $("#lab-r2").value = S.r2; $("#lab-c").value = Math.round(S.C * 100) / 100; labReset(); });
+  ["#lab-r1", "#lab-r2", "#lab-c"].forEach((id) => $(id).addEventListener("change", labReset));
+  $("#lab-step").addEventListener("click", () => { lab.shown = Math.min(lab.shown + 1, lab.res.rows.length); labDraw(); });
+  $("#lab-all").addEventListener("click", () => { lab.shown = lab.res.rows.length; labDraw(); });
+  $("#lab-reset").addEventListener("click", labReset);
+  ss.value = "arbolito"; $("#lab-r1").value = "max"; $("#lab-r2").value = "suc"; $("#lab-c").value = 60;
+  labReset();
+})();
+function labReset() {
+  const S = SETS[lab.key]; let C = Number($("#lab-c").value);
+  const maxT = Math.max(...Object.values(S.t), ...(S.together || []).map(([a, b]) => S.t[a] + S.t[b]));
+  if (!(C >= maxT)) { C = maxT; $("#lab-c").value = C; }
+  lab.C = C;
+  lab.res = runBalance(S, C, [$("#lab-r1").value, $("#lab-r2").value]);
+  lab.shown = 0; $("#lab-desc").textContent = S.desc + " T = " + lab.res.T + " min · Nmin = ⌈" + lab.res.T + "/" + fmt(C) + "⌉ = " + lab.res.Nmin + ".";
+  labDraw();
+}
+function labDraw() {
+  const S = SETS[lab.key], R = lab.res, rows = R.rows.slice(0, lab.shown);
+  const station = {}, loads = {};
+  rows.filter((r) => r.ok).forEach((r) => { station[r.k] = r.sn; loads[r.sn] = r.acc; });
+  const stList = Object.keys(loads).map((n) => ({ tasks: Object.keys(station).filter((k) => station[k] == n), load: loads[n] }));
+  $("#lab-graph").innerHTML = graphSvg(S, { id: "lab", station, suc: R.S, aria: "Grafo de la línea coloreado por estación" }) + `<figcaption>Debajo de cada tarea: tiempo · número de sucesoras.</figcaption>`;
+  $("#lab-bars").innerHTML = (stList.length ? barsSvg(stList, lab.C) : `<p class="muted" style="padding:20px;text-align:center">Pulsa «Siguiente paso» para abrir la estación 1.</p>`);
+  const tb = $("#lab-rows"); tb.textContent = "";
+  rows.forEach((r, i) => {
+    const tr = el("tr", r.ok ? "" : "no");
+    const next = rows[i + 1]; if (r.ok && (!next || next.sn !== r.sn)) tr.className = "close";
+    [r.sn, "{" + r.avail.join(", ") + "}", r.k, fmt(r.tk), r.acc == null ? "—" : fmt(r.acc), r.di == null ? "—" : fmt(r.di), r.ok ? "Sí" : "No"].forEach((v) => tr.appendChild(el("td", "mono", String(v))));
+    tb.appendChild(tr);
+  });
+  const last = rows[rows.length - 1];
+  const say = $("#lab-say");
+  if (!last) say.textContent = "Abre la estación 1 con DI = C = " + fmt(lab.C) + " min. Reglas: " + RULES[$("#lab-r1").value] + ", luego " + RULES[$("#lab-r2").value] + ".";
+  else if (!last.ok) say.textContent = "Estación " + last.sn + ": " + last.note + " (necesita " + fmt(last.tk) + " y quedan " + fmt(last.tk + last.di) + "). Se prueba la siguiente factible.";
+  else say.textContent = "Estación " + last.sn + ": entre {" + last.avail.join(", ") + "} se asigna " + last.k + " (" + fmt(last.tk) + " min). " + (last.note ? last.note + ". " : "") + "Acumulado " + fmt(last.acc) + ", quedan " + fmt(last.di) + ".";
+  const k = $("#lab-kpis"); k.textContent = "";
+  const done = lab.shown >= R.rows.length;
+  const items = done ? [["N real", R.N], ["C real", fmt(R.Cr) + " min"], ["Tasa", fmt(60 / R.Cr) + " /h"], ["Ocio por ciclo", fmt(R.ocio) + " min"], ["Eficiencia", fmt(R.eff * 100) + " %"]] : [["Paso", lab.shown + " de " + R.rows.length]];
+  items.forEach(([a, b]) => { const d = el("div", "kpi"); d.appendChild(el("b", "", String(b))); d.appendChild(el("span", "", a)); k.appendChild(d); });
+  if (done) say.textContent = "Listo: " + R.N + " estaciones, la más cargada con " + fmt(R.Cr) + " min. Eficiencia " + fmt(R.eff * 100) + " %.";
+  $("#lab-step").disabled = done;
+}
+
+/* ---------- Taller ---------- */
+function stationsTable(set, C, rules) {
+  const R = runBalance(set, C, rules);
+  let h = `<div class="tw"><table><thead><tr><th>Est.</th><th>Factibles</th><th>Tarea</th><th>t</th><th>t acum</th><th>DI</th><th>¿Asignar?</th></tr></thead><tbody>`;
+  R.rows.forEach((r, i) => { const nx = R.rows[i + 1]; const cls = !r.ok ? "no" : (!nx || nx.sn !== r.sn ? "close" : ""); h += `<tr class="${cls}"><td class="mono">${r.sn}</td><td class="mono">{${r.avail.join(", ")}}</td><td class="mono">${r.k}</td><td class="mono">${fmt(r.tk)}</td><td class="mono">${r.acc == null ? "—" : fmt(r.acc)}</td><td class="mono">${r.di == null ? "—" : fmt(r.di)}</td><td>${r.ok ? "Sí" : "No"}</td></tr>`; });
+  return h + `</tbody></table></div>`;
+}
+const PROBS = [
+  { id: "T1", title: "ModAndes: pantalones de seda", src: "Pre-parcial de balanceo y planeación, 2026-10 (es el estilo de la complementaria de mañana)",
+    fig: () => graphSvg(SETS.modandes, { id: "t1", aria: "Grafo de precedencias de ModAndes" }),
+    text: "El proceso tiene 10 actividades (A a J) con los tiempos y precedencias del grafo: A 5 min; B 7 (después de A); C 5 (después de A); D 8 (después de B); E 4 (después de B y C); F 6 (después de C); G 9 (después de D y E); H 6 (después de E y F); I 7 (después de F); J 6 (después de G, H e I). <b>Restricción 1:</b> D y G deben ir en la misma estación. <b>Restricción 2:</b> I y J deben ir en la misma estación.",
+    lits: [
+      { q: "b) Hoy trabajan con dos estaciones: Estación 1 = {A, B, C, D, E, F} y Estación 2 = {G, H, I, J}. ¿Cuál es el tiempo de ciclo, en min/und?", ans: 35, tol: 0.01, unit: "min/und" },
+      { q: "b) ¿Y la tasa de producción con esa configuración, en und/hora? (dos decimales)", ans: 60 / 35, tol: 0.01, unit: "und/h" },
+      { q: "c) Ahora la demanda es de 24 pantalones al día con 8 horas de producción. ¿Cuál es el tiempo de ciclo requerido?", ans: 20, tol: 0.01, unit: "min/und" },
+      { q: "c) ¿Cuál es el número mínimo teórico de estaciones?", ans: 4, tol: 0, unit: "estaciones" },
+      { q: "c) Balancea con regla primaria más sucesoras y secundaria mayor tiempo. Escribe la estación (número entero) de cada actividad.", grid: { A: 1, B: 1, C: 1, D: 3, E: 2, F: 2, G: 3, H: 2, I: 4, J: 4 } },
+      { q: "d) ¿Cuál es el tiempo de ciclo real?", ans: 17, tol: 0.01, unit: "min/und" },
+      { q: "d) ¿Cuál es el tiempo ocioso total por ciclo?", ans: 5, tol: 0.01, unit: "min" },
+      { q: "d) ¿Cuál es la eficiencia, en %, con dos decimales?", ans: 92.65, tol: 0.02, unit: "%" }
+    ],
+    hints: ["Para b), con estaciones ya dadas el tiempo de ciclo es el de la estación más cargada: suma los tiempos de cada una y toma el mayor.", "Para c), cuenta primero las sucesoras de todas: A 9, B 5, C 6, D 2, E 3, F 3, G 1, H 1, I 1, J 0. D+G es un bloque de 17 min, e I+J uno de 13 que solo se puede abrir cuando G y H ya estén."],
+    sol: () => `<p><b>b)</b> Estación 1: 5 + 7 + 5 + 8 + 4 + 6 = 35 min; estación 2: 9 + 6 + 7 + 6 = 28 min. El ciclo es el de la más cargada: <b>35 min/und</b>, y la tasa, 60/35 = <b>1,71 und/h</b>.</p>
+      <p><b>c)</b> TD = 8 × 60 = 480 min/día, así que C = 480/24 = <b>20 min/und</b>. T = 63 min y N<sub>min</sub> = ⌈63/20⌉ = ⌈3,15⌉ = <b>4</b>. La tabla completa (las filas tachadas son tareas o bloques que no cupieron):</p>
+      ${stationsTable(SETS.modandes, 20, ["suc", "max"])}
+      <p>Puntos clave: en la estación 1, después de A y C, entre B (5 sucesoras) y F (3) gana B. Con DI = 3 ya no cabe nada. En la estación 2, el bloque D+G (17) no cabe en los 10 que quedan después de F y E, y el bloque I+J todavía no se puede abrir porque J necesita G y H; por eso entra H.</p>
+      ${barsSvg(runBalance(SETS.modandes, 20, ["suc", "max"]).stations, 20)}
+      <p><b>d)</b> N<sub>real</sub> = 4 y C<sub>real</sub> = máx(17, 16, 17, 13) = <b>17 min/und</b>. T<sub>ocio</sub> = 4 × 17 − 63 = <b>5 min</b> por ciclo y η = 63/68 = <b>92,65 %</b>.</p>`,
+    res: "Estaciones {A, C, B} · {F, E, H} · {D, G} · {I, J}; C real = 17 min/und; ocio 5 min/ciclo; η = 92,65 %." },
+  { id: "T2", title: "Distribuidora El Faro: kits publicitarios", src: "Actividad 11 de 2026-10, con solución oficial (la verifiqué)",
+    fig: () => graphSvg(SETS.faro, { id: "t2", aria: "Grafo de precedencias de El Faro" }),
+    text: "Las actividades y sus tiempos están en el grafo: A 12 min; B 6 (después de A); C 9 (después de A); D 10 (después de B); E 5 (después de B y C); F 4 (después de D); G 12 (después de E); H 11 (después de E); I 5 (después de H); J 7 (después de F, G e I). La demanda es de 620 kits al mes y se trabajan 25 días de 8 horas. <b>Restricciones:</b> D y E deben ir en la misma estación; I y G <b>no</b> pueden ir en la misma estación. Regla primaria: menor tiempo; secundaria: orden lexicográfico.",
+    lits: [
+      { q: "1. Tiempo de ciclo requerido (dos decimales)", ans: 12000 / 620, tol: 0.01, unit: "min/kit" },
+      { q: "2. Número mínimo teórico de operarios (estaciones)", ans: 5, tol: 0, unit: "estaciones" },
+      { q: "4. Escribe la estación de cada actividad.", grid: { A: 1, B: 1, C: 2, D: 3, E: 3, F: 3, G: 5, H: 4, I: 4, J: 5 } },
+      { q: "5. Tiempo de ocio por ciclo", ans: 14, tol: 0.01, unit: "min/ciclo" },
+      { q: "5. Tiempo de ocio total por día (dos decimales)", ans: 14 * 480 / 19, tol: 0.05, unit: "min/día" },
+      { q: "5. Eficiencia de la línea (%)", ans: 85.26, tol: 0.02, unit: "%" },
+      { q: "6. Si se quiere la máxima tasa posible (manteniendo D y E juntas), ¿cuántos kits al mes salen?", ans: 800, tol: 0.5, unit: "kits/mes" }
+    ],
+    hints: ["TD = 25 × 8 × 60 = 12.000 min al mes. T = 81 min, así que N<sub>min</sub> = ⌈81/19,35⌉.", "En la estación 2, después de C quedan 10,35 min: el bloque D+E (15) no cabe. Para el ocio por día: en un día caben 480/C<sub>real</sub> ciclos.", "Para la tasa máxima: cada tarea sola en su estación, salvo D+E, que van juntas. El ciclo mínimo es el más largo entre 15 (D+E) y las demás tareas."],
+    sol: () => `<p><b>1.</b> TD = 25 días × 8 h × 60 = 12.000 min/mes; C = 12.000/620 = <b>19,35 min/kit</b>.</p>
+      <p><b>2.</b> T = 81 min; N<sub>min</sub> = ⌈81/19,35⌉ = ⌈4,19⌉ = <b>5</b>.</p>
+      <p><b>4.</b> La tabla (cuadra con la solución oficial):</p>
+      ${stationsTable(SETS.faro, 12000 / 620, ["min", "lex"])}
+      <p>La estación 2 queda solo con C porque el bloque D+E no cabe. En la estación 4, G no se escoge al principio porque H (11) e I (5) son más cortas por la regla de menor tiempo, y después G ya no puede ir con I.</p>
+      ${barsSvg(runBalance(SETS.faro, 12000 / 620, ["min", "lex"]).stations, 12000 / 620)}
+      <p><b>5.</b> C<sub>real</sub> = 19 min; T<sub>ocio</sub> = 5 × 19 − 81 = <b>14 min/ciclo</b>. En un día caben 480/19 = 25,26 ciclos: 14 × 25,26 = <b>353,68 min/día</b>. η = 81/95 = <b>85,26 %</b>.</p>
+      <p><b>6.</b> Con cada tarea sola, salvo el bloque D+E = 15 min, el ciclo mínimo es 15 min (A y G tardan 12). Tasa = 1/15 kit/min × 12.000 min/mes = <b>800 kits/mes</b>.</p>`,
+    res: "C = 19,35 min/kit; N min = 5; C real = 19; ocio 14 min/ciclo (353,68 min/día); η = 85,26 %; tasa máxima 800 kits/mes." },
+  { id: "T3", title: "Boggate: la tasa máxima", src: "Ejercicio 2 de la clase de balanceo",
+    fig: () => graphSvg(SETS.boggate, { id: "t3", aria: "Grafo de precedencias de Boggate" }),
+    text: "La compañía de cepillos Boggate tiene estas operaciones: A 5 min; B 4 (después de A); C 2 (después de A); D 4 (después de A); E 1 (después de B y C); F 1 (después de D); G 2 (después de E y F). La junta quiere <b>maximizar la tasa de producción</b>.",
+    lits: [
+      { q: "a) ¿Cuál es el tiempo de ciclo requerido para la tasa máxima?", ans: 5, tol: 0.01, unit: "min/und" },
+      { q: "b) Balancea para maximizar la eficiencia. ¿Cuántas estaciones quedan?", ans: 4, tol: 0, unit: "estaciones" },
+      { q: "c) ¿Cuál es la eficiencia, en %?", ans: 95, tol: 0.05, unit: "%" },
+      { q: "c) ¿Cuál es la tasa de producción, en und/hora?", ans: 12, tol: 0.01, unit: "und/h" }
+    ],
+    hints: ["El ciclo no puede ser menor que la tarea más larga.", "T = 19 min y C = 5, así que N<sub>min</sub> = ⌈19/5⌉ = 4. Busca un reparto con 4 estaciones."],
+    sol: () => `<p><b>a)</b> Para producir lo más rápido posible el ciclo es la tarea más larga: <b>C = 5 min</b> (A).</p>
+      <p><b>b)</b> T = 19 min y N<sub>min</sub> = ⌈19/5⌉ = 4. El reparto de la clase: {A} 5 · {D, F} 5 · {B} 4 · {C, E, G} 5. Son <b>4 estaciones</b>, que es el mínimo posible.</p>
+      ${barsSvg([{ tasks: ["A"], load: 5 }, { tasks: ["D", "F"], load: 5 }, { tasks: ["B"], load: 4 }, { tasks: ["C", "E", "G"], load: 5 }], 5)}
+      <p><b>c)</b> η = 19/(4 × 5) = <b>95 %</b>. TH = 1/5 = 0,2 und/min = <b>12 und/h</b>.</p>`,
+    res: "C = 5 min; 4 estaciones; η = 95 %; 12 und/h." }
+];
+function parseNum(s) { if (s == null) return NaN; const v = String(s).trim().replace(/\s/g, "").replace(",", "."); return v === "" ? NaN : Number(v); }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((P) => {
+    const a = el("article", "prob");
+    const h = el("div", "prob-head");
+    h.appendChild(el("span", "tag", P.id + " · " + P.src));
+    h.appendChild(el("h3", "", P.title));
+    const tx = el("p", "prose"); tx.innerHTML = P.text; h.appendChild(tx);
+    const fg = el("figure", "fig"); fg.innerHTML = P.fig(); h.appendChild(fg);
+    a.appendChild(h);
+    const b = el("div", "prob-body");
+    P.lits.forEach((L, li) => {
+      const d = el("div", "lit");
+      d.appendChild(el("p", "", L.q));
+      const row = el("div", "lit-row");
+      const fb = el("span", "fb");
+      if (L.grid) {
+        const g = el("div", "grid-in");
+        Object.keys(L.grid).forEach((k) => { const s = el("span"); const lab = el("label", "", k); const inp = el("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.id = `${P.id}-${li}-${k}`; lab.htmlFor = inp.id; s.appendChild(lab); s.appendChild(inp); g.appendChild(s); });
+        row.appendChild(g);
+        const btn = el("button", "btn ghost", "Revisar"); btn.type = "button";
+        btn.addEventListener("click", () => {
+          const wrong = Object.keys(L.grid).filter((k) => parseNum($(`#${P.id}-${li}-${k}`).value) !== L.grid[k]);
+          d.className = "lit " + (wrong.length ? "bad" : "ok");
+          fb.className = "fb " + (wrong.length ? "bad" : "ok");
+          fb.textContent = wrong.length ? `Revisa: ${wrong.join(", ")}.` : "Todas bien.";
+        });
+        row.appendChild(btn);
+      } else {
+        const inp = el("input"); inp.type = "text"; inp.inputMode = "decimal"; inp.id = `${P.id}-${li}`; inp.style.width = "7em";
+        const lab = el("label", "", L.unit); lab.htmlFor = inp.id;
+        const btn = el("button", "btn ghost", "Revisar"); btn.type = "button";
+        btn.addEventListener("click", () => {
+          const v = parseNum(inp.value);
+          if (isNaN(v)) { fb.className = "fb bad"; fb.textContent = "Escribe un número (con coma o punto decimal)."; return; }
+          const ok = Math.abs(v - L.ans) <= Math.max(L.tol, 1e-9) + 1e-9;
+          d.className = "lit " + (ok ? "ok" : "bad"); fb.className = "fb " + (ok ? "ok" : "bad");
+          fb.textContent = ok ? "Correcto." : "No da. Revisa el procedimiento o abre la pista.";
+        });
+        row.appendChild(inp); row.appendChild(lab); row.appendChild(btn);
+      }
+      row.appendChild(fb); d.appendChild(row); b.appendChild(d);
+    });
+    const rv = el("div", "reveals");
+    P.hints.forEach((ht, i) => { const dd = el("details", "rev"); dd.appendChild(el("summary", "", "Pista " + (i + 1))); const bb = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; bb.appendChild(pp); dd.appendChild(bb); rv.appendChild(dd); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); sb.innerHTML = P.sol() + `<p class="wx-res" style="border-radius:4px">Resultado: ${P.res}</p>`; ds.appendChild(sb); rv.appendChild(ds);
+    b.appendChild(rv); a.appendChild(b); box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const G1 = { t: { A: 3, B: 6, C: 4, D: 5, E: 2, F: 4 }, p: { A: [], B: ["A"], C: ["A"], D: ["B"], E: ["C"], F: ["D", "E"] } };
+const G2 = { t: { A: 4, B: 3, C: 5, D: 2, E: 6, F: 3, G: 4 }, p: { A: [], B: [], C: ["A"], D: ["A", "B"], E: ["C"], F: ["D"], G: ["E", "F"] } };
+const MOD = "M1", NEXT = "Aprobado. Sigue con M2 · Planeación agregada.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "¿Qué es el tiempo de ciclo requerido C?",
+      o: ["La suma de los tiempos de todas las tareas", "Lo máximo que puede demorarse cada estación por unidad para cumplir la demanda", "El tiempo de la tarea más larga", "El tiempo de la estación más cargada después de balancear"], a: 1,
+      e: "C = TD/D: el tiempo disponible repartido entre las unidades que hay que sacar. La estación más cargada es C real, que sale después de balancear." },
+    { k: "Corta", q: "Una línea trabaja 8 horas al día y debe producir 96 unidades diarias. ¿Cuál es el tiempo de ciclo requerido?",
+      o: ["5 min/und", "0,2 min/und", "12 min/und", "4 min/und"], a: 0,
+      e: "TD = 8 × 60 = 480 min; C = 480/96 = 5 min/und." },
+    { k: "Corta", fig: () => graphSvg(G1, { id: "qa3", aria: "Grafo de seis tareas" }), q: "En el grafo, ¿cuántas sucesoras tiene B?",
+      o: ["1", "2", "3", "5"], a: 1,
+      e: "Desde B se llega a D y, desde D, a F: {D, F}. Son 2." },
+    { k: "Tipo parcial", fig: () => graphSvg(G1, { id: "qa4", aria: "Grafo de seis tareas" }), q: "Con C = 10 min, regla primaria mayor tiempo y secundaria orden alfabético, ¿qué tareas quedan en la estación 2?",
+      o: ["{C, D}", "{C, E}", "{D, E}", "{B, C}"], a: 0,
+      e: "Estación 1: A (3), luego B (6) → 9; ni C (4) ni D (5) caben en 1. Estación 2: factibles C y D; mayor tiempo D (5), luego C (4) → 9. Estación 3: E y F." },
+    { k: "Tipo parcial", fig: () => barsSvg([{ tasks: ["·"], load: 9 }, { tasks: ["·"], load: 10 }, { tasks: ["·"], load: 8 }, { tasks: ["·"], load: 7 }], 10, { aria: "Cuatro estaciones con 9, 10, 8 y 7 minutos" }), q: "Una línea quedó con 4 estaciones de 9, 10, 8 y 7 minutos (T = 34 min). ¿Cuál es su eficiencia?",
+      o: ["85 %", "89,5 %", "75 %", "100 %"], a: 0,
+      e: "C real = 10; η = 34/(4 × 10) = 34/40 = 85 %." }
+  ],
+  B: [
+    { k: "Conceptual", q: "¿Por qué el número mínimo de estaciones se redondea siempre hacia arriba?",
+      o: ["Porque así lo pide la regla primaria", "Porque con una estación menos el trabajo total no cabe dentro de C en cada estación", "Porque la eficiencia siempre debe ser menor que 100 %", "No siempre: se redondea al entero más cercano"], a: 1,
+      e: "Si T/C = 4,3, con 4 estaciones solo caben 4·C minutos de trabajo por unidad, menos que T. Se necesitan 5." },
+    { k: "Corta", q: "Las tareas de una línea suman T = 52 min y el ciclo requerido es C = 12 min. ¿Cuál es N mínimo?",
+      o: ["4", "4,33", "5", "6"], a: 2,
+      e: "52/12 = 4,33 → ⌈4,33⌉ = 5." },
+    { k: "Corta", fig: () => graphSvg(G2, { id: "qb3", aria: "Grafo de siete tareas" }), q: "En la estación 1 quedan 6 min. Las factibles son C (5 min, 2 sucesoras) y D (2 min, 2 sucesoras). Con regla primaria más sucesoras y secundaria mayor tiempo, ¿cuál se asigna?",
+      o: ["C, porque empatan en sucesoras y C tarda más", "D, porque tarda menos", "Ninguna, porque empatan", "Las dos a la vez"], a: 0,
+      e: "Empatan en la primaria (2 sucesoras cada una); la secundaria escoge la más larga, C, que cabe en 6." },
+    { k: "Tipo parcial", fig: () => graphSvg(G2, { id: "qb4", aria: "Grafo de siete tareas" }), q: "Con C = 10 min, regla primaria más sucesoras y secundaria mayor tiempo, ¿qué tareas quedan en la estación 1?",
+      o: ["{A, B, D}", "{A, B}", "{A, C}", "{A, B, C}"], a: 0,
+      e: "A (5 sucesoras) → 4; B (3) → 7; C ya no cabe (5 > 3) y D (2 min) sí → 9. Nada más cabe en 1." },
+    { k: "Tipo parcial", fig: () => barsSvg([{ tasks: ["ABD"], load: 9 }, { tasks: ["CF"], load: 8 }, { tasks: ["EG"], load: 10 }], 10, { aria: "Tres estaciones con 9, 8 y 10 minutos" }), q: "El balanceo anterior quedó con estaciones de 9, 8 y 10 min (T = 27). Si la línea trabaja 480 min al día, ¿cuánto tiempo ocioso total hay por día?",
+      o: ["144 min", "3 min", "30 min", "160 min"], a: 0,
+      e: "C real = 10; ocio por ciclo = 3 × 10 − 27 = 3 min. Ciclos por día = 480/10 = 48. Ocio por día = 3 × 48 = 144 min." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig fig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = String(d.fecha || ""); }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

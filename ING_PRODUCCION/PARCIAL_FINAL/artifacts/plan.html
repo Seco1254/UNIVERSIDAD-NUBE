@@ -134,7 +134,7 @@ tr:last-child td{border-bottom:0}
 .gd span{font-family:var(--f-mono); font-size:.74rem; color:var(--muted)}
 .tag-today{justify-self:start; font-family:var(--f-mono); font-size:.68rem; font-weight:600; background:var(--safety); color:var(--safety-ink); padding:1px 6px; border-radius:3px}
 .gmain{display:grid; gap:8px; min-width:0}
-.track{position:relative; height:26px; background:repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),var(--rule) calc(20% - 1px) 20%); border-radius:3px}
+.track{position:relative; height:26px; background:repeating-linear-gradient(90deg,transparent 0 calc(16.667% - 1px),var(--rule) calc(16.667% - 1px) 16.667%); border-radius:3px}
 .seg{position:absolute; top:3px; bottom:3px; border-radius:3px; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:var(--f-mono); font-size:.68rem; font-weight:600; white-space:nowrap; padding:0 4px}
 .seg.mod{background:var(--accent); color:var(--accent-ink)}
 .seg.evt{background:repeating-linear-gradient(-45deg,var(--evt) 0 4px,var(--evt-soft) 4px 8px); color:var(--ink)}
@@ -271,18 +271,18 @@ footer{font-size:.82rem; color:var(--muted); border-top:1px solid var(--rule); p
     <div class="tw"><table>
       <thead><tr><th>Tema</th><th>Ejercicio típico</th><th>Tu nota</th><th>Prioridad</th><th>Módulo</th></tr></thead>
       <tbody>
-        <tr><td><b>Scheduling 2 · flow shop</b></td><td>10 trabajos en 3 máquinas: ver si aplica Johnson extendido o CDS, secuencia, Cmax y Gantt; CDS con 4 máquinas</td><td class="warn">Reto 14: 1,0/5</td><td><span class="prio alta">Alta</span></td><td class="num">M2</td></tr>
-        <tr><td><b>Control de piso · CONWIP</b></td><td>Estaciones con máquinas en paralelo: tasas, cuello de botella, T0, WIP crítico, tabla WIP–TH–TS del mejor caso, máquina adicional y % de mejora</td><td class="warn">Reto 9: 2,1/5</td><td><span class="prio alta">Alta</span></td><td class="num">M4</td></tr>
-        <tr><td><b>Gestión de proyectos · CPM</b></td><td>Grafo AON, ruta crítica, costo normal y acelerado con costo indirecto semanal, aceleración a mínimo costo con CUA y bono por semana anticipada</td><td class="warn">Reto 15: no presentado</td><td><span class="prio alta">Alta</span></td><td class="num">M5</td></tr>
-        <tr><td><b>Scheduling 1 · una máquina</b></td><td>Hodgson–Moore (mínimo de trabajos tardíos), Lawler con precedencias (mínimo Lmax), costo de retrasos, «¿importa el orden en el Cmax?»</td><td class="warn">Reto 13: 2,9/5</td><td><span class="prio alta">Alta</span></td><td class="num">M1</td></tr>
-        <tr><td>Balanceo de línea</td><td>Tiempo de ciclo, Nmin, grafo, asignación con regla primaria y secundaria y restricciones (juntas o separadas), C real, ocio y eficiencia</td><td>Reto 11: 4,0 · Actividad 11: 2,5</td><td><span class="prio media">Media</span></td><td class="num">M3</td></tr>
-        <tr><td>Planeación agregada</td><td>Persecución y nivelación con inventario de seguridad, recepciones de otra planta, redondeos y costos</td><td>Reto 12: 4,5 · <span class="warn">Actividad 12: no entregada</span></td><td><span class="prio media">Media</span></td><td class="num">M6</td></tr>
+        <tr><td><b>Scheduling 2 · flow shop</b></td><td>10 trabajos en 3 máquinas: ver si aplica Johnson extendido o CDS, secuencia, Cmax y Gantt; CDS con 4 máquinas</td><td class="warn">Reto 14: 1,0/5</td><td><span class="prio alta">Alta</span></td><td class="num">M4</td></tr>
+        <tr><td><b>Control de piso · CONWIP</b></td><td>Estaciones con máquinas en paralelo: tasas, cuello de botella, T0, WIP crítico, tabla WIP–TH–TS del mejor caso, máquina adicional y % de mejora</td><td class="warn">Reto 9: 2,1/5</td><td><span class="prio alta">Alta</span></td><td class="num">M5</td></tr>
+        <tr><td><b>Gestión de proyectos · CPM</b></td><td>Grafo AON, ruta crítica, costo normal y acelerado con costo indirecto semanal, aceleración a mínimo costo con CUA y bono por semana anticipada</td><td class="warn">Reto 15: no presentado</td><td><span class="prio alta">Alta</span></td><td class="num">M6</td></tr>
+        <tr><td><b>Scheduling 1 · una máquina</b></td><td>Hodgson–Moore (mínimo de trabajos tardíos), Lawler con precedencias (mínimo Lmax), costo de retrasos, «¿importa el orden en el Cmax?»</td><td class="warn">Reto 13: 2,9/5</td><td><span class="prio alta">Alta</span></td><td class="num">M3</td></tr>
+        <tr><td>Balanceo de línea</td><td>Tiempo de ciclo, Nmin, grafo, asignación con regla primaria y secundaria y restricciones (juntas o separadas), C real, ocio y eficiencia</td><td>Reto 11: 4,0 · Actividad 11: 2,5</td><td><span class="prio media">Media</span></td><td class="num">M1</td></tr>
+        <tr><td>Planeación agregada</td><td>Persecución y nivelación con inventario de seguridad, recepciones de otra planta, redondeos y costos</td><td>Reto 12: 4,5 · <span class="warn">Actividad 12: no entregada</span></td><td><span class="prio media">Media</span></td><td class="num">M2</td></tr>
       </tbody>
     </table></div>
     <div class="facts">
       <div class="fact"><span class="eyebrow">Formato (2026-10)</span><p>Sincrónico, 150 minutos, en LockDown Browser. La hoja de cálculo viene dentro del examen. No se permite calculadora: practica los talleres en Excel.</p></div>
       <div class="fact"><span class="eyebrow">Hoja de fórmulas</span><p>Una hoja carta, por una cara, a mano, con nombre y código. Solo fórmulas: puedes escribir «rb → tasa del cuello de botella», pero no explicaciones ni ejemplos. Si no cumple, la retiran.</p></div>
-      <div class="fact"><span class="eyebrow">Ojo con control de piso</span><p>En 2026-10 el final fue sobre 50 y el ejercicio numérico de control de piso se volvió bono (nota sobre 43) porque casi nadie lo resolvió. Por eso M4 va el sábado, con tiempo.</p></div>
+      <div class="fact"><span class="eyebrow">Ojo con control de piso</span><p>En 2026-10 el final fue sobre 50 y el ejercicio numérico de control de piso se volvió bono (nota sobre 43) porque casi nadie lo resolvió. Por eso M5 tiene el bloque más largo (2 h 30) y vuelve en el simulacro.</p></div>
       <div class="fact"><span class="eyebrow">¿Entra el Parcial 1?</span><p>Ningún anuncio dice que el final sea acumulativo y el de 2026-10 no lo fue. Pregúntalo el martes en la complementaria. El plan asume que no entra.</p></div>
     </div>
   </section>
@@ -290,13 +290,13 @@ footer{font-size:.82rem; color:var(--muted); border-top:1px solid var(--rule); p
   <section aria-labelledby="sem-h">
     <div class="sec-head">
       <h2 id="sem-h">Tu semana, como un Gantt</h2>
-      <p class="note">Cada barra es un día, de 0 a 5 horas. La carga sigue tu semana: martes y jueves, liviana; viernes, suave; miércoles, media; sábado y domingo, pesada. Las complementarias de repaso cuentan como estudio. Lo más difícil (control de piso y proyectos) va el sábado.</p>
+      <p class="note">Cada barra es un día, de 0 a 6 horas. <b>Ajuste del 23 de noviembre:</b> esta semana casi no tienes clases, así que la carga sube, y cada tema se estudia <b>antes</b> de su complementaria de repaso, para que llegues sabiendo de qué hablan: balanceo y planeación agregada el martes antes de las 11:00, y los dos de scheduling el miércoles antes de las 2:00. Control de piso y proyectos (su complementaria fue el lunes) van el jueves y el viernes, con la grabación. El sábado, el mini-simulacro; el domingo, repaso de lo que falle.</p>
       <div class="legend"><span><i class="sw mod"></i>Módulo</span><span><i class="sw evt"></i>Complementaria</span><span><i class="sw sim"></i>Simulacro</span><span><i class="sw adm"></i>Trámite</span></div>
     </div>
     <div class="gantt" id="gantt">
-      <div class="axis"><span class="eyebrow">Día</span><div class="ticks" aria-hidden="true"><span style="left:0">0 h</span><span style="left:20%">1</span><span style="left:40%">2</span><span style="left:60%">3</span><span style="left:80%">4</span><span style="left:100%">5 h</span></div></div>
+      <div class="axis"><span class="eyebrow">Día</span><div class="ticks" aria-hidden="true"><span style="left:0">0 h</span><span style="left:16.667%">1</span><span style="left:33.333%">2</span><span style="left:50%">3</span><span style="left:66.667%">4</span><span style="left:83.333%">5</span><span style="left:100%">6 h</span></div></div>
     </div>
-    <p class="note muted"><b>Si te atrasas:</b> recorta primero los labs de M3 y M6, después el X1 (si te sientes bien con DMAIC) y por último baja el mini-simulacro a 3 problemas: control de piso, proyectos y flow shop. Nunca recortes la teoría ni los ejercicios de las complementarias de repaso. Cuando termines un quiz, mándame la nota y ajusto el plan.</p>
+    <p class="note muted"><b>Si te atrasas:</b> lo intocable es estudiar la teoría de cada tema antes de su complementaria. Recorta primero los labs, después el X1 (si te sientes bien con DMAIC) y por último baja el mini-simulacro a 3 problemas: control de piso, proyectos y flow shop. Cuando termines un quiz, mándame la nota y ajusto el plan.</p>
   </section>
 
   <section aria-labelledby="met-h">
@@ -314,7 +314,7 @@ footer{font-size:.82rem; color:var(--muted); border-top:1px solid var(--rule); p
   <section aria-labelledby="mod-h">
     <div class="sec-head">
       <h2 id="mod-h">Módulos</h2>
-      <p class="note">Cada módulo es su propio artifact. Cuando vayas a empezar uno, pídeme «arma M1» (o el que toque) y aparece aquí el botón para abrirlo.</p>
+      <p class="note">Cada módulo es su propio artifact y van en el orden en que los estudias. Cuando uno todavía no tenga botón, pídeme «arma M3» (o el que toque) y aparece aquí.</p>
       <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
     </div>
     <div class="mods" id="mods"></div>
@@ -342,63 +342,63 @@ const FINAL = new Date(2026, 10, 30, 7, 0);
 const DAYS = [
   { d: "2026-11-23", n: "Lun 23", load: "Noche", h: "15 min", t: "Revisar la Entrega Final DMAIC",
     blocks: [{ c: "DMAIC", m: 15, k: "adm", t: "Confirmar con el grupo que la Entrega Final quedó subida" }],
-    note: "Hoy no se estudia. Si la entrega no quedó, escríbele a Sebastián esta misma noche.", mods: [] },
-  { d: "2026-11-24", n: "Mar 24", load: "Liviana", h: "1,5 h", t: "Complementaria de repaso PA + BL",
-    blocks: [{ c: "PA + BL", m: 80, k: "evt", t: "11:00 · Complementaria de repaso de planeación agregada y balanceo (Teams)" }],
-    note: "Es la primera pasada de M3 y M6: anota cómo resuelven. Pregunta si el final incluye los temas del Parcial 1. A las 3:30 p. m., presentación DMAIC (ML-512).", mods: [] },
-  { d: "2026-11-25", n: "Mié 25", load: "Media", h: "3 h", t: "M1 · Scheduling 1 + complementaria",
-    blocks: [{ c: "M1", m: 90, k: "mod", t: "M1 · teoría, lab y taller, antes de las 2:00" }, { c: "Sch 1-2", m: 80, k: "evt", t: "2:00 · Complementaria de repaso de scheduling 1 y 2 (Teams)" }, { c: "Q", m: 10, k: "mod", t: "Quiz de M1" }],
-    note: "La complementaria también sirve de primera vista de M2 (flow shop).", mods: ["M1"] },
-  { d: "2026-11-26", n: "Jue 26", load: "Liviana", h: "1,5 h", t: "Quiz DMAIC + M2 · Scheduling 2",
-    blocks: [{ c: "X1", m: 30, k: "mod", t: "X1 · DMAIC exprés, antes de clase" }, { c: "M2", m: 60, k: "mod", t: "Noche · M2 teoría y lab" }],
-    note: "En clase: presentaciones y Quiz DMAIC (2 % del curso).", mods: ["X1", "M2"] },
-  { d: "2026-11-27", n: "Vie 27", load: "Suave", h: "2 h", t: "M2 taller · M3 · Balanceo de línea",
-    blocks: [{ c: "M2", m: 60, k: "mod", t: "M2 · taller y quiz" }, { c: "M3", m: 60, k: "mod", t: "M3 · teoría y lab" }],
-    note: "", mods: ["M2", "M3"] },
-  { d: "2026-11-28", n: "Sáb 28", load: "Pesada", h: "5 h", t: "M4 · Control de piso y M5 · Proyectos",
-    blocks: [{ c: "M3", m: 40, k: "mod", t: "M3 · taller y quiz" }, { c: "M4", m: 135, k: "mod", t: "M4 · Control de piso completo" }, { c: "M5", m: 120, k: "mod", t: "M5 · Gestión de proyectos completo" }],
-    note: "El bloque difícil de la semana. Haz una pausa larga entre M4 y M5.", mods: ["M3", "M4", "M5"] },
-  { d: "2026-11-29", n: "Dom 29", load: "Pesada", h: "5 h", t: "M6 · Planeación agregada y mini-simulacro",
-    blocks: [{ c: "M6", m: 120, k: "mod", t: "M6 · Planeación agregada completo" }, { c: "M7", m: 120, k: "sim", t: "M7 · mini-simulacro (90 min) y corrección" }, { c: "Hoja", m: 30, k: "adm", t: "Hoja de fórmulas a mano" }, { c: "", m: 10, k: "adm", t: "Coevaluación DMAIC, antes de las 11:59 p. m." }],
-    note: "Mañana a las 7:00 a. m. es el final. Deja lista la hoja de fórmulas y el carné, y duerme temprano.", mods: ["M6", "M7"] },
+    note: "Hoy no se estudia. Si la entrega no quedó, escríbele a Sebastián esta misma noche. Mañana arrancas temprano: M1 a las 7:45.", mods: [] },
+  { d: "2026-11-24", n: "Mar 24", load: "Pesada", h: "5 h 20", t: "M1 Balanceo y M2 Planeación agregada, antes de la complementaria",
+    blocks: [{ c: "M1", m: 105, k: "mod", t: "7:45 · M1 Balanceo de línea completo" }, { c: "M2", m: 75, k: "mod", t: "9:35 · M2 Planeación agregada: teoría y lab" }, { c: "PA + BL", m: 80, k: "evt", t: "11:00 · Complementaria de repaso de planeación agregada y balanceo (Teams)" }, { c: "M2", m: 60, k: "mod", t: "Noche · M2 taller y quiz" }],
+    note: "Llegas a la complementaria con los dos temas vistos: compara cómo resuelven con lo que hiciste en los talleres y anota dudas. Pregunta si el final incluye los temas del Parcial 1. A las 3:30 p. m., presentación DMAIC (ML-512).", mods: ["M1", "M2"] },
+  { d: "2026-11-25", n: "Mié 25", load: "Pesada", h: "5 h 30", t: "M3 y M4 Scheduling, antes de la complementaria",
+    blocks: [{ c: "M3", m: 105, k: "mod", t: "8:00 · M3 Scheduling 1 (una máquina) completo" }, { c: "M4", m: 105, k: "mod", t: "10:00 · M4 Scheduling 2 (flow shop): teoría, lab y primer ejercicio" }, { c: "Sch 1-2", m: 80, k: "evt", t: "2:00 · Complementaria de repaso de scheduling 1 y 2 (Teams)" }, { c: "Q", m: 40, k: "mod", t: "Después · M4 resto del taller y quiz" }],
+    note: "Almuerza antes de la complementaria. Flow shop es tu tema más flojo (Reto 14: 1,0): aprovecha para preguntar ahí.", mods: ["M3", "M4"] },
+  { d: "2026-11-26", n: "Jue 26", load: "Media", h: "3 h 10", t: "Quiz DMAIC y M5 Control de piso",
+    blocks: [{ c: "X1", m: 40, k: "mod", t: "Mañana · X1 DMAIC exprés" }, { c: "M5", m: 150, k: "mod", t: "M5 Control de piso (CONWIP) completo" }],
+    note: "En clase: presentaciones y Quiz DMAIC (2 % del curso). Haz X1 antes de salir.", mods: ["X1", "M5"] },
+  { d: "2026-11-27", n: "Vie 27", load: "Media", h: "3 h 50", t: "M6 Gestión de proyectos + grabación",
+    blocks: [{ c: "M6", m: 150, k: "mod", t: "M6 Gestión de proyectos (CPM) completo" }, { c: "Grab.", m: 80, k: "evt", t: "Grabación de la complementaria de control de piso y proyectos (del lunes 23)" }],
+    note: "La grabación sirve de repaso de M5 y M6 ya estudiados.", mods: ["M6"] },
+  { d: "2026-11-28", n: "Sáb 28", load: "Pesada", h: "4 h 30", t: "Repaso y mini-simulacro",
+    blocks: [{ c: "Quiz B", m: 90, k: "mod", t: "Quiz B de los módulos donde sacaste menos de 5/5" }, { c: "M7", m: 120, k: "sim", t: "M7 · mini-simulacro (90 min) y corrección" }, { c: "Hoja", m: 60, k: "adm", t: "Borrador de la hoja de fórmulas" }],
+    note: "El simulacro dice qué repasar el domingo.", mods: ["M7"] },
+  { d: "2026-11-29", n: "Dom 29", load: "Suave", h: "3 h", t: "Repaso dirigido y hoja de fórmulas",
+    blocks: [{ c: "Repaso", m: 120, k: "mod", t: "Repaso de lo que falló en el simulacro" }, { c: "Hoja", m: 45, k: "adm", t: "Hoja de fórmulas final, a mano" }, { c: "", m: 10, k: "adm", t: "Coevaluación DMAIC, antes de las 11:59 p. m." }],
+    note: "Mañana a las 7:00 a. m. es el final. Deja lista la hoja de fórmulas y el carné, y duerme temprano.", mods: [] },
   { d: "2026-11-30", n: "Lun 30", load: "Examen", h: "7:00 a. m.", t: "PARCIAL FINAL", exam: true,
     blocks: [],
     note: "Arriba a las 5:30. Diez minutos con la hoja de fórmulas, carné y llega 15 minutos antes: el tiempo corre desde las 7:00 en punto.", mods: [] }
 ];
 
 const MODS = [
-  { id: "M1", t: "Scheduling 1 · una máquina", day: "Mié 25", h: "≈ 2 h", prio: "alta", why: "Reto 13: 2,9/5",
+  { id: "M1", t: "Balanceo de línea", day: "Mar 24, 7:45", h: "≈ 1 h 45", prio: "media", why: "Actividad 11: 2,5/5",
+    dominar: ["Tiempo de ciclo C = TD / D y N mínimo = ⌈T / C⌉", "Grafo de precedencias y número de sucesoras (todas, no solo las inmediatas)", "Asignación con regla primaria y secundaria, y restricciones de juntas o separadas", "N real, C real, tasa, tiempo ocioso (por ciclo y por día) y eficiencia", "Tasa máxima posible de la línea"],
+    taller: ["ModAndes (pre-parcial 2026-10): D y G juntas, I y J juntas", "Distribuidora El Faro (Actividad 11 de 2026-10, con solución oficial)", "Boggate (clase): tasa máxima"],
+    ojo: ["La tasa sale con C real, no con C", "Una tarea es factible si sus predecesoras ya están y cabe en lo que queda", "Ocio por día = ocio por ciclo × (TD / C real)"] },
+  { id: "M2", t: "Planeación agregada", day: "Mar 24, 9:35 y noche", h: "≈ 2 h 15", prio: "media", why: "Actividad 12: no entregada",
+    dominar: ["Capacidad por trabajador Kₙ = productividad × días hábiles", "Recepciones de otra planta e inventario de seguridad", "Persecución: requerimiento neto, trabajadores, contrataciones, despidos, producción e inventario mes a mes", "Nivelación: acumulados y fuerza laboral constante", "Costos de salarios, contratar, despedir, mantener y producir; comparar estrategias"],
+    taller: ["ModAndes (pre-parcial 2026-10): con taller externo", "Bar-Bunny (Actividad 12 de 2026-10)", "π-anito (repaso 2026-20)"],
+    ojo: ["Redondeos: unidades al entero inferior y trabajadores al superior", "En diciembre no hay inventario de seguridad", "El inventario inicial es el final del mes anterior"] },
+  { id: "M3", t: "Scheduling 1 · una máquina", day: "Mié 25, 8:00", h: "≈ 1 h 45", prio: "alta", why: "Reto 13: 2,9/5",
     dominar: ["Notación de Graham (α|β|γ) y los indicadores pⱼ, dⱼ, Cⱼ, Lⱼ, Tⱼ, Uⱼ y Cmax", "Reglas SPT, EDD y WSPT: qué minimiza cada una", "Hodgson–Moore (mínimo de trabajos tardíos), paso a paso", "Lawler con precedencias (mínimo Lmax), de atrás hacia adelante", "Costo de retrasos y por qué en una máquina el orden no cambia el Cmax"],
-    taller: ["Forja Andina (complementaria 2026-20): Moore y Lawler con precedencias", "Punto 1 del repaso de 2026-10: 8 trabajos, $100 por hora de retraso", "Odontología (Actividad 13 de 2026-10): con tiempos de preparación", "Variantes nuevas"],
-    ojo: ["Tᵢ nunca es negativa; Lⱼ sí puede serlo", "En Moore se saca el trabajo más largo entre los ya programados, no el que llega tarde", "Los tiempos de preparación se suman al de proceso"] },
-  { id: "M2", t: "Scheduling 2 · flow shop", day: "Jue 26 y vie 27", h: "≈ 2 h", prio: "alta", why: "Reto 14: 1,0/5",
+    taller: ["Forja Andina (complementaria 2026-20): Moore y Lawler con precedencias", "Punto 1 del repaso de 2026-10: 8 trabajos, $100 por hora de retraso", "Odontología (Actividad 13 de 2026-10): con tiempos de preparación"],
+    ojo: ["Tⱼ nunca es negativa; Lⱼ sí puede serlo", "En Moore se saca el trabajo más largo entre los ya programados, no el que llega tarde", "Los tiempos de preparación se suman al de proceso"] },
+  { id: "M4", t: "Scheduling 2 · flow shop", day: "Mié 25, 10:00", h: "≈ 2 h 25", prio: "alta", why: "Reto 14: 1,0/5",
     dominar: ["Armar el Gantt de un flow shop con la tabla de tiempos de terminación", "Johnson para dos máquinas (F2||Cmax)", "Tres máquinas: revisar la condición mín M1 ≥ máx M2 o mín M3 ≥ máx M2; si se cumple, máquinas virtuales y Johnson (óptimo)", "CDS para m máquinas: m − 1 subproblemas y el mejor Cmax real", "Cuándo la respuesta es óptima y cuándo es heurística"],
     taller: ["Pelao-Botso (complementaria 2026-20): 10 bolsos, 3 máquinas", "Vinyl Eilish (repaso 2026-10)", "Michi-Ganga (repaso 2026-20)", "Ferriperfiles (Actividad 14 de 2026-10): CDS con 4 máquinas"],
     ojo: ["El Cmax de cada secuencia se calcula con los tiempos reales, nunca con los de las máquinas virtuales", "En Johnson, si el mínimo está en la primera máquina el trabajo va al inicio; si está en la segunda, al final", "La condición de F3 se revisa antes de escoger el método"] },
-  { id: "M3", t: "Balanceo de línea", day: "Vie 27 y sáb 28", h: "≈ 1 h 40", prio: "media", why: "Actividad 11: 2,5/5",
-    dominar: ["Tiempo de ciclo C = tiempo disponible / demanda y Nmin = ⌈Σt / C⌉", "Grafo de precedencias y número de sucesoras (todas, no solo las inmediatas)", "Asignación con regla primaria y secundaria, y restricciones de juntas o separadas", "N real, C real, tasa de producción, tiempo ocioso y eficiencia = Σt / (N real · C real)", "Tasa máxima posible de la línea"],
-    taller: ["ModAndes (pre-parcial 2026-10): D y G juntas, I y J juntas", "Distribuidora El Faro (Actividad 11 de 2026-10): menor tiempo y orden alfabético", "Complementaria de balanceo 2026-20 y ejercicios de clase"],
-    ojo: ["Una tarea solo es factible si ya están asignadas todas sus predecesoras y cabe en el tiempo que queda", "Las unidades: min/unidad para el ciclo, unidades/hora para la tasa"] },
-  { id: "M4", t: "Control de piso · CONWIP", day: "Sáb 28", h: "≈ 2 h 15", prio: "alta", why: "Reto 9: 2,1/5",
+  { id: "M5", t: "Control de piso · CONWIP", day: "Jue 26", h: "≈ 2 h 30", prio: "alta", why: "Reto 9: 2,1/5",
     dominar: ["Push, pull y CONWIP; ley de Little WIP = TH · TS", "Tasa de una estación: n/t con máquinas iguales y Σ 1/tᵢ con máquinas distintas; el cuello de botella rb", "T0 por la ruta del proceso (si hay ramas en paralelo, la más larga)", "WIP crítico W0 = rb · T0, y qué hacer si no es entero", "Mejor caso (tabla WIP, TH, %rb, TS, %T0 y espera) y peor caso", "Pasar a und/hora, día y mes con jornada y descansos; máquina adicional y % de mejora"],
-    taller: ["Krispo (repaso 2026-20)", "Doléz (repaso 2026-10): máquinas distintas en paralelo", "ChocoAndes (Actividad 9 de 2026-10): producción por mes", "Gibsoff (Actividad 9 de 2026-20): rutas en paralelo", "Binder Kueno: flujo por lotes"],
+    taller: ["Krispo (repaso 2026-20)", "Doléz (repaso 2026-10): máquinas distintas en paralelo", "ChocoAndes (Actividad 9 de 2026-10): producción por mes", "Gibsoff (Actividad 9 de 2026-20): rutas en paralelo"],
     ojo: ["T0 usa el tiempo de una máquina, no el tiempo dividido entre el número de máquinas", "Si W0 no es entero: ⌊W0⌋ es el máximo WIP con TS mínimo y ⌈W0⌉ el mínimo WIP con TH máximo", "En 2026-10 este fue el ejercicio que casi nadie resolvió"] },
-  { id: "M5", t: "Gestión de proyectos · CPM", day: "Sáb 28", h: "≈ 2 h", prio: "alta", why: "Reto 15: no presentado",
+  { id: "M6", t: "Gestión de proyectos · CPM", day: "Vie 27", h: "≈ 2 h 30", prio: "alta", why: "Reto 15: no presentado",
     dominar: ["Grafo AON (actividades en los nodos)", "Pase hacia adelante (IT, FT) y hacia atrás (IL, FL); holguras y ruta crítica", "Costo total = directo + indirecto semanal × duración − bonos + multas", "CUA = (C acelerado − C normal) / (T normal − T acelerado)", "Aceleración semana a semana a mínimo costo, con varias rutas críticas a la vez", "¿Conviene la propuesta de adelantar el proyecto?"],
     taller: ["Biblioteca Altamira (repaso 2026-20)", "Divertpro (repaso 2026-10; ojo con el error del Excel)", "El Patito (ejercicio de clase)", "Actividad 15 de 2026-10"],
     ojo: ["Cuando dos rutas quedan críticas hay que acortar las dos a la vez", "Ninguna actividad baja de su tiempo acelerado", "Solo se paga el bono por las semanas que se pidieron"] },
-  { id: "M6", t: "Planeación agregada", day: "Dom 29", h: "≈ 2 h", prio: "media", why: "Actividad 12: no entregada",
-    dominar: ["Capacidad por trabajador Kₙ = productividad × días hábiles", "Recepciones de otra planta e inventario de seguridad", "Persecución: requerimiento neto, trabajadores, contrataciones, despidos, producción e inventario mes a mes", "Nivelación: acumulados y fuerza laboral constante", "Costos de salarios, contratar, despedir, mantener y producir; comparar estrategias"],
-    taller: ["π-anito (repaso 2026-20)", "ModAndes (pre-parcial 2026-10): con taller externo", "Bar-Bunny (Actividad 12 de 2026-10)", "Complementaria de planeación 2026-20"],
-    ojo: ["Redondeos: unidades al entero inferior y trabajadores al superior", "En diciembre no hay inventario de seguridad", "El inventario inicial es el final del mes anterior"] },
-  { id: "X1", t: "Exprés · DMAIC para el quiz del jueves", day: "Jue 26", h: "30 min", express: true, parts: [["teoria", "Teoría"]],
+  { id: "X1", t: "Exprés · DMAIC para el quiz del jueves", day: "Jue 26", h: "40 min", express: true, parts: [["teoria", "Teoría"]],
     dominar: ["Las cinco fases: Definir, Medir, Analizar, Mejorar y Controlar", "Qué se entrega y qué herramienta va en cada fase, según la nota técnica del curso"],
     taller: ["Sin taller: teoría corta y quiz de 5 preguntas"],
     ojo: ["Vale el 2 % del curso; no reemplaza ningún módulo del final"] },
-  { id: "M7", t: "Mini-simulacro del final", day: "Dom 29", h: "2 h", sim: true, max: 60,
+  { id: "M7", t: "Mini-simulacro del final", day: "Sáb 28", h: "2 h", sim: true, max: 60,
     dominar: ["Seis problemas cortos, uno por tema, en 90 minutos", "Respuestas numéricas, como en Bloque Neón", "Hoja de cálculo para las cuentas, como en el examen"],
     taller: ["Variantes nuevas de los ejercicios de los repasos", "Sobre 60: 10 puntos por problema"],
-    ojo: ["Meta: 42/60", "Lo que falles define el repaso del domingo en la noche"] }
+    ojo: ["Meta: 42/60", "Lo que falles define el repaso del domingo"] }
 ];
 const COUNTED = MODS.filter((m) => !m.express);
 
@@ -422,7 +422,7 @@ let progress = {};
 
 (function gantt() {
   const box = $("#gantt");
-  const SCALE = 300;
+  const SCALE = 360;
   DAYS.forEach((d) => {
     const r = el("div", "grow" + (d.exam ? " exam" : "") + (d.d === todayIso ? " is-today" : "") + (d.d < todayIso ? " is-past" : ""));
     const gd = el("div", "gd");
