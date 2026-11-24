@@ -1,0 +1,604 @@
+<title>Plan Final de Producción</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: tablero de planta. Una columna (≤ 920px) sobre piso gris acero: orden de trabajo de hoy arriba, lo urgente, cuánto necesitas, qué sale, el cronograma como un Gantt de la semana (barra por día en horas) y las estaciones (módulos) con su avance. */
+:root{
+  --floor:#e9ecef; --panel:#ffffff; --ink:#16191d; --muted:#59616b; --rule:#d3d8de; --line:rgba(22,25,29,.06);
+  --accent:#d24a0f; --accent-ink:#ffffff; --accent-soft:#fde3d4;
+  --safety:#ffd23f; --safety-ink:#2b2300;
+  --evt:#7a8591; --evt-soft:#e2e6ea; --sim:#16191d;
+  --red:#c0352b; --red-soft:#f9e1de; --orange:#b4600b; --orange-soft:#fbebd6; --green:#1d7a4f; --green-soft:#d9f0e4;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --floor:#111316; --panel:#1a1d21; --ink:#e7e9ec; --muted:#9aa2ac; --rule:#2d3238; --line:rgba(231,233,236,.04);
+    --accent:#ff8a4f; --accent-ink:#111316; --accent-soft:#3a2216;
+    --safety:#6b5800; --safety-ink:#fff4c4;
+    --evt:#8d98a5; --evt-soft:#262b31; --sim:#e7e9ec;
+    --red:#ff8b80; --red-soft:#3a1d1b; --orange:#f0a95a; --orange-soft:#3a2a15; --green:#5fd29b; --green-soft:#13301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --floor:#111316; --panel:#1a1d21; --ink:#e7e9ec; --muted:#9aa2ac; --rule:#2d3238; --line:rgba(231,233,236,.04);
+  --accent:#ff8a4f; --accent-ink:#111316; --accent-soft:#3a2216;
+  --safety:#6b5800; --safety-ink:#fff4c4;
+  --evt:#8d98a5; --evt-soft:#262b31; --sim:#e7e9ec;
+  --red:#ff8b80; --red-soft:#3a1d1b; --orange:#f0a95a; --orange-soft:#3a2a15; --green:#5fd29b; --green-soft:#13301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--floor);
+  background-image:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 64px);
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.55;
+}
+.wrap{max-width:920px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:28px 64px; display:grid; grid-template-columns:minmax(0,1fr); gap:44px}
+.wrap > *, section{min-width:0}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.05; letter-spacing:.005em}
+h1{font-size:clamp(2.8rem,10vw,4.8rem); font-weight:800; text-transform:uppercase}
+h2{font-size:1.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.01em}
+h3{font-size:1.2rem; font-weight:700}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.note{font-size:.96rem; max-width:68ch}
+.sec-head{display:grid; gap:6px}
+.sec-head h2{display:flex; align-items:center; gap:10px}
+.sec-head h2::before{content:""; width:14px; height:14px; background:var(--accent); flex:none; clip-path:polygon(0 0,100% 50%,0 100%)}
+
+/* Cabecera */
+.top{display:grid; gap:14px; border-top:6px solid var(--ink); padding-top:16px}
+.hazard{height:8px; background:repeating-linear-gradient(-45deg,var(--safety) 0 10px,var(--ink) 10px 20px); border-radius:2px; max-width:220px}
+.lede{font-size:1.08rem; max-width:64ch}
+.stats{display:flex; flex-wrap:wrap; gap:12px 34px; align-items:end; margin-top:4px}
+.stat{display:grid; gap:2px}
+.stat b{font-family:var(--f-display); font-size:2.4rem; font-weight:800; line-height:1; font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem; color:var(--muted)}
+.bar{height:8px; background:var(--rule); border-radius:2px; overflow:hidden; width:min(240px,100%)}
+.bar i{display:block; height:100%; width:0; background:var(--accent); transition:width .4s}
+
+/* Orden de trabajo de hoy */
+.wo{background:var(--panel); border:2px solid var(--ink); border-radius:var(--r); display:grid; overflow:hidden}
+.wo-head{display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 14px; align-items:center; background:var(--ink); color:var(--floor); padding:8px 16px}
+.wo-head .eyebrow{color:var(--floor); opacity:.85}
+.wo-body{padding:16px; display:grid; gap:12px}
+.wo-body h3{font-size:1.55rem}
+.wo-list{margin:0; padding:0; list-style:none; display:grid; gap:6px}
+.wo-list li{display:grid; grid-template-columns:4.6rem minmax(0,1fr); gap:10px; font-size:.95rem; align-items:baseline}
+.wo-list .mono{font-size:.8rem; color:var(--muted)}
+.wo-row{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:var(--r); background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.ask{font-size:.9rem; color:var(--muted)}
+.ask code{font-family:var(--f-mono); font-size:.85rem; background:var(--accent-soft); color:var(--ink); padding:1px 6px; border-radius:3px}
+
+/* Urgente */
+.checks{display:grid; gap:8px; margin:0; padding:0; list-style:none}
+.checks li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; align-items:start; background:var(--panel); border:1px solid var(--rule); border-left:4px solid var(--rule); border-radius:var(--r); padding:11px 14px}
+.checks li.hot{border-left-color:var(--red)}
+.checks li.warm{border-left-color:var(--orange)}
+.checks .when{font-family:var(--f-mono); font-size:.76rem; color:var(--muted); white-space:nowrap; padding-top:3px; min-width:6.4rem}
+.checks b{font-weight:700}
+.copy{font-family:var(--f-mono); font-size:.85rem; user-select:all; background:var(--evt-soft); padding:1px 6px; border-radius:3px}
+
+/* Tablas */
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--panel)}
+table{border-collapse:collapse; width:100%; font-size:.92rem}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--floor)}
+tr:last-child td{border-bottom:0}
+.num{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+.big{font-weight:700; color:var(--ink)}
+.warn{color:var(--red); font-weight:600}
+.prio{display:inline-flex; align-items:center; gap:6px; font-weight:600; white-space:nowrap}
+.prio::before{content:""; width:9px; height:9px; border-radius:50%; background:currentColor}
+.prio.alta{color:var(--red)} .prio.media{color:var(--orange)}
+.formula{font-family:var(--f-mono); font-size:.88rem; background:var(--panel); border:1px dashed var(--rule); border-radius:var(--r); padding:10px 14px; overflow-x:auto}
+.facts{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+@media (max-width:600px){ .facts{grid-template-columns:minmax(0,1fr)} }
+.fact{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; align-content:start; min-width:0}
+.fact .eyebrow{font-size:.7rem}
+.fact p{font-size:.92rem}
+
+/* Gantt de la semana */
+.legend{display:flex; flex-wrap:wrap; gap:6px 16px; color:var(--muted); font-size:.85rem}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.sw{width:14px; height:10px; border-radius:2px; display:inline-block}
+.sw.mod{background:var(--accent)} .sw.evt{background:repeating-linear-gradient(-45deg,var(--evt) 0 3px,var(--evt-soft) 3px 6px)} .sw.sim{background:var(--sim)} .sw.adm{background:var(--rule)}
+.gantt{display:grid; gap:0; background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); overflow:hidden}
+.axis,.grow{display:grid; grid-template-columns:8.5rem minmax(0,1fr); gap:0 14px; padding:10px 14px}
+.axis{padding-block:8px; border-bottom:1px solid var(--rule); background:var(--floor)}
+.ticks{position:relative; height:16px; font-family:var(--f-mono); font-size:.7rem; color:var(--muted)}
+.ticks span{position:absolute; top:0; transform:translateX(-50%)}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+.grow{border-bottom:1px solid var(--rule); align-items:start}
+.grow:last-child{border-bottom:0}
+.grow.is-today{background:linear-gradient(var(--safety),var(--safety)) left top/5px 100% no-repeat, var(--panel)}
+.grow.is-past{opacity:.55}
+.grow.exam{background:var(--ink); color:var(--floor)}
+.grow.exam .gd span,.grow.exam .gtxt{color:var(--floor); opacity:.85}
+.gd{display:grid; gap:2px; align-content:start}
+.gd b{font-family:var(--f-display); font-weight:700; font-size:1.2rem; line-height:1}
+.gd span{font-family:var(--f-mono); font-size:.74rem; color:var(--muted)}
+.tag-today{justify-self:start; font-family:var(--f-mono); font-size:.68rem; font-weight:600; background:var(--safety); color:var(--safety-ink); padding:1px 6px; border-radius:3px}
+.gmain{display:grid; gap:8px; min-width:0}
+.track{position:relative; height:26px; background:repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),var(--rule) calc(20% - 1px) 20%); border-radius:3px}
+.seg{position:absolute; top:3px; bottom:3px; border-radius:3px; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:var(--f-mono); font-size:.68rem; font-weight:600; white-space:nowrap; padding:0 4px}
+.seg.mod{background:var(--accent); color:var(--accent-ink)}
+.seg.evt{background:repeating-linear-gradient(-45deg,var(--evt) 0 4px,var(--evt-soft) 4px 8px); color:var(--ink)}
+.seg.evt span{background:var(--panel); padding:0 3px; border-radius:2px}
+.seg.sim{background:var(--sim); color:var(--floor)}
+.seg.adm{background:var(--rule); color:var(--ink)}
+.gtxt{margin:0; padding:0; list-style:none; display:grid; gap:3px; font-size:.9rem}
+.gtxt li{display:grid; grid-template-columns:3.6rem minmax(0,1fr); gap:8px}
+.gtxt .mono{font-size:.76rem; color:var(--muted); padding-top:2px}
+.gnote{font-size:.88rem; color:var(--muted)}
+.grow.exam .gnote{color:var(--floor); opacity:.85}
+
+/* Módulos */
+.dbnote{font-size:.85rem; color:var(--muted); font-style:italic}
+.mods{display:grid; gap:12px}
+.mod{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:16px 18px; display:grid; gap:12px; min-width:0}
+.mod.done{border-color:var(--green); box-shadow:inset 4px 0 0 var(--green)}
+.mod.express{border-style:dashed}
+.mod-head{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:4px 14px; align-items:start}
+.code{font-family:var(--f-display); font-weight:800; font-size:1.9rem; line-height:.9; padding:6px 8px; border:2px solid var(--ink); border-radius:3px; min-width:2.6em; text-align:center}
+.mod-meta{font-size:.84rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:4px}
+.pill{font-size:.75rem; font-weight:600; padding:3px 9px; border-radius:99px; white-space:nowrap; background:var(--rule); color:var(--ink)}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.go{background:var(--accent-soft); color:var(--accent)}
+.pill.b{background:var(--red-soft); color:var(--red)}
+.pill.lock{background:transparent; border:1px dashed var(--rule); color:var(--muted)}
+.chip{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.04em; text-transform:uppercase; border:1px solid currentColor; padding:0 6px; border-radius:3px}
+.chip.alta{color:var(--red)} .chip.media{color:var(--orange)} .chip.xp{color:var(--accent)}
+.prog{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.tog{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:.88rem; padding:6px 11px; border-radius:var(--r); border:1px solid var(--rule); background:transparent; color:var(--ink); cursor:pointer}
+.tog .box{width:15px; height:15px; border:1.5px solid var(--muted); border-radius:3px; display:grid; place-items:center; font-size:11px; line-height:1}
+.tog[aria-pressed="true"]{border-color:var(--green); background:var(--green-soft)}
+.tog[aria-pressed="true"] .box{background:var(--green); border-color:var(--green); color:var(--panel)}
+.tog:disabled{cursor:default; opacity:.7}
+.quizsel{display:inline-flex; align-items:center; gap:7px; font-size:.88rem; padding:4px 6px 4px 11px; border-radius:var(--r); border:1px solid var(--rule)}
+.quizsel select,.quizsel input{font:inherit; font-family:var(--f-mono); background:var(--floor); color:var(--ink); border:1px solid var(--rule); border-radius:4px; padding:3px 6px}
+.quizsel input{width:4.5em}
+.open{margin-left:auto; font-weight:600; font-size:.9rem; text-decoration:none}
+.open:hover{text-decoration:underline}
+span.open{font-weight:400}
+details.more summary{cursor:pointer; font-size:.88rem; color:var(--muted); list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+ "; font-family:var(--f-mono)}
+details.more[open] summary::before{content:"− "}
+.more-body{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin-top:12px}
+.more-body h4{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px; font-weight:500}
+.more-body ul{margin:0; padding-left:18px; font-size:.9rem; display:grid; gap:4px}
+
+/* Método */
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; counter-reset:s}
+.step{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:12px 14px; display:grid; gap:4px; align-content:start; counter-increment:s}
+.step h3::before{content:counter(s) " · "; color:var(--accent)}
+.step p{font-size:.9rem}
+
+.errs{display:grid; gap:8px; margin:0; padding-left:20px; font-size:.93rem; max-width:72ch}
+footer{font-size:.82rem; color:var(--muted); border-top:1px solid var(--rule); padding-top:14px}
+
+@media (prefers-reduced-motion: reduce){ .bar i{transition:none} }
+@media (max-width:600px){
+  .axis{display:none}
+  .grow{grid-template-columns:1fr; gap:8px}
+  .gd{grid-auto-flow:column; justify-content:start; align-items:baseline; gap:10px}
+  .mod-head{grid-template-columns:auto minmax(0,1fr)}
+  .mod-head .pill{grid-column:1 / -1; justify-self:start}
+  .checks li{grid-template-columns:1fr; gap:2px}
+  .wo-list li{grid-template-columns:3.8rem minmax(0,1fr)}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="hazard" aria-hidden="true"></div>
+    <p class="eyebrow">IIND-2205 · Ingeniería de Producción · Sección 2 · 2026-20</p>
+    <h1>Parcial final</h1>
+    <p class="lede"><b>Lunes 30 de noviembre, 7:00 a.&nbsp;m.</b>, en LockDown Browser. Vale el 20&nbsp;%. Entran control de piso, gestión de proyectos, planeación agregada, balanceo de línea y scheduling 1 y 2. En 2026-10 duró 150 minutos, con hoja de cálculo dentro del examen y una hoja de fórmulas a mano.</p>
+    <div class="stats">
+      <div class="stat"><b id="dias">7</b><span id="dias-lab">días para el final</span></div>
+      <div class="stat"><b>0,3–1,1</b><span>lo que necesitas si el DMAIC sale bien</span></div>
+      <div class="stat"><b id="aprob">0/7</b><span>módulos aprobados</span></div>
+      <div class="stat" style="align-self:center"><div class="bar" aria-hidden="true"><i id="aprob-bar"></i></div></div>
+    </div>
+  </header>
+
+  <section aria-labelledby="hoy-h">
+    <div class="wo">
+      <div class="wo-head"><span class="eyebrow" id="hoy-h">Orden de trabajo · hoy</span><span class="eyebrow" id="hoy-load"></span></div>
+      <div class="wo-body">
+        <h3 id="hoy-t">Lunes 23 · revisar el DMAIC</h3>
+        <ul class="wo-list" id="hoy-list"></ul>
+        <p class="note muted" id="hoy-note" hidden></p>
+        <div class="wo-row" id="hoy-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="urg-h">
+    <div class="sec-head">
+      <h2 id="urg-h">Antes de estudiar: lo que vale nota esta semana</h2>
+      <p class="note">Pasar depende más del DMAIC que del final. Estas seis cosas no son estudio, pero mueven tu definitiva.</p>
+    </div>
+    <ul class="checks">
+      <li class="hot"><span class="when">Ya · lun 23</span><span><b>Entrega Final DMAIC.</b> En tu sección aparece «No enviado» (cerró el lunes 23 a las 12:00&nbsp;m.) y la carpeta no es de grupo. Confirma con tu grupo que alguien la subió; si no, escríbele a Sebastián: <span class="copy">s.aparicioc@uniandes.edu.co</span>. Vale el 5&nbsp;% del curso: si queda en 0, lo que necesitas en el final sube de ≈&nbsp;0,3 a ≈&nbsp;1,3.</span></li>
+      <li class="hot"><span class="when">Mar 24 · 3:30 p.&nbsp;m.</span><span><b>Presentación final DMAIC</b> del grupo 4 en el ML-512. Vale el 5&nbsp;% del curso.</span></li>
+      <li class="warm"><span class="when">Jue 26 · en clase</span><span><b>Quiz DMAIC</b>, individual, sobre la metodología (2&nbsp;% del curso). Lo prepara el exprés X1, 30 minutos antes de clase.</span></li>
+      <li class="warm"><span class="when">Dom 29 · 11:59 p.&nbsp;m.</span><span><b>Coevaluación DMAIC.</b> El anuncio de la sección dice domingo; el del unificado, lunes 30. Hazla el domingo. Tus pares pueden bajarte hasta el 20&nbsp;% de la nota del proyecto.</span></li>
+      <li><span class="when">Antes del dom 29</span><span><b>Salón y LockDown Browser.</b> El salón lo define Registro: confírmalo. Revisa que LockDown esté actualizado y ten el carné a la mano.</span></li>
+      <li><span class="when">Mar 24 y mié 25</span><span><b>Bono de complementarias.</b> Ir a 9 o más complementarias de temas distintos da hasta +0,25 en la definitiva. Las dos de repaso de esta semana pueden contar: entra a las dos.</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="nec-h">
+    <div class="sec-head">
+      <h2 id="nec-h">Cuánto necesitas en el final</h2>
+      <p class="note">Llevas <b>2,48 de 5,00</b> (calculado el 23 de noviembre con lo que muestra Bloque Neón; no es la nota oficial). Faltan el final (20&nbsp;%), el documento final DMAIC (5&nbsp;%), la presentación final (5&nbsp;%) y el Quiz DMAIC (2&nbsp;%).</p>
+    </div>
+    <p class="formula">nota necesaria = (3,00 − 2,48 − 0,05·DocFinal − 0,05·PresFinal − 0,02·QuizDMAIC) / 0,20</p>
+    <div class="tw"><table>
+      <thead><tr><th>Escenario del DMAIC que falta</th><th>Con el 3,71 oficial (con bonos)</th><th>Sin contar bonos</th></tr></thead>
+      <tbody>
+        <tr><td>A · como la intermedia (doc 4,0, presentación 3,8, quiz 3,5)</td><td class="num big">0,32</td><td class="num">1,14</td></tr>
+        <tr><td>B · regular (doc 3,5, presentación 3,5, quiz 2,5)</td><td class="num big">0,62</td><td class="num">1,44</td></tr>
+        <tr><td>C · el documento final queda en 0 (presentación 3,8, quiz 3,5)</td><td class="num big">1,32</td><td class="num">2,14</td></tr>
+        <tr><td>D · todo lo que falta del DMAIC en 0</td><td class="num big warn">2,62</td><td class="num warn">3,44</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note muted">La meta del plan es <b>3,0 en el final</b>, para tener margen si la coevaluación o el documento final salen mal. En 2026-10 el final te salió 11/43 (1,27).</p>
+  </section>
+
+  <section aria-labelledby="sale-h">
+    <div class="sec-head">
+      <h2 id="sale-h">Qué sale en el final</h2>
+      <p class="note">El final de 2026-10 cubrió exactamente estos cinco temas, y las complementarias de repaso de 2026-10 y de 2026-20 repiten el mismo tipo de ejercicio: un problema largo por tema, con literales. Están ordenados por prioridad, según tus notas de este semestre.</p>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Tema</th><th>Ejercicio típico</th><th>Tu nota</th><th>Prioridad</th><th>Módulo</th></tr></thead>
+      <tbody>
+        <tr><td><b>Scheduling 2 · flow shop</b></td><td>10 trabajos en 3 máquinas: ver si aplica Johnson extendido o CDS, secuencia, Cmax y Gantt; CDS con 4 máquinas</td><td class="warn">Reto 14: 1,0/5</td><td><span class="prio alta">Alta</span></td><td class="num">M2</td></tr>
+        <tr><td><b>Control de piso · CONWIP</b></td><td>Estaciones con máquinas en paralelo: tasas, cuello de botella, T0, WIP crítico, tabla WIP–TH–TS del mejor caso, máquina adicional y % de mejora</td><td class="warn">Reto 9: 2,1/5</td><td><span class="prio alta">Alta</span></td><td class="num">M4</td></tr>
+        <tr><td><b>Gestión de proyectos · CPM</b></td><td>Grafo AON, ruta crítica, costo normal y acelerado con costo indirecto semanal, aceleración a mínimo costo con CUA y bono por semana anticipada</td><td class="warn">Reto 15: no presentado</td><td><span class="prio alta">Alta</span></td><td class="num">M5</td></tr>
+        <tr><td><b>Scheduling 1 · una máquina</b></td><td>Hodgson–Moore (mínimo de trabajos tardíos), Lawler con precedencias (mínimo Lmax), costo de retrasos, «¿importa el orden en el Cmax?»</td><td class="warn">Reto 13: 2,9/5</td><td><span class="prio alta">Alta</span></td><td class="num">M1</td></tr>
+        <tr><td>Balanceo de línea</td><td>Tiempo de ciclo, Nmin, grafo, asignación con regla primaria y secundaria y restricciones (juntas o separadas), C real, ocio y eficiencia</td><td>Reto 11: 4,0 · Actividad 11: 2,5</td><td><span class="prio media">Media</span></td><td class="num">M3</td></tr>
+        <tr><td>Planeación agregada</td><td>Persecución y nivelación con inventario de seguridad, recepciones de otra planta, redondeos y costos</td><td>Reto 12: 4,5 · <span class="warn">Actividad 12: no entregada</span></td><td><span class="prio media">Media</span></td><td class="num">M6</td></tr>
+      </tbody>
+    </table></div>
+    <div class="facts">
+      <div class="fact"><span class="eyebrow">Formato (2026-10)</span><p>Sincrónico, 150 minutos, en LockDown Browser. La hoja de cálculo viene dentro del examen. No se permite calculadora: practica los talleres en Excel.</p></div>
+      <div class="fact"><span class="eyebrow">Hoja de fórmulas</span><p>Una hoja carta, por una cara, a mano, con nombre y código. Solo fórmulas: puedes escribir «rb → tasa del cuello de botella», pero no explicaciones ni ejemplos. Si no cumple, la retiran.</p></div>
+      <div class="fact"><span class="eyebrow">Ojo con control de piso</span><p>En 2026-10 el final fue sobre 50 y el ejercicio numérico de control de piso se volvió bono (nota sobre 43) porque casi nadie lo resolvió. Por eso M4 va el sábado, con tiempo.</p></div>
+      <div class="fact"><span class="eyebrow">¿Entra el Parcial 1?</span><p>Ningún anuncio dice que el final sea acumulativo y el de 2026-10 no lo fue. Pregúntalo el martes en la complementaria. El plan asume que no entra.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sem-h">
+    <div class="sec-head">
+      <h2 id="sem-h">Tu semana, como un Gantt</h2>
+      <p class="note">Cada barra es un día, de 0 a 5 horas. La carga sigue tu semana: martes y jueves, liviana; viernes, suave; miércoles, media; sábado y domingo, pesada. Las complementarias de repaso cuentan como estudio. Lo más difícil (control de piso y proyectos) va el sábado.</p>
+      <div class="legend"><span><i class="sw mod"></i>Módulo</span><span><i class="sw evt"></i>Complementaria</span><span><i class="sw sim"></i>Simulacro</span><span><i class="sw adm"></i>Trámite</span></div>
+    </div>
+    <div class="gantt" id="gantt">
+      <div class="axis"><span class="eyebrow">Día</span><div class="ticks" aria-hidden="true"><span style="left:0">0 h</span><span style="left:20%">1</span><span style="left:40%">2</span><span style="left:60%">3</span><span style="left:80%">4</span><span style="left:100%">5 h</span></div></div>
+    </div>
+    <p class="note muted"><b>Si te atrasas:</b> recorta primero los labs de M3 y M6, después el X1 (si te sientes bien con DMAIC) y por último baja el mini-simulacro a 3 problemas: control de piso, proyectos y flow shop. Nunca recortes la teoría ni los ejercicios de las complementarias de repaso. Cuando termines un quiz, mándame la nota y ajusto el plan.</p>
+  </section>
+
+  <section aria-labelledby="met-h">
+    <div class="sec-head">
+      <h2 id="met-h">Cómo funciona cada módulo</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Teoría</h3><p>Desde cero, con la tabla «Símbolos de este módulo» y un ejemplo resuelto paso a paso por idea clave. Cada algoritmo termina en una receta para el examen.</p></div>
+      <div class="step"><h3>Lab</h3><p>Un Gantt, grafo o simulador para <i>ver</i> el algoritmo: tarjetas CONWIP que circulan, la ruta crítica que cambia al acelerar, el flow shop en vivo.</p></div>
+      <div class="step"><h3>Taller</h3><p>Primero los ejercicios de las complementarias de repaso y las actividades de 2026-10 con solución; luego variantes nuevas. Lo resuelves en Excel y yo te corrijo paso a paso.</p></div>
+      <div class="step"><h3>Quiz</h3><p>5 preguntas: 3 cortas y 2 tipo parcial. Pasas con 4/5 o más; si no, repaso del error y Quiz B. Si ya dominas un tema, haz el quiz primero y sáltatelo.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="mod-h">
+    <div class="sec-head">
+      <h2 id="mod-h">Módulos</h2>
+      <p class="note">Cada módulo es su propio artifact. Cuando vayas a empezar uno, pídeme «arma M1» (o el que toque) y aparece aquí el botón para abrirlo.</p>
+      <p class="dbnote" id="dbnote">Cargando tu progreso…</p>
+    </div>
+    <div class="mods" id="mods"></div>
+  </section>
+
+  <section aria-labelledby="err-h">
+    <div class="sec-head">
+      <h2 id="err-h">Errores en las soluciones oficiales</h2>
+      <p class="note">Verificados hasta ahora. Cada módulo revisa sus soluciones antes de usarlas como modelo.</p>
+    </div>
+    <ul class="errs">
+      <li><b>Divertpro</b> (repaso de proyectos, 2026-10): el Excel de la solución pone 25 semanas como tiempo acelerado de L, pero el enunciado dice <b>24</b>. Con el enunciado, el CUA de L es $1.000 (no $1.500), todo acelerado dura 103 semanas y cuesta $648.400 (no 104 y $651.400), y para adelantar 6 semanas lo más barato es <b>A 4 semanas + L 2 semanas</b>: costo total <b>$618.800</b> (el Excel da $619.800). La propuesta conviene en los dos casos: en tiempo normal son $643.100.</li>
+      <li><b>Doléz</b> (repaso de control de piso, 2026-10): el enunciado habla de «varillas», pero es un medicamento (viene de otro ejercicio). La solución toma como «mínimo tiempo total del proceso» la suma de la máquina más rápida de cada estación (37 min), y en el literal e usa el promedio de los tiempos de cada estación.</li>
+      <li><b>Vinyl Eilish</b> (repaso de scheduling, 2026-10) y <b>Pelao-Botso</b> (complementaria 2026-20): el trabajo 9 aparece como «JG», y en Vinyl la tabla dice «para cada bolso».</li>
+      <li><b>Odontología</b> (Actividad 13 de 2026-10): el enunciado dice «minimizar las atenciones tardías (EDD)», pero el algoritmo es Hodgson–Moore, que arranca con el orden EDD. Los tiempos de preparación se suman al de proceso.</li>
+      <li><b>Gibsoff</b> (Actividad 9 de 2026-20), literal f: mueve una máquina de la estación 4 a la 7, lo que supone que las máquinas sirven en cualquier estación. Es la interpretación del profe.</li>
+    </ul>
+  </section>
+
+  <footer>Fuente: material de Bloque Neón del 23 de noviembre (programa 2026-20, notas técnicas y diapositivas, complementarias y repasos de 2026-20 y 2026-10, actividades con solución de 2026-10, anuncios de los cuatro sitios y tus notas de la sección 2). El progreso se guarda en esta página; Claude lo actualiza cuando pasas un quiz.</footer>
+</div>
+
+<script>
+const FINAL = new Date(2026, 10, 30, 7, 0);
+const DAYS = [
+  { d: "2026-11-23", n: "Lun 23", load: "Noche", h: "15 min", t: "Revisar la Entrega Final DMAIC",
+    blocks: [{ c: "DMAIC", m: 15, k: "adm", t: "Confirmar con el grupo que la Entrega Final quedó subida" }],
+    note: "Hoy no se estudia. Si la entrega no quedó, escríbele a Sebastián esta misma noche.", mods: [] },
+  { d: "2026-11-24", n: "Mar 24", load: "Liviana", h: "1,5 h", t: "Complementaria de repaso PA + BL",
+    blocks: [{ c: "PA + BL", m: 80, k: "evt", t: "11:00 · Complementaria de repaso de planeación agregada y balanceo (Teams)" }],
+    note: "Es la primera pasada de M3 y M6: anota cómo resuelven. Pregunta si el final incluye los temas del Parcial 1. A las 3:30 p. m., presentación DMAIC (ML-512).", mods: [] },
+  { d: "2026-11-25", n: "Mié 25", load: "Media", h: "3 h", t: "M1 · Scheduling 1 + complementaria",
+    blocks: [{ c: "M1", m: 90, k: "mod", t: "M1 · teoría, lab y taller, antes de las 2:00" }, { c: "Sch 1-2", m: 80, k: "evt", t: "2:00 · Complementaria de repaso de scheduling 1 y 2 (Teams)" }, { c: "Q", m: 10, k: "mod", t: "Quiz de M1" }],
+    note: "La complementaria también sirve de primera vista de M2 (flow shop).", mods: ["M1"] },
+  { d: "2026-11-26", n: "Jue 26", load: "Liviana", h: "1,5 h", t: "Quiz DMAIC + M2 · Scheduling 2",
+    blocks: [{ c: "X1", m: 30, k: "mod", t: "X1 · DMAIC exprés, antes de clase" }, { c: "M2", m: 60, k: "mod", t: "Noche · M2 teoría y lab" }],
+    note: "En clase: presentaciones y Quiz DMAIC (2 % del curso).", mods: ["X1", "M2"] },
+  { d: "2026-11-27", n: "Vie 27", load: "Suave", h: "2 h", t: "M2 taller · M3 · Balanceo de línea",
+    blocks: [{ c: "M2", m: 60, k: "mod", t: "M2 · taller y quiz" }, { c: "M3", m: 60, k: "mod", t: "M3 · teoría y lab" }],
+    note: "", mods: ["M2", "M3"] },
+  { d: "2026-11-28", n: "Sáb 28", load: "Pesada", h: "5 h", t: "M4 · Control de piso y M5 · Proyectos",
+    blocks: [{ c: "M3", m: 40, k: "mod", t: "M3 · taller y quiz" }, { c: "M4", m: 135, k: "mod", t: "M4 · Control de piso completo" }, { c: "M5", m: 120, k: "mod", t: "M5 · Gestión de proyectos completo" }],
+    note: "El bloque difícil de la semana. Haz una pausa larga entre M4 y M5.", mods: ["M3", "M4", "M5"] },
+  { d: "2026-11-29", n: "Dom 29", load: "Pesada", h: "5 h", t: "M6 · Planeación agregada y mini-simulacro",
+    blocks: [{ c: "M6", m: 120, k: "mod", t: "M6 · Planeación agregada completo" }, { c: "M7", m: 120, k: "sim", t: "M7 · mini-simulacro (90 min) y corrección" }, { c: "Hoja", m: 30, k: "adm", t: "Hoja de fórmulas a mano" }, { c: "", m: 10, k: "adm", t: "Coevaluación DMAIC, antes de las 11:59 p. m." }],
+    note: "Mañana a las 7:00 a. m. es el final. Deja lista la hoja de fórmulas y el carné, y duerme temprano.", mods: ["M6", "M7"] },
+  { d: "2026-11-30", n: "Lun 30", load: "Examen", h: "7:00 a. m.", t: "PARCIAL FINAL", exam: true,
+    blocks: [],
+    note: "Arriba a las 5:30. Diez minutos con la hoja de fórmulas, carné y llega 15 minutos antes: el tiempo corre desde las 7:00 en punto.", mods: [] }
+];
+
+const MODS = [
+  { id: "M1", t: "Scheduling 1 · una máquina", day: "Mié 25", h: "≈ 2 h", prio: "alta", why: "Reto 13: 2,9/5",
+    dominar: ["Notación de Graham (α|β|γ) y los indicadores pⱼ, dⱼ, Cⱼ, Lⱼ, Tⱼ, Uⱼ y Cmax", "Reglas SPT, EDD y WSPT: qué minimiza cada una", "Hodgson–Moore (mínimo de trabajos tardíos), paso a paso", "Lawler con precedencias (mínimo Lmax), de atrás hacia adelante", "Costo de retrasos y por qué en una máquina el orden no cambia el Cmax"],
+    taller: ["Forja Andina (complementaria 2026-20): Moore y Lawler con precedencias", "Punto 1 del repaso de 2026-10: 8 trabajos, $100 por hora de retraso", "Odontología (Actividad 13 de 2026-10): con tiempos de preparación", "Variantes nuevas"],
+    ojo: ["Tᵢ nunca es negativa; Lⱼ sí puede serlo", "En Moore se saca el trabajo más largo entre los ya programados, no el que llega tarde", "Los tiempos de preparación se suman al de proceso"] },
+  { id: "M2", t: "Scheduling 2 · flow shop", day: "Jue 26 y vie 27", h: "≈ 2 h", prio: "alta", why: "Reto 14: 1,0/5",
+    dominar: ["Armar el Gantt de un flow shop con la tabla de tiempos de terminación", "Johnson para dos máquinas (F2||Cmax)", "Tres máquinas: revisar la condición mín M1 ≥ máx M2 o mín M3 ≥ máx M2; si se cumple, máquinas virtuales y Johnson (óptimo)", "CDS para m máquinas: m − 1 subproblemas y el mejor Cmax real", "Cuándo la respuesta es óptima y cuándo es heurística"],
+    taller: ["Pelao-Botso (complementaria 2026-20): 10 bolsos, 3 máquinas", "Vinyl Eilish (repaso 2026-10)", "Michi-Ganga (repaso 2026-20)", "Ferriperfiles (Actividad 14 de 2026-10): CDS con 4 máquinas"],
+    ojo: ["El Cmax de cada secuencia se calcula con los tiempos reales, nunca con los de las máquinas virtuales", "En Johnson, si el mínimo está en la primera máquina el trabajo va al inicio; si está en la segunda, al final", "La condición de F3 se revisa antes de escoger el método"] },
+  { id: "M3", t: "Balanceo de línea", day: "Vie 27 y sáb 28", h: "≈ 1 h 40", prio: "media", why: "Actividad 11: 2,5/5",
+    dominar: ["Tiempo de ciclo C = tiempo disponible / demanda y Nmin = ⌈Σt / C⌉", "Grafo de precedencias y número de sucesoras (todas, no solo las inmediatas)", "Asignación con regla primaria y secundaria, y restricciones de juntas o separadas", "N real, C real, tasa de producción, tiempo ocioso y eficiencia = Σt / (N real · C real)", "Tasa máxima posible de la línea"],
+    taller: ["ModAndes (pre-parcial 2026-10): D y G juntas, I y J juntas", "Distribuidora El Faro (Actividad 11 de 2026-10): menor tiempo y orden alfabético", "Complementaria de balanceo 2026-20 y ejercicios de clase"],
+    ojo: ["Una tarea solo es factible si ya están asignadas todas sus predecesoras y cabe en el tiempo que queda", "Las unidades: min/unidad para el ciclo, unidades/hora para la tasa"] },
+  { id: "M4", t: "Control de piso · CONWIP", day: "Sáb 28", h: "≈ 2 h 15", prio: "alta", why: "Reto 9: 2,1/5",
+    dominar: ["Push, pull y CONWIP; ley de Little WIP = TH · TS", "Tasa de una estación: n/t con máquinas iguales y Σ 1/tᵢ con máquinas distintas; el cuello de botella rb", "T0 por la ruta del proceso (si hay ramas en paralelo, la más larga)", "WIP crítico W0 = rb · T0, y qué hacer si no es entero", "Mejor caso (tabla WIP, TH, %rb, TS, %T0 y espera) y peor caso", "Pasar a und/hora, día y mes con jornada y descansos; máquina adicional y % de mejora"],
+    taller: ["Krispo (repaso 2026-20)", "Doléz (repaso 2026-10): máquinas distintas en paralelo", "ChocoAndes (Actividad 9 de 2026-10): producción por mes", "Gibsoff (Actividad 9 de 2026-20): rutas en paralelo", "Binder Kueno: flujo por lotes"],
+    ojo: ["T0 usa el tiempo de una máquina, no el tiempo dividido entre el número de máquinas", "Si W0 no es entero: ⌊W0⌋ es el máximo WIP con TS mínimo y ⌈W0⌉ el mínimo WIP con TH máximo", "En 2026-10 este fue el ejercicio que casi nadie resolvió"] },
+  { id: "M5", t: "Gestión de proyectos · CPM", day: "Sáb 28", h: "≈ 2 h", prio: "alta", why: "Reto 15: no presentado",
+    dominar: ["Grafo AON (actividades en los nodos)", "Pase hacia adelante (IT, FT) y hacia atrás (IL, FL); holguras y ruta crítica", "Costo total = directo + indirecto semanal × duración − bonos + multas", "CUA = (C acelerado − C normal) / (T normal − T acelerado)", "Aceleración semana a semana a mínimo costo, con varias rutas críticas a la vez", "¿Conviene la propuesta de adelantar el proyecto?"],
+    taller: ["Biblioteca Altamira (repaso 2026-20)", "Divertpro (repaso 2026-10; ojo con el error del Excel)", "El Patito (ejercicio de clase)", "Actividad 15 de 2026-10"],
+    ojo: ["Cuando dos rutas quedan críticas hay que acortar las dos a la vez", "Ninguna actividad baja de su tiempo acelerado", "Solo se paga el bono por las semanas que se pidieron"] },
+  { id: "M6", t: "Planeación agregada", day: "Dom 29", h: "≈ 2 h", prio: "media", why: "Actividad 12: no entregada",
+    dominar: ["Capacidad por trabajador Kₙ = productividad × días hábiles", "Recepciones de otra planta e inventario de seguridad", "Persecución: requerimiento neto, trabajadores, contrataciones, despidos, producción e inventario mes a mes", "Nivelación: acumulados y fuerza laboral constante", "Costos de salarios, contratar, despedir, mantener y producir; comparar estrategias"],
+    taller: ["π-anito (repaso 2026-20)", "ModAndes (pre-parcial 2026-10): con taller externo", "Bar-Bunny (Actividad 12 de 2026-10)", "Complementaria de planeación 2026-20"],
+    ojo: ["Redondeos: unidades al entero inferior y trabajadores al superior", "En diciembre no hay inventario de seguridad", "El inventario inicial es el final del mes anterior"] },
+  { id: "X1", t: "Exprés · DMAIC para el quiz del jueves", day: "Jue 26", h: "30 min", express: true, parts: [["teoria", "Teoría"]],
+    dominar: ["Las cinco fases: Definir, Medir, Analizar, Mejorar y Controlar", "Qué se entrega y qué herramienta va en cada fase, según la nota técnica del curso"],
+    taller: ["Sin taller: teoría corta y quiz de 5 preguntas"],
+    ojo: ["Vale el 2 % del curso; no reemplaza ningún módulo del final"] },
+  { id: "M7", t: "Mini-simulacro del final", day: "Dom 29", h: "2 h", sim: true, max: 60,
+    dominar: ["Seis problemas cortos, uno por tema, en 90 minutos", "Respuestas numéricas, como en Bloque Neón", "Hoja de cálculo para las cuentas, como en el examen"],
+    taller: ["Variantes nuevas de los ejercicios de los repasos", "Sobre 60: 10 puntos por problema"],
+    ojo: ["Meta: 42/60", "Lo que falles define el repaso del domingo en la noche"] }
+];
+const COUNTED = MODS.filter((m) => !m.express);
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const pad = (n) => String(n).padStart(2, "0");
+const now = new Date();
+const todayIso = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+const fmtMin = (m) => m >= 60 ? (Math.floor(m / 60) + " h" + (m % 60 ? " " + (m % 60) : "")) : m + " min";
+let progress = {};
+
+(function countdown() {
+  const a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const b = new Date(2026, 10, 30);
+  const d = Math.round((b - a) / 86400000);
+  if (d > 1) { $("#dias").textContent = d; $("#dias-lab").textContent = "días para el final"; }
+  else if (d === 1) { $("#dias").textContent = "1"; $("#dias-lab").textContent = "día: el final es mañana"; }
+  else if (d === 0 && now < new Date(2026, 10, 30, 10, 0)) { $("#dias").textContent = "Hoy"; $("#dias-lab").textContent = "a las 7:00 a. m."; }
+  else { $("#dias").textContent = "✓"; $("#dias-lab").textContent = "el final ya pasó"; }
+})();
+
+(function gantt() {
+  const box = $("#gantt");
+  const SCALE = 300;
+  DAYS.forEach((d) => {
+    const r = el("div", "grow" + (d.exam ? " exam" : "") + (d.d === todayIso ? " is-today" : "") + (d.d < todayIso ? " is-past" : ""));
+    const gd = el("div", "gd");
+    gd.appendChild(el("b", "", d.n));
+    gd.appendChild(el("span", "", d.load + " · " + d.h));
+    if (d.d === todayIso) gd.appendChild(el("span", "tag-today", "HOY"));
+    r.appendChild(gd);
+    const main = el("div", "gmain");
+    if (!d.exam) {
+      const tr = el("div", "track"); tr.setAttribute("role", "img");
+      const total = d.blocks.reduce((s, b) => s + b.m, 0);
+      tr.setAttribute("aria-label", d.n + ": " + fmtMin(total) + " en total");
+      let x = 0;
+      d.blocks.forEach((b) => {
+        const s = el("div", "seg " + b.k);
+        s.style.left = (x / SCALE * 100) + "%";
+        s.style.width = "calc(" + (b.m / SCALE * 100) + "% - 2px)";
+        s.title = b.t + " · " + fmtMin(b.m);
+        if (b.c && b.m >= 25) { const sp = el("span", "", b.c); s.appendChild(sp); }
+        tr.appendChild(s); x += b.m;
+      });
+      main.appendChild(tr);
+      const ul = el("ul", "gtxt");
+      d.blocks.forEach((b) => { const li = el("li"); li.appendChild(el("span", "mono", fmtMin(b.m))); li.appendChild(el("span", "", b.t)); ul.appendChild(li); });
+      main.appendChild(ul);
+    } else {
+      main.appendChild(el("b", "", "7:00 a. m. · PARCIAL FINAL en LockDown Browser"));
+    }
+    if (d.note) main.appendChild(el("p", "gnote", d.note));
+    r.appendChild(main);
+    box.appendChild(r);
+  });
+})();
+
+let db = null, canWrite = false;
+const writeQueue = {};
+
+function hasQuiz(p) { return p && p.quiz != null && p.quiz !== ""; }
+function isPassed(m, p) { if (!hasQuiz(p)) return false; return m.sim ? Number(p.quiz) >= 0.7 * m.max : Number(p.quiz) >= 4; }
+function todayMods() { const d = DAYS.find((x) => x.d === todayIso); return d ? d.mods : []; }
+function status(m) {
+  const p = progress[m.id] || {};
+  if (isPassed(m, p)) return ["Aprobado", "ok"];
+  if (hasQuiz(p)) return [m.sim ? "Repasar lo que falló" : "Toca el Quiz B", "b"];
+  if (p.teoria || p.lab || p.taller) return ["En curso", "go"];
+  if (todayMods().includes(m.id)) return ["Hoy", "go"];
+  return ["Pendiente · " + m.day, "lock"];
+}
+
+function renderMods() {
+  const box = $("#mods"); box.textContent = "";
+  let passed = 0;
+  MODS.forEach((m) => {
+    const p = progress[m.id] || {};
+    if (!m.express && isPassed(m, p)) passed++;
+    const card = el("article", "mod" + (isPassed(m, p) ? " done" : "") + (m.express ? " express" : ""));
+    const head = el("div", "mod-head");
+    head.appendChild(el("span", "code", m.id));
+    const tbox = el("div"); tbox.style.minWidth = "0";
+    tbox.appendChild(el("h3", "", m.t));
+    const meta = el("div", "mod-meta");
+    if (m.express) meta.appendChild(el("span", "chip xp", "Exprés"));
+    if (m.prio) meta.appendChild(el("span", "chip " + m.prio, "Prioridad " + m.prio));
+    meta.appendChild(el("span", "", m.day + " · " + m.h));
+    if (m.why) meta.appendChild(el("span", "", m.why));
+    tbox.appendChild(meta); head.appendChild(tbox);
+    const [st, cls] = status(m);
+    head.appendChild(el("span", "pill " + cls, st));
+    card.appendChild(head);
+
+    const prog = el("div", "prog");
+    if (!m.sim) {
+      const parts = m.parts || [["teoria", "Teoría"], ["lab", "Lab"], ["taller", "Taller"]];
+      parts.forEach(([k, lab]) => {
+        const b = el("button", "tog"); b.type = "button"; b.id = "tog-" + m.id + "-" + k;
+        b.setAttribute("aria-pressed", p[k] ? "true" : "false");
+        const bx = el("span", "box", p[k] ? "✓" : ""); bx.setAttribute("aria-hidden", "true");
+        b.appendChild(bx); b.appendChild(document.createTextNode(lab));
+        b.disabled = !canWrite;
+        b.addEventListener("click", () => save(m.id, { [k]: !p[k] }));
+        prog.appendChild(b);
+      });
+    }
+    const q = el("label", "quizsel"); q.htmlFor = "quiz-" + m.id;
+    q.appendChild(document.createTextNode(m.sim ? "Puntaje" : "Quiz"));
+    let inp;
+    if (m.sim) {
+      inp = el("input"); inp.type = "number"; inp.min = 0; inp.max = m.max; inp.placeholder = "—";
+      inp.value = hasQuiz(p) ? p.quiz : "";
+      inp.addEventListener("change", () => { const v = inp.value === "" ? null : Math.max(0, Math.min(m.max, Number(inp.value))); save(m.id, { quiz: v }); });
+      q.appendChild(inp); q.appendChild(document.createTextNode("/" + m.max));
+    } else {
+      inp = el("select");
+      const o0 = el("option", "", "—"); o0.value = ""; inp.appendChild(o0);
+      for (let i = 0; i <= 5; i++) { const o = el("option", "", i + "/5"); o.value = String(i); inp.appendChild(o); }
+      inp.value = hasQuiz(p) ? String(p.quiz) : "";
+      inp.addEventListener("change", () => save(m.id, { quiz: inp.value === "" ? null : Number(inp.value) }));
+      q.appendChild(inp);
+    }
+    inp.id = "quiz-" + m.id; inp.disabled = !canWrite;
+    prog.appendChild(q);
+    if (typeof p.url === "string" && p.url.startsWith("https://")) { const a = el("a", "open", "Abrir " + m.id + " →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; prog.appendChild(a); }
+    else prog.appendChild(el("span", "open muted", "Aún no creado"));
+    card.appendChild(prog);
+
+    const det = el("details", "more");
+    det.appendChild(el("summary", "", "Qué incluye"));
+    const body = el("div", "more-body");
+    [["Vas a dominar", m.dominar], [m.sim ? "Formato" : "Taller", m.taller], [m.sim ? "Meta" : "Ojo", m.ojo]].forEach(([h, list]) => {
+      const col = el("div"); col.appendChild(el("h4", "", h));
+      const ul = el("ul"); list.forEach((x) => ul.appendChild(el("li", "", x))); col.appendChild(ul); body.appendChild(col);
+    });
+    det.appendChild(body); card.appendChild(det);
+    box.appendChild(card);
+  });
+  $("#aprob").textContent = passed + "/" + COUNTED.length;
+  $("#aprob-bar").style.width = (passed / COUNTED.length * 100) + "%";
+  renderToday();
+}
+
+function renderToday() {
+  const d = DAYS.find((x) => x.d === todayIso) || (todayIso < DAYS[0].d ? DAYS[0] : null);
+  const list = $("#hoy-list"); list.textContent = "";
+  const row = $("#hoy-row"); row.textContent = "";
+  const note = $("#hoy-note"); note.hidden = true;
+  if (!d) { $("#hoy-h").textContent = "Después del final"; $("#hoy-load").textContent = ""; $("#hoy-t").textContent = "El parcial final ya pasó. Revisa tu nota en Bloque Neón."; return; }
+  $("#hoy-h").textContent = (d.d === todayIso ? "Orden de trabajo · hoy, " : "Primer día · ") + d.n;
+  $("#hoy-load").textContent = d.exam ? d.h : d.load + " · " + d.h;
+  $("#hoy-t").textContent = d.t;
+  d.blocks.forEach((b) => { const li = el("li"); li.appendChild(el("span", "mono", fmtMin(b.m))); li.appendChild(el("span", "", b.t)); list.appendChild(li); });
+  if (d.note) { note.hidden = false; note.textContent = d.note; }
+  const missing = [];
+  d.mods.forEach((id) => {
+    const p = progress[id] || {};
+    if (typeof p.url === "string" && p.url.startsWith("https://")) { const a = el("a", "btn", "Abrir " + id + " →"); a.href = p.url; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a); }
+    else missing.push(id);
+  });
+  if (missing.length) {
+    const s = el("p", "ask"); s.appendChild(document.createTextNode("Para empezar, pídeme en el chat: "));
+    s.appendChild(el("code", "", "arma " + missing.join(" y "))); row.appendChild(s);
+  }
+}
+
+async function save(id, patch) {
+  if (!db || !canWrite) return;
+  progress[id] = Object.assign({}, progress[id] || {}, patch);
+  renderMods();
+  const prev = writeQueue[id] || Promise.resolve();
+  const run = prev.then(() => db.collection("progreso").doc(id).set(Object.assign({}, progress[id]))).catch((e) => {
+    if (e && (e.code === "invalid_argument" || e.code === "permission_denied" || e.code === "not_granted")) { canWrite = false; $("#dbnote").textContent = "Esta vista es de solo lectura: no se pudo guardar el cambio."; renderMods(); }
+    else { $("#dbnote").textContent = "No se pudo guardar el cambio. Vuelve a intentarlo en un momento."; }
+  });
+  writeQueue[id] = run;
+  return run;
+}
+
+renderMods();
+
+(async function () {
+  let db0 = null;
+  try { db0 = await window.claude?.use?.("db"); } catch (e) { db0 = null; }
+  if (!db0) { $("#dbnote").textContent = "Abre esta página en claude.ai con tu cuenta para guardar y ver tu progreso."; return; }
+  db = db0;
+  let user = null;
+  try { user = await window.claude.use("user"); } catch (e) { user = null; }
+  let cw = null;
+  try { cw = user ? await user.can("data.write") : null; } catch (e) { cw = null; }
+  canWrite = cw !== false;
+  const timer = setTimeout(() => { $("#dbnote").textContent = "Tu progreso está tardando en cargar. Recarga la página si no aparece."; }, 10000);
+  $("#dbnote").textContent = canWrite ? "Marca cada parte cuando la termines. Claude actualiza la nota del quiz cuando lo apruebas." : "Estás viendo el progreso en modo lectura.";
+  db.collection("progreso").onSnapshot((snap) => {
+    clearTimeout(timer);
+    const next = {};
+    snap.docs.forEach((d) => { if (d.exists) next[d.id] = Object.assign({}, d.data()); });
+    progress = next;
+    renderMods();
+  }, () => { clearTimeout(timer); $("#dbnote").textContent = "Se perdió la conexión con tu progreso. Recarga la página."; });
+})();
+</script>
