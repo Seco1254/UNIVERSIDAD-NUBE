@@ -1,0 +1,798 @@
+<title>M2 Planeación agregada</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: tablero de planeación. Una columna (≤ 920px) sobre piso gris acero, como el plan: teoría con ejemplos mes a mes, un planeador que compara persecución y nivelación con su gráfica, taller con chequeo de respuestas y quiz guardado. */
+:root{
+  --floor:#e9ecef; --panel:#ffffff; --ink:#16191d; --muted:#59616b; --rule:#d3d8de; --line:rgba(22,25,29,.06);
+  --accent:#d24a0f; --accent-ink:#ffffff; --accent-soft:#fde3d4;
+  --safety:#ffd23f; --safety-ink:#2b2300;
+  --red:#c0352b; --red-soft:#f9e1de; --green:#1d7a4f; --green-soft:#d9f0e4; --orange:#b4600b;
+  --s1:#2f6fd6; --s2:#d24a0f; --s3:#1d8a5a; --s4:#8a4fd1; --s5:#b8860b; --s6:#c2367a;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --floor:#111316; --panel:#1a1d21; --ink:#e7e9ec; --muted:#9aa2ac; --rule:#2d3238; --line:rgba(231,233,236,.04);
+    --accent:#ff8a4f; --accent-ink:#111316; --accent-soft:#3a2216;
+    --safety:#6b5800; --safety-ink:#fff4c4;
+    --red:#ff8b80; --red-soft:#3a1d1b; --green:#5fd29b; --green-soft:#13301f; --orange:#f0a95a;
+    --s1:#6fa3ff; --s2:#ff8a4f; --s3:#4fd194; --s4:#b996ff; --s5:#e6c25a; --s6:#ff7fb6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --floor:#111316; --panel:#1a1d21; --ink:#e7e9ec; --muted:#9aa2ac; --rule:#2d3238; --line:rgba(231,233,236,.04);
+  --accent:#ff8a4f; --accent-ink:#111316; --accent-soft:#3a2216;
+  --safety:#6b5800; --safety-ink:#fff4c4;
+  --red:#ff8b80; --red-soft:#3a1d1b; --green:#5fd29b; --green-soft:#13301f; --orange:#f0a95a;
+  --s1:#6fa3ff; --s2:#ff8a4f; --s3:#4fd194; --s4:#b996ff; --s5:#e6c25a; --s6:#ff7fb6;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background-color:var(--floor); background-image:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 64px); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6}
+.wrap{max-width:920px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:28px 64px; display:grid; grid-template-columns:minmax(0,1fr); gap:40px}
+.wrap > *, section{min-width:0}
+h1,h2,h3,h4{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.08}
+h1{font-size:clamp(2.6rem,9vw,4.4rem); font-weight:800; text-transform:uppercase}
+h2{font-size:1.9rem; font-weight:700; text-transform:uppercase}
+h3{font-size:1.35rem; font-weight:700}
+h4{font-size:1.1rem; font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.prose{max-width:68ch}
+b{font-weight:700}
+
+.top{display:grid; gap:12px; border-top:6px solid var(--ink); padding-top:16px}
+.hazard{height:8px; background:repeating-linear-gradient(-45deg,var(--safety) 0 10px,var(--ink) 10px 20px); border-radius:2px; max-width:220px}
+.lede{font-size:1.08rem; max-width:64ch}
+.nav{display:flex; flex-wrap:wrap; gap:8px}
+.nav a{font-family:var(--f-mono); font-size:.8rem; text-decoration:none; color:var(--ink); border:1px solid var(--rule); background:var(--panel); padding:5px 10px; border-radius:var(--r)}
+.nav a:hover{border-color:var(--accent)}
+.meta{display:flex; flex-wrap:wrap; gap:6px 18px; font-size:.88rem; color:var(--muted)}
+
+.sec-title{display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 14px; align-items:baseline; border-top:3px solid var(--ink); padding-top:12px}
+.sec-num{font-family:var(--f-display); font-weight:800; font-size:2.6rem; line-height:.8; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); max-width:66ch}
+section{display:grid; gap:22px}
+.block{display:grid; gap:12px}
+
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--panel)}
+table{border-collapse:collapse; width:100%; font-size:.92rem}
+th,td{text-align:left; padding:8px 11px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--floor); white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.mono, .num{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+tr.no td{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--red)}
+tr.close td{border-bottom:2px solid var(--ink)}
+
+.eq{display:grid; gap:4px; background:var(--panel); border:1px solid var(--rule); border-left:5px solid var(--accent); border-radius:var(--r); padding:12px 16px}
+.eq > span:first-child{font-family:var(--f-mono); font-size:1.05rem; font-weight:600}
+.eq > span + span{font-size:.92rem; color:var(--muted)}
+
+.wx{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); overflow:hidden}
+.wx-head{padding:12px 16px; border-bottom:1px solid var(--rule); background:var(--floor); display:grid; gap:6px}
+.tag{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.steps{list-style:none; margin:0; padding:0; counter-reset:st}
+.steps > li{display:grid; grid-template-columns:2.2rem minmax(0,1fr); gap:10px; padding:12px 16px; border-bottom:1px dashed var(--rule); counter-increment:st}
+.steps > li:last-child{border-bottom:0}
+.steps > li::before{content:counter(st); font-family:var(--f-display); font-weight:800; font-size:1.4rem; color:var(--accent); line-height:1.1}
+.stp{display:grid; gap:4px; min-width:0}
+.stp .why{color:var(--muted); font-size:.92rem}
+.stp .calc{font-family:var(--f-mono); font-size:.92rem; background:var(--floor); border-radius:4px; padding:6px 10px; overflow-x:auto}
+.wx-res{padding:12px 16px; background:var(--accent-soft); font-weight:600}
+
+.fig{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:10px; overflow-x:auto}
+.fig svg{display:block; max-width:100%; height:auto; margin:0 auto}
+.fig figcaption{font-size:.85rem; color:var(--muted); margin-top:6px; text-align:center}
+figure{margin:0}
+svg text{font-family:var(--f-mono)}
+.g-edge{stroke:var(--muted); stroke-width:1.6; fill:none}
+.g-node{fill:var(--panel); stroke:var(--ink); stroke-width:2}
+.g-lbl{fill:var(--ink); font-size:14px; font-weight:600; text-anchor:middle; dominant-baseline:central}
+.g-t{fill:var(--muted); font-size:11px; text-anchor:middle}
+.ah{fill:var(--muted)}
+.bar-bg{fill:var(--floor); stroke:var(--rule)}
+.bar-txt{fill:var(--ink); font-size:12px}
+.bar-c{stroke:var(--red); stroke-width:2; stroke-dasharray:5 4}
+.bar-c-t{fill:var(--red); font-size:11px}
+.stn-1{fill:var(--s1)} .stn-2{fill:var(--s2)} .stn-3{fill:var(--s3)} .stn-4{fill:var(--s4)} .stn-5{fill:var(--s5)} .stn-6{fill:var(--s6)}
+.nst-1{stroke:var(--s1)} .nst-2{stroke:var(--s2)} .nst-3{stroke:var(--s3)} .nst-4{stroke:var(--s4)} .nst-5{stroke:var(--s5)} .nst-6{stroke:var(--s6)}
+.g-node.has{stroke-width:4}
+
+.recipe{background:var(--ink); color:var(--floor); border-radius:var(--r); padding:16px 18px; display:grid; gap:10px}
+.recipe h3{color:var(--floor)}
+.recipe ol{margin:0; padding-left:22px; display:grid; gap:6px}
+.recipe code{font-family:var(--f-mono); background:rgba(127,127,127,.25); padding:0 5px; border-radius:3px}
+.traps{background:var(--red-soft); border-radius:var(--r); padding:14px 16px; display:grid; gap:8px}
+.traps ul{margin:0; padding-left:20px; display:grid; gap:4px}
+
+/* Lab */
+.lab{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:14px; display:grid; gap:14px}
+.ctrls{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:end}
+.ctrl{display:grid; gap:4px; font-size:.85rem}
+.ctrl label{color:var(--muted); font-family:var(--f-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em}
+select,input[type=number],input[type=text]{font:inherit; font-family:var(--f-mono); font-size:.9rem; background:var(--floor); color:var(--ink); border:1px solid var(--rule); border-radius:4px; padding:6px 8px}
+input[type=number]{width:6.5em}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.92rem; padding:8px 13px; border-radius:var(--r); background:var(--accent); color:var(--accent-ink); border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.5; cursor:default; filter:none}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.lab-grid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px}
+.say{background:var(--floor); border-radius:var(--r); padding:10px 12px; font-size:.95rem; min-height:3.2em}
+.kpis{display:flex; flex-wrap:wrap; gap:8px 22px}
+.kpi{display:grid}
+.kpi b{font-family:var(--f-display); font-size:1.6rem; line-height:1; font-variant-numeric:tabular-nums}
+.kpi span{font-size:.78rem; color:var(--muted)}
+
+/* Taller */
+.prob{background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); display:grid; overflow:hidden}
+.prob-head{padding:14px 16px; display:grid; gap:8px; border-bottom:1px solid var(--rule)}
+.prob-body{padding:14px 16px; display:grid; gap:14px}
+.src{font-family:var(--f-mono); font-size:.72rem; color:var(--muted)}
+.lit{display:grid; gap:8px; border-left:3px solid var(--rule); padding-left:12px}
+.lit.ok{border-left-color:var(--green)} .lit.bad{border-left-color:var(--red)}
+.lit-row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.lit-row label{font-size:.85rem; color:var(--muted)}
+.grid-in{display:flex; flex-wrap:wrap; gap:6px 10px}
+.grid-in span{display:inline-flex; gap:4px; align-items:center; font-family:var(--f-mono); font-size:.85rem}
+.grid-in input{width:3.4em}
+.fb{font-size:.88rem}
+.fb.ok{color:var(--green)} .fb.bad{color:var(--red)}
+.reveals{display:grid; gap:8px}
+details.rev{border:1px solid var(--rule); border-radius:var(--r); background:var(--floor)}
+details.rev summary{cursor:pointer; padding:8px 12px; font-weight:600; font-size:.92rem}
+.rev-body{padding:4px 14px 14px; display:grid; gap:10px; font-size:.95rem}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+fieldset.q{border:1px solid var(--rule); border-radius:var(--r); background:var(--panel); padding:14px 16px; margin:0; display:grid; gap:10px; min-width:0}
+fieldset.q legend{display:flex; gap:10px; align-items:flex-start; padding:0; font-weight:600; float:left; width:100%}
+.qn{font-family:var(--f-display); font-size:1.5rem; line-height:1; color:var(--accent)}
+.kind{font-family:var(--f-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:500}
+.qfig{clear:both}
+.qopts{display:grid; gap:6px; clear:both}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:var(--r); cursor:pointer}
+.qopt:hover{border-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; padding:8px 10px; border-radius:var(--r)}
+.qexp.ok{background:var(--green-soft)} .qexp.no{background:var(--red-soft)}
+.qrow{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+.result{border-radius:var(--r); padding:14px 16px; display:grid; gap:8px}
+.result.pass{background:var(--green-soft)} .result.fail{background:var(--red-soft)}
+.score{font-family:var(--f-display); font-size:2.4rem; font-weight:800; line-height:1}
+.attempts{display:grid; gap:6px}
+.att{display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:8px 12px}
+.pill{font-size:.75rem; font-weight:600; padding:2px 9px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)} .pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.85rem; color:var(--muted); border-top:1px solid var(--rule); padding-top:14px; display:grid; gap:4px}
+
+.block,.prob-head,.prob-body,.rev-body,.lit,.lab,.stp,section,.quiz,fieldset.q,.result{grid-template-columns:minmax(0,1fr)}
+svg{max-width:100%; height:auto}
+.ch-d{stroke:var(--ink); stroke-width:2.2; fill:none}
+.ch-dot{fill:var(--ink)}
+.ch-p{fill:var(--s1)}
+.ch-i{stroke:var(--s3); stroke-width:2.2; fill:none}
+.ch-idot{fill:var(--s3)}
+.ch-neg{fill:var(--red)}
+.ch-ss{stroke:var(--s5); stroke-width:1.6; stroke-dasharray:4 3}
+.ch-axis{stroke:var(--rule)}
+.ch-t{fill:var(--muted); font-size:11px}
+.leg{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.82rem; color:var(--muted)}
+.leg i{display:inline-block; width:14px; height:4px; vertical-align:middle; margin-right:6px; border-radius:2px}
+td.bad{color:var(--red); font-weight:700}
+.cost{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px}
+.cost div{background:var(--floor); border-radius:var(--r); padding:8px 10px; display:grid}
+.cost b{font-family:var(--f-mono); font-size:.95rem; font-variant-numeric:tabular-nums}
+.cost span{font-size:.75rem; color:var(--muted)}
+.cost .tot{background:var(--accent-soft)}
+@media (max-width:700px){ .lab-grid{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:560px){ .steps > li{grid-template-columns:1.6rem minmax(0,1fr); padding:10px 12px} .sec-title{grid-template-columns:minmax(0,1fr)} .sec-title p{grid-column:1} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="hazard" aria-hidden="true"></div>
+    <p class="eyebrow">IIND-2205 · Parcial final · Módulo 2 de 6</p>
+    <h1>Planeación agregada</h1>
+    <p class="lede">Decidir, mes a mes, cuántos trabajadores tener y cuánto producir para cumplir la demanda al menor costo. Teoría y lab antes de la complementaria del martes 24 a las 11:00; el taller y el quiz, en la noche.</p>
+    <div class="meta"><span>≈ 2 h 15 en total</span><span>Teoría 55 min · Lab 20 min · Taller 50 min · Quiz 10 min</span></div>
+    <nav class="nav" aria-label="Secciones"><a href="#teoria">1 · Teoría</a><a href="#lab">2 · Lab</a><a href="#taller">3 · Taller</a><a href="#quiz">4 · Quiz</a></nav>
+  </header>
+
+  <!-- ============ 1. TEORÍA ============ -->
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Siete ideas con ejemplos resueltos mes a mes, usando la misma notación de las diapositivas del profe. Al final, la receta para el examen. Los ejemplos llevan números pequeños porque todo el tema son cuentas en una tabla.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th><th>Unidades</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">t</td><td>«te»</td><td>El periodo: casi siempre un mes. t = 1 es el primer mes del plan y t = 0 es «antes de empezar».</td><td>—</td></tr>
+          <tr><td class="mono">D<sub>t</sub></td><td>«de sub te»</td><td>Demanda del mes t: lo que hay que entregar ese mes.</td><td>und</td></tr>
+          <tr><td class="mono">K</td><td>«ka»</td><td>Productividad: unidades que hace un trabajador en un día.</td><td>und/día</td></tr>
+          <tr><td class="mono">n<sub>t</sub></td><td>«ene sub te»</td><td>Días hábiles del mes t.</td><td>días</td></tr>
+          <tr><td class="mono">Kn<sub>t</sub></td><td>«ka ene»</td><td>Lo que hace un trabajador en todo el mes: Kn<sub>t</sub> = K · n<sub>t</sub>.</td><td>und/trabajador</td></tr>
+          <tr><td class="mono">RP<sub>t</sub></td><td>«erre pe»</td><td>Recepción programada: unidades que llegan sin producirlas (otra planta, un taller externo).</td><td>und</td></tr>
+          <tr><td class="mono">SS<sub>t</sub></td><td>«ese ese» (<i>safety stock</i>)</td><td>Inventario de seguridad: lo mínimo que debe quedar al final del mes t.</td><td>und</td></tr>
+          <tr><td class="mono">I<sub>t</sub>, I<sub>0</sub></td><td>«i sub te»</td><td>Inventario al final del mes t. I<sub>0</sub> es el inventario con el que arrancas.</td><td>und</td></tr>
+          <tr><td class="mono">RN<sub>t</sub></td><td>«erre ene»</td><td>Requerimiento neto: lo que de verdad tienes que producir ese mes (en las diapositivas, Rn<sub>t</sub>).</td><td>und</td></tr>
+          <tr><td class="mono">W<sub>t</sub>, W<sub>0</sub></td><td>«doble ve»</td><td>Trabajadores del mes t. W<sub>0</sub> son los que tienes antes de empezar.</td><td>trabajadores</td></tr>
+          <tr><td class="mono">H<sub>t</sub>, F<sub>t</sub></td><td>«hache», «efe»</td><td>Contratados (<i>hire</i>) y despedidos (<i>fire</i>) en el mes t.</td><td>trabajadores</td></tr>
+          <tr><td class="mono">P<sub>t</sub></td><td>«pe sub te»</td><td>Producción del mes t: P<sub>t</sub> = W<sub>t</sub> · Kn<sub>t</sub>.</td><td>und</td></tr>
+          <tr><td class="mono">W*</td><td>«doble ve estrella»</td><td>La fuerza laboral constante de la nivelación.</td><td>trabajadores</td></tr>
+          <tr><td class="mono">⌈x⌉, ⌊x⌋</td><td>«techo», «piso»</td><td>Redondear hacia arriba y hacia abajo: ⌈13,2⌉ = 14 y ⌊13,8⌋ = 13.</td><td>—</td></tr>
+          <tr><td class="mono">«ac»</td><td>«acumulado»</td><td>Suma desde el mes 1 hasta el mes t. Por ejemplo, Kn<sub>ac</sub> en el mes 3 = Kn<sub>1</sub> + Kn<sub>2</sub> + Kn<sub>3</sub>.</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+      <p class="prose muted">Costos (todos en pesos): salario mensual por trabajador, costo de contratar uno, de despedir uno, de mantener una unidad en inventario un mes y de producir una unidad.</p>
+    </div>
+
+    <div class="block">
+      <h3>1. Qué es la planeación agregada</h3>
+      <p class="prose">La demanda sube y baja de un mes a otro. La empresa tiene dos palancas: cambiar cuánta gente trabaja o guardar inventario en los meses flojos para gastarlo en los fuertes. Planear «agregado» es decidir eso para los próximos meses con números gruesos (unidades y trabajadores), sin entrar en qué máquina hace qué.</p>
+      <p class="prose">El curso ve las dos estrategias puras:</p>
+      <ul class="prose" style="margin:0; padding-left:20px; display:grid; gap:6px">
+        <li><b>Persecución</b> (<i>chase</i>): cada mes tienes justo los trabajadores que la demanda pide. Contratas y despides mucho y casi no guardas inventario. Típica en cultivos, almacenes de ropa o eventos.</li>
+        <li><b>Nivelación</b>: el mismo número de trabajadores todo el horizonte (W*). No contratas ni despides durante el año y el inventario absorbe las subidas y bajadas. Típica en manufactura y alimentos de consumo masivo.</li>
+      </ul>
+      <figure class="fig" id="fig-estrategias"></figure>
+    </div>
+
+    <div class="block">
+      <h3>2. La capacidad de un trabajador y la ecuación del inventario</h3>
+      <p class="prose">Todo el tema se apoya en dos cuentas. La primera: un trabajador hace K unidades al día y el mes tiene n<sub>t</sub> días hábiles, así que en el mes hace Kn<sub>t</sub>. La segunda es la del inventario, que funciona como un tanque: entra lo producido y lo recibido, sale lo entregado, y lo que queda pasa al mes siguiente.</p>
+      <div class="eq"><span>Kn<sub>t</sub> = K · n<sub>t</sub>&nbsp;&nbsp;&nbsp;&nbsp;P<sub>t</sub> = W<sub>t</sub> · Kn<sub>t</sub></span><span>Lo que hace un trabajador en el mes, y lo que hace toda la planta.</span></div>
+      <div class="eq"><span>I<sub>t</sub> = I<sub>t−1</sub> + P<sub>t</sub> + RP<sub>t</sub> − D<sub>t</sub></span><span>Inventario final = el que traías + lo que produces + lo que te llega − lo que entregas.</span></div>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 1</span><p>Un trabajador hace K = 15 und/día, enero tiene 24 días hábiles, hay 14 trabajadores, arrancas con I<sub>0</sub> = 950 und y la demanda de enero es 5.856 und. ¿Cuánto inventario queda al final de enero?</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Capacidad de un trabajador en enero.</b><span class="why">Por qué: la producción se calcula por trabajador-mes.</span><span class="calc">Kn<sub>1</sub> = 15 × 24 = 360 und por trabajador</span></div></li>
+          <li><div class="stp"><b>Producción de la planta.</b><span class="why">Por qué: los 14 trabajadores hacen 360 cada uno.</span><span class="calc">P<sub>1</sub> = 14 × 360 = 5.040 und</span></div></li>
+          <li><div class="stp"><b>Ecuación del inventario.</b><span class="why">Por qué: lo que había + lo producido − lo entregado (no hay recepciones).</span><span class="calc">I<sub>1</sub> = 950 + 5.040 + 0 − 5.856 = 134 und</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: quedan 134 unidades. Es el primer mes de la actividad Bar-Bunny de 2026-10 (taller T2).</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>3. Persecución, mes a mes</h3>
+      <p class="prose">Cada mes produces solo lo que falta. Lo que falta es la demanda (más el inventario de seguridad, si lo piden) menos lo que ya tienes y lo que te llega. Eso es el <b>requerimiento neto</b>. Los trabajadores salen de dividir entre lo que hace uno, redondeando <b>siempre hacia arriba</b>: con un trabajador menos no alcanzas.</p>
+      <div class="eq"><span>RN<sub>t</sub> = D<sub>t</sub> + SS<sub>t</sub> − I<sub>t−1</sub> − RP<sub>t</sub>&nbsp;&nbsp;&nbsp;&nbsp;W<sub>t</sub> = ⌈RN<sub>t</sub> / Kn<sub>t</sub>⌉</span><span>Si en el problema no hay inventario de seguridad, SS<sub>t</sub> = 0.</span></div>
+      <div class="eq"><span>H<sub>t</sub> = W<sub>t</sub> − W<sub>t−1</sub> si sube&nbsp;&nbsp;&nbsp;&nbsp;F<sub>t</sub> = W<sub>t−1</sub> − W<sub>t</sub> si baja</span><span>Después: P<sub>t</sub> = W<sub>t</sub> · Kn<sub>t</sub> y el inventario con la ecuación del tanque. Como redondeaste hacia arriba, sobra un poco: ese sobrante pasa al mes siguiente.</span></div>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 2 · Persecución</span><p>Cuatro meses con D = 1.050, 1.430, 1.800 y 1.260 und; días hábiles 20, 20, 25 y 20; K = 5 und/día; W<sub>0</sub> = 12 trabajadores; I<sub>0</sub> = 200 und; en el mes 3 llegan 300 und de otra planta. Sin inventario de seguridad.</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Kn de cada mes.</b><span class="why">Por qué: lo necesito para pasar de unidades a trabajadores.</span><span class="calc">Kn = 5 × 20 = 100; 100; 5 × 25 = 125; 100</span></div></li>
+          <li><div class="stp"><b>Mes 1.</b><span class="why">Necesito 1.050 y ya tengo 200 guardadas.</span><span class="calc">RN<sub>1</sub> = 1.050 − 200 = 850 → W<sub>1</sub> = ⌈850/100⌉ = ⌈8,5⌉ = 9 → F<sub>1</sub> = 12 − 9 = 3<br>P<sub>1</sub> = 9 × 100 = 900 → I<sub>1</sub> = 200 + 900 − 1.050 = 50</span></div></li>
+          <li><div class="stp"><b>Mes 2.</b><span class="why">Me quedaron 50 del mes 1.</span><span class="calc">RN<sub>2</sub> = 1.430 − 50 = 1.380 → W<sub>2</sub> = ⌈13,8⌉ = 14 → H<sub>2</sub> = 14 − 9 = 5<br>P<sub>2</sub> = 1.400 → I<sub>2</sub> = 50 + 1.400 − 1.430 = 20</span></div></li>
+          <li><div class="stp"><b>Mes 3.</b><span class="why">Llegan 300 de otra planta: se restan del requerimiento.</span><span class="calc">RN<sub>3</sub> = 1.800 − 20 − 300 = 1.480 → W<sub>3</sub> = ⌈1.480/125⌉ = ⌈11,84⌉ = 12 → F<sub>3</sub> = 2<br>P<sub>3</sub> = 12 × 125 = 1.500 → I<sub>3</sub> = 20 + 1.500 + 300 − 1.800 = 20</span></div></li>
+          <li><div class="stp"><b>Mes 4.</b><span class="why">Igual que los anteriores.</span><span class="calc">RN<sub>4</sub> = 1.260 − 20 = 1.240 → W<sub>4</sub> = ⌈12,4⌉ = 13 → H<sub>4</sub> = 1<br>P<sub>4</sub> = 1.300 → I<sub>4</sub> = 20 + 1.300 − 1.260 = 60</span></div></li>
+        </ol>
+        <div class="tw" style="margin:0 16px 12px"><table>
+          <thead><tr><th>t</th><th>D</th><th>Kn</th><th>RP</th><th>RN</th><th>W</th><th>H</th><th>F</th><th>P</th><th>I</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0</td><td></td><td></td><td></td><td></td><td class="mono">12</td><td></td><td></td><td></td><td class="mono">200</td></tr>
+            <tr><td class="mono">1</td><td class="mono">1.050</td><td class="mono">100</td><td class="mono">0</td><td class="mono">850</td><td class="mono">9</td><td class="mono">0</td><td class="mono">3</td><td class="mono">900</td><td class="mono">50</td></tr>
+            <tr><td class="mono">2</td><td class="mono">1.430</td><td class="mono">100</td><td class="mono">0</td><td class="mono">1.380</td><td class="mono">14</td><td class="mono">5</td><td class="mono">0</td><td class="mono">1.400</td><td class="mono">20</td></tr>
+            <tr><td class="mono">3</td><td class="mono">1.800</td><td class="mono">125</td><td class="mono">300</td><td class="mono">1.480</td><td class="mono">12</td><td class="mono">0</td><td class="mono">2</td><td class="mono">1.500</td><td class="mono">20</td></tr>
+            <tr><td class="mono">4</td><td class="mono">1.260</td><td class="mono">100</td><td class="mono">0</td><td class="mono">1.240</td><td class="mono">13</td><td class="mono">1</td><td class="mono">0</td><td class="mono">1.300</td><td class="mono">60</td></tr>
+          </tbody>
+        </table></div>
+        <p class="wx-res">Resultado: la fuerza laboral va 9 → 14 → 12 → 13, con 6 contrataciones y 5 despidos, y el inventario nunca pasa de 60.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>4. Nivelación: la fuerza laboral constante W*</h3>
+      <p class="prose">Ahora todos los meses trabaja la misma gente. ¿Cuántos? Los suficientes para que, al final de <b>cada</b> mes, lo producido hasta ese momento alcance para lo entregado hasta ese momento. Por eso se trabaja con acumulados: para cada mes t calculas cuántos trabajadores constantes habrían hecho falta para llegar hasta ahí, y te quedas con el <b>mayor</b>. Con uno menos, en ese mes faltaría producto.</p>
+      <div class="eq"><span>RN<sub>ac,t</sub> = (D<sub>1</sub> + … + D<sub>t</sub>) + SS<sub>t</sub> − I<sub>0</sub> − (RP<sub>1</sub> + … + RP<sub>t</sub>)</span><span>Lo que tienes que haber producido al final del mes t. Solo entra el inventario de seguridad de ese mes, porque es lo que debe sobrar al final.</span></div>
+      <div class="eq"><span>W<sub>t</sub> = ⌈RN<sub>ac,t</sub> / Kn<sub>ac,t</sub>⌉&nbsp;&nbsp;&nbsp;&nbsp;W* = máx(W<sub>1</sub>, …, W<sub>T</sub>)</span><span>Después: contratas o despides solo en el mes 1 (W* − W<sub>0</sub>), P<sub>t</sub> = W* · Kn<sub>t</sub> y el inventario con la ecuación del tanque.</span></div>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 3 · Nivelación con los mismos datos</span><p>Los mismos cuatro meses del ejemplo 2 (I<sub>0</sub> = 200, W<sub>0</sub> = 12, 300 und recibidas en el mes 3, sin inventario de seguridad).</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Requerimiento acumulado de cada mes.</b><span class="why">Por qué: es lo que debe haberse producido al cierre de cada mes. Al acumulado le resto I<sub>0</sub> una sola vez y las recepciones que ya llegaron.</span><span class="calc">Mes 1: 1.050 − 200 = 850<br>Mes 2: 850 + 1.430 = 2.280<br>Mes 3: 2.280 + 1.800 − 300 = 3.780<br>Mes 4: 3.780 + 1.260 = 5.040</span></div></li>
+          <li><div class="stp"><b>Capacidad acumulada de un trabajador.</b><span class="why">Por qué: un trabajador constante hace la suma de los Kn hasta ese mes.</span><span class="calc">100; 200; 325; 425</span></div></li>
+          <li><div class="stp"><b>Divido y redondeo hacia arriba.</b><span class="why">Por qué: cuántos trabajadores constantes cumplirían hasta ese mes.</span><span class="calc">⌈850/100⌉ = 9&nbsp;&nbsp;⌈2.280/200⌉ = ⌈11,4⌉ = 12&nbsp;&nbsp;⌈3.780/325⌉ = ⌈11,63⌉ = 12&nbsp;&nbsp;⌈5.040/425⌉ = ⌈11,86⌉ = 12</span></div></li>
+          <li><div class="stp"><b>Tomo el mayor.</b><span class="why">Por qué: W* tiene que cumplir todos los cortes a la vez.</span><span class="calc">W* = máx(9, 12, 12, 12) = 12 → como W<sub>0</sub> = 12, no se contrata ni se despide</span></div></li>
+          <li><div class="stp"><b>Producción e inventario.</b><span class="why">Por qué: P<sub>t</sub> = 12 · Kn<sub>t</sub> y la ecuación del tanque.</span><span class="calc">P = 1.200, 1.200, 1.500, 1.200<br>I<sub>1</sub> = 200 + 1.200 − 1.050 = 350; I<sub>2</sub> = 350 + 1.200 − 1.430 = 120<br>I<sub>3</sub> = 120 + 1.500 + 300 − 1.800 = 120; I<sub>4</sub> = 120 + 1.200 − 1.260 = 60</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: W* = 12 los cuatro meses. El inventario sube a 350 en el mes 1 para cubrir el mes 2, que es el más exigente.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>5. El inventario de seguridad</h3>
+      <p class="prose">Muchos problemas piden que al final de cada mes quede un colchón: el inventario de seguridad, casi siempre un porcentaje de la demanda de ese mes. Ojo con dos cosas: el enunciado dice cómo redondearlo (lee bien: a veces es hacia arriba y a veces «unidades al entero inferior»), y en el último mes (diciembre) normalmente no se pide.</p>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 4 · Bar-Bunny, nivelación, enero</span><p>El inventario de seguridad es el 3 % de la demanda, redondeado hacia arriba. Enero: D<sub>1</sub> = 5.856 und, I<sub>0</sub> = 950, Kn<sub>1</sub> = 360. ¿Cuántos trabajadores constantes harían falta solo mirando enero?</p></div>
+        <ol class="steps">
+          <li><div class="stp"><b>Inventario de seguridad de enero.</b><span class="why">Por qué: es lo que debe sobrar al final de enero.</span><span class="calc">SS<sub>1</sub> = ⌈0,03 × 5.856⌉ = ⌈175,68⌉ = 176</span></div></li>
+          <li><div class="stp"><b>Requerimiento acumulado.</b><span class="why">Por qué: hay que entregar 5.856 y que sobren 176, y ya tienes 950.</span><span class="calc">RN<sub>ac,1</sub> = 5.856 + 176 − 950 = 5.082</span></div></li>
+          <li><div class="stp"><b>Trabajadores.</b><span class="why">Por qué: divido entre lo que hace uno en enero y redondeo hacia arriba.</span><span class="calc">W<sub>1</sub> = ⌈5.082/360⌉ = ⌈14,12⌉ = 15</span></div></li>
+        </ol>
+        <p class="wx-res">Resultado: 15 trabajadores para enero. Repitiendo con los 12 meses, el máximo es W* = 19 (taller T2).</p>
+      </article>
+      <p class="prose">En <b>persecución</b> el inventario de seguridad se suma igual en RN<sub>t</sub> = D<sub>t</sub> + SS<sub>t</sub> − I<sub>t−1</sub> − RP<sub>t</sub>. En los parciales de 2026-10 y 2026-20, la persecución se pidió <b>sin</b> inventario de seguridad: revisa el enunciado.</p>
+    </div>
+
+    <div class="block">
+      <h3>6. Los costos y cuál estrategia conviene</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Costo</th><th>Cómo se calcula</th></tr></thead>
+        <tbody>
+          <tr><td>Mano de obra (salarios)</td><td class="mono">Σ W<sub>t</sub> × salario mensual</td></tr>
+          <tr><td>Contratación</td><td class="mono">Σ H<sub>t</sub> × costo de contratar</td></tr>
+          <tr><td>Despido</td><td class="mono">Σ F<sub>t</sub> × costo de despedir</td></tr>
+          <tr><td>Mantener inventario</td><td class="mono">Σ I<sub>t</sub> × costo por unidad-mes</td></tr>
+          <tr><td>Producción</td><td class="mono">Σ P<sub>t</sub> × costo unitario</td></tr>
+        </tbody>
+      </table></div>
+      <article class="wx">
+        <div class="wx-head"><span class="tag">Ejemplo resuelto 5 · Comparar las dos estrategias</span><p>Con los ejemplos 2 y 3: salario $2.000.000, contratar $800.000, despedir $1.000.000, mantener $5.000 por unidad al mes y producir $10.000 por unidad.</p></div>
+        <div class="tw" style="margin:12px 16px"><table>
+          <thead><tr><th>Costo</th><th>Persecución</th><th>Nivelación</th></tr></thead>
+          <tbody>
+            <tr><td>Salarios</td><td class="mono">48 × 2.000.000 = 96.000.000</td><td class="mono">48 × 2.000.000 = 96.000.000</td></tr>
+            <tr><td>Contratar</td><td class="mono">6 × 800.000 = 4.800.000</td><td class="mono">0</td></tr>
+            <tr><td>Despedir</td><td class="mono">5 × 1.000.000 = 5.000.000</td><td class="mono">0</td></tr>
+            <tr><td>Mantener</td><td class="mono">150 × 5.000 = 750.000</td><td class="mono">650 × 5.000 = 3.250.000</td></tr>
+            <tr><td>Producir</td><td class="mono">5.100 × 10.000 = 51.000.000</td><td class="mono">5.100 × 10.000 = 51.000.000</td></tr>
+            <tr><td><b>Total</b></td><td class="mono"><b>157.550.000</b></td><td class="mono"><b>150.250.000</b></td></tr>
+          </tbody>
+        </table></div>
+        <p class="wx-res">Resultado: aquí gana la nivelación, porque contratar y despedir sale más caro que guardar inventario. En otros problemas gana la persecución (inventario caro): siempre hay que calcular.</p>
+      </article>
+      <p class="prose"><b>Qué reduce cada una:</b> la persecución reduce el costo de inventario; la nivelación reduce los costos de contratar y despedir (y da estabilidad laboral). Así se contesta la pregunta de «¿cuál es mejor y por qué?».</p>
+    </div>
+
+    <div class="block">
+      <h3>7. Variante: trabajadores nuevos que producen menos</h3>
+      <p class="prose">Las diapositivas traen esta variante: los contratados producen, por ejemplo, un 30 % menos que los antiguos. Entonces los W<sub>0</sub> antiguos se usan primero y solo lo que falte se cubre con nuevos, que hacen 0,7 · Kn.</p>
+      <div class="eq"><span>Nuevos<sub>t</sub> = ⌈(RN<sub>ac,t</sub> − W<sub>0</sub> · Kn<sub>ac,t</sub>) / (0,7 · Kn<sub>ac,t</sub>)⌉ si lo de adentro es positivo</span><span>Ejemplo de la clase: W<sub>0</sub> = 180, RN<sub>ac</sub> = 3.390, Kn<sub>ac</sub> = 18 → faltan 3.390 − 180 × 18 = 150 und → ⌈150/12,6⌉ = 12 nuevos → W = 192.</span></div>
+    </div>
+
+    <div class="recipe">
+      <h3>Receta para el examen</h3>
+      <ol>
+        <li>Arma en Excel una fila por mes con <code>D, n, Kn = K·n, RP, SS</code>. Fila 0: <code>W<sub>0</sub></code> e <code>I<sub>0</sub></code>.</li>
+        <li><b>Persecución:</b> <code>RN = D + SS − I<sub>t−1</sub> − RP</code> → <code>W = ⌈RN/Kn⌉</code> → H o F → <code>P = W·Kn</code> → <code>I = I<sub>t−1</sub> + P + RP − D</code>. Fila por fila, porque cada mes usa el inventario del anterior.</li>
+        <li><b>Nivelación:</b> columna de <code>RN<sub>ac</sub> = D<sub>ac</sub> + SS<sub>t</sub> − I<sub>0</sub> − RP<sub>ac</sub></code> y de <code>Kn<sub>ac</sub></code> → <code>W<sub>t</sub> = ⌈RN<sub>ac</sub>/Kn<sub>ac</sub>⌉</code> → <code>W* = máx</code>. Luego H o F solo en el mes 1, <code>P = W*·Kn</code> e inventario.</li>
+        <li>Revisa que el inventario nunca quede negativo ni por debajo del de seguridad.</li>
+        <li>Costos: suma columnas y multiplica por cada costo unitario. Compara totales y di qué reduce cada estrategia.</li>
+      </ol>
+    </div>
+    <div class="traps">
+      <h4>Trampas frecuentes</h4>
+      <ul>
+        <li>Redondear los trabajadores hacia abajo. Siempre hacia arriba.</li>
+        <li>Olvidar restar las recepciones programadas (RP) en el mes en que llegan.</li>
+        <li>En nivelación, sumar los inventarios de seguridad de todos los meses. Solo va el SS del mes t.</li>
+        <li>Calcular el salario con W* × 1 mes. Son W* × número de meses.</li>
+        <li>No leer cómo se redondea el inventario de seguridad o la producción.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 2. LAB ============ -->
+  <section id="lab" aria-labelledby="l-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="l-h">Lab · el planeador</h2><p>Cambia de estrategia y mira cómo cambian la producción, el inventario y los costos. Con «Fuerza constante a mano» baja W uno por uno: en algún mes el inventario se vuelve negativo, y por eso W* es el máximo.</p></div>
+    <div class="lab">
+      <div class="ctrls">
+        <div class="ctrl"><label for="lab-set">Caso</label><select id="lab-set"></select></div>
+        <div class="ctrl"><label for="lab-st">Estrategia</label><select id="lab-st"><option value="chase">Persecución</option><option value="level">Nivelación (W*)</option><option value="manual">Fuerza constante a mano</option></select></div>
+        <div class="ctrl" id="lab-w-wrap"><label for="lab-w">W a mano</label><input type="number" id="lab-w" min="0" step="1"></div>
+      </div>
+      <p class="muted" id="lab-desc" style="font-size:.9rem"></p>
+      <figure class="fig" id="lab-chart" style="margin:0"></figure>
+      <div class="leg" aria-hidden="true"><span><i style="background:var(--ink)"></i>Demanda</span><span><i style="background:var(--s1)"></i>Producción</span><span><i style="background:var(--s3)"></i>Inventario final</span><span><i style="background:var(--s5)"></i>Inventario de seguridad</span><span><i style="background:var(--red)"></i>Faltante</span></div>
+      <p class="say" id="lab-say" aria-live="polite"></p>
+      <div class="cost" id="lab-cost"></div>
+      <div class="tw"><table>
+        <thead id="lab-head"></thead>
+        <tbody id="lab-rows"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. TALLER ============ -->
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>El pre-parcial de 2026-10 y la actividad de 2026-10 con su solución oficial. Hazlos en Excel: una fila por mes. Puedes escribir los números con o sin puntos de miles. Si quieres que te corrija, pega tu tabla en el chat.</p></div>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <!-- ============ 4. QUIZ ============ -->
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas y 2 tipo parcial. Pasas con 4/5 o más. Si no, lee las explicaciones de las que fallaste y haz el Quiz B.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" class="block" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Siguiente:</b> M3 · Scheduling 1 (una máquina), el miércoles a las 8:00, antes de la complementaria de las 2:00.</p>
+    <p>Fuentes: diapositivas de planeación agregada (introducción, persecución y nivelación), pre-parcial de balanceo y planeación de 2026-10 (ModAndes) y Actividad 12 de 2026-10 con su solución oficial (Bar-Bunny). Todos los resultados los verifiqué con una hoja de cálculo propia.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const nf = (x, d = 0) => (Math.round(x * 10 ** d) / 10 ** d).toLocaleString("es-CO", { maximumFractionDigits: d });
+const MES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+/* ---------- Casos ---------- */
+const CASES = {
+  ej: { name: "Ejemplo de la teoría (4 meses)", months: ["Mes 1", "Mes 2", "Mes 3", "Mes 4"], D: [1050, 1430, 1800, 1260], n: [20, 20, 25, 20], K: 5, W0: 12, I0: 200, RP: [0, 0, 300, 0],
+    ssLevel: null, cost: { cw: 2000000, ch: 800000, cf: 1000000, ci: 5000, cp: 10000 }, desc: "K = 5 und/día, W0 = 12, I0 = 200; llegan 300 und en el mes 3. Sin inventario de seguridad." },
+  bb: { name: "Bar-Bunny (Actividad 12, 2026-10)", months: MES, D: [5856, 5184, 6552, 6984, 7320, 6936, 6180, 7128, 7452, 7896, 7248, 6804], n: [24, 22, 24, 27, 25, 21, 21, 26, 21, 27, 22, 18], K: 15, W0: 10, I0: 950, RP: [0, 0, 550, 0, 550, 0, 0, 0, 0, 550, 550, 0],
+    ssLevel: { pct: 0.03, round: "up" }, cost: { cw: 1640000, ch: 840000, cf: 1000000, ci: 12600, cp: 900 }, desc: "K = 15 und/día, W0 = 10, I0 = 950; 550 und de otra sede en mar, may, oct y nov. Nivelación con SS = 3 % (hacia arriba), sin SS en diciembre; persecución sin SS." },
+  ma: { name: "ModAndes (pre-parcial 2026-10)", months: ["Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], D: [4200, 4650, 5100, 5850, 6300, 6700], n: [22, 21, 24, 23, 22, 20], K: 16, W0: 14, I0: 900, RP: [0, 0, 600, 0, 600, 0],
+    ssLevel: { pct: 0.05, round: "up" }, cost: { cw: 1800000, ch: 850000, cf: 1300000, ci: 6500, cp: 18000 }, desc: "K = 16 und/día, W0 = 14, I0 = 900; taller externo de 600 und en sep y nov. Nivelación con SS = 5 % (hacia arriba), sin SS en diciembre; persecución sin SS." }
+};
+function ssOf(c, use) { return c.D.map((d, i) => (!use || !c.ssLevel || i === c.D.length - 1) ? 0 : (c.ssLevel.round === "up" ? Math.ceil(c.ssLevel.pct * d - 1e-9) : Math.floor(c.ssLevel.pct * d + 1e-9))); }
+function chase(c) {
+  const rows = []; let Wp = c.W0, Ip = c.I0;
+  c.D.forEach((d, i) => { const Kn = c.K * c.n[i], RN = d - Ip - c.RP[i], W = Math.max(0, Math.ceil(RN / Kn - 1e-12)), P = W * Kn, I = Ip + P + c.RP[i] - d;
+    rows.push({ m: c.months[i], D: d, Kn, RP: c.RP[i], SS: 0, RN, W, H: Math.max(0, W - Wp), F: Math.max(0, Wp - W), P, I }); Wp = W; Ip = I; });
+  return rows;
+}
+function levelAcc(c) {
+  const SS = ssOf(c, true); let cd = 0, crp = 0, ck = 0; const acc = [];
+  c.D.forEach((d, i) => { cd += d; crp += c.RP[i]; ck += c.K * c.n[i]; const rn = cd + SS[i] - c.I0 - crp; acc.push({ rn, kn: ck, w: Math.ceil(rn / ck - 1e-12) }); });
+  return { acc, SS, W: Math.max(...acc.map((a) => a.w)) };
+}
+function constant(c, W, SS) {
+  const rows = []; let Ip = c.I0;
+  c.D.forEach((d, i) => { const Kn = c.K * c.n[i], P = W * Kn, I = Ip + P + c.RP[i] - d;
+    rows.push({ m: c.months[i], D: d, Kn, RP: c.RP[i], SS: SS[i], W, H: i === 0 ? Math.max(0, W - c.W0) : 0, F: i === 0 ? Math.max(0, c.W0 - W) : 0, P, I }); Ip = I; });
+  return rows;
+}
+function costs(c, rows) {
+  const s = (k) => rows.reduce((a, r) => a + r[k], 0);
+  const o = { sal: s("W") * c.cost.cw, con: s("H") * c.cost.ch, des: s("F") * c.cost.cf, man: Math.max(0, 0) + rows.reduce((a, r) => a + Math.max(0, r.I), 0) * c.cost.ci, pro: s("P") * c.cost.cp };
+  o.tot = o.sal + o.con + o.des + o.man + o.pro; return o;
+}
+
+/* ---------- Gráfica ---------- */
+function planChart(rows, opts = {}) {
+  const W = 600, H = 250, L = 56, R = 12, T = 12, B = 34, n = rows.length;
+  const vals = rows.flatMap((r) => [r.D, r.P, r.I, r.SS || 0]);
+  const vmax = Math.max(...vals) * 1.1, vmin = Math.min(0, ...rows.map((r) => r.I)) * 1.1;
+  const y = (v) => T + (vmax - v) / (vmax - vmin) * (H - T - B);
+  const bw = (W - L - R) / n, x = (i) => L + bw * i + bw / 2;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="${opts.aria || "Demanda, producción e inventario por mes"}">`;
+  const step = Math.pow(10, Math.floor(Math.log10(vmax / 4))), tickStep = Math.ceil(vmax / 4 / step) * step;
+  for (let v = 0; v <= vmax; v += tickStep) { s += `<line class="ch-axis" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ch-t" x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${nf(v)}</text>`; }
+  if (vmin < 0) s += `<line class="ch-axis" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" style="stroke:var(--ink)"/>`;
+  rows.forEach((r, i) => {
+    const h = Math.max(0, y(0) - y(r.P));
+    s += `<rect class="ch-p" x="${x(i) - bw * 0.3}" y="${y(r.P)}" width="${bw * 0.6}" height="${h}" rx="2" opacity=".8"><title>${r.m}: producción ${nf(r.P)}</title></rect>`;
+    if (r.I < 0) s += `<rect class="ch-neg" x="${x(i) - bw * 0.3}" y="${y(0)}" width="${bw * 0.6}" height="${y(r.I) - y(0)}" rx="2"><title>${r.m}: faltan ${nf(-r.I)}</title></rect>`;
+    s += `<text class="ch-t" x="${x(i)}" y="${H - 14}" text-anchor="middle">${r.m}</text>`;
+  });
+  const path = (k) => rows.map((r, i) => (i ? "L" : "M") + x(i) + "," + y(r[k])).join(" ");
+  s += `<path class="ch-d" d="${path("D")}"/>` + rows.map((r, i) => `<circle class="ch-dot" cx="${x(i)}" cy="${y(r.D)}" r="3.5"><title>${r.m}: demanda ${nf(r.D)}</title></circle>`).join("");
+  s += `<path class="ch-i" d="${path("I")}"/>` + rows.map((r, i) => `<circle class="${r.I < 0 ? "ch-neg" : "ch-idot"}" cx="${x(i)}" cy="${y(r.I)}" r="3.5"><title>${r.m}: inventario ${nf(r.I)}</title></circle>`).join("");
+  if (rows.some((r) => r.SS)) rows.forEach((r, i) => { if (r.SS) s += `<line class="ch-ss" x1="${x(i) - bw * 0.4}" x2="${x(i) + bw * 0.4}" y1="${y(r.SS)}" y2="${y(r.SS)}"/>`; });
+  return s + `</svg>`;
+}
+function demandSvg(months, D, aria) {
+  const rows = months.map((m, i) => ({ m, D: D[i], P: 0, I: 0, SS: 0 }));
+  const W = 420, H = 170, L = 46, B = 28, T = 10, n = D.length, vmax = Math.max(...D) * 1.15, bw = (W - L - 10) / n;
+  const y = (v) => T + (vmax - v) / vmax * (H - T - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="${aria}">`;
+  D.forEach((d, i) => { const x = L + bw * i + bw * 0.2; s += `<rect class="ch-p" x="${x}" y="${y(d)}" width="${bw * 0.6}" height="${y(0) - y(d)}" rx="2" opacity=".8"/><text class="ch-t" x="${x + bw * 0.3}" y="${y(d) - 4}" text-anchor="middle">${nf(d)}</text><text class="ch-t" x="${x + bw * 0.3}" y="${H - 10}" text-anchor="middle">${months[i]}</text>`; });
+  s += `<line class="ch-axis" x1="${L}" x2="${W - 10}" y1="${y(0)}" y2="${y(0)}"/><text class="ch-t" x="4" y="${T + 10}">Demanda</text>`;
+  return s + `</svg>`;
+}
+
+/* ---------- Figura de teoría ---------- */
+(function () {
+  const c = CASES.ej, a = chase(c), b = constant(c, levelAcc(c).W, ssOf(c, false));
+  const box = $("#fig-estrategias");
+  box.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px"><div><p class="eyebrow" style="text-align:center">Persecución</p>${planChart(a, { aria: "Persecución: la producción sigue a la demanda" })}</div><div><p class="eyebrow" style="text-align:center">Nivelación</p>${planChart(b, { aria: "Nivelación: producción casi plana e inventario que sube y baja" })}</div></div><figcaption>Barras: producción. Línea negra: demanda. Línea verde: inventario al final del mes. Datos del ejemplo resuelto 2.</figcaption>`;
+})();
+
+/* ---------- Lab ---------- */
+(function initLab() {
+  const ss = $("#lab-set"); Object.entries(CASES).forEach(([k, v]) => { const o = el("option", "", v.name); o.value = k; ss.appendChild(o); });
+  ss.value = "bb"; $("#lab-st").value = "level";
+  const sync = () => { const c = CASES[ss.value]; $("#lab-w").value = levelAcc(c).W; draw(); };
+  ss.addEventListener("change", sync); $("#lab-st").addEventListener("change", draw); $("#lab-w").addEventListener("input", draw);
+  sync();
+})();
+function draw() {
+  const c = CASES[$("#lab-set").value], st = $("#lab-st").value;
+  $("#lab-w-wrap").hidden = st !== "manual";
+  $("#lab-desc").textContent = c.desc;
+  let rows, say, head;
+  const lv = levelAcc(c);
+  if (st === "chase") {
+    rows = chase(c);
+    head = ["Mes", "D", "Kn", "RP", "RN", "W", "H", "F", "P", "I"];
+    say = `Persecución: la fuerza laboral va de ${Math.min(...rows.map((r) => r.W))} a ${Math.max(...rows.map((r) => r.W))} trabajadores, con ${rows.reduce((a, r) => a + r.H, 0)} contrataciones y ${rows.reduce((a, r) => a + r.F, 0)} despidos. El inventario se queda bajo.`;
+  } else {
+    const W = st === "level" ? lv.W : Math.max(0, Math.round(Number($("#lab-w").value) || 0));
+    rows = constant(c, W, lv.SS);
+    head = ["Mes", "D", "Kn", "RP", "SS", "RN ac", "Kn ac", "Wt", "W", "P", "I"];
+    rows.forEach((r, i) => { r.rnac = lv.acc[i].rn; r.knac = lv.acc[i].kn; r.wt = lv.acc[i].w; });
+    const bad = rows.filter((r) => r.I < r.SS);
+    if (st === "level") say = `Nivelación: los W<sub>t</sub> acumulados dan ${lv.acc.map((a) => a.w).join(", ")}; el máximo es W* = ${lv.W}. ${lv.W > c.W0 ? "Se contratan " + (lv.W - c.W0) : lv.W < c.W0 ? "Se despiden " + (c.W0 - lv.W) : "No se contrata ni se despide"} en el primer mes.`;
+    else say = bad.length ? `Con W = ${W} no alcanza: en ${bad.map((r) => r.m).join(", ")} el inventario queda por debajo del de seguridad${bad.some((r) => r.I < 0) ? " o negativo (faltante)" : ""}. W* = ${lv.W}.` : `Con W = ${W} se cumple todo${W > lv.W ? ", pero sobra gente: el inventario y el costo suben. W* = " + lv.W : ". Es W*"}.`;
+  }
+  $("#lab-say").innerHTML = say;
+  $("#lab-chart").innerHTML = planChart(rows);
+  const h = $("#lab-head"); h.textContent = ""; const tr0 = el("tr"); head.forEach((x) => tr0.appendChild(el("th", "", x))); h.appendChild(tr0);
+  const tb = $("#lab-rows"); tb.textContent = "";
+  const t0 = el("tr"); head.forEach((x, i) => t0.appendChild(el("td", "mono", i === 0 ? "0" : x === "W" ? String(c.W0) : x === "I" ? nf(c.I0) : ""))); tb.appendChild(t0);
+  rows.forEach((r) => {
+    const tr = el("tr");
+    const map = { Mes: r.m, D: nf(r.D), Kn: nf(r.Kn), RP: nf(r.RP), SS: nf(r.SS), RN: nf(r.RN), "RN ac": nf(r.rnac), "Kn ac": nf(r.knac), Wt: r.wt, W: r.W, H: r.H, F: r.F, P: nf(r.P), I: nf(r.I) };
+    head.forEach((k) => { const td = el("td", "mono" + (k === "I" && r.I < (r.SS || 0) ? " bad" : "") + (k === "Wt" && r.wt === lv.W ? " bad" : ""), String(map[k])); tr.appendChild(td); });
+    tb.appendChild(tr);
+  });
+  const co = costs(c, rows), box = $("#lab-cost"); box.textContent = "";
+  [["Salarios", co.sal], ["Contratar", co.con], ["Despedir", co.des], ["Mantener", co.man], ["Producir", co.pro], ["Total", co.tot]].forEach(([k, v]) => { const d = el("div", k === "Total" ? "tot" : ""); d.appendChild(el("b", "", "$" + nf(v))); d.appendChild(el("span", "", k)); box.appendChild(d); });
+}
+
+/* ---------- Taller ---------- */
+function planTable(c, rows, cols) {
+  let h = `<div class="tw"><table><thead><tr>${cols.map((k) => `<th>${k}</th>`).join("")}</tr></thead><tbody>`;
+  rows.forEach((r) => { h += "<tr>" + cols.map((k) => `<td class="mono">${k === "Mes" ? r.m : nf(r[k === "RN ac" ? "rnac" : k === "Kn ac" ? "knac" : k === "Wt" ? "wt" : k])}</td>`).join("") + "</tr>"; });
+  return h + `</tbody></table></div>`;
+}
+function costTable(c, rows) {
+  const co = costs(c, rows), s = (k) => rows.reduce((a, r) => a + Math.max(0, r[k]), 0);
+  return `<div class="tw"><table><thead><tr><th>Costo</th><th>Cuenta</th><th>Total</th></tr></thead><tbody>
+    <tr><td>Salarios</td><td class="mono">${nf(s("W"))} × ${nf(c.cost.cw)}</td><td class="mono">$${nf(co.sal)}</td></tr>
+    <tr><td>Contratar</td><td class="mono">${nf(s("H"))} × ${nf(c.cost.ch)}</td><td class="mono">$${nf(co.con)}</td></tr>
+    <tr><td>Despedir</td><td class="mono">${nf(s("F"))} × ${nf(c.cost.cf)}</td><td class="mono">$${nf(co.des)}</td></tr>
+    <tr><td>Mantener</td><td class="mono">${nf(s("I"))} × ${nf(c.cost.ci)}</td><td class="mono">$${nf(co.man)}</td></tr>
+    <tr><td>Producir</td><td class="mono">${nf(s("P"))} × ${nf(c.cost.cp)}</td><td class="mono">$${nf(co.pro)}</td></tr>
+    <tr><td><b>Total</b></td><td></td><td class="mono"><b>$${nf(co.tot)}</b></td></tr></tbody></table></div>`;
+}
+const MA = CASES.ma, BB = CASES.bb;
+const maL = levelAcc(MA), maLR = constant(MA, maL.W, maL.SS); maLR.forEach((r, i) => { r.rnac = maL.acc[i].rn; r.knac = maL.acc[i].kn; r.wt = maL.acc[i].w; });
+const maC = chase(MA);
+const bbL = levelAcc(BB), bbLR = constant(BB, bbL.W, bbL.SS); bbLR.forEach((r, i) => { r.rnac = bbL.acc[i].rn; r.knac = bbL.acc[i].kn; r.wt = bbL.acc[i].w; });
+const bbC = chase(BB);
+const PROBS = [
+  { id: "T1", title: "ModAndes: pantalones de seda, julio a diciembre", src: "Pre-parcial de balanceo y planeación, 2026-10 (el estilo de la complementaria de mañana)",
+    fig: () => demandSvg(MA.months, MA.D, "Demanda de pantalones de julio a diciembre"),
+    text: "Días hábiles y demanda: julio 22 días y 4.200 und; agosto 21 y 4.650; septiembre 24 y 5.100; octubre 23 y 5.850; noviembre 22 y 6.300; diciembre 20 y 6.700. Al cierre de junio hay 14 trabajadores y 900 pantalones; cada trabajador hace 16 pantalones al día. Salario $1.800.000/mes; contratar $850.000; despedir $1.300.000; mantener $6.500 por unidad al mes; producir $18.000 por pantalón. Inventario de seguridad: 5 % de la demanda del mes (redondéalo hacia arriba), sin inventario de seguridad en diciembre. Un taller externo entrega 600 pantalones en septiembre y en noviembre. <b>a)</b> Plan con nivelación de la fuerza laboral. <b>b)</b> Plan con persecución, <b>sin</b> inventario de seguridad.",
+    lits: [
+      { q: "a) Inventario de seguridad de julio", ans: 210, tol: 0, unit: "und" },
+      { q: "a) Fuerza laboral constante W*", ans: maL.W, tol: 0, unit: "trabajadores" },
+      { q: "a) ¿Cuántos trabajadores se contratan en julio?", ans: maL.W - MA.W0, tol: 0, unit: "trabajadores" },
+      { q: "a) Inventario final de diciembre", ans: maLR[5].I, tol: 0, unit: "und" },
+      { q: "a) Costo de mantener inventario en el semestre", ans: costs(MA, maLR).man, tol: 1, unit: "$" },
+      { q: "a) Costo total del semestre con nivelación", ans: costs(MA, maLR).tot, tol: 1, unit: "$" },
+      { q: "b) Trabajadores en julio con persecución", ans: maC[0].W, tol: 0, unit: "trabajadores" },
+      { q: "b) Trabajadores en diciembre con persecución", ans: maC[5].W, tol: 0, unit: "trabajadores" },
+      { q: "b) Costo total de contratación en el semestre", ans: costs(MA, maC).con, tol: 1, unit: "$" },
+      { q: "b) Costo total del semestre con persecución", ans: costs(MA, maC).tot, tol: 1, unit: "$" },
+      { q: "¿Cuánto ahorra la estrategia más barata frente a la otra?", ans: Math.abs(costs(MA, maLR).tot - costs(MA, maC).tot), tol: 1, unit: "$" }
+    ],
+    hints: ["Kn de julio = 16 × 22 = 352. En nivelación, el requerimiento acumulado de julio es 4.200 + 210 − 900 = 3.510.", "Recuerda restar los 600 del taller en septiembre y noviembre, tanto en el acumulado de la nivelación como en el RN de la persecución.", "En persecución, julio: RN = 4.200 − 900 = 3.300 → ⌈3.300/352⌉. Después, cada mes usa el inventario que quedó del anterior."],
+    sol: () => `<p><b>a) Nivelación.</b> Inventarios de seguridad (5 %, hacia arriba): ${maL.SS.map(nf).join(", ")}. Acumulados y trabajadores por corte:</p>
+      ${planTable(MA, maLR, ["Mes", "D", "Kn", "RP", "SS", "RN ac", "Kn ac", "Wt"])}
+      <p>W* = máx(${maL.acc.map((a) => a.w).join(", ")}) = <b>${maL.W}</b>: se contrata <b>${maL.W - MA.W0}</b> en julio. Con 15 trabajadores todo el semestre:</p>
+      ${planTable(MA, maLR, ["Mes", "D", "Kn", "RP", "P", "I", "SS"])}
+      <p>El inventario nunca baja del de seguridad. Costos:</p>${costTable(MA, maLR)}
+      <p><b>b) Persecución</b> (sin inventario de seguridad):</p>
+      ${planTable(MA, maC, ["Mes", "D", "Kn", "RP", "RN", "W", "H", "F", "P", "I"])}
+      ${costTable(MA, maC)}
+      <p><b>Conclusión:</b> la persecución cuesta $${nf(costs(MA, maC).tot)} y la nivelación $${nf(costs(MA, maLR).tot)}: conviene la <b>persecución</b>, que ahorra $${nf(costs(MA, maLR).tot - costs(MA, maC).tot)}. La nivelación pierde por el inventario: mantenerlo cuesta $${nf(costs(MA, maLR).man)}. La persecución reduce el inventario; la nivelación, las contrataciones y despidos.</p>`,
+    res: `Nivelación: W* = ${maL.W}, total $${nf(costs(MA, maLR).tot)}. Persecución: total $${nf(costs(MA, maC).tot)}. Conviene la persecución.` },
+  { id: "T2", title: "Bar-Bunny: máquinas de corte para barberos, un año", src: "Actividad 12 de 2026-10, con solución oficial (la verifiqué)",
+    fig: () => demandSvg(BB.months, BB.D, "Demanda de máquinas de corte de enero a diciembre"),
+    text: "Días hábiles de enero a diciembre: 24, 22, 24, 27, 25, 21, 21, 26, 21, 27, 22, 18. Demanda: 5.856, 5.184, 6.552, 6.984, 7.320, 6.936, 6.180, 7.128, 7.452, 7.896, 7.248, 6.804. Al cierre de diciembre anterior hay 10 trabajadores y 950 máquinas; cada operario hace 15 al día. Salario $1.640.000; contratar $840.000; despedir $1.000.000; mantener $12.600 por unidad al mes; producir $900. En marzo, mayo, octubre y noviembre llegan 550 unidades de otra sede. <b>a)</b> Persecución, sin inventario de seguridad. <b>b)</b> Nivelación con inventario de seguridad del 3 % de la demanda de cada mes (hacia arriba), excepto diciembre.",
+    lits: [
+      { q: "a) Trabajadores en enero con persecución", ans: bbC[0].W, tol: 0, unit: "trabajadores" },
+      { q: "a) Total de contrataciones en el año", ans: bbC.reduce((a, r) => a + r.H, 0), tol: 0, unit: "trabajadores" },
+      { q: "a) Total de despidos en el año", ans: bbC.reduce((a, r) => a + r.F, 0), tol: 0, unit: "trabajadores" },
+      { q: "a) Costo total anual con persecución", ans: costs(BB, bbC).tot, tol: 1, unit: "$" },
+      { q: "b) Inventario de seguridad de enero", ans: 176, tol: 0, unit: "und" },
+      { q: "b) Fuerza laboral constante W*", ans: bbL.W, tol: 0, unit: "trabajadores" },
+      { q: "b) Inventario final de diciembre", ans: bbLR[11].I, tol: 0, unit: "und" },
+      { q: "b) Costo anual de mantener inventario", ans: costs(BB, bbLR).man, tol: 1, unit: "$" },
+      { q: "b) Costo total anual con nivelación", ans: costs(BB, bbLR).tot, tol: 1, unit: "$" }
+    ],
+    hints: ["Enero en persecución: RN = 5.856 − 950 = 4.906 y Kn = 15 × 24 = 360.", "En nivelación, el W<sub>t</sub> más alto aparece al final del año: mira el acumulado de septiembre a diciembre."],
+    sol: () => `<p><b>a) Persecución:</b></p>
+      ${planTable(BB, bbC, ["Mes", "D", "Kn", "RP", "RN", "W", "H", "F", "P", "I"])}${costTable(BB, bbC)}
+      <p><b>b) Nivelación.</b> Acumulados y trabajadores por corte:</p>
+      ${planTable(BB, bbLR, ["Mes", "D", "SS", "RP", "RN ac", "Kn ac", "Wt"])}
+      <p>W* = <b>${bbL.W}</b>: se contratan ${bbL.W - BB.W0} en enero. Plan:</p>
+      ${planTable(BB, bbLR, ["Mes", "D", "Kn", "RP", "P", "I", "SS"])}${costTable(BB, bbLR)}
+      <p>Aquí gana de lejos la persecución: el inventario es caro ($12.600 por unidad al mes) y la nivelación acumula hasta 4.924 unidades en mayo.</p>`,
+    res: `Persecución: $${nf(costs(BB, bbC).tot)}. Nivelación: W* = ${bbL.W}, $${nf(costs(BB, bbLR).tot)}. Cuadra con la solución oficial.` }
+];
+function parseCands(s) {
+  if (s == null) return [];
+  let v = String(s).trim().replace(/[\s$]/g, "");
+  if (!v) return [];
+  const out = new Set();
+  if (v.includes(".") && v.includes(",")) out.add(Number(v.replace(/\./g, "").replace(",", ".")));
+  else if ((v.match(/\./g) || []).length > 1) out.add(Number(v.replace(/\./g, "")));
+  else if ((v.match(/,/g) || []).length > 1) out.add(Number(v.replace(/,/g, "")));
+  else { out.add(Number(v.replace(",", "."))); if (/^\d{1,3}[.,]\d{3}$/.test(v)) out.add(Number(v.replace(/[.,]/, ""))); }
+  return [...out].filter((x) => !isNaN(x));
+}
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((P) => {
+    const a = el("article", "prob");
+    const h = el("div", "prob-head");
+    h.appendChild(el("span", "tag", P.id + " · " + P.src));
+    h.appendChild(el("h3", "", P.title));
+    const tx = el("p", "prose"); tx.innerHTML = P.text; h.appendChild(tx);
+    const fg = el("figure", "fig"); fg.innerHTML = P.fig(); h.appendChild(fg);
+    a.appendChild(h);
+    const b = el("div", "prob-body");
+    P.lits.forEach((L, li) => {
+      const d = el("div", "lit");
+      d.appendChild(el("p", "", L.q));
+      const row = el("div", "lit-row");
+      const fb = el("span", "fb");
+      const inp = el("input"); inp.type = "text"; inp.inputMode = "decimal"; inp.id = `${P.id}-${li}`; inp.style.width = "10em";
+      const lab = el("label", "", L.unit); lab.htmlFor = inp.id;
+      const btn = el("button", "btn ghost", "Revisar"); btn.type = "button";
+      btn.addEventListener("click", () => {
+        const c = parseCands(inp.value);
+        if (!c.length) { fb.className = "fb bad"; fb.textContent = "Escribe un número."; return; }
+        const ok = c.some((v) => Math.abs(v - L.ans) <= L.tol + 1e-6);
+        d.className = "lit " + (ok ? "ok" : "bad"); fb.className = "fb " + (ok ? "ok" : "bad");
+        fb.textContent = ok ? "Correcto." : "No da. Revisa el procedimiento o abre la pista.";
+      });
+      row.appendChild(inp); row.appendChild(lab); row.appendChild(btn); row.appendChild(fb); d.appendChild(row); b.appendChild(d);
+    });
+    const rv = el("div", "reveals");
+    P.hints.forEach((ht, i) => { const dd = el("details", "rev"); dd.appendChild(el("summary", "", "Pista " + (i + 1))); const bb = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; bb.appendChild(pp); dd.appendChild(bb); rv.appendChild(dd); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb = el("div", "rev-body"); sb.innerHTML = P.sol() + `<p class="wx-res" style="border-radius:4px">Resultado: ${P.res}</p>`; ds.appendChild(sb); rv.appendChild(ds);
+    b.appendChild(rv); a.appendChild(b); box.appendChild(a);
+  });
+})();
+
+/* ---------- Quiz ---------- */
+const MOD = "M2", NEXT = "Aprobado. Mañana sigues con M3 · Scheduling 1.";
+const QUIZ = {
+  A: [
+    { k: "Conceptual", q: "¿Qué caracteriza a la estrategia de persecución?",
+      o: ["Mantiene el mismo número de trabajadores todo el año", "Ajusta el número de trabajadores cada mes a la demanda y mantiene poco inventario", "Produce todo en el primer mes y guarda inventario", "Nunca contrata ni despide"], a: 1,
+      e: "Persecución = cada mes justo los trabajadores que pide la demanda: muchas contrataciones y despidos, poco inventario." },
+    { k: "Corta", q: "Un trabajador hace 16 unidades al día y el mes tiene 22 días hábiles. ¿Cuánto vale Kn?",
+      o: ["38 und", "352 und", "1,375 und", "22 und"], a: 1,
+      e: "Kn = K · n = 16 × 22 = 352 unidades por trabajador en el mes." },
+    { k: "Corta", q: "Empiezas el mes con 300 unidades, produces 4.000, recibes 500 de otra planta y entregas 4.600. ¿Con cuánto inventario cierras el mes?",
+      o: ["200", "800", "−300", "4.200"], a: 0,
+      e: "I = 300 + 4.000 + 500 − 4.600 = 200." },
+    { k: "Tipo parcial", fig: () => demandSvg(["Mes t"], [5000], "Demanda del mes: 5.000 unidades"), q: "Persecución sin inventario de seguridad: la demanda del mes es 5.000, quedaron 260 del mes anterior, Kn = 330 y el mes anterior había 13 trabajadores. ¿Cuántos trabajadores hay este mes y cuántos se contratan?",
+      o: ["15 trabajadores, se contratan 2", "14 trabajadores, se contrata 1", "16 trabajadores, se contratan 3", "15 trabajadores, no se contrata nadie"], a: 0,
+      e: "RN = 5.000 − 260 = 4.740; W = ⌈4.740/330⌉ = ⌈14,36⌉ = 15; H = 15 − 13 = 2." },
+    { k: "Tipo parcial", q: "En nivelación, los cocientes RN acumulado / Kn acumulado de cuatro meses dan 11,2; 12,6; 12,1 y 11,8. ¿Cuánto vale W*?",
+      o: ["12", "13", "11,8", "14"], a: 1,
+      e: "Se redondea cada uno hacia arriba: 12, 13, 13 y 12. W* es el mayor: 13." }
+  ],
+  B: [
+    { k: "Conceptual", q: "¿Por qué en la nivelación W* es el máximo de los Wₜ y no el promedio?",
+      o: ["Porque así lo dice la notación", "Porque con menos trabajadores, en el mes del máximo lo producido hasta ahí no alcanza para lo entregado hasta ahí", "Porque el promedio da decimales", "Porque el máximo siempre es el último mes"], a: 1,
+      e: "Cada Wₜ es lo mínimo para cumplir hasta el mes t. Para cumplir todos los meses hay que cubrir el corte más exigente." },
+    { k: "Corta", q: "El inventario de seguridad es el 3 % de la demanda, redondeado hacia arriba. Si D = 5.184, ¿cuánto es?",
+      o: ["155", "156", "155,52", "160"], a: 1,
+      e: "0,03 × 5.184 = 155,52 → hacia arriba, 156." },
+    { k: "Corta", q: "En un semestre de persecución la suma de los Wₜ es 88 y el salario es $1.800.000 al mes. ¿Cuánto cuesta la mano de obra?",
+      o: ["$1.800.000", "$158.400.000", "$10.800.000", "$26.400.000"], a: 1,
+      e: "Salarios = Σ Wₜ × salario = 88 × 1.800.000 = $158.400.000." },
+    { k: "Tipo parcial", fig: () => demandSvg(["Mes t"], [6000], "Demanda del mes: 6.000 unidades"), q: "Persecución con inventario de seguridad: D = 6.000, SS = 300, quedaron 250 del mes anterior, llegan 600 de otra planta y Kn = 368. ¿Cuántos trabajadores se necesitan?",
+      o: ["15", "14", "17", "16"], a: 0,
+      e: "RN = 6.000 + 300 − 250 − 600 = 5.450; W = ⌈5.450/368⌉ = ⌈14,81⌉ = 15." },
+    { k: "Tipo parcial", fig: () => demandSvg(["Mes 1", "Mes 2", "Mes 3"], [2000, 2600, 3100], "Demanda de tres meses"), q: "Nivelación sin inventario de seguridad: D = 2.000, 2.600 y 3.100; Kn = 200, 220 y 250; I₀ = 400 y en el mes 2 llegan 300. ¿Cuánto vale W*?",
+      o: ["11", "10", "10,45", "12"], a: 0,
+      e: "Acumulados: 1.600/200 = 8; (1.600 + 2.600 − 300)/420 = 3.900/420 = 9,29 → 10; (3.900 + 3.100)/670 = 7.000/670 = 10,45 → 11. W* = 11." }
+  ]
+};
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig fig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = String(d.fecha || ""); }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+
+</script>

@@ -44,14 +44,14 @@ Fuentes: el final de 2026-10 cubrió exactamente estos cinco temas, y las comple
 
 | Tema | Ejercicio típico | Tu nota este semestre | Prioridad | Módulo |
 |---|---|---|---|---|
-| **Scheduling 2 · flow shop** | 10 trabajos en 3 máquinas: revisar si aplica Johnson extendido o CDS, secuencia, Cmax y Gantt; CDS con 4 máquinas | **Reto 14: 1,0/5** | Alta | M2 |
-| **Control de piso · CONWIP** | Estaciones con máquinas en paralelo: tasas, cuello de botella, T0, WIP crítico, tabla WIP–TH–TS del mejor caso, máquina adicional y % de mejora | **Reto 9: 2,1/5** | Alta | M4 |
-| **Gestión de proyectos · CPM** | Grafo AON, ruta crítica, costo normal y acelerado con costo indirecto semanal, aceleración a mínimo costo con CUA, bono por semana anticipada | **Reto 15: no presentado** | Alta | M5 |
-| **Scheduling 1 · una máquina** | Hodgson–Moore (mínimo de tardíos), Lawler con precedencias (mínimo Lmax), costo de retrasos, «¿importa el orden en el Cmax?» | **Reto 13: 2,9/5** | Alta | M1 |
-| Balanceo de línea | Tiempo de ciclo, Nmin, grafo, asignación con regla primaria y secundaria y restricciones (juntas o separadas), C real, ocio, eficiencia | Reto 11: 4,0 · Actividad 11: 2,5 | Media | M3 |
-| Planeación agregada | Persecución y nivelación con inventario de seguridad, recepciones de otra planta, redondeos y costos | Reto 12: 4,5 · **Actividad 12: no entregada** | Media | M6 |
+| **Scheduling 2 · flow shop** | 10 trabajos en 3 máquinas: revisar si aplica Johnson extendido o CDS, secuencia, Cmax y Gantt; CDS con 4 máquinas | **Reto 14: 1,0/5** | Alta | M4 |
+| **Control de piso · CONWIP** | Estaciones con máquinas en paralelo: tasas, cuello de botella, T0, WIP crítico, tabla WIP–TH–TS del mejor caso, máquina adicional y % de mejora | **Reto 9: 2,1/5** | Alta | M5 |
+| **Gestión de proyectos · CPM** | Grafo AON, ruta crítica, costo normal y acelerado con costo indirecto semanal, aceleración a mínimo costo con CUA, bono por semana anticipada | **Reto 15: no presentado** | Alta | M6 |
+| **Scheduling 1 · una máquina** | Hodgson–Moore (mínimo de tardíos), Lawler con precedencias (mínimo Lmax), costo de retrasos, «¿importa el orden en el Cmax?» | **Reto 13: 2,9/5** | Alta | M3 |
+| Balanceo de línea | Tiempo de ciclo, Nmin, grafo, asignación con regla primaria y secundaria y restricciones (juntas o separadas), C real, ocio, eficiencia | Reto 11: 4,0 · Actividad 11: 2,5 | Media | M1 |
+| Planeación agregada | Persecución y nivelación con inventario de seguridad, recepciones de otra planta, redondeos y costos | Reto 12: 4,5 · **Actividad 12: no entregada** | Media | M2 |
 
-**Ojo:** en 2026-10 el final fue sobre 50 y el ejercicio numérico de control de piso se volvió bono (la nota quedó sobre 43) porque casi nadie lo resolvió. Por eso M4 va el sábado, con tiempo.
+**Ojo:** en 2026-10 el final fue sobre 50 y el ejercicio numérico de control de piso se volvió bono (la nota quedó sobre 43) porque casi nadie lo resolvió. Por eso M5 tiene el bloque más largo (2 h 30) y vuelve en el simulacro.
 
 ## 4. Metodología (la de siempre)
 
@@ -66,33 +66,35 @@ Lo de siempre: toda pregunta o problema que describa un montaje lleva su figura 
 
 ## 5. Módulos
 
-| Módulo | Qué vas a dominar | Taller |
-|---|---|---|
-| **M1 · Scheduling 1: una máquina** | Notación de Graham (α\|β\|γ); pⱼ, dⱼ, Cⱼ, Lⱼ = Cⱼ − dⱼ, Tⱼ = máx(0, Lⱼ), Uⱼ; Cmax = Σpⱼ (en una máquina el orden no lo cambia); reglas SPT, EDD y WSPT; **Hodgson–Moore** (1‖ΣUⱼ); **Lawler** (1\|prec\|Lmax, de atrás hacia adelante); costo de retrasos; tiempos de preparación | Forja Andina (complementaria 2026-20: Moore y Lawler con precedencias) · Punto 1 del repaso 2026-10 · Odontología (Actividad 13 de 2026-10) |
-| **M2 · Scheduling 2: flow shop** | Gantt de flow shop con la tabla de tiempos de terminación C(i, j) = máx(C(i−1, j), C(i, j−1)) + p(i, j); **Johnson** para F2; F3: si mín M1 ≥ máx M2 o mín M3 ≥ máx M2, máquinas virtuales y Johnson (óptimo); si no, **CDS** (heurística); CDS para m máquinas: m − 1 subproblemas | Pelao-Botso (complementaria 2026-20) · Vinyl Eilish (repaso 2026-10) · Michi-Ganga (repaso 2026-20) · Ferriperfiles (Actividad 14 de 2026-10, CDS con 4 máquinas) |
-| **M3 · Balanceo de línea** | Tiempo de ciclo C = tiempo disponible / demanda; Nmin = ⌈Σt / C⌉; grafo de precedencias y número de sucesoras; asignación con regla primaria y secundaria; restricciones de juntas y separadas; N real, C real, tasa, tiempo ocioso, eficiencia = Σt / (N real · C real); tasa máxima | ModAndes (pre-parcial 2026-10) · Distribuidora El Faro (Actividad 11 de 2026-10) · complementaria de balanceo 2026-20 · ejercicios de clase |
-| **M4 · Control de piso: CONWIP** | Push, pull y CONWIP; ley de Little WIP = TH · TS; tasa de una estación con máquinas iguales (n/t) y distintas (Σ 1/tᵢ); cuello de botella rb; T0 por la ruta (con ramas en paralelo, el máximo); W0 = rb · T0 y qué hacer si no es entero; **mejor caso** (tabla WIP–TH–%rb–TS–%T0–espera) y **peor caso**; pasar a und/hora, día y mes; máquina adicional | Krispo (repaso 2026-20) · Doléz (repaso 2026-10, máquinas distintas) · ChocoAndes (Actividad 9 de 2026-10) · Gibsoff (Actividad 9 de 2026-20, rutas en paralelo) · Binder Kueno (lotes) |
-| **M5 · Gestión de proyectos: CPM** | Grafo AON; pase hacia adelante (IT, FT) y hacia atrás (IL, FL); holguras y ruta crítica; costo total = directo + indirecto semanal × duración − bonos + multas; CUA = (C acel − C normal)/(T normal − T acel); aceleración semana a semana, con varias rutas críticas a la vez; ¿conviene la propuesta? | Biblioteca Altamira (repaso 2026-20) · Divertpro (repaso 2026-10) · El Patito (clase) · Actividad 15 de 2026-10 |
-| **M6 · Planeación agregada** | Capacidad por trabajador Kₙ = productividad × días; recepciones; inventario de seguridad; **persecución** (RN, W, contrataciones, despidos, producción, inventario mes a mes); **nivelación** (acumulados y fuerza laboral constante); costos de salarios, contratar, despedir, mantener y producir; redondeos | π-anito (repaso 2026-20) · ModAndes (pre-parcial 2026-10, taller externo) · Bar-Bunny (Actividad 12 de 2026-10) · complementaria de planeación 2026-20 |
-| **X1 · Exprés: DMAIC para el quiz del jueves** | Las cinco fases (Definir, Medir, Analizar, Mejorar, Controlar): qué se hace y qué herramienta va en cada una, sacado de la nota técnica DMAIC del curso. Solo teoría y quiz | — |
-| **M7 · Mini-simulacro** | 6 problemas cortos, uno por tema, en 90 minutos, con respuestas numéricas como en Bloque Neón y hoja de cálculo. Sobre 60. **Meta: 42/60** | Variantes nuevas (no hay finales anteriores con preguntas visibles fuera de LockDown) |
+Van en el orden en que los estudias: cada tema, antes de su complementaria de repaso.
+
+| Módulo | Qué vas a dominar | Taller | Artifact |
+|---|---|---|---|
+| **M1 · Balanceo de línea** | Tiempo de ciclo C = TD/D; N mínimo = ⌈T/C⌉; grafo de precedencias y número de sucesoras (todas); asignación con regla primaria y secundaria; restricciones de juntas (bloque) y separadas; N real, C real, tasa, tiempo ocioso (por ciclo y por día), eficiencia = T/(N real · C real); tasa máxima | ModAndes (pre-parcial 2026-10) · Distribuidora El Faro (Actividad 11 de 2026-10, con solución oficial) · Boggate (clase) | [M1](https://claude.ai/artifact/YWsM4S8gLmCuUeDkDWEC6S) |
+| **M2 · Planeación agregada** | Kn = K · n; ecuación del inventario; **persecución** (RN, W = ⌈RN/Kn⌉, contrataciones, despidos); **nivelación** (acumulados y W* = máximo); inventario de seguridad; costos y comparación; trabajadores nuevos menos productivos | ModAndes (pre-parcial 2026-10) · Bar-Bunny (Actividad 12 de 2026-10, con solución oficial) | [M2](https://claude.ai/artifact/Ue6ufFWZWGwQptByivLuU7) |
+| **M3 · Scheduling 1: una máquina** | Notación de Graham (α\|β\|γ); pⱼ, dⱼ, Cⱼ, Lⱼ = Cⱼ − dⱼ, Tⱼ = máx(0, Lⱼ), Uⱼ; Cmax = Σpⱼ (en una máquina el orden no lo cambia); reglas SPT, EDD y WSPT; **Hodgson–Moore** (1‖ΣUⱼ); **Lawler** (1\|prec\|Lmax, de atrás hacia adelante); costo de retrasos; tiempos de preparación | Forja Andina (complementaria 2026-20: Moore y Lawler con precedencias) · Punto 1 del repaso 2026-10 · Odontología (Actividad 13 de 2026-10) | por crear |
+| **M4 · Scheduling 2: flow shop** | Gantt de flow shop con la tabla de tiempos de terminación C(i, j) = máx(C(i−1, j), C(i, j−1)) + p(i, j); **Johnson** para F2; F3: si mín M1 ≥ máx M2 o mín M3 ≥ máx M2, máquinas virtuales y Johnson (óptimo); si no, **CDS** (heurística); CDS para m máquinas: m − 1 subproblemas | Pelao-Botso (complementaria 2026-20) · Vinyl Eilish (repaso 2026-10) · Michi-Ganga (repaso 2026-20) · Ferriperfiles (Actividad 14 de 2026-10, CDS con 4 máquinas) | por crear |
+| **M5 · Control de piso: CONWIP** | Push, pull y CONWIP; ley de Little WIP = TH · TS; tasa de una estación con máquinas iguales (n/t) y distintas (Σ 1/tᵢ); cuello de botella rb; T0 por la ruta (con ramas en paralelo, el máximo); W0 = rb · T0 y qué hacer si no es entero; **mejor caso** (tabla WIP–TH–%rb–TS–%T0–espera) y **peor caso**; pasar a und/hora, día y mes; máquina adicional | Krispo (repaso 2026-20) · Doléz (repaso 2026-10, máquinas distintas) · ChocoAndes (Actividad 9 de 2026-10) · Gibsoff (Actividad 9 de 2026-20, rutas en paralelo) | por crear |
+| **M6 · Gestión de proyectos: CPM** | Grafo AON; pase hacia adelante (IT, FT) y hacia atrás (IL, FL); holguras y ruta crítica; costo total = directo + indirecto semanal × duración − bonos + multas; CUA = (C acel − C normal)/(T normal − T acel); aceleración semana a semana, con varias rutas críticas a la vez; ¿conviene la propuesta? | Biblioteca Altamira (repaso 2026-20) · Divertpro (repaso 2026-10) · El Patito (clase) · Actividad 15 de 2026-10 | por crear |
+| **X1 · Exprés: DMAIC para el quiz del jueves** | Las cinco fases (Definir, Medir, Analizar, Mejorar, Controlar): qué se hace y qué herramienta va en cada una, sacado de la nota técnica DMAIC del curso. Solo teoría y quiz | — | por crear |
+| **M7 · Mini-simulacro** | 6 problemas cortos, uno por tema, en 90 minutos, con respuestas numéricas como en Bloque Neón y hoja de cálculo. Sobre 60. **Meta: 42/60** | Variantes nuevas | por crear |
 
 ## 6. Cronograma
 
-Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes, suave** (~2 h); **miércoles, media** (2,5–3 h); **sábado y domingo, pesada** (4–5 h). Las complementarias de repaso cuentan como estudio.
+> **Ajuste del 23 de noviembre (noche).** Vas atrasado en estos temas y una complementaria solo sirve si llegas sabiendo de qué hablan. Por eso cada tema se estudia **antes** de su complementaria de repaso. Y como esta semana casi no tienes clases, la carga sube por encima de la habitual (martes y jueves livianos no aplican esta semana).
 
 | Día | Carga | Qué |
 |---|---|---|
-| Lun 23 (noche) | 15 min | Nada de estudio: revisa la Entrega Final DMAIC y abre el plan |
-| Mar 24 | Liviana · 1,5 h | **11:00 complementaria de repaso PA + BL** (Teams, 1 h 20): primera pasada de M3 y M6. Pregunta si el final es acumulativo. 3:30 p. m.: presentación DMAIC |
-| Mié 25 | Media · 3 h | **M1** teoría, lab y taller (1 h 30, antes de las 2:00) → **2:00 complementaria de repaso Scheduling 1 y 2** (Teams, 1 h 20) → quiz de M1 |
-| Jue 26 | Liviana · 1,5 h | **X1** DMAIC exprés (30 min, antes de clase) → Quiz DMAIC en clase · noche: **M2** teoría y lab (1 h) |
-| Vie 27 | Suave · 2 h | **M2** taller y quiz (1 h) · **M3** teoría y lab (1 h) |
-| Sáb 28 | Pesada · 5 h | **M3** taller y quiz (40 min) · **M4** control de piso completo (2 h 15) · **M5** gestión de proyectos completo (2 h) |
-| Dom 29 | Pesada · 5 h | **M6** planeación agregada completo (2 h) · **M7** mini-simulacro y corrección (2 h) · hoja de fórmulas a mano (30 min) · coevaluación DMAIC. A dormir temprano |
+| Lun 23 (noche) | 15 min | Nada de estudio: revisa la Entrega Final DMAIC |
+| Mar 24 | 5 h 20 | 7:45 **M1** balanceo completo (1 h 45) → 9:35 **M2** planeación agregada: teoría y lab (1 h 15) → **11:00 complementaria de repaso PA + BL** (Teams) → 3:30 p. m. presentación DMAIC → noche: **M2** taller y quiz (1 h) |
+| Mié 25 | 5 h 30 | 8:00 **M3** scheduling 1 completo (1 h 45) → 10:00 **M4** flow shop: teoría, lab y primer ejercicio (1 h 45) → **2:00 complementaria de repaso Scheduling 1 y 2** (Teams) → después: **M4** resto del taller y quiz (40 min) |
+| Jue 26 | 3 h 10 | **X1** DMAIC exprés (40 min) → Quiz DMAIC en clase · **M5** control de piso completo (2 h 30) |
+| Vie 27 | 3 h 50 | **M6** gestión de proyectos completo (2 h 30) · grabación de la complementaria de control de piso y proyectos del lunes (1 h 20), como repaso |
+| Sáb 28 | 4 h 30 | Quiz B de los módulos flojos (1 h 30) · **M7** mini-simulacro y corrección (2 h) · borrador de la hoja de fórmulas (1 h) |
+| Dom 29 | 3 h | Repaso de lo que falló en el simulacro (2 h) · hoja de fórmulas final a mano (45 min) · coevaluación DMAIC. A dormir temprano |
 | **Lun 30** | — | 5:30 a. m. arriba, 10 min con la hoja de fórmulas, llegar 15 min antes. **7:00 a. m.: PARCIAL FINAL** |
 
-**Si te atrasas:** recorta primero los labs de M3 y M6, después el X1 (si te sientes bien con DMAIC) y, por último, baja el mini-simulacro a 3 problemas (control de piso, proyectos y flow shop). Nunca recortes la teoría ni los ejercicios de las complementarias de repaso. Cuando termines un quiz, mándame la nota y ajusto el plan.
+**Si te atrasas:** lo intocable es estudiar la teoría de cada tema antes de su complementaria. Recorta primero los labs, después el X1 (si te sientes bien con DMAIC) y por último baja el mini-simulacro a 3 problemas (control de piso, proyectos y flow shop). Cuando termines un quiz, mándame la nota y ajusto el plan.
 
 ## 7. Errores y erratas de las soluciones oficiales
 
@@ -110,13 +112,13 @@ Todo está en `material/` (copia del zip de Bloque Neón del 23 de noviembre). C
 
 ## 9. Tu progreso
 
-| Módulo | Teoría | Lab | Taller | Quiz | Estado |
+| Módulo | Teoría | Lab | Taller | Quiz | Cuándo |
 |---|---|---|---|---|---|
-| M1 Scheduling 1 | ☐ | ☐ | ☐ | — | miércoles 25 |
-| M2 Scheduling 2 | ☐ | ☐ | ☐ | — | jueves 26 y viernes 27 |
-| M3 Balanceo de línea | ☐ | ☐ | ☐ | — | viernes 27 y sábado 28 |
-| M4 Control de piso | ☐ | ☐ | ☐ | — | sábado 28 |
-| M5 Gestión de proyectos | ☐ | ☐ | ☐ | — | sábado 28 |
-| M6 Planeación agregada | ☐ | ☐ | ☐ | — | domingo 29 |
+| M1 Balanceo de línea | ☐ | ☐ | ☐ | — | martes 24, 7:45 |
+| M2 Planeación agregada | ☐ | ☐ | ☐ | — | martes 24, 9:35 y noche |
+| M3 Scheduling 1 | ☐ | ☐ | ☐ | — | miércoles 25, 8:00 |
+| M4 Scheduling 2 | ☐ | ☐ | ☐ | — | miércoles 25, 10:00 y tarde |
+| M5 Control de piso | ☐ | ☐ | ☐ | — | jueves 26 |
+| M6 Gestión de proyectos | ☐ | ☐ | ☐ | — | viernes 27 |
 | X1 DMAIC exprés | ☐ | — | — | — | jueves 26 |
-| M7 Mini-simulacro | — | — | — | —/60 | domingo 29 |
+| M7 Mini-simulacro | — | — | — | —/60 | sábado 28 |
