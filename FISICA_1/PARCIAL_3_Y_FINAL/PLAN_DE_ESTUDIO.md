@@ -127,11 +127,13 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 |---|---|---|
 | Mar 24 nov | Liviana · 1–1,5 h | **F1** movimiento armónico simple: teoría y lab |
 | Mié 25 nov | Media · 2,5–3 h | **F1** taller y quiz · **F2** péndulos, amortiguadas y forzadas: teoría y lab |
-| Jue 26 nov | Liviana · 1–1,5 h | Clase de repaso general (12:30): pregunta por hoja de fórmulas, calculadora y salón · **F2** taller y quiz |
+| Jue 26 nov | Liviana · 1,5 h | **Preguntas del profe, ronda 1** (30 min, antes de clase) · clase de repaso general (12:30): pregunta por el formato, hoja de fórmulas, calculadora y salón · **F2** taller y quiz |
 | Vie 27 nov | Suave · ~2 h | **F3** repaso P3 + gravitación (con los quizzes de M6 y M7) · evaluación de cursos antes de las 11:59 p. m. |
-| Sáb 28 nov | Pesada · 4–5 h | **F4** repaso P2 · **F5** repaso P1 |
+| Sáb 28 nov | Pesada · 4–5 h | **F4** repaso P2 · **F5** repaso P1 · **Preguntas del profe, ronda 2** (30 min) |
 | Dom 29 nov | Pesada · 4–5 h | **F6** simulacro final (3 h) + corrección · en la noche, el simulacro de Bloque Neón |
 | **Lun 30 nov** | — | En la mañana, la hoja de fórmulas del final (y el simulacro de BN antes de las 2:00 p. m. si no lo hiciste) · **EXAMEN FINAL (15:00)** |
+
+> **Preguntas del profe (24 de noviembre).** El estudiante subió las diapositivas «Preparación examen final» del profe (versión 2024-2, en `material/06_Final/`). Traen 3 juegos de preguntas de finales anteriores, presentados en línea: 10 de selección múltiple de 1 punto cada uno. Hay 22 distintas: 7 de Newton y energía, 5 de cinemática, 5 del Parcial 3, 3 de oscilaciones y 2 de gravitación. 4 se repiten entre juegos: x = h/μ, la cuerda que se recorta (9π), la aceleración máxima del MAS y el cometa. Están resueltas en el artifact [Preguntas del profe](https://claude.ai/artifact/Y31P81uVmYN73fWZvW6S9t), en dos rondas. Por eso la gravitación sube a prioridad 2. **Errata:** en la bala que se incrusta en un bloque con vara rígida, el profe usa la condición de cuerda (tensión 0 arriba) y da (1 + M/m)·√(5gR); con una vara rígida de verdad bastaría v ≈ 0 arriba, lo que da 2·(1 + M/m)·√(gR), que también está entre las opciones. Se deja la del profe, con la nota.
 
 **Si te atrasas en la fase 2:** recorta primero F5 (deja solo lo que perdiste en tu Parcial 1). Nunca recortes la teoría de F1 y F2 ni el simulacro.
 
