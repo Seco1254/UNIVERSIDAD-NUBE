@@ -48,6 +48,23 @@ Cada parcial trae 3 o 4 preguntas de selección múltiple de 10 puntos y 3 probl
 - 2025-2: el enunciado del abierto 2 dice «equilibrio electrostático» (es estático).
 - 2026-1 (sin solución oficial): en el abierto 1 dice «la máxima altura que alcancen los resortes» (son los bloques) y en el abierto 2, «dos diagramas de fuerza para la tabla» (es una barra).
 
+## 1c. Qué sale en el final (pesos revisados el 26 de noviembre)
+
+Dos fuentes que coinciden bastante: las 22 preguntas de finales anteriores que el profe usa para preparar el final (`material/06_Final/`) y las 28 clases del programa.
+
+| Tema | Preguntas del profe | Clases del programa | Tiempo en el plan | Módulo |
+|---|---|---|---|---|
+| Newton, fricción, poleas, circular, trabajo y energía (caps. 4–7) | **7 de 22 · 32 %** | 8 de 28 · 29 % | ~2 h 30 | F4 |
+| Momento lineal, rotación y momento angular (caps. 8–10) | **5 de 22 · 23 %** | 7 de 28 · 25 % | ~1 h 15 | F5 |
+| Vectores, cinemática y gráficas (caps. 1–3) | **5 de 22 · 23 %** | 7 de 28 · 25 % | ~1 h 15 | F6 · F1 |
+| Oscilaciones (cap. 14) | **3 de 22 · 14 %** | 4 de 28 · 14 % | ~2 h | F2 · F3 |
+| Gravitación (cap. 13) | **2 de 22 · 9 %** | 2 de 28 · 7 % | ~45 min | F5 |
+| Equilibrio estático (cap. 11) | 0 de 22 | no está | opcional (quiz de M6) | — |
+
+- Oscilaciones tiene más tiempo que su peso porque es nueva; cinemática tiene menos porque es el mejor parcial (69/90) y sus preguntas son conceptuales.
+- Hay que aprender desde cero: los **diagramas de energía U(x)** (el profe los pregunta; en el Parcial 2 quedaron con prioridad baja y ningún módulo los enseña), la **gravitación** (X2 nunca se hizo) y el **péndulo**. F4 y F5 traen esa teoría.
+- Del Parcial 3, el profe pregunta leyes de conservación: momento lineal, rodar y momento angular. El torque, la polea con masa y el equilibrio no aparecen; el equilibrio no está en el programa.
+
 ## 2. Fechas clave
 
 | Fecha | Qué | Qué hacer |
@@ -94,11 +111,11 @@ Numerados en el orden en que se estudian y ordenados por cuántos puntos da cada
 |---|---|---|---|
 | **F1 · Descartar opciones: dimensiones y casos extremos** | 1.4 | Dimensiones de v, a, F, energía, k, ω, I, p y L; tachar opciones; casos extremos (μ = 0, masa 0, θ = 0° o 90°); revisar resultados | Consejo que le dieron el 26 de noviembre. En las preguntas del profe las opciones casi siempre tienen las mismas dimensiones: ahí descartan los casos extremos |
 | **F2 · Oscilaciones I: movimiento armónico simple** | 14.1–14.4 | ω = √(k/M), T, f, v_máx y a_máx, energía ½·k·A², resorte vertical | 2 preguntas de finales anteriores (del profe), libro y clases; un problema mixto choque + MAS |
-| **F3 · Oscilaciones II: péndulos, amortiguadas y forzadas** | 14.5–14.8 | Péndulo simple y físico, amortiguamiento y resonancia (conceptual) | Libro; la pregunta del profe del péndulo con más amplitud |
-| **F4 · Repaso P2: Newton, fricción, circular y energía** | caps. 4–7 | Ascensores, contacto, poleas móviles, loop, energía con fricción y resortes, diagramas U(x) | Tu Parcial 2, parciales 2 anteriores y 7 preguntas del profe |
-| **F5 · Repaso P3 + gravitación** | caps. 8–11 y 13 | Lo que más sale en los P3, quizzes pendientes de M6 y M7, gravitación y el cometa | Quiz 3 bono, tareas 10 y 11 y 7 preguntas del profe |
-| **F6 · Repaso P1: cinemática y gráficas** | caps. 1–3 | Gráficas v→x, proyectil, caída libre | 5 preguntas del profe y tu Parcial 1 |
-| **F7 · Simulacro final** | todo | Preguntas cortas del estilo del profe y algunos abiertos, 2 h. **Meta: 60/100** | Armado por Claude |
+| **F3 · Oscilaciones II: péndulos, amortiguadas y forzadas** | 14.5–14.8 | Péndulo simple (el periodo no depende de la amplitud) y físico; amortiguamiento y resonancia, solo lo conceptual. ~45 min | La pregunta del profe del péndulo con más amplitud |
+| **F4 · Repaso P2: Newton, circular y energía** | caps. 4–7 | Ascensor, contacto, poleas móviles, loop, energía con fricción y resortes y, **nuevo**, diagramas de energía U(x); potencia básica. ~2 h 30 | Tu Parcial 2, parciales 2 anteriores y 7 preguntas del profe |
+| **F5 · Repaso P3 + gravitación** | caps. 8–10 y 13 | Conservación de p y de L, rodar y, **nuevo**, gravitación (fuerza por simetría, órbitas, Kepler). Quiz de M7; el de M6 es opcional. ~2 h | 7 preguntas del profe (5 del P3 y 2 de gravitación) y el Quiz 3 bono |
+| **F6 · Repaso P1: cinemática y gráficas** | caps. 1–3 | Gráficas v→x, proyectil, caída libre, lo justo de vectores. ~1 h 15 | 5 preguntas del profe y tu Parcial 1 |
+| **F7 · Simulacro final** | todo | 10 de selección múltiple repartidas como las del profe (3 de Newton y energía, 2 del P3, 2 de cinemática, 2 de oscilaciones, 1 de gravitación) y 2 abiertos, 2 h. **Meta: 60/100** | Armado por Claude |
 
 ## 5. Cronograma
 
@@ -126,10 +143,10 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 
 | Día | Carga | Qué |
 |---|---|---|
-| Jue 26 nov | Liviana · 1–1,5 h | **Bloque 1:** F1 (30 min) + Preguntas del profe, ronda 1 (30 min) · clase de repaso a las 12:30 |
-| Vie 27 nov | Suave · 2–2,5 h | **Bloque 1:** F2 · **Bloque 2:** F3 · evaluación de cursos antes de las 11:59 p. m. |
-| Sáb 28 nov | Pesada · 4–5 h | **F4** repaso P2 · **F5** repaso P3 + gravitación · Preguntas del profe, ronda 2 |
-| Dom 29 nov | Pesada · 4–5 h | **F6** repaso P1 (corto) · **F7** simulacro + corrección · en la noche, simulacro de Bloque Neón |
+| Jue 26 nov | Liviana · 1–1,5 h | **Bloque 1:** F1 (30 min) + Preguntas del profe, ronda 1 (30 min) · clase de repaso a las 12:30 · si ya empezaste F2, sigue con él y pasa F1 y la ronda 1 a mañana |
+| Vie 27 nov | Suave · ~2 h | **Bloque 1:** F2 (o F1 + ronda 1) · **Bloque 2:** F3 (45 min) · evaluación de cursos antes de las 11:59 p. m. |
+| Sáb 28 nov | Pesada · ~5 h | **F4** repaso P2 y diagramas de energía (~2 h 30) · **F5** repaso P3 + gravitación (~2 h, quiz de M7) · Preguntas del profe, ronda 2 |
+| Dom 29 nov | Pesada · ~4 h | **F6** repaso P1 (~1 h 15) · **F7** simulacro + corrección · en la noche, simulacro de Bloque Neón |
 | **Lun 30 nov** | — | En la mañana, la hoja de fórmulas del final (y el simulacro de BN antes de las 2:00 p. m. si no lo hiciste) · **EXAMEN FINAL (15:00)** |
 
 > **Preguntas del profe (24 de noviembre).** El estudiante subió las diapositivas «Preparación examen final» del profe (versión 2024-2, en `material/06_Final/`). Traen 3 juegos de preguntas de finales anteriores, presentados en línea: 10 de selección múltiple de 1 punto cada uno. Hay 22 distintas: 7 de Newton y energía, 5 de cinemática, 5 del Parcial 3, 3 de oscilaciones y 2 de gravitación. 4 se repiten entre juegos: x = h/μ, la cuerda que se recorta (9π), la aceleración máxima del MAS y el cometa. Están resueltas en el artifact [Preguntas del profe](https://claude.ai/artifact/Y31P81uVmYN73fWZvW6S9t), en dos rondas. Por eso la gravitación sube a prioridad 2. **Errata:** en la bala que se incrusta en un bloque con vara rígida, el profe usa la condición de cuerda (tensión 0 arriba) y da (1 + M/m)·√(5gR); con una vara rígida de verdad bastaría v ≈ 0 arriba, lo que da 2·(1 + M/m)·√(gR), que también está entre las opciones. Se deja la del profe, con la nota.
