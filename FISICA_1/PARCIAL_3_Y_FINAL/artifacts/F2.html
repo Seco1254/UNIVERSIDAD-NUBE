@@ -361,7 +361,8 @@ svg text{fill:var(--ink)}
       <h3>Por qué este módulo importa</h3>
       <ul>
         <li>El capítulo 14 <b>solo entra en el final</b>: no salió en ningún parcial y en Bloque Neón no hay diapositivas. Se vio en las clases del 10, 12, 17 y 24 de noviembre.</li>
-        <li>Como no hay finales anteriores, el taller tiene problemas del tipo del libro y uno que mezcla un choque (Parcial 3) con un resorte que oscila. Esa mezcla es muy de final.</li>
+        <li>No hay finales anteriores completos, pero sí las preguntas de finales anteriores que el profe usa para preparar el final (sus diapositivas «Preparación examen final»). 3 de las 22 son de oscilaciones: el taller empieza con las 2 de este módulo, y la del péndulo va en F3.</li>
+        <li>Después vienen problemas del tipo del libro y uno que mezcla un choque (Parcial 3) con un resorte que oscila. Esa mezcla es muy de final.</li>
         <li>Usa cosas que ya sabes: la ley de Hooke y la energía del resorte del Parcial 2, y el momento lineal del Parcial 3.</li>
       </ul>
     </div>
@@ -627,8 +628,8 @@ svg text{fill:var(--ink)}
 
   <!-- ============ 3. TALLER ============ -->
   <section id="taller" aria-labelledby="w-h">
-    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>No hay parciales anteriores de este tema: son problemas del tipo del libro, en el orden de la teoría, y al final uno tipo final que mezcla un choque con el MAS.</p></div>
-    <p class="prose"><b>Si vas corto de tiempo:</b> haz el T1 y el T5 (el tipo final) y salta al quiz. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>Primero las 2 preguntas de MAS de finales anteriores que el profe usa para preparar el final. Después, problemas del tipo del libro en el orden de la teoría y, al final, uno tipo final que mezcla un choque con el MAS.</p></div>
+    <p class="prose"><b>Si vas corto de tiempo:</b> haz el T1 y el T2 (las del profe), el T3 y el T7 (el tipo final), y salta al quiz. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
     <div id="problems" class="block"></div>
   </section>
 
@@ -650,7 +651,7 @@ svg text{fill:var(--ink)}
 
   <footer>
     <p>Siguiente: F3 · Péndulos, oscilaciones amortiguadas y forzadas.</p>
-    <p>Fuentes: Young &amp; Freedman 14.1 a 14.4 y el programa del curso (clases del 10 al 24 de noviembre). No hay diapositivas ni parciales de este tema.</p>
+    <p>Fuentes: Young &amp; Freedman 14.1 a 14.4 y el programa del curso (clases del 10 al 24 de noviembre). No hay diapositivas ni parciales de este tema; el T1 y el T2 son preguntas de finales anteriores (diapositivas «Preparación examen final» del profe Ávila).</p>
   </footer>
 </div>
 
@@ -814,8 +815,27 @@ const rt = (x) => `√<span class="rad">${x}</span>`;
 const tch = (t) => `<span class="cx">${t}</span>`;
 const etab = (c1, c2, rows, tot) => `<div class="tw"><table class="etab"><thead><tr><th></th><th>${c1}</th><th>${c2}</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}<tr class="tot"><td>Total</td><td>${tot[0]}</td><td>${tot[1]}</td></tr></tbody></table></div>`;
 const PROBS = [
-  { group: "Problemas tipo libro · en el orden de la teoría", note: "No hay parciales anteriores del cap. 14. Estos cinco cubren lo que se puede preguntar: periodo, máximos, amplitud con energía, resorte vertical y un choque que termina en MAS." },
-  { n: "T1", t: "Lo básico de un bloque en un resorte", src: "Tipo libro 14.2",
+  { group: "Preguntas de finales anteriores · empieza por aquí", note: "Salieron en finales anteriores y el profe las puso en sus diapositivas para preparar el final. Valían 1 punto cada una." },
+  { n: "T1", t: "La energía al duplicar la amplitud", src: "Final anterior · primer juego de las diapositivas del profe · 1 punto",
+    fig: () => dosResortesSvg({ pos: 1, Ap: 48, X0: 150, ghosts: [0], title: "amplitud A" }, { pos: 2, Ap: 48, X0: 150, ghosts: [0], title: "amplitud 2A" }, "El mismo bloque y el mismo resorte: arriba oscila con amplitud A y abajo con amplitud 2A"),
+    txt: "Al duplicar la amplitud de oscilación de un oscilador armónico simple, su energía: A) se multiplica por 8 · B) disminuye · C) se cuadruplica · D) se duplica · E) permanece constante.",
+    hints: ["Mira la energía en un extremo, donde el bloque está quieto un instante: toda está en el resorte.", "E = ½·k·A². ¿Qué pasa si cambias A por 2A?"],
+    sol: [{ w: "La energía total, en el extremo.", y: "En x = A el bloque está quieto: no hay energía cinética y toda está en el resorte (sección 4).", m: "E = ½·k·A²" },
+      { w: "Cambia A por 2A.", y: "El 2 también se eleva al cuadrado: (2A)² = 4·A².", m: "E' = ½·k·(2A)² = 4·(½·k·A²) = 4·E" },
+      { w: "Descarta las trampas.", y: "«Se duplica» sería si la energía dependiera de A sin el cuadrado. «Permanece constante» confunde la energía con el periodo, que es el que no depende de la amplitud." }],
+    res: "C: se cuadruplica.",
+    checks: [{ q: "¿Qué le pasa a la energía?", opts: ["Se multiplica por 8", "Disminuye", "Se cuadruplica", "Se duplica", "Permanece constante"], a: 2 }] },
+  { n: "T2", t: "¿Con qué coincide la aceleración máxima?", src: "Final anterior · salió en 2 de los 3 juegos del profe · 1 punto",
+    fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0, -1], H: 140, aria: "Un bloque que oscila entre −A y +A en un resorte" }),
+    txt: "En un oscilador armónico simple se puede afirmar que: A) la aceleración máxima coincide con velocidad = 0 · B) la aceleración máxima coincide con la posición de equilibrio · C) la aceleración máxima coincide con la rapidez máxima · D) la aceleración es constante · E) la aceleración es cero cuando la rapidez es cero.",
+    hints: ["a = −ω²·x: ¿dónde es más grande el tamaño de x?", "En los extremos (x = ±A), ¿qué hace el bloque un instante antes de devolverse?"],
+    sol: [{ w: "Dónde es máxima la aceleración.", y: "a = −ω²·x es proporcional a la posición: es más grande donde x es más grande, en los extremos x = ±A.", m: "|a<sub>máx</sub>| = A·ω² en x = ±A" },
+      { w: "Qué hace el bloque en los extremos.", y: "Ahí se detiene un instante para devolverse: v = 0. Por eso la aceleración máxima coincide con velocidad cero.", m: "en x = ±A: v = 0" },
+      { w: "Descarta las otras.", y: "En el equilibrio es al revés: a = 0 y la rapidez es máxima (B y C ✗). La aceleración cambia con x, no es constante (D ✗). Cuando v = 0 la aceleración es máxima, no cero (E ✗)." }],
+    res: "A: la aceleración máxima coincide con velocidad = 0.",
+    checks: [{ q: "¿Cuál se puede afirmar?", opts: ["La aceleración máxima coincide con velocidad = 0", "La aceleración máxima coincide con la posición de equilibrio", "La aceleración máxima coincide con la rapidez máxima", "La aceleración es constante", "La aceleración es cero cuando la rapidez es cero"], a: 0 }] },
+  { group: "Problemas tipo libro · en el orden de la teoría", note: "Estos cinco cubren lo demás que se puede preguntar: periodo, máximos, amplitud con energía, resorte vertical y un choque que termina en MAS." },
+  { n: "T3", t: "Lo básico de un bloque en un resorte", src: "Tipo libro 14.2",
     fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0], note: "se suelta desde el reposo", noteX: 20, noteAnchor: "start", H: 150, y: 110, aria: "Un bloque M en un resorte k, estirado hasta +A y soltado desde el reposo" }),
     txt: "Un bloque de masa M está pegado a un resorte de constante k sobre una mesa sin fricción. Se estira una distancia A desde el equilibrio y se suelta desde el reposo. Encuentra: (a) el periodo T y la frecuencia f; (b) la rapidez máxima y dónde ocurre; (c) la aceleración máxima y dónde ocurre.",
     hints: ["ω sale de Newton: M·a = −k·x. Después T = 2π/ω y f = 1/T.", "Se suelta desde el reposo: la amplitud es A. v_máx = A·ω y a_máx = A·ω²."],
@@ -825,7 +845,7 @@ const PROBS = [
       { w: "(c) Aceleración máxima.", y: "a_máx = A·ω² = A·k/M. Ocurre en los extremos (x = ±A), donde el resorte está más estirado o comprimido y empuja más fuerte.", m: `a<sub>máx</sub> = ${fr("k·A", "M")}` }],
     res: "T = 2π·√(M/k), f = (1/2π)·√(k/M), v_máx = A·√(k/M) en x = 0 y a_máx = k·A/M en x = ±A.",
     checks: [{ q: "(a) ¿Cuánto vale la frecuencia f?", opts: ["(1/2π)·√(k/M)", "2π·√(k/M)", "√(k/M)", "(1/2π)·√(M/k)"], a: 0 }] },
-  { n: "T2", t: "La amplitud cuando ya va rápido", src: "Tipo libro 14.3 · amplitud con energía",
+  { n: "T4", t: "La amplitud cuando ya va rápido", src: "Tipo libro 14.3 · amplitud con energía",
     fig: () => resorteSvg({ pos: 0.55, marks: true, v: { lab: "v₀", dir: 1 }, dim: { from: 0, to: 0.55, lab: "x₀" }, H: 150, y: 110, aria: "Un bloque en un resorte, en la posición x₀ a la derecha del equilibrio, moviéndose hacia la derecha con rapidez v₀" }),
     txt: "El bloque del T1 (masa M, resorte k, sin fricción) está en la posición x₀, a la derecha del equilibrio, y en ese instante va con rapidez v₀ alejándose del equilibrio. ¿Cuál es la amplitud A de la oscilación? ¿Es mayor o menor que x₀?",
     hints: ["Usa energía entre el instante dado y el extremo, donde el bloque se detiene (v = 0, x = A).", "½·k·A² = ½·M·v₀² + ½·k·x₀²."],
@@ -836,7 +856,7 @@ const PROBS = [
       { w: "¿Mayor o menor que x₀?", y: "Dentro de la raíz, a x₀² se le suma algo positivo. Tiene sentido: además de estar estirado, el bloque tiene energía cinética, que todavía lo lleva más lejos." }],
     res: "A = √(x₀² + M·v₀²/k), mayor que x₀.",
     checks: [{ q: "¿Cuánto vale A?", opts: ["x₀ + v₀·√(M/k)", "√(x₀² + M·v₀²/k)", "√(x₀² + k·v₀²/M)", "x₀"], a: 1 }] },
-  { n: "T3", t: "¿Dónde va a la mitad de la rapidez máxima?", src: "Tipo libro 14.3 · energía",
+  { n: "T5", t: "¿Dónde va a la mitad de la rapidez máxima?", src: "Tipo libro 14.3 · energía",
     fig: () => resorteSvg({ pos: 0.87, marks: true, xmark: { pos: 0.87, lab: "x = ?" }, v: { lab: "½·vmáx", dir: 1 }, H: 150, aria: "Un bloque que oscila con amplitud A, en una posición x desconocida donde su rapidez es la mitad de la máxima" }),
     txt: "Un bloque de masa M oscila en un resorte de constante k con amplitud A, sin fricción. ¿En qué posiciones x su rapidez es la mitad de la rapidez máxima?",
     hints: ["En el equilibrio toda la energía es cinética: ½·M·v_máx² = ½·k·A².", "Si la rapidez es la mitad, la energía cinética es un cuarto: (½)² = ¼. El resto está en el resorte."],
@@ -847,7 +867,7 @@ const PROBS = [
       { w: "Saca raíz.", y: "√(3/4) = √3/2, y la x puede ser a la derecha o a la izquierda.", m: `x = ±${fr("√3", "2")}·A ≈ ±0,87·A` }],
     res: "x = ±(√3/2)·A, cerca de los extremos.",
     checks: [{ q: "¿En qué x?", opts: ["±A/2", "±(√3/2)·A", "±A/√2", "±A/4"], a: 1 }] },
-  { n: "T4", t: "El bloque colgado que se baja un poco más", src: "Tipo libro 14.4 · resorte vertical",
+  { n: "T6", t: "El bloque colgado que se baja un poco más", src: "Tipo libro 14.4 · resorte vertical",
     fig: () => verticalSvg({ D: true }),
     txt: "Un bloque de masa M cuelga de un resorte vertical, que se estira una distancia d hasta que el bloque queda quieto. Después se baja el bloque una distancia D más y se suelta desde el reposo. Encuentra: (a) el periodo; (b) la amplitud; (c) la rapidez máxima.",
     hints: ["Equilibrio: k·d = M·g, así que k = M·g/d y ω = √(g/d) (ejemplo 6).", "Oscila alrededor del punto donde estaba quieto. Se suelta desde el reposo a D de ese punto: A = D."],
@@ -858,7 +878,7 @@ const PROBS = [
     res: "T = 2π·√(d/g), A = D y v_máx = D·√(g/d).",
     checks: [{ q: "(c) ¿Cuánto vale la rapidez máxima?", opts: ["D·√(g/d)", "√(2·g·D)", "d·√(g/D)", "D·√(d/g)"], a: 0 }] },
   { group: "Tipo final · mezcla con el Parcial 3", note: "Así se puede ver un problema del final: primero un choque (solo momento lineal, como en M1 del Parcial 3) y después un MAS." },
-  { n: "T5", t: "La plastilina que se pega al bloque del resorte", src: "Tipo final · choque + MAS",
+  { n: "T7", t: "La plastilina que se pega al bloque del resorte", src: "Tipo final · choque + MAS",
     fig: () => choqueSvg(),
     txt: "Un bloque de masa M está quieto en el equilibrio, pegado a un resorte de constante k sobre una mesa sin fricción. Una bola de plastilina, también de masa M, llega con rapidez v₀ y se pega al bloque. Encuentra: (a) la rapidez de los dos justo después del choque; (b) la amplitud de la oscilación; (c) el periodo; (d) qué fracción de la energía cinética de la plastilina se pierde en el choque.",
     hints: ["(a) En el choque solo se conserva el momento lineal, no la energía (salen pegados). El resorte no empuja en ese instante: el bloque está en el equilibrio.", "(b) Después del choque sí se conserva la energía: la cinética de los dos (masa 2M) se vuelve ½·k·A² en el extremo. (c) La masa que oscila ahora es 2M."],
@@ -928,9 +948,9 @@ const QUIZ = {
       e: "En el equilibrio k·d = M·g, así que k/M = g/d y ω = √(g/d). T = 2π/ω = 2π·√(d/g)." }
   ],
   B: [
-    { k: "Conceptual", fig: ampFig, q: "Si la amplitud de un bloque en un resorte se duplica, la energía total de la oscilación:",
-      o: ["Se duplica", "Se cuadruplica", "No cambia", "Se reduce a la mitad"], a: 1,
-      e: "E = ½·k·A². Con 2A, (2A)² = 4·A²: la energía se cuadruplica." },
+    { k: "Conceptual", fig: () => FIG.ej2(), q: "Un bloque de masa M oscila en un resorte con amplitud A. Si se cambia por un bloque de masa 4M en el mismo resorte y se suelta desde la misma amplitud, la energía total de la oscilación:",
+      o: ["Se cuadruplica", "Se duplica", "No cambia", "Se reduce a la cuarta parte"], a: 2,
+      e: "E = ½·k·A² solo depende del resorte y de la amplitud, no de la masa. Lo que cambia es la rapidez máxima: v_máx = A·√(k/M) queda a la mitad, y ½·(4M)·(v_máx/2)² da lo mismo que antes." },
     { k: "Conceptual", fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0], H: 140, aria: "Un bloque en el extremo x = +A de su oscilación" }), q: "Cuando el bloque está en el extremo x = +A, ¿cómo son su velocidad y su aceleración?",
       o: ["v = 0 y la aceleración es máxima, hacia el equilibrio", "v es máxima y a = 0", "v = 0 y a = 0", "v es máxima y la aceleración es máxima, hacia afuera"], a: 0,
       e: "En el extremo se detiene un instante (v = 0), pero el resorte está estirado al máximo y lo jala hacia el equilibrio: a = −ω²·A." },

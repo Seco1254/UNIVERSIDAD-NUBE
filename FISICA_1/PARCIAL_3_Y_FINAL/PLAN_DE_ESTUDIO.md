@@ -23,7 +23,7 @@
 - **Cómo sale la nota de cada parcial:** (escrito + asistencia + quiz bono) / 105 × 5. Con eso cuadran tus dos notas: 80/105 → 3,80 y 70/105 → 3,33.
 - **Lo más barato de ganar:** la asistencia (10 pts) y el quiz bono (5 pts) son 15 de los 105 puntos. En el Parcial 1 perdiste 4 pts de asistencia y en el Parcial 2, 2 del bono. No faltes a clase y presenta el quiz bono que suele haber unos días antes del parcial.
 - **Formato del escrito de este semestre:** Parte A con 3 preguntas de selección múltiple de 10 pts, que hay que justificar, y Parte B con 3 problemas abiertos de 20 pts divididos en literales (diagrama, ecuaciones, resultado en letras).
-- **Ya tienes los 4 parciales 3 anteriores del profe** (2024-2, 2025-1, 2025-2 y 2026-1), con las soluciones de los tres primeros, en `material/03_Parciales_anteriores_con_solucion/Parcial 3/`. Los talleres empiezan con esos problemas. El de 2026-1 queda guardado para el simulacro M8. Siguen sin existir finales anteriores.
+- **Ya tienes los 4 parciales 3 anteriores del profe** (2024-2, 2025-1, 2025-2 y 2026-1), con las soluciones de los tres primeros, en `material/03_Parciales_anteriores_con_solucion/Parcial 3/`. Los talleres empiezan con esos problemas. El de 2026-1 queda guardado para el simulacro M8. No hay finales anteriores completos, pero sí 22 preguntas de finales anteriores en las diapositivas «Preparación examen final» del profe (`material/06_Final/`, subidas el 24 de noviembre).
 
 ## 1b. Qué sale en el Parcial 3 (4 parciales anteriores)
 
@@ -93,7 +93,7 @@ Numerados en el orden en que se estudian y ordenados por cuántos puntos da cada
 | Módulo | Libro | Qué vas a dominar | De dónde salen los problemas |
 |---|---|---|---|
 | **F1 · Descartar opciones: dimensiones y casos extremos** | 1.4 | Dimensiones de v, a, F, energía, k, ω, I, p y L; tachar opciones; casos extremos (μ = 0, masa 0, θ = 0° o 90°); revisar resultados | Consejo que le dieron el 26 de noviembre. En las preguntas del profe las opciones casi siempre tienen las mismas dimensiones: ahí descartan los casos extremos |
-| **F2 · Oscilaciones I: movimiento armónico simple** | 14.1–14.4 | ω = √(k/M), T, f, v_máx y a_máx, energía ½·k·A², resorte vertical | Libro y clases; un problema mixto choque + MAS |
+| **F2 · Oscilaciones I: movimiento armónico simple** | 14.1–14.4 | ω = √(k/M), T, f, v_máx y a_máx, energía ½·k·A², resorte vertical | 2 preguntas de finales anteriores (del profe), libro y clases; un problema mixto choque + MAS |
 | **F3 · Oscilaciones II: péndulos, amortiguadas y forzadas** | 14.5–14.8 | Péndulo simple y físico, amortiguamiento y resonancia (conceptual) | Libro; la pregunta del profe del péndulo con más amplitud |
 | **F4 · Repaso P2: Newton, fricción, circular y energía** | caps. 4–7 | Ascensores, contacto, poleas móviles, loop, energía con fricción y resortes, diagramas U(x) | Tu Parcial 2, parciales 2 anteriores y 7 preguntas del profe |
 | **F5 · Repaso P3 + gravitación** | caps. 8–11 y 13 | Lo que más sale en los P3, quizzes pendientes de M6 y M7, gravitación y el cometa | Quiz 3 bono, tareas 10 y 11 y 7 preguntas del profe |
