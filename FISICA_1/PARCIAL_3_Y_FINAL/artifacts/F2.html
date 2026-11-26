@@ -1,4 +1,4 @@
-<title>F1 Movimiento armónico</title>
+<title>F2 Movimiento armónico</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
@@ -345,20 +345,20 @@ svg text{fill:var(--ink)}
 
 <div class="wrap">
   <header class="head">
-    <p class="eyebrow">Física 1 · Examen final · <b>Paso 1</b> · módulo F1 de F6</p>
+    <p class="eyebrow">Física 1 · Examen final · <b>Paso 3</b> · módulo F2 de F7</p>
     <h1>Oscilaciones I: movimiento armónico simple</h1>
     <div class="meta">
       <span class="chip-hot">Final: lunes 30, 15:00</span>
-      <span>Martes 24: teoría y lab · miércoles 25: taller y quiz</span>
+      <span>Viernes 27 · bloque 1 · ~1 h 15 min</span>
       <span>Libro: 14.1 a 14.4</span>
     </div>
     <p class="prose">Un bloque pegado a un resorte que va y viene, un carro con amortiguadores que rebota, una cuerda de guitarra: todo lo que <b>oscila</b> alrededor de un punto de equilibrio. En este módulo aprendes el caso más importante, el <b>movimiento armónico simple</b> (MAS) de una masa en un resorte: cuánto tarda en ir y volver, dónde va más rápido y cómo se reparte su energía.</p>
     <div class="shortcut">
-      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a F2.</p>
+      <p><b>¿Ya te sientes listo?</b> Ve directo al quiz. Si sacas 4/5 o más, pasas a F3.</p>
       <a class="btn" href="#quiz">Ir al quiz</a>
     </div>
     <div class="callout">
-      <h3>Por qué este módulo va primero</h3>
+      <h3>Por qué este módulo importa</h3>
       <ul>
         <li>El capítulo 14 <b>solo entra en el final</b>: no salió en ningún parcial y en Bloque Neón no hay diapositivas. Se vio en las clases del 10, 12, 17 y 24 de noviembre.</li>
         <li>Como no hay finales anteriores, el taller tiene problemas del tipo del libro y uno que mezcla un choque (Parcial 3) con un resorte que oscila. Esa mezcla es muy de final.</li>
@@ -628,13 +628,13 @@ svg text{fill:var(--ink)}
   <!-- ============ 3. TALLER ============ -->
   <section id="taller" aria-labelledby="w-h">
     <div class="sec-title"><span class="sec-num">3</span><h2 id="w-h">Taller</h2><p>No hay parciales anteriores de este tema: son problemas del tipo del libro, en el orden de la teoría, y al final uno tipo final que mezcla un choque con el MAS.</p></div>
-    <p class="prose">Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
+    <p class="prose"><b>Si vas corto de tiempo:</b> haz el T1 y el T5 (el tipo final) y salta al quiz. Usa el chequeo rápido cuando tengas tu respuesta. Si fallas, abre la pista 1 antes de ver la solución. Si quieres que te corrija el desarrollo, mándame una foto o escríbelo en el chat.</p>
     <div id="problems" class="block"></div>
   </section>
 
   <!-- ============ 4. QUIZ ============ -->
   <section id="quiz" aria-labelledby="q-h">
-    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas o conceptuales y 2 tipo examen. Pasas a F2 con 4/5 o más.</p></div>
+    <div class="sec-title"><span class="sec-num">4</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas o conceptuales y 2 tipo examen. Pasas a F3 con 4/5 o más.</p></div>
     <form id="quiz-a" class="quiz" novalidate></form>
     <div id="res-a" hidden></div>
     <div id="quizb-wrap" hidden>
@@ -649,7 +649,7 @@ svg text{fill:var(--ink)}
   </section>
 
   <footer>
-    <p>Siguiente: F2 · Péndulos, oscilaciones amortiguadas y forzadas.</p>
+    <p>Siguiente: F3 · Péndulos, oscilaciones amortiguadas y forzadas.</p>
     <p>Fuentes: Young &amp; Freedman 14.1 a 14.4 y el programa del curso (clases del 10 al 24 de noviembre). No hay diapositivas ni parciales de este tema.</p>
   </footer>
 </div>
@@ -907,7 +907,7 @@ function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li
 
 
 /* ---------- Quiz ---------- */
-const MOD = "F1", NEXT = "Aprobado. Pasas a F2 · Péndulos, oscilaciones amortiguadas y forzadas.";
+const MOD = "F2", NEXT = "Aprobado. Pasas a F3 · Péndulos, oscilaciones amortiguadas y forzadas.";
 const ampFig = () => dosResortesSvg({ pos: 1, Ap: 48, X0: 150, ghosts: [0], title: "estirado A" }, { pos: 2, Ap: 48, X0: 150, ghosts: [0], title: "estirado 2A" }, "El mismo bloque y el mismo resorte: arriba estirado una distancia A, abajo estirado 2A");
 const QUIZ = {
   A: [

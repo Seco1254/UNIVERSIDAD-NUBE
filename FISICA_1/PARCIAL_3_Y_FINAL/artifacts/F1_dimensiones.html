@@ -1,0 +1,1039 @@
+<title>F1 Descartar opciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio del curso (mismo sistema del plan). Columna de lectura ≤ 860px y barra de secciones fija arriba; módulo F1 (dimensiones) del examen final. */
+:root{
+  --paper:#f1f3f6; --surface:#ffffff; --ink:#151b26; --muted:#586274; --rule:#d6dbe4; --grid:rgba(21,27,38,.05);
+  --accent:#2f4fd8; --accent-ink:#ffffff; --accent-soft:#e3e8fd;
+  --hi:#ffe27a; --hi-ink:#3a2f00;
+  --red:#c23b3b; --red-soft:#fbe6e6; --orange:#b8680c; --orange-soft:#fcefd9;
+  --green:#1f7d53; --green-soft:#dcf2e6;
+  --c-peso:#c23b3b; --c-normal:#1f7d53; --c-f:#2f4fd8; --c-comp:#b8680c; --c-ground:#e2e6ee; --c-fric:#7a3fc4;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+    --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+    --hi:#5a4b10; --hi-ink:#fff3c2;
+    --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+    --green:#62d49e; --green-soft:#12301f;
+    --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e131a; --surface:#161d27; --ink:#e6ebf2; --muted:#98a3b4; --rule:#2a3443; --grid:rgba(230,235,242,.04);
+  --accent:#8a9fff; --accent-ink:#0e131a; --accent-soft:#1d2752;
+  --hi:#5a4b10; --hi-ink:#fff3c2;
+  --red:#ff8a8a; --red-soft:#3b1c20; --orange:#f2a955; --orange-soft:#3a2914;
+  --green:#62d49e; --green-soft:#12301f;
+  --c-peso:#ff8a8a; --c-normal:#62d49e; --c-f:#8a9fff; --c-comp:#f2a955; --c-ground:#253041; --c-fric:#c8a6ff;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:24px 72px; display:grid; gap:48px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.12}
+h1{font-size:clamp(2rem,6.5vw,3.2rem); font-weight:900; font-stretch:110%; letter-spacing:-.015em}
+h2{font-size:1.7rem; font-weight:800; font-stretch:108%}
+h3{font-size:1.12rem; font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.eyebrow{font-family:var(--f-mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.prose{display:grid; gap:12px; max-width:68ch}
+p.prose{display:block}
+section{display:grid; gap:22px; min-width:0}
+.block{display:grid; gap:12px; min-width:0}
+
+/* Nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--paper); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:860px; margin:0 auto; padding-inline:16px; padding-block:8px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+.nav a{flex:0 0 auto; text-decoration:none; color:var(--ink); font-size:.88rem; font-weight:600; padding:6px 10px; border-radius:7px; display:inline-flex; gap:7px; align-items:baseline}
+.nav a span{font-family:var(--f-mono); font-weight:400; font-size:.72rem; color:var(--muted)}
+.nav a:hover{background:var(--surface)}
+.nav a.back{color:var(--accent)}
+
+/* Header */
+.head{display:grid; gap:12px}
+.meta{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem; color:var(--muted)}
+.chip-ref{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.shortcut{background:var(--surface); border:1.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:var(--r); padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between}
+.btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-body); font-weight:600; font-size:.95rem; padding:9px 14px; border-radius:8px; background:var(--accent); color:var(--accent-ink); text-decoration:none; border:0; cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* Section title */
+.sec-title{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; border-top:2px solid var(--ink); padding-top:14px}
+.sec-num{font-family:var(--f-display); font-weight:900; font-stretch:120%; font-size:2.4rem; line-height:.9; color:var(--accent)}
+.sec-title p{grid-column:2; color:var(--muted); font-size:.92rem}
+
+/* Teoría */
+.laws{display:grid; gap:0; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden}
+.law{display:grid; grid-template-columns:5.5rem minmax(0,1fr) minmax(0,1fr); gap:6px 16px; padding:12px 14px; border-bottom:1px solid var(--rule)}
+.law:last-child{border-bottom:0}
+.law b{font-family:var(--f-display); font-weight:800}
+.law .ex{color:var(--muted); font-size:.93rem}
+@media (max-width:620px){ .law{grid-template-columns:1fr} }
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:560px}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--paper)}
+tr:last-child td{border-bottom:0}
+.steps{display:grid; gap:8px; padding-left:0; list-style:none; counter-reset:s}
+.steps li{display:grid; grid-template-columns:1.8rem 1fr; gap:10px; counter-increment:s}
+.steps li::before{content:counter(s); font-family:var(--f-display); font-weight:900; color:var(--accent); font-size:1.15rem; line-height:1.4}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:12px; display:grid; gap:10px; min-width:0}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:.9rem}
+.eq{font-family:var(--f-mono); font-size:.92rem; background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:8px 10px; display:grid; gap:2px}
+.eq b{font-weight:500}
+.callout{border-left:4px solid var(--accent); background:var(--accent-soft); padding:12px 14px; border-radius:0 8px 8px 0; display:grid; gap:6px}
+.callout.trap{border-color:var(--red); background:var(--red-soft)}
+.callout h3{font-size:1rem}
+
+/* SVG */
+.sv-ground{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-line{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-dash{stroke:var(--muted); stroke-width:1.2; stroke-dasharray:4 4; fill:none}
+.sv-block{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.sv-lab{fill:var(--ink); font-family:var(--f-mono); font-size:12px}
+.sv-ang{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:15px}
+.sv-arc{stroke:var(--accent); stroke-width:1.8; fill:none}
+.sv-rope{stroke:var(--ink); stroke-width:1.5; fill:none}
+.sv-pulley{fill:var(--surface); stroke:var(--ink); stroke-width:1.8}
+.a-peso{stroke:var(--c-peso); fill:var(--c-peso)} .t-peso{fill:var(--c-peso)}
+.a-comp{stroke:var(--c-comp); fill:var(--c-comp)} .t-comp{fill:var(--c-comp)}
+.a-f{stroke:var(--c-f); fill:var(--c-f)} .t-f{fill:var(--c-f)}
+.a-n{stroke:var(--c-normal); fill:var(--c-normal)} .t-n{fill:var(--c-normal)}
+.sv-t{font-family:var(--f-mono); font-size:12px; font-weight:500}
+
+/* Lab */
+.lab{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); overflow:hidden}
+@media (max-width:720px){ .lab{grid-template-columns:1fr} }
+.lab-stage{padding:10px; border-right:1px solid var(--rule); min-width:0}
+@media (max-width:720px){ .lab-stage{border-right:0; border-bottom:1px solid var(--rule)} }
+#lab-cv{width:100%; height:300px; display:block}
+.lab-side{padding:14px; display:grid; gap:14px; align-content:start; min-width:0}
+.ctl{display:grid; gap:6px}
+.ctl label,.ctl legend{font-size:.85rem; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent)}
+.seg{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden}
+.seg label{flex:1; text-align:center; font-size:.83rem; font-weight:500; padding:6px 4px; cursor:pointer}
+.seg input{position:absolute; opacity:0; pointer-events:none}
+.seg input:checked + span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent); color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:-2px}
+fieldset{border:0; padding:0; margin:0; display:grid; gap:6px; min-width:0}
+.chk{display:flex; gap:8px; align-items:center; font-size:.88rem}
+.readout{display:grid; gap:6px; font-size:.86rem; border-top:1px solid var(--rule); padding-top:12px}
+.ro{display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.ro span:first-child{color:var(--muted)}
+.ro b{font-family:var(--f-mono); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.legend-f{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.8rem; padding:6px 4px 0}
+.legend-f i{display:inline-block; width:14px; height:3px; vertical-align:middle; margin-right:5px; border-radius:2px}
+.status{font-weight:600; font-size:.88rem; padding:6px 10px; border-radius:8px; background:var(--paper)}
+.status.ok{background:var(--green-soft); color:var(--green)}
+.challenges{display:grid; gap:10px}
+
+/* Details */
+details.rev{border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.rev > summary{cursor:pointer; padding:9px 12px; font-weight:600; font-size:.92rem; list-style:none; display:flex; gap:8px; align-items:center}
+details.rev > summary::-webkit-details-marker{display:none}
+details.rev > summary::before{content:"+"; font-family:var(--f-mono); color:var(--accent); width:1em}
+details.rev[open] > summary::before{content:"−"}
+details.rev .rev-body{padding:0 12px 12px 32px; display:grid; gap:8px; font-size:.95rem}
+
+/* Taller */
+.prob{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:16px; display:grid; gap:14px; min-width:0}
+.prob-head{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline}
+.prob-head .src{font-family:var(--f-mono); font-size:.75rem; color:var(--muted)}
+.prob-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:680px){ .prob-body{grid-template-columns:1fr} }
+.prob-body svg{width:100%; height:auto; display:block; background:var(--paper); border-radius:8px}
+.check{display:grid; gap:8px; border-top:1px dashed var(--rule); padding-top:12px}
+.check p{font-weight:600; font-size:.92rem}
+.opts{display:flex; flex-wrap:wrap; gap:6px}
+.opt{font:inherit; font-family:var(--f-mono); font-size:.88rem; padding:6px 11px; border-radius:7px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--green-soft); border-color:var(--green); color:var(--green)}
+.opt.wrong{background:var(--red-soft); border-color:var(--red); color:var(--red)}
+.fb{font-size:.9rem; min-height:1.2em}
+.fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+.reveals{display:grid; gap:8px}
+
+/* Quiz */
+.quiz{display:grid; gap:14px}
+.q{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r); padding:14px 16px; display:grid; gap:10px; min-width:0}
+.q legend{font-weight:600; padding:0; display:grid; grid-template-columns:auto 1fr; gap:10px}
+.q legend .qn{font-family:var(--f-display); font-weight:900; color:var(--accent)}
+.q .kind{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.qopts{display:grid; gap:6px}
+.qopt{display:flex; gap:10px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:.95rem}
+.qopt:hover{border-color:var(--accent)}
+.qopt input{margin-top:5px; accent-color:var(--accent)}
+.qopt.right{border-color:var(--green); background:var(--green-soft)}
+.qopt.wrong{border-color:var(--red); background:var(--red-soft)}
+.qexp{font-size:.92rem; border-left:3px solid var(--rule); padding-left:10px}
+.qexp.ok{border-color:var(--green)} .qexp.no{border-color:var(--red)}
+.result{border-radius:var(--r); padding:16px; display:grid; gap:8px; border:1.5px solid var(--ink)}
+.result.pass{background:var(--green-soft)}
+.result.fail{background:var(--red-soft)}
+.result .score{font-family:var(--f-display); font-weight:900; font-stretch:115%; font-size:2.2rem; line-height:1}
+.attempts{display:grid; gap:6px; font-size:.9rem}
+.att{display:flex; flex-wrap:wrap; gap:4px 12px; padding:8px 12px; background:var(--surface); border:1px solid var(--rule); border-radius:8px}
+.att b{font-family:var(--f-mono)}
+.pill{font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:99px}
+.pill.ok{background:var(--green-soft); color:var(--green)}
+.pill.no{background:var(--red-soft); color:var(--red)}
+footer{font-size:.84rem; color:var(--muted); display:grid; gap:6px}
+
+/* M3: fricción */
+[hidden]{display:none!important}
+.qfig svg{width:100%; max-width:380px; height:auto; display:block; background:var(--paper); border-radius:8px}
+.sv-brk{stroke:var(--ink); stroke-width:2.6; fill:none}
+.sv-axle{fill:var(--ink)}
+.sv-hatch{stroke:var(--muted); stroke-width:1}
+.a-fric{stroke:var(--c-fric); fill:var(--c-fric)} .t-fric{fill:var(--c-fric)}
+.a-fric-bad{stroke:var(--red); fill:var(--red)}
+.tabs{display:flex; flex-wrap:wrap; gap:6px}
+.tab{font:inherit; font-size:.88rem; font-weight:600; padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.lab-fig svg{width:100%; height:auto; display:block}
+.lab-stage{display:grid; gap:8px; align-content:start}
+.small{font-size:.85rem}
+.gr-grid{stroke:var(--rule); stroke-width:1}
+.gr-axis{stroke:var(--muted); stroke-width:1.2}
+.gr-tick{fill:var(--muted); font-family:var(--f-mono); font-size:10px}
+.gr-lab{fill:var(--muted); font-family:var(--f-body); font-size:11px}
+.gr-ann{fill:var(--ink); font-family:var(--f-mono); font-size:10.5px}
+.gr-line{stroke:var(--accent); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.gr-drop{stroke:var(--accent); stroke-width:2; stroke-dasharray:4 4; fill:none}
+.gr-guide{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 4}
+.gr-dot{fill:var(--accent); stroke:var(--surface); stroke-width:2}
+#graf-plot{touch-action:none; cursor:crosshair}
+.nl-band{fill:var(--green-soft); stroke:var(--green); stroke-width:1.2}
+.nl-dot{fill:var(--green); stroke:var(--surface); stroke-width:2}
+.nl-dot.bad{fill:var(--red)}
+.status.bad{background:var(--red-soft); color:var(--red)}
+.qrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* M5 */
+.a-v{stroke:var(--ink); fill:var(--ink)} .t-v{fill:var(--ink)}
+.arc-v{stroke:var(--ink); stroke-width:2; fill:none}
+.sv-ball{fill:var(--surface); stroke:var(--ink); stroke-width:2}
+.sv-cyl{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.5}
+.sv-track{stroke:var(--ink); stroke-width:4; fill:none}
+.sv-road{stroke:var(--c-ground); stroke-width:34; fill:none}
+.sv-block.bad{stroke:var(--red)}
+.sv-dash.bad{stroke:var(--red)}
+.sub{font-size:8px}
+.prose ul{padding-left:20px; display:grid; gap:4px; margin:0}
+.sym td:first-child{white-space:nowrap; font-size:1rem}
+
+/* M6–M7 */
+.sv-rough{stroke:var(--orange); stroke-width:5}
+.sv-ghost{fill:none; stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 3}
+.sv-spring{stroke:var(--ink); stroke-width:2; fill:none; stroke-linejoin:round}
+.sv-track-th{stroke:var(--ink); stroke-width:3; fill:none}
+.bar-track{fill:var(--rule)}
+.bar{fill:var(--accent)}
+.bar-heat{fill:var(--orange)}
+
+/* M8 */
+.chip-hot{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--red); border:1px solid currentColor; padding:0 6px; border-radius:4px}
+.sv-dim{stroke:var(--accent); stroke-width:1.6}
+.sv-dim2{stroke:var(--c-fric); stroke-width:3}
+.sv-comp{stroke:var(--c-comp); stroke-width:2; stroke-dasharray:5 3}
+svg text{fill:var(--ink)}
+.sv-tl{font-family:var(--f-body); font-size:12.5px}
+
+/* Ejemplos resueltos paso a paso */
+.wx{border:1px solid var(--rule); border-radius:var(--r); background:var(--surface); overflow:hidden; display:grid; margin-top:6px}
+.wx-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:14px; padding:14px; background:var(--accent-soft); border-bottom:1px solid var(--rule); align-items:center}
+.wx-q{display:grid; gap:8px}
+.wx-q p{margin:0}
+.wx .tag{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.wx h4{font-family:var(--f-display); font-weight:800; font-size:1.1rem; margin:0; line-height:1.25}
+.wx-fig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:6px; min-width:0}
+.wx-fig.wide{max-width:420px}
+.wx-fig figcaption{font-size:.85rem; color:var(--muted); padding:2px 6px 4px}
+.wx-steps{list-style:none; margin:0; padding:4px 14px; counter-reset:w}
+.wx-steps>li{display:grid; grid-template-columns:1.9rem minmax(0,1fr); column-gap:10px; row-gap:7px; padding:14px 0; border-top:1px dashed var(--rule); counter-increment:w}
+.wx-steps>li:first-child{border-top:0}
+.wx-steps>li::before{content:counter(w); grid-column:1; grid-row:1; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.85rem}
+.wx-steps>li>*{grid-column:2; margin:0; min-width:0}
+.wx-steps .what{font-weight:700; line-height:1.6rem}
+.wx-steps .why{color:var(--muted)}
+.mx{font-family:var(--f-mono); font-size:.95rem; background:var(--paper); border:1px solid var(--rule); border-radius:6px; padding:8px 12px; overflow-x:auto; line-height:2.2; white-space:nowrap}
+.mx .ar{color:var(--muted); margin:0 .6em; font-family:var(--f-body)}
+.wx-res{margin:4px 14px 0; padding:10px 12px; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0}
+.wx-chk{margin:0; padding:12px 14px 16px}
+.frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.35; margin:0 .1em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor}
+.rad{display:inline-block; border-top:1.5px solid currentColor; padding:0 .15em; line-height:1.6}
+.cx{text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:2px}
+.etab{min-width:340px; font-family:var(--f-mono); font-size:.88rem}
+.etab th,.etab td{text-align:center; padding:7px 10px}
+.etab th:first-child,.etab td:first-child{text-align:left; color:var(--muted)}
+.etab tr.tot td{font-weight:600; background:var(--paper)}
+.etab tr:last-child td{border-bottom:0}
+@media (max-width:640px){ .wx-head{grid-template-columns:1fr} .wx-steps{padding:4px 10px} .wx-steps>li{grid-template-columns:1.6rem minmax(0,1fr); column-gap:8px} }
+
+/* P3·M1: choques */
+.sv-tag{fill:var(--muted); font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase}
+.sv-thin{stroke:var(--rule); stroke-width:1.2; fill:none}
+.sv-ang-s{fill:var(--accent); font-family:var(--f-display); font-weight:800; font-size:12px}
+.bar-k{fill:var(--green)}
+.btn.sm{font-size:.82rem; padding:6px 10px}
+.presets{gap:6px}
+
+/* Figuras de rotación e inercia */
+.sv-mass{fill:var(--accent-soft); stroke:var(--ink); stroke-width:1.6}
+.sv-axis{fill:var(--surface); stroke:var(--red); stroke-width:2}
+.sv-rod{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.sv-disk{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.8}
+.sv-ring{stroke:var(--ink); stroke-width:6; fill:none}
+.sv-ring2{stroke:var(--ink); stroke-width:3.5; fill:none}
+.sv-plate{fill:var(--c-ground); stroke:var(--ink); stroke-width:1.6}
+.callout ul,.callout ol{padding-left:20px; display:grid; gap:4px}
+.prob-group{display:grid; gap:4px; margin:10px 0 2px; padding-top:10px; border-top:2px solid var(--ink)}
+.prob-group h3{font-family:var(--f-display); font-size:1.12rem}
+.prob-group p{margin:0; color:var(--muted); font-size:.95rem}
+.chip-opt{font-family:var(--f-mono); font-size:.72rem; color:var(--muted); border:1px dashed var(--muted); padding:1px 6px; border-radius:4px}
+.lab-h{font-size:1rem; margin:4px 0 -4px}
+.ibar{display:flex; height:14px; border-radius:6px; overflow:hidden; background:var(--paper); border:1px solid var(--rule)}
+.ibar span{display:block; height:100%; transition:width .25s}
+.ibar span:first-child{background:var(--accent)}
+.ibar span:last-child{background:var(--orange)}
+.key{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+.mini{min-width:0; font-size:.8rem}
+.mini th,.mini td{padding:5px 6px}
+.mini td{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+.mini tr.win td{background:var(--green-soft)}
+.key i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px}
+</style>
+
+<nav class="nav" aria-label="Secciones del módulo">
+  <div class="nav-in">
+    <a class="back" href="https://claude.ai/artifact/3pHhP74FL8qBp8SYWWCRhD" target="_blank" rel="noopener">← Plan</a>
+    <a href="#teoria">1 Teoría <span>15 min</span></a>
+    <a href="#taller">2 Taller <span>10 min</span></a>
+    <a href="#quiz">3 Quiz <span>5 min</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Física 1 · Examen final · <b>Paso 1</b> · módulo F1 de F7 · exprés, sin lab</p>
+    <h1>Descartar opciones sin resolver: dimensiones y casos extremos</h1>
+    <div class="meta">
+      <span class="chip-hot">Final: lunes 30, 15:00</span>
+      <span>Jueves 26 · ~30 min</span>
+      <span>Libro: 1.4 (unidades y dimensiones)</span>
+    </div>
+    <p class="prose">Te dieron un buen consejo: revisar las <b>dimensiones</b> de las opciones. Una respuesta que debería ser un tiempo y sale en metros está mala, sin hacer ninguna cuenta. Aquí aprendes a hacerlo en segundos y lo completas con un segundo truco, los <b>casos extremos</b>, que sirve justo cuando todas las opciones tienen las dimensiones bien.</p>
+    <div class="callout">
+      <h3>Lo que vas a ver en el examen</h3>
+      <ul>
+        <li>En las preguntas del profe, las opciones casi siempre tienen las mismas dimensiones (él las arma así). Ahí las dimensiones no descartan, pero los <b>casos extremos</b> sí: en la rampa con fricción, por ejemplo, descartan 3 de las 5 opciones.</li>
+        <li>Las dimensiones sí descartan mucho cuando las opciones mezclan fórmulas, como √(L/g) contra √(g/L) en un periodo, y en preguntas de unidades, como la de «cuál NO es unidad de energía».</li>
+        <li>Y siempre sirven para <b>revisar tu propia respuesta</b> antes de marcar o de pasar al siguiente literal de un abierto.</li>
+      </ul>
+    </div>
+  </header>
+
+  <section id="teoria" aria-labelledby="t-h">
+    <div class="sec-title"><span class="sec-num">1</span><h2 id="t-h">Teoría</h2><p>Qué son las dimensiones, la tabla de las que más usas, las tres reglas, los casos extremos y una receta para las preguntas de selección múltiple.</p></div>
+
+    <div class="block">
+      <h3>Símbolos de este módulo</h3>
+      <div class="tw"><table class="sym">
+        <thead><tr><th>Símbolo</th><th>Se lee</th><th>Qué es</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">[x]</td><td>«dimensiones de x»</td><td>De qué está hecha la cantidad x: longitud, masa, tiempo o una combinación.</td></tr>
+          <tr><td class="mono">L</td><td>«longitud»</td><td>La dimensión de cualquier distancia: metros, centímetros, kilómetros. (Aquí L no es el largo de una barra.)</td></tr>
+          <tr><td class="mono">M</td><td>«masa»</td><td>La dimensión de cualquier masa: kilogramos, gramos.</td></tr>
+          <tr><td class="mono">T</td><td>«tiempo»</td><td>La dimensión de cualquier tiempo: segundos, horas. (Aquí T no es el periodo.)</td></tr>
+          <tr><td class="mono">sin dimensión</td><td>—</td><td>Números como 2, ½ y π, los ángulos, el seno y el coseno, y el coeficiente de fricción μ.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>1. Las dimensiones de lo que más usas</h3>
+      <p class="prose">Toda cantidad de mecánica está hecha de tres ingredientes: longitud (L), masa (M) y tiempo (T). Por ejemplo, una velocidad son metros sobre segundos, así que [v] = L/T. Una fuerza es masa por aceleración: [F] = M·L/T². Esta tabla te ahorra pensarlas en el examen:</p>
+      <div class="tw"><table>
+        <thead><tr><th>Cantidad</th><th>Dimensiones</th><th>De dónde sale</th></tr></thead>
+        <tbody>
+          <tr><td>distancia, altura, radio: x, h, R, d</td><td class="mono">L</td><td>metros</td></tr>
+          <tr><td>tiempo, periodo: t, T</td><td class="mono">T</td><td>segundos</td></tr>
+          <tr><td>velocidad: v</td><td class="mono">L/T</td><td>m/s</td></tr>
+          <tr><td>aceleración y gravedad: a, g</td><td class="mono">L/T²</td><td>m/s²</td></tr>
+          <tr><td>fuerza: F, N, T (tensión), M·g</td><td class="mono">M·L/T²</td><td>F = M·a</td></tr>
+          <tr><td>energía y trabajo: K, U, W</td><td class="mono">M·L²/T²</td><td>½·M·v²</td></tr>
+          <tr><td>constante del resorte: k</td><td class="mono">M/T²</td><td>F = k·x, así que k = fuerza/longitud</td></tr>
+          <tr><td>ω (frecuencia angular o velocidad angular), f</td><td class="mono">1/T</td><td>rad/s; el radián no tiene dimensión</td></tr>
+          <tr><td>momento de inercia: I</td><td class="mono">M·L²</td><td>M·R²</td></tr>
+          <tr><td>momento lineal: p</td><td class="mono">M·L/T</td><td>M·v</td></tr>
+          <tr><td>momento angular: L</td><td class="mono">M·L²/T</td><td>I·ω</td></tr>
+          <tr><td>μ, ángulos, sen θ, cos θ, 2, π</td><td class="mono">sin dimensión</td><td>no cambian las dimensiones</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="block">
+      <h3>2. Las tres reglas</h3>
+      <ol class="prose">
+        <li><b>Solo se suman, restan o igualan cosas con las mismas dimensiones.</b> «2·g·H + v²» está bien (las dos son L²/T²); «g + v» no puede aparecer.</li>
+        <li><b>Los números no cuentan.</b> 2, ½, π, μ y los ángulos no cambian las dimensiones. Por eso las dimensiones nunca distinguen √(10·g·H/7) de √(2·g·H).</li>
+        <li><b>Una raíz parte las dimensiones a la mitad:</b> √(L²/T²) = L/T.</li>
+      </ol>
+      <article class="wx" aria-labelledby="wx1-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 1</span>
+            <h4 id="wx1-h">¿Cuál puede ser el periodo de un péndulo?</h4>
+            <p>Un péndulo de largo ℓ (se lee «ele cursiva») oscila. Las opciones para su periodo son 2π·√(ℓ/g) y 2π·√(g/ℓ).</p>
+            <p><b>Pregunta:</b> ¿cuál puede ser un periodo?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej1"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">¿Qué dimensiones tiene que tener?</p><p class="why">Un periodo es un tiempo.</p><div class="mx">[periodo] = T</div></li>
+          <li><p class="what">Primera opción: ℓ/g.</p><p class="why">Dividir entre L/T² es multiplicar por T²/L. La L se cancela. El 2π no cuenta.</p><div class="mx">[ℓ/g] = <span class="frac"><span>L</span><span>L/T²</span></span> = <span class="cx">L</span>·<span class="frac"><span>T²</span><span><span class="cx">L</span></span></span> = T²<span class="ar">→</span>√(T²) = T ✓</div></li>
+          <li><p class="what">Segunda opción: g/ℓ.</p><p class="why">Es la misma fracción volteada.</p><div class="mx">[g/ℓ] = <span class="frac"><span>1</span><span>T²</span></span><span class="ar">→</span>√ = <span class="frac"><span>1</span><span>T</span></span> ✗</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> solo 2π·√(ℓ/g) es un tiempo. La otra tiene dimensiones de 1/T: es una frecuencia angular, no un periodo.</div>
+        <p class="wx-chk"><b>Truco para recordarlo:</b> un péndulo más largo oscila más lento, así que ℓ va arriba.</p>
+      </article>
+      <article class="wx" aria-labelledby="wx2-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 2</span>
+            <h4 id="wx2-h">Revisar tu propia respuesta</h4>
+            <p>Resolviste una rapidez y te salió v = √(2·g·H)/R.</p>
+            <p><b>Pregunta:</b> ¿puede estar bien?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej2"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Lo que debe dar.</p><div class="mx">[v] = L/T</div></li>
+          <li><p class="what">Lo que dio.</p><p class="why">g·H = (L/T²)·L = L²/T². La raíz da L/T. Dividir entre R (una L) deja 1/T.</p><div class="mx">[√(2·g·H)/R] = <span class="frac"><span>L/T</span><span>L</span></span> = <span class="frac"><span>1</span><span>T</span></span> ✗</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> está mala: dio 1/T, que es una ω, no una rapidez. Ese «/R» sobra, o lo que se pedía era ω = v/R.</div>
+        <p class="wx-chk"><b>Cuándo hacerlo:</b> al final de cada literal de un abierto. Toma diez segundos y te salva de arrastrar el error al siguiente literal.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>3. Los casos extremos</h3>
+      <p class="prose">Cuando todas las opciones tienen las dimensiones bien, imagina un caso extremo en el que sabes qué tiene que pasar: <b>sin fricción (μ = 0)</b>, <b>una masa que se vuelve cero</b>, <b>un ángulo de 0° o de 90°</b>. La respuesta correcta tiene que funcionar también ahí. Las que den algo absurdo, se tachan.</p>
+      <article class="wx" aria-labelledby="wx3-h">
+        <div class="wx-head">
+          <div class="wx-q">
+            <span class="tag">Ejemplo resuelto 3</span>
+            <h4 id="wx3-h">La rampa con fricción, sin resolverla</h4>
+            <p>Un bloque baja desde una altura h por una rampa sin fricción y frena en un tramo horizontal con coeficiente μ. Opciones para la distancia x: h·μ², h/μ, h, «ninguna de las otras» y μ·h. Es la pregunta que salió en los 3 juegos del profe.</p>
+            <p><b>Pregunta:</b> ¿cuáles se pueden tachar sin hacer cuentas?</p>
+          </div>
+          <figure class="wx-fig"><div data-fig="ej3"></div></figure>
+        </div>
+        <ol class="wx-steps">
+          <li><p class="what">Dimensiones: no sirven aquí.</p><p class="why">μ no tiene dimensión, así que h·μ², h/μ, h y μ·h son todas longitudes.</p></li>
+          <li><p class="what">Caso extremo: μ → 0 (casi sin fricción).</p><p class="why">Si casi no hay fricción, el bloque casi no frena: x tiene que ser enorme.</p><div class="mx">h·μ² → 0 ✗<span class="ar">·</span>μ·h → 0 ✗<span class="ar">·</span>h/μ → ∞ ✓</div></li>
+          <li><p class="what">Otro caso: más fricción.</p><p class="why">Con más fricción frena antes. «h» no depende de μ, así que tampoco puede ser.</p><div class="mx">h ✗</div></li>
+        </ol>
+        <div class="wx-res"><b>Resultado:</b> solo queda h/μ, sin escribir una sola ecuación. (Con energía: M·g·h = μ·M·g·x.)</div>
+        <p class="wx-chk"><b>Casos que casi siempre ayudan:</b> μ = 0, θ = 0° (plano horizontal), θ = 90° (pared vertical), una masa igual a 0 y dos masas iguales.</p>
+      </article>
+    </div>
+
+    <div class="callout">
+      <h3>Receta para una pregunta de selección múltiple</h3>
+      <ol>
+        <li>¿Qué te piden: un tiempo, una rapidez, una fuerza, una energía? Escribe sus dimensiones.</li>
+        <li>Tacha las opciones con otras dimensiones (los números y μ no cuentan).</li>
+        <li>Con las que quedan, prueba un caso extremo: μ = 0, una masa igual a 0, θ = 0° o 90°.</li>
+        <li>Si todavía quedan dos, resuelve. Ya sabes entre cuáles está.</li>
+        <li>En un abierto, revisa las dimensiones de cada resultado antes de seguir.</li>
+      </ol>
+    </div>
+    <div class="callout trap"><h3>Trampas típicas</h3>
+      <p>Creer que las dimensiones distinguen √(10·g·H/7) de √(2·g·H): los números no cuentan.</p>
+      <p>Confundir el periodo (T) con la frecuencia angular (1/T): una es la otra volteada.</p>
+      <p>Olvidar que k (del resorte) es M/T², no una fuerza.</p>
+    </div>
+  </section>
+
+  <section id="taller" aria-labelledby="w-h">
+    <div class="sec-title"><span class="sec-num">2</span><h2 id="w-h">Taller</h2><p>Seis preguntas: tres de dimensiones y tres de casos extremos. Cuatro son del profe. La idea es descartar <b>antes</b> de resolver.</p></div>
+    <p class="prose">En cada una, primero tacha lo que puedas y después marca el chequeo rápido. La solución dice qué se descarta y por qué.</p>
+    <div id="problems" class="block"></div>
+  </section>
+
+  <section id="quiz" aria-labelledby="q-h">
+    <div class="sec-title"><span class="sec-num">3</span><h2 id="q-h">Quiz de paso</h2><p>5 preguntas: 3 cortas y 2 tipo examen. Pasas a F2 con 4/5 o más.</p></div>
+    <form id="quiz-a" class="quiz" novalidate></form>
+    <div id="res-a" hidden></div>
+    <div id="quizb-wrap" hidden>
+      <div class="sec-title" style="border-top-width:1px"><span class="sec-num" style="font-size:1.8rem">B</span><h3>Quiz B</h3><p>Preguntas nuevas sobre lo mismo.</p></div>
+      <form id="quiz-b" class="quiz" novalidate></form>
+      <div id="res-b" hidden></div>
+    </div>
+    <div class="block">
+      <h3>Tus intentos</h3>
+      <div class="attempts" id="attempts"><p class="muted">Todavía no has presentado el quiz.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Siguiente: las preguntas del profe (ronda 1) y después F2 · Movimiento armónico simple.</p>
+    <p>Fuentes: Young &amp; Freedman 1.4 y las diapositivas «Preparación examen final» del profe Ávila.</p>
+  </footer>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const fmt = (v) => v.toFixed(2).replace(".", ",");
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+
+/* ---------- Figuras ---------- */
+function arrowSvg(x1, y1, x2, y2, cls) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, h = Math.min(8, L * 0.5), w = h * 0.56;
+  const bx = x2 - ux * h, by = y2 - uy * h;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(bx)}" y2="${f1(by)}" class="${cls}" stroke-width="2.4"/>` +
+    `<polygon points="${f1(x2)},${f1(y2)} ${f1(bx - uy * w)},${f1(by + ux * w)} ${f1(bx + uy * w)},${f1(by - ux * w)}" class="${cls}" stroke-width="1"/>`;
+}
+const T = (x, y, t, cls = "sv-t", anchor = "start") => `<text x="${f1(x)}" y="${f1(y)}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+/* ---------- Utilidades de figuras ---------- */
+const DEG = Math.PI / 180;
+const sb = (base, s, rest = "") => `${base}<tspan dy="3" font-size="9">${s}</tspan><tspan dy="-3">${rest}</tspan>`;
+const nf = (v) => (Math.round(v * 100) / 100).toString().replace(".", ",").replace("-", "−");
+function axisMark(x, y, lab = "eje") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="8" class="sv-axis"/><circle cx="${f1(x)}" cy="${f1(y)}" r="2.2" class="sv-axle"/>` + (lab ? T(x - 11, y + 20, lab, "sv-tl", "end") : ""); }
+function mass(x, y, lab, r = 8, dx = 12, dy = -8, anchor = "start") { return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" class="sv-mass"/>` + T(x + dx, y + dy, lab, "sv-t", anchor); }
+function block(cx, yb, w, h, lab, cls = "sv-block") { return `<rect x="${f1(cx - w / 2)}" y="${f1(yb - h)}" width="${f1(w)}" height="${f1(h)}" class="${cls}"/>` + (lab ? T(cx, yb - h / 2 + 4, lab, "sv-lab", "middle") : ""); }
+function curvedArrow(cx, cy, r, a0, a1, cls = "a-v") {
+  const p = (a) => [cx + r * Math.cos(a * DEG), cy - r * Math.sin(a * DEG)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1), ccw = a1 > a0;
+  let g = `<path d="M ${f1(x0)} ${f1(y0)} A ${r} ${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} ${ccw ? 0 : 1} ${f1(x1)} ${f1(y1)}" class="sv-arc"/>`;
+  const s = ccw ? 1 : -1, tx = -Math.sin(a1 * DEG) * s, ty = -Math.cos(a1 * DEG) * s;
+  return g + arrowSvg(x1 - tx * 12, y1 - ty * 12, x1 + tx * 2, y1 + ty * 2, cls);
+}
+/* ---------- Figuras de F1 ---------- */
+function zig(x1, y1, x2, y2, n = 9, amp = 7) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, px = -uy, py = ux, lead = Math.min(8, L * 0.12), body = L - 2 * lead;
+  const pts = [[x1, y1], [x1 + ux * lead, y1 + uy * lead]];
+  for (let i = 0; i < n * 2; i++) { const s = lead + body * (i + 0.5) / (n * 2), sg = i % 2 ? -1 : 1; pts.push([x1 + ux * s + px * amp * sg, y1 + uy * s + py * amp * sg]); }
+  pts.push([x2 - ux * lead, y2 - uy * lead], [x2, y2]);
+  return `<polyline points="${pts.map((p) => f1(p[0]) + "," + f1(p[1])).join(" ")}" class="sv-spring"/>`;
+}
+/* una fila: pared, resorte, bloque sobre el piso. pos: posición del bloque en unidades de A */
+function springRow(y, o = {}) {
+  const X0 = o.X0 ?? 170, Ap = o.Ap ?? 80, w = o.w ?? 38, h = o.h ?? 30, pos = o.pos ?? 0, bx = X0 + pos * Ap;
+  let g = `<line x1="18" y1="${y}" x2="${o.floorEnd ?? 306}" y2="${y}" class="sv-line"/><line x1="18" y1="${y - 62}" x2="18" y2="${y}" class="sv-line"/>`;
+  for (let yy = y - 58; yy <= y - 4; yy += 9) g += `<line x1="18" y1="${yy}" x2="11" y2="${yy + 6}" class="sv-hatch"/>`;
+  if (o.marks) {
+    g += `<line x1="${X0}" y1="${y - h - 16}" x2="${X0}" y2="${y}" class="sv-dash"/>`;
+    [-1, 0, 1].forEach((s) => { const xx = X0 + s * Ap; g += `<line x1="${f1(xx)}" y1="${y}" x2="${f1(xx)}" y2="${y + 6}" class="sv-line"/>` + T(xx, y + 19, s === 0 ? "0" : (s < 0 ? "−A" : "+A"), "sv-t", "middle"); });
+  }
+  if (o.xmark) { const xx = X0 + o.xmark.pos * Ap; g += `<line x1="${f1(xx)}" y1="${y}" x2="${f1(xx)}" y2="${y + 6}" class="sv-line"/>` + `<line x1="${f1(xx)}" y1="${y + 6}" x2="${f1(xx)}" y2="${y + 22}" class="sv-thin"/>` + T(xx, y + 34, o.xmark.lab, "sv-t t-f", "middle"); }
+  (o.ghosts || []).forEach((p) => { g += `<rect x="${f1(X0 + p * Ap - w / 2)}" y="${y - h}" width="${w}" height="${h}" class="sv-ghost"/>`; });
+  g += zig(18, y - h / 2, bx - w / 2, y - h / 2, o.coils ?? 9);
+  g += block(bx, y, w, h, o.M ?? "M");
+  if (o.k !== false) g += T(o.kx ?? 60, y - h - 8, o.k ?? "k", "sv-t", "middle");
+  if (o.v) { const d = o.v.dir || 1, x0 = bx + d * (w / 2 + 5); g += arrowSvg(x0, y - h / 2, x0 + d * 38, y - h / 2, "a-v") + T(x0 + d * 19, y - h / 2 - 9, o.v.lab, "sv-t t-v", "middle"); }
+  if (o.dim) { const xa = X0 + o.dim.from * Ap, xb = X0 + o.dim.to * Ap, yy = y - h - 24; g += `<line x1="${f1(xa)}" y1="${yy}" x2="${f1(xb)}" y2="${yy}" class="sv-dim"/><line x1="${f1(xa)}" y1="${yy - 4}" x2="${f1(xa)}" y2="${yy + 4}" class="sv-dim"/><line x1="${f1(xb)}" y1="${yy - 4}" x2="${f1(xb)}" y2="${yy + 4}" class="sv-dim"/>` + T((xa + xb) / 2, yy - 6, o.dim.lab, "sv-t", "middle"); }
+  if (o.note) g += T(o.noteX ?? 306, y - h - 30, o.note, "sv-tl", o.noteAnchor ?? "end");
+  return g;
+}
+const svgWrap = (h, g, aria) => `<svg viewBox="0 0 320 ${h}" role="img" aria-label="${aria}">${g}</svg>`;
+function resorteSvg(o = {}) { return svgWrap(o.H ?? 140, springRow(o.y ?? 96, o), o.aria || "Un bloque de masa M sobre una mesa sin fricción, pegado a un resorte de constante k sujeto a una pared"); }
+function dosResortesSvg(a, b, aria) {
+  return svgWrap(196, T(306, 16, a.title, "sv-tl", "end") + springRow(74, a) + T(306, 114, b.title, "sv-tl", "end") + springRow(172, b), aria);
+}
+function xtSvg() {
+  const x0 = 34, xe = 304, yc = 104, Ay = 52, Tp = 108;
+  let g = `<line x1="${x0}" y1="${yc}" x2="${xe}" y2="${yc}" class="sv-line"/><line x1="${x0}" y1="20" x2="${x0}" y2="186" class="sv-line"/>`;
+  g += T(xe, yc - 8, "t", "sv-t", "end") + T(x0 - 8, 26, "x", "sv-t", "end");
+  let d = "";
+  for (let px = 0; px <= xe - x0; px += 2) d += (px ? " L " : "M ") + f1(x0 + px) + " " + f1(yc - Ay * Math.cos(2 * Math.PI * px / Tp));
+  g += `<path d="${d}" class="sv-arc" style="stroke-width:2.4"/>`;
+  g += `<line x1="${x0}" y1="${yc - Ay}" x2="${xe}" y2="${yc - Ay}" class="sv-dash"/><line x1="${x0}" y1="${yc + Ay}" x2="${xe}" y2="${yc + Ay}" class="sv-dash"/>`;
+  g += T(x0 - 6, yc - Ay + 4, "+A", "sv-t", "end") + T(x0 - 6, yc + Ay + 4, "−A", "sv-t", "end");
+  const ty = yc - Ay - 16;
+  g += `<line x1="${x0}" y1="${ty}" x2="${x0 + Tp}" y2="${ty}" class="sv-dim"/><line x1="${x0}" y1="${ty - 5}" x2="${x0}" y2="${ty + 5}" class="sv-dim"/><line x1="${x0 + Tp}" y1="${ty - 5}" x2="${x0 + Tp}" y2="${ty + 5}" class="sv-dim"/>` + T(x0 + Tp / 2, ty - 6, "T: una oscilación", "sv-tl", "middle");
+  g += `<line x1="${x0 + Tp * 1.5}" y1="${yc}" x2="${x0 + Tp * 1.5}" y2="${yc + Ay}" class="sv-dim"/>` + T(x0 + Tp * 1.5 - 6, yc + Ay / 2 + 4, "A", "sv-t", "end");
+  return svgWrap(196, g, "Gráfica de la posición x contra el tiempo t: un coseno que oscila entre +A y −A y se repite cada periodo T");
+}
+function verticalSvg(o = {}) {
+  const top = 16, nat = 84, dpx = 36, bh = 30, xL = 92, xR = 206;
+  let g = `<line x1="40" y1="${top}" x2="290" y2="${top}" class="sv-line"/>`;
+  for (let x = 44; x <= 288; x += 10) g += `<line x1="${x}" y1="${top}" x2="${x - 6}" y2="${top - 7}" class="sv-hatch"/>`;
+  g += zig(xL, top, xL, nat, 8, 7) + T(xL, nat + 18, "sin el bloque", "sv-tl", "middle");
+  g += `<line x1="70" y1="${nat}" x2="272" y2="${nat}" class="sv-dash"/>`;
+  g += zig(xR, top, xR, nat + dpx, 8, 7) + block(xR, nat + dpx + bh, 40, bh, "M");
+  g += `<line x1="248" y1="${nat}" x2="248" y2="${nat + dpx}" class="sv-dim"/>` + T(254, nat + dpx / 2 + 4, "d", "sv-t");
+  if (!o.D) g += T(xR, nat + dpx + bh + 18, "quieto: en equilibrio", "sv-tl", "middle");
+  else {
+    const yD = nat + dpx + 44;
+    g += T(xR - 28, nat + dpx + 20, "en equilibrio", "sv-tl", "end");
+    g += `<rect x="${xR - 20}" y="${yD}" width="40" height="${bh}" class="sv-ghost"/>` + `<line x1="272" y1="${nat + dpx}" x2="272" y2="${yD}" class="sv-dim"/>` + T(278, (nat + dpx + yD) / 2 + 4, "D", "sv-t");
+    g += T(xR - 28, yD + 20, "se baja D y se suelta", "sv-tl", "end");
+  }
+  const kY = o.D ? 220 : 190;
+  g += T(40, kY, "k", "sv-t") + T(52, kY, "= constante del resorte", "sv-tl");
+  return svgWrap(o.D ? 230 : 200, g, o.D ? "Un resorte vertical sin carga y el mismo resorte con un bloque M que lo estira d; después el bloque se baja una distancia D más y se suelta" : "Un resorte vertical sin carga y el mismo resorte con un bloque M colgado que lo estira una distancia d hasta quedar quieto");
+}
+function choqueSvg(o = {}) {
+  let g = springRow(110, { X0: 130, M: o.M || "M", w: o.M === "3M" ? 44 : 38, note: "quieto en el equilibrio", noteX: 130, noteAnchor: "middle" });
+  g += `<circle cx="268" cy="96" r="12" class="sv-mass"/>` + T(268, 100, "M", "sv-lab", "middle");
+  g += arrowSvg(252, 72, 206, 72, "a-v") + T(229, 64, "v₀", "sv-t t-v", "middle");
+  g += T(268, 134, "plastilina: se pega", "sv-tl", "middle");
+  return svgWrap(144, g, `Un bloque de masa ${o.M || "M"} quieto en el equilibrio de un resorte; una bola de plastilina de masa M llega con rapidez v₀ y se pega`);
+}
+
+/* ---------- Figuras ---------- */
+const W = (h, g, aria, w = 320) => `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${aria}">${g}</svg>`;
+const ground = (x1, x2, y) => { let g = `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" class="sv-line"/>`; for (let x = x1 + 4; x < x2; x += 12) g += `<line x1="${x}" y1="${y}" x2="${x - 6}" y2="${y + 6}" class="sv-hatch"/>`; return g; };
+const ceil = (x1, x2, y) => { let g = `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" class="sv-line"/>`; for (let x = x1 + 4; x < x2; x += 10) g += `<line x1="${x}" y1="${y}" x2="${x - 6}" y2="${y - 7}" class="sv-hatch"/>`; return g; };
+const dimV = (x, y1, y2, lab, side = 1) => `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" class="sv-dim"/><line x1="${x - 4}" y1="${y1}" x2="${x + 4}" y2="${y1}" class="sv-dim"/><line x1="${x - 4}" y1="${y2}" x2="${x + 4}" y2="${y2}" class="sv-dim"/>` + T(x + side * 7, (y1 + y2) / 2 + 4, lab, "sv-t", side > 0 ? "start" : "end");
+const dimH = (x1, x2, y, lab) => `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" class="sv-dim"/><line x1="${x1}" y1="${y - 4}" x2="${x1}" y2="${y + 4}" class="sv-dim"/><line x1="${x2}" y1="${y - 4}" x2="${x2}" y2="${y + 4}" class="sv-dim"/>` + T((x1 + x2) / 2, y + 16, lab, "sv-t", "middle");
+const person = (x, yFeet, s = 1) => `<circle cx="${x}" cy="${yFeet - 44 * s}" r="${6 * s}" class="sv-block"/><line x1="${x}" y1="${yFeet - 38 * s}" x2="${x}" y2="${yFeet - 16 * s}" class="sv-line"/><line x1="${x}" y1="${yFeet - 16 * s}" x2="${x - 7 * s}" y2="${yFeet}" class="sv-line"/><line x1="${x}" y1="${yFeet - 16 * s}" x2="${x + 7 * s}" y2="${yFeet}" class="sv-line"/><line x1="${x - 9 * s}" y1="${yFeet - 30 * s}" x2="${x + 9 * s}" y2="${yFeet - 30 * s}" class="sv-line"/>`;
+
+function loopSvg() {
+  const cx = 200, cy = 96, R = 62;
+  let g = `<path d="M 24 20 Q 40 ${cy + R} ${cx} ${cy + R}" class="sv-track-th"/><circle cx="${cx}" cy="${cy}" r="${R}" class="sv-track-th"/><line x1="${cx}" y1="${cy + R}" x2="306" y2="${cy + R}" class="sv-track-th"/>`;
+  g += `<rect x="${cx - 11}" y="${cy - R - 2}" width="22" height="12" class="sv-block"/>`;
+  g += `<line x1="${cx}" y1="${cy}" x2="${cx + R * 0.71}" y2="${cy + R * 0.71}" class="sv-dash"/>` + T(cx + 26, cy + 30, "R", "sv-t");
+  g += arrowSvg(cx + 14, cy - R - 14, cx + 54, cy - R - 14, "a-v") + T(cx + 60, cy - R - 10, "v = ?", "sv-t t-v");
+  return W(172, g, "Un carro en el punto más alto de una pista circular vertical de radio R");
+}
+function cilindrosSvg() {
+  const x0 = 30, y0 = 46, x1 = 300, y1 = 170, th = Math.atan2(y1 - y0, x1 - x0), nx = Math.sin(th), ny = -Math.cos(th);
+  let g = `<polygon points="${x0},${y0} ${x1},${y1} ${x0},${y1}" class="sv-ground"/>`;
+  [[30, 22, "B"], [86, 11, "A"]].forEach(([d, r, l]) => { const px = x0 + d * Math.cos(th), py = y0 + d * Math.sin(th), cx = px + r * nx, cy = py + r * ny; g += `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${r}" class="sv-disk"/><circle cx="${f1(cx)}" cy="${f1(cy)}" r="2" class="sv-axle"/>` + T(cx, cy - r - 6, l, "sv-t", "middle"); });
+  g += T(236, 24, "A: radio R · B: radio 2R", "sv-tl", "middle") + T(236, 42, "mismo material", "sv-tl", "middle") + T(236, 60, "ruedan sin deslizar", "sv-tl", "middle");
+  return W(180, g, "Dos cilindros macizos del mismo material, A de radio R y B de radio 2R, arriba del mismo plano inclinado");
+}
+function ascensorSvg() {
+  let g = `<rect x="40" y="14" width="128" height="170" class="sv-block"/><line x1="104" y1="2" x2="104" y2="14" class="sv-rope"/>`;
+  g += `<rect x="72" y="166" width="64" height="12" class="sv-plate"/>` + T(104, 176, "báscula", "sv-tag", "middle");
+  g += person(104, 166, 1.6);
+  g += T(180, 70, "quieto: 800 N", "sv-tl") + T(180, 90, "moviéndose: 700 N", "sv-tl") + T(180, 120, "a = ?", "sv-t t-v");
+  return W(192, g, "Un hombre de pie sobre una báscula dentro de un ascensor");
+}
+function rampaSvg(o = {}) {
+  let g = `<path d="M 40 34 Q 70 150 150 150" class="sv-track-th"/><line x1="150" y1="150" x2="304" y2="150" class="sv-line"/>`;
+  g += `<line x1="172" y1="150" x2="296" y2="150" class="sv-rough"/>` + T(234, 140, "μ", "sv-t", "middle");
+  g += `<rect x="36" y="18" width="18" height="14" class="sv-block" transform="rotate(30 45 25)"/>` + T(60, 18, "M", "sv-t");
+  g += dimV(22, 30, 150, "h", -1) + dimH(172, 296, 166, "x = ?");
+  g += T(96, 186, "sin fricción", "sv-tl", "middle") + `<rect x="${f1(274)}" y="136" width="18" height="14" class="sv-ghost"/>`;
+  return W(194, g, "Un bloque baja desde una altura h por una rampa sin fricción y frena en un tramo horizontal con coeficiente de fricción mu");
+}
+function monedaSvg() {
+  let g = ground(60, 260, 180) + `<line x1="160" y1="40" x2="160" y2="172" class="sv-dash"/>`;
+  g += `<circle cx="160" cy="36" r="7" class="sv-mass"/><circle cx="160" cy="172" r="7" class="sv-mass"/>`;
+  g += arrowSvg(176, 150, 176, 110, "a-v") + T(182, 132, "v₀ = ?", "sv-t t-v");
+  g += dimV(104, 36, 180, "20 m", -1) + T(220, 40, "altura máxima", "sv-tl");
+  return W(196, g, "Una moneda lanzada hacia arriba desde el piso que sube hasta una altura máxima de 20 metros");
+}
+function vagonSvg() {
+  const cart = (x) => `<rect x="${x}" y="120" width="96" height="16" class="sv-plate"/><circle cx="${x + 20}" cy="142" r="7" class="sv-block"/><circle cx="${x + 76}" cy="142" r="7" class="sv-block"/>`;
+  let g = ground(10, 310, 149) + cart(18) + person(66, 120, 1.2) + arrowSvg(120, 112, 152, 112, "a-v") + T(120, 104, "2 m/s", "sv-t t-v") + T(66, 172, "antes", "sv-tl", "middle");
+  g += cart(184) + person(166, 149, 1.2) + arrowSvg(284, 112, 314, 112, "a-v") + T(299, 104, "v = ?", "sv-t t-v", "middle") + T(232, 172, "después", "sv-tl", "middle");
+  g += T(66, 24, "hombre 75 kg", "sv-tl", "middle") + T(66, 38, "vagón 30 kg", "sv-tl", "middle") + T(166, 64, "cae con", "sv-tl", "middle") + T(166, 78, "v horizontal 0", "sv-tl", "middle");
+  return W(180, g, "Un hombre de 75 kilogramos en un vagón de 30 kilogramos que va a 2 metros por segundo; luego salta y queda sin velocidad horizontal");
+}
+function balaSvg() {
+  const px = 196, py = 48, R = 70;
+  let g = `<circle cx="${px}" cy="${py}" r="${R}" class="sv-dash"/><circle cx="${px}" cy="${py}" r="3" class="sv-axle"/>`;
+  g += `<line x1="${px}" y1="${py}" x2="${px}" y2="${py + R - 12}" class="sv-line" style="stroke-width:3"/>` + block(px, py + R + 12, 26, 24, "M₂");
+  g += T(px + 8, py + 30, "R", "sv-t") + T(px - 10, py + 26, "vara rígida", "sv-tl", "end");
+  g += `<rect x="40" y="${py + R - 6}" width="20" height="10" rx="4" class="sv-mass"/>` + T(50, py + R - 12, "M₁", "sv-t", "middle");
+  g += arrowSvg(68, py + R, 120, py + R, "a-v") + T(94, py + R - 8, "v", "sv-t t-v", "middle");
+  return W(150, g, "Una bala de masa M1 con rapidez v va hacia un bloque de masa M2 que cuelga de una vara rígida de largo R con pivote arriba");
+}
+function cuerdaMesaSvg() {
+  let g = `<polygon points="70,30 300,30 250,120 20,120" class="sv-plate"/><ellipse cx="160" cy="75" rx="62" ry="24" class="sv-dash"/>`;
+  g += `<circle cx="160" cy="75" r="3" class="sv-axle"/><line x1="98" y1="75" x2="160" y2="75" class="sv-rope"/><circle cx="98" cy="75" r="7" class="sv-mass"/>`;
+  g += arrowSvg(98, 86, 112, 100, "a-v") + T(84, 108, "ω₀ = π rad/s", "sv-tl", "end");
+  g += `<line x1="160" y1="75" x2="160" y2="160" class="sv-rope" style="stroke-dasharray:3 3"/>` + arrowSvg(160, 128, 160, 168, "a-f") + T(170, 162, "F: jala la cuerda", "sv-t t-f");
+  return W(176, g, "Un objeto gira sobre una mesa atado a una cuerda que pasa por un hueco en el centro; una fuerza F jala la cuerda por debajo");
+}
+/* mini gráfica: fn(t) en [0, tmax], rango [lo, hi] */
+function miniGraf(fn, o = {}) {
+  const w = o.w ?? 150, h = o.h ?? 96, x0 = 16, y0 = 8, gw = w - 26, gh = h - 20, tmax = o.tmax ?? 3.6, lo = o.lo ?? -1, hi = o.hi ?? 1;
+  const X = (t) => x0 + t / tmax * gw, Y = (v) => y0 + (hi - v) / (hi - lo) * gh;
+  let g = `<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0 + gh}" class="sv-line"/><line x1="${x0}" y1="${f1(Y(0))}" x2="${x0 + gw}" y2="${f1(Y(0))}" class="sv-line"/>`;
+  [1, 2, 3].forEach((t) => { if (t < tmax) g += `<line x1="${f1(X(t))}" y1="${f1(Y(0) - 3)}" x2="${f1(X(t))}" y2="${f1(Y(0) + 3)}" class="sv-line"/>`; });
+  let d = ""; for (let i = 0; i <= 120; i++) { const t = tmax * i / 120, v = fn(t); if (v == null) continue; d += (d ? " L " : "M ") + f1(X(t)) + " " + f1(Y(v)); }
+  g += `<path d="${d}" class="sv-arc" style="stroke-width:2.2"/>`;
+  g += T(x0 - 4, y0 + 8, o.yl ?? "x", "sv-t", "end") + T(x0 + gw, Y(0) + 14, "t", "sv-t", "end");
+  if (o.lab) g += T(w - 4, h - 2, o.lab, "sv-t", "end");
+  return W(h, g, o.aria || "Gráfica contra el tiempo", w);
+}
+const vt = (t) => t < 0.8 ? -0.45 + t / 0.8 * 1.25 : t < 2.4 ? 0.8 : 0.8 - (t - 2.4) / 0.8 * 1.25;
+const xt = (() => { const N = 720, tm = 3.6, arr = [], dt = tm / N; let x = -0.15; for (let i = 0; i <= N; i++) { arr.push(x); x += vt(i * dt) * dt; } return (t) => arr[Math.round(t / tm * N)]; })();
+function proyectilGrafs() {
+  const fs = [["I", (t) => 0.25 * t], ["II", () => 0.6], ["III", (t) => 0.8 - 0.55 * t], ["IV", () => -0.6], ["V", (t) => 0.9 * Math.sin(Math.PI * t / 3)]];
+  let g = "";
+  fs.forEach(([l, fn], i) => {
+    const ox = (i % 3) * 104 + 4, oy = Math.floor(i / 3) * 92 + 2, x0 = ox + 12, gw = 82, gh = 70, Y = (v) => oy + 6 + (1 - v) / 2 * gh, X = (t) => x0 + t / 3.2 * gw;
+    g += `<line x1="${x0}" y1="${oy + 6}" x2="${x0}" y2="${oy + 6 + gh}" class="sv-line"/><line x1="${x0}" y1="${f1(Y(0))}" x2="${x0 + gw}" y2="${f1(Y(0))}" class="sv-line"/>`;
+    let d = ""; for (let k = 0; k <= 60; k++) { const t = 3 * k / 60; d += (k ? " L " : "M ") + f1(X(t)) + " " + f1(Y(fn(t))); }
+    g += `<path d="${d}" class="sv-arc" style="stroke-width:2"/>` + T(x0 - 3, oy + 14, "v", "sv-t", "end") + T(x0 + gw / 2, oy + gh + 20, l, "sv-t", "middle");
+  });
+  return W(190, g, "Cinco gráficas de velocidad contra tiempo: I recta que sube desde cero, II constante positiva, III recta que baja y cruza el cero, IV constante negativa, V un arco");
+}
+function contactoSvg() {
+  let g = ground(20, 300, 120) + block(150, 120, 80, 50, "4M") + block(220, 120, 60, 40, "3M");
+  g += arrowSvg(40, 95, 108, 95, "a-f") + T(40, 86, "F", "sv-t t-f") + T(160, 150, "mesa sin fricción", "sv-tl", "middle");
+  return W(160, g, "Una fuerza F empuja un bloque 4M que está en contacto con un bloque 3M sobre una mesa sin fricción");
+}
+function cometaSvg() {
+  let g = `<ellipse cx="170" cy="80" rx="130" ry="54" class="sv-arc" style="stroke:var(--ink)"/><circle cx="90" cy="80" r="16" fill="var(--red)" stroke="var(--ink)"/>` + T(90, 112, "Tierra", "sv-tl", "middle");
+  g += `<circle cx="40" cy="80" r="6" class="sv-axle"/>` + T(30, 84, "A", "sv-t", "end") + `<circle cx="300" cy="80" r="6" class="sv-axle"/>` + T(310, 84, "B", "sv-t");
+  return W(156, g, "Un cometa en una órbita elíptica alrededor de la Tierra: A es el punto más cercano y B el más lejano");
+}
+function caidaSvg() {
+  let g = ground(30, 300, 170) + block(100, 60, 34, 30, "M₁") + block(230, 110, 26, 24, "M₂");
+  g += dimV(64, 60, 170, "h₁", -1) + dimV(196, 110, 170, "h₂", -1) + T(160, 22, "h₁ > h₂ · M₁ > M₂ · se sueltan juntos en t = 0", "sv-tl", "middle");
+  return W(184, g, "Dos cuerpos en reposo a distintas alturas: M1 más pesado a la altura h1, M2 más liviano a la altura h2 menor");
+}
+function tierraSvg() {
+  const cx = 118, cy = 92, R = 66;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" class="sv-disk"/><line x1="${cx}" y1="${cy - R - 18}" x2="${cx}" y2="${cy + R + 18}" class="sv-dash"/>`;
+  g += `<path d="M ${cx - 30} ${cy - R + 7} Q ${cx} ${cy - R - 6} ${cx + 30} ${cy - R + 7} Z" fill="var(--surface)" stroke="var(--ink)"/><path d="M ${cx - 30} ${cy + R - 7} Q ${cx} ${cy + R + 6} ${cx + 30} ${cy + R - 7} Z" fill="var(--surface)" stroke="var(--ink)"/>`;
+  g += arrowSvg(cx + 18, cy - R + 14, cx + 48, cy - 18, "a-f") + arrowSvg(cx + 18, cy + R - 14, cx + 48, cy + 18, "a-f") + T(cx + 76, cy - 6, "el agua va", "sv-tl") + T(cx + 76, cy + 10, "a los océanos", "sv-tl");
+  g += curvedArrow(cx, cy - R - 10, 18, 200, 340) + T(cx - 28, cy - R - 12, "gira", "sv-tl", "end") + T(cx - R - 6, cy - R + 4, "hielo", "sv-tl", "end");
+  return W(184, g, "La Tierra girando sobre su eje, con casquetes de hielo en los polos que se derriten y el agua se reparte hacia los océanos");
+}
+function simetriaSvg() {
+  let g = `<line x1="20" y1="140" x2="300" y2="140" class="sv-line"/><line x1="160" y1="20" x2="160" y2="160" class="sv-line"/>` + T(300, 156, "x", "sv-t", "end") + T(170, 24, "y", "sv-t");
+  [[-2, "−2a"], [-1, "−a"], [1, "a"], [2, "2a"]].forEach(([k, l]) => { const x = 160 + k * 52; g += `<circle cx="${x}" cy="140" r="7" class="sv-mass"/>` + T(x, 162, l, "sv-tl", "middle"); });
+  g += `<circle cx="160" cy="50" r="9" class="sv-mass"/>` + T(174, 54, "M", "sv-t") + T(230, 110, "cuatro masas iguales", "sv-tl", "middle");
+  return W(172, g, "Cuatro partículas iguales puestas simétricamente sobre el eje x y una quinta partícula M sobre el eje y");
+}
+function penduloSvg() {
+  const px = 160, py = 20, L = 130, a1 = 8, a2 = 16, P = (a) => [px + L * Math.sin(a * DEG), py + L * Math.cos(a * DEG)];
+  let g = ceil(110, 210, py);
+  const [x1, y1] = P(a1), [x2, y2] = P(a2);
+  g += `<line x1="${px}" y1="${py}" x2="${px}" y2="${py + L + 10}" class="sv-dash"/>`;
+  g += `<line x1="${px}" y1="${py}" x2="${f1(x2)}" y2="${f1(y2)}" class="sv-dash"/><circle cx="${f1(x2)}" cy="${f1(y2)}" r="9" class="sv-ghost"/>`;
+  g += `<line x1="${px}" y1="${py}" x2="${f1(x1)}" y2="${f1(y1)}" class="sv-rope"/><circle cx="${f1(x1)}" cy="${f1(y1)}" r="9" class="sv-mass"/>`;
+  g += T(x2 + 14, y2 + 4, "10°: T = ?", "sv-tl") + T(x1 - 14, y1 + 26, "5°: T = 1 s", "sv-tl", "middle");
+  return W(190, g, "Un péndulo de hilo que oscila con amplitud de 5 grados y, con línea punteada, con amplitud de 10 grados");
+}
+function resortePoleaSvg() {
+  let g = `<line x1="18" y1="20" x2="18" y2="100" class="sv-line"/><line x1="18" y1="100" x2="220" y2="100" class="sv-line"/><line x1="220" y1="100" x2="220" y2="190" class="sv-line"/>`;
+  g += zig(18, 82, 92, 82, 7, 6) + T(55, 66, "k", "sv-t", "middle") + block(122, 100, 60, 34, "2M");
+  g += `<line x1="152" y1="82" x2="226" y2="82" class="sv-rope"/><circle cx="226" cy="92" r="10" class="sv-pulley"/><circle cx="226" cy="92" r="2" class="sv-axle"/>`;
+  g += `<line x1="236" y1="92" x2="236" y2="146" class="sv-rope"/>` + block(236, 172, 28, 26, "M");
+  g += T(122, 120, "sin fricción", "sv-tl", "middle") + T(160, 16, "se suelta desde el reposo, resorte sin deformar", "sv-tl", "middle");
+  return W(196, g, "Un bloque 2M sobre una mesa sin fricción, unido a un resorte fijo a una pared y a una cuerda que pasa por una polea y sostiene un bloque M que cuelga");
+}
+function uxSvg() {
+  const x0 = 46, Y = (u) => 90 - u * 16, X = (i) => x0 + 10 + i * 46;
+  let g = `<line x1="${x0}" y1="16" x2="${x0}" y2="168" class="sv-line"/><line x1="${x0}" y1="90" x2="310" y2="90" class="sv-line"/>` + T(x0 - 4, 16, "U(x)", "sv-t", "end") + T(310, 84, "x", "sv-t", "end");
+  [[4, "4 J"], [2, "2 J"], [-2, "−2 J"], [-4, "−4 J"]].forEach(([u, l]) => { g += `<line x1="${x0 - 4}" y1="${Y(u)}" x2="${x0 + 4}" y2="${Y(u)}" class="sv-line"/>` + T(x0 - 7, Y(u) + 4, l, "sv-tl", "end"); });
+  for (let i = 0; i <= 5; i++) g += `<line x1="${X(i)}" y1="86" x2="${X(i)}" y2="94" class="sv-line"/>` + T(X(i), 106, "x" + i, "sv-tl", "middle");
+  const pts = [[0, 4], [0.5, 0.6], [1, -2.2], [1.5, -3.6], [2, -4], [2.5, -3.6], [3, -2.6], [3.5, -2.1], [4, -2], [5.4, -2]];
+  g += `<path d="${pts.map((p, i) => (i ? "L " : "M ") + f1(X(p[0])) + " " + f1(Y(p[1]))).join(" ")}" class="sv-track-th" style="stroke-linejoin:round"/>`;
+  g += `<line x1="${x0}" y1="${Y(-4)}" x2="${X(3)}" y2="${Y(-4)}" class="sv-dash"/><line x1="${X(2)}" y1="90" x2="${X(2)}" y2="${Y(-4)}" class="sv-dash"/><line x1="${X(4)}" y1="90" x2="${X(4)}" y2="${Y(-2)}" class="sv-dash"/>`;
+  return W(176, g, "Gráfica de energía potencial U contra x: vale 4 J en x0, baja hasta −4 J en x2 y sube hasta quedarse en −2 J desde x4");
+}
+function poleasSvg() {
+  let g = ceil(70, 200, 16);
+  const mx = 104, my = 120, r = 16, fx = 168, fy = 40;
+  g += `<line x1="${mx - r}" y1="16" x2="${mx - r}" y2="${my}" class="sv-rope"/><line x1="${mx + r}" y1="${my}" x2="${fx - r}" y2="${fy}" class="sv-rope"/><line x1="${fx}" y1="16" x2="${fx}" y2="${fy}" class="sv-line"/>`;
+  g += `<circle cx="${fx}" cy="${fy}" r="${r}" class="sv-pulley"/><circle cx="${fx}" cy="${fy}" r="2" class="sv-axle"/><circle cx="${mx}" cy="${my}" r="${r}" class="sv-pulley"/><circle cx="${mx}" cy="${my}" r="2" class="sv-axle"/>`;
+  g += `<line x1="${fx + r}" y1="${fy}" x2="${fx + r}" y2="120" class="sv-rope"/>` + arrowSvg(fx + r, 116, fx + r, 160, "a-f") + T(fx + r + 8, 150, "F = 100 N", "sv-t t-f");
+  g += `<line x1="${mx}" y1="${my}" x2="${mx}" y2="${my + 30}" class="sv-line"/>` + block(mx, my + 60, 46, 30, "10 kg");
+  return W(196, g, "Una caja de 10 kilogramos cuelga de una polea móvil; la cuerda va del techo, rodea la polea móvil, sube por una polea fija y se jala hacia abajo con 100 newtons");
+}
+
+
+/* ---------- Figuras de este módulo ---------- */
+function penduloSimpleSvg() {
+  const px = 160, py = 22, L = 120, a = 18 * DEG, bx = px + L * Math.sin(a), by = py + L * Math.cos(a);
+  let g = ceil(110, 210, py) + `<line x1="${px}" y1="${py}" x2="${px}" y2="${py + L + 12}" class="sv-dash"/>`;
+  g += `<line x1="${px}" y1="${py}" x2="${f1(bx)}" y2="${f1(by)}" class="sv-rope"/><circle cx="${f1(bx)}" cy="${f1(by)}" r="10" class="sv-mass"/>`;
+  g += T(px + 30, py + 62, "ℓ", "sv-t") + T(bx + 16, by + 4, "periodo = ?", "sv-tl");
+  return W(170, g, "Un péndulo simple de largo ele que oscila");
+}
+function planoSvg2(o = {}) {
+  const x0 = 30, y0 = 40, x1 = 290, y1 = 160, th = Math.atan2(y1 - y0, x1 - x0), nx = Math.sin(th), ny = -Math.cos(th);
+  let g = `<polygon points="${x0},${y0} ${x1},${y1} ${x0},${y1}" class="sv-ground"/>`;
+  if (o.rough) g += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" class="sv-rough"/>` + T((x0 + x1) / 2 + 14, (y0 + y1) / 2 - 12, "μ", "sv-t");
+  const px = x0 + 20 * Math.cos(th), py = y0 + 20 * Math.sin(th);
+  if (o.ball) g += `<circle cx="${f1(px + 12 * nx)}" cy="${f1(py + 12 * ny)}" r="12" class="sv-mass"/>`;
+  else g += `<g transform="rotate(${f1(th / DEG)} ${f1(px + 11 * nx)} ${f1(py + 11 * ny)})"><rect x="${f1(px + 11 * nx - 12)}" y="${f1(py + 11 * ny - 11)}" width="24" height="22" class="sv-block"/></g>`;
+  if (o.h !== false) g += dimV(14, py, y1, "h", 1);
+  if (o.D) g += T((x0 + x1) / 2 - 6, (y0 + y1) / 2 + 22, "D", "sv-t");
+  g += `<path d="M ${x1 - 40} ${y1} A 40 40 0 0 1 ${f1(x1 - 40 * Math.cos(th))} ${f1(y1 - 40 * Math.sin(th))}" class="sv-arc"/>` + T(x1 - 52, y1 - 6, "θ", "sv-ang");
+  g += T(x1 - 6, 30, o.lab || "", "sv-tl", "end");
+  return W(176, g, o.aria || "Un cuerpo arriba de un plano inclinado de ángulo theta");
+}
+function fisicoSvg() {
+  const px = 160, py = 26;
+  let g = ceil(120, 200, py - 8) + `<rect x="${px - 7}" y="${py - 4}" width="14" height="140" rx="4" class="sv-rod"/>` + axisMark(px, py, "") + T(px - 14, py + 4, "pivote", "sv-tl", "end");
+  g += `<circle cx="${px}" cy="${py + 66}" r="4" fill="var(--red)"/>` + T(px - 12, py + 70, "CM", "sv-tl", "end") + dimV(px + 26, py, py + 66, "d", 1);
+  g += T(px + 24, py + 110, "masa M", "sv-tl") + T(px + 24, py + 126, "inercia I (pivote)", "sv-tl");
+  return W(176, g, "Un cuerpo rígido que cuelga de un pivote; su centro de masa está a una distancia d del pivote");
+}
+function contacto2Svg(a = "4M", b = "3M") {
+  let g = ground(20, 300, 120) + block(150, 120, 80, 50, a) + block(220, 120, 60, 40, b);
+  g += arrowSvg(40, 95, 108, 95, "a-f") + T(40, 86, "F", "sv-t t-f") + T(160, 150, "mesa sin fricción", "sv-tl", "middle");
+  return W(160, g, `Una fuerza F empuja un bloque ${a} que está en contacto con un bloque ${b} sobre una mesa sin fricción`);
+}
+const FIG = {
+  ej1: () => penduloSimpleSvg(),
+  ej2: () => planoSvg2({ ball: true, lab: "v = ?", aria: "Una esfera que baja una altura H por un plano" }).replace(/>h</, ">H<"),
+  ej3: () => rampaSvg()
+};
+document.querySelectorAll("[data-fig]").forEach((n) => { n.innerHTML = FIG[n.dataset.fig](); });
+
+/* ---------- Taller ---------- */
+const fr = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const rt = (x) => `√<span class="rad">${x}</span>`;
+const tch = (t) => `<span class="cx">${t}</span>`;
+const PROBS = [
+  { group: "Con dimensiones", note: "Las opciones mezclan fórmulas distintas: las dimensiones dejan una sola." },
+  { n: "T1", t: "El periodo de un bloque en un resorte", src: "Dimensiones",
+    fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0], H: 140, aria: "Un bloque M en un resorte k que oscila" }),
+    txt: "Un bloque de masa M oscila en un resorte de constante k. Sin resolver nada, ¿cuál de estas puede ser su periodo? A) 2π·√(k/M) · B) 2π·√(M/k) · C) 2π·M/k · D) 2π·√(M·k).",
+    hints: ["Un periodo es un tiempo: T. [k] = M/T² (fuerza entre longitud).", "Calcula [M/k] y saca raíz."],
+    sol: [{ w: "Lo que debe dar.", m: "[periodo] = T" },
+      { w: "A) k/M.", y: "La M se cancela.", m: `[k/M] = ${fr("M/T²", "M")} = ${fr("1", "T²")}<span class="ar">→</span>√ = ${fr("1", "T")} ✗` },
+      { w: "B) M/k.", y: "Es la A volteada.", m: `[M/k] = T²<span class="ar">→</span>√ = T ✓` },
+      { w: "C) M/k sin raíz.", m: `T² ✗` },
+      { w: "D) M·k.", m: `[M·k] = M·${fr("M", "T²")} = ${fr("M²", "T²")}<span class="ar">→</span>√ = ${fr("M", "T")} ✗` }],
+    res: "B, 2π·√(M/k), sin hacer ni una ecuación.",
+    checks: [{ q: "¿Cuál es?", opts: ["2π·√(k/M)", "2π·√(M/k)", "2π·M/k", "2π·√(M·k)"], a: 1 }] },
+  { n: "T2", t: "La rapidez de una esfera que baja", src: "Dimensiones · la esfera de los parciales 3",
+    fig: () => planoSvg2({ ball: true, lab: "rueda sin deslizar", aria: "Una esfera que baja rodando una altura H por un plano" }).replace(/>h</, ">H<"),
+    txt: "Una esfera rueda sin deslizar y baja una altura H. Sin resolver nada, ¿cuál puede ser su rapidez abajo? A) √(10·g·H/7) · B) 10·g·H/7 · C) √(10·g/(7·H)) · D) √(7·H/(10·g)).",
+    hints: ["Una rapidez es L/T. Los números (10 y 7) no cuentan.", "[g·H] = (L/T²)·L = L²/T²."],
+    sol: [{ w: "Lo que debe dar.", m: "[v] = L/T" },
+      { w: "A) g·H con raíz.", m: `[g·H] = ${fr("L²", "T²")}<span class="ar">→</span>√ = ${fr("L", "T")} ✓` },
+      { w: "B) g·H sin raíz.", m: `${fr("L²", "T²")} ✗` },
+      { w: "C) g/H.", y: "La L se cancela.", m: `[g/H] = ${fr("1", "T²")}<span class="ar">→</span>√ = ${fr("1", "T")} ✗` },
+      { w: "D) H/g.", m: `T²<span class="ar">→</span>√ = T ✗` }],
+    res: "A. Ojo: si las opciones fueran √(10·g·H/7) y √(2·g·H), las dimensiones no ayudarían: ahí toca resolver (M4).",
+    checks: [{ q: "¿Cuál es?", opts: ["√(10·g·H/7)", "10·g·H/7", "√(10·g/(7·H))", "√(7·H/(10·g))"], a: 0 }] },
+  { n: "T3", t: "¿Cuál no es una unidad de energía?", src: "Preguntas del profe · ronda 2",
+    fig: () => "",
+    txt: "Uno de estos juegos de unidades NO es una unidad de energía: A) kJ · B) W·s · C) N·m²/s · D) N·m · E) kg·m²/s².",
+    hints: ["Energía: J = N·m = kg·m²/s². Un vatio (W) es un julio por segundo."],
+    sol: [{ w: "Las que sí son.", y: "kJ son mil julios. W·s = (J/s)·s = J. N·m = J. kg·m²/s² = J." },
+      { w: "La que no.", m: `N·m²/s = J·${fr("m", "s")}: le sobran metros sobre segundos ✗` }],
+    res: "C, N·m²/s.",
+    checks: [{ q: "¿Cuál no es energía?", opts: ["kJ", "W·s", "N·m²/s", "N·m", "kg·m²/s²"], a: 2 }] },
+  { group: "Con casos extremos", note: "Aquí todas las opciones tienen las dimensiones bien. Lo que descarta es imaginar un caso extremo." },
+  { n: "T4", t: "Los bloques en contacto", src: "Preguntas del profe · ronda 2",
+    fig: () => contacto2Svg(),
+    txt: "Una fuerza F empuja dos bloques en contacto, 4M atrás y 3M adelante, sobre una mesa sin fricción. ¿Cuánto vale la fuerza entre ellos? A) F · B) 2F · C) (3/4)·F · D) (3/7)·F · E) (4/7)·F.",
+    hints: ["La fuerza de contacto solo tiene que mover al bloque de adelante. ¿Puede ser F o más?", "Si los dos bloques fueran iguales, ¿qué fracción de F empujaría al de adelante?"],
+    sol: [{ w: "Descarta lo imposible.", y: "La fuerza de contacto solo acelera al bloque de adelante, que es una parte de la masa: tiene que ser menor que F.", m: "F ✗<span class=\"ar\">·</span>2F ✗" },
+      { w: "Caso extremo: bloques iguales.", y: "Si los dos tuvieran la misma masa, el de adelante sería la mitad de la masa total y recibiría F/2. En general recibe F por la fracción de la masa que está adelante.", m: `N = F·${fr("masa de adelante", "masa total")} = F·${fr("3M", "7M")}` },
+      { w: "Comprueba con Newton.", y: "Los dos juntos: F = 7M·a. El de adelante: N = 3M·a.", m: `N = 3M·${fr("F", "7M")} = ${fr("3", "7")}·F` }],
+    res: "D, (3/7)·F. La (4/7)·F sería empujar al de atrás, que es la trampa.",
+    checks: [{ q: "¿Cuál es?", opts: ["F", "2F", "(3/4)·F", "(3/7)·F", "(4/7)·F"], a: 3 }] },
+  { n: "T5", t: "Un bloque que baja por un plano con fricción", src: "Casos extremos · tipo final",
+    fig: () => planoSvg2({ rough: true, lab: "parte del reposo", aria: "Un bloque arriba de un plano inclinado de ángulo theta con fricción mu, a una altura h" }),
+    txt: "Un bloque se suelta desde el reposo a una altura h en un plano de ángulo θ con coeficiente de fricción μ, y baja. ¿Con qué rapidez llega abajo? A) √(2·g·h·(1 − μ·cot θ)) · B) √(2·g·h·(1 + μ·cot θ)) · C) √(2·g·h·(1 − μ)) · D) √(2·g·h/μ). (cot θ = cos θ/sen θ.)",
+    hints: ["Las cuatro son L/T: no se descartan por dimensiones. Prueba μ = 0: tiene que dar √(2·g·h).", "Prueba θ = 90° (una pared vertical): no hay normal, entonces no hay fricción. cot 90° = 0."],
+    sol: [{ w: "μ = 0 (sin fricción).", y: "Tiene que salir √(2·g·h). La D se va al infinito.", m: "D ✗" },
+      { w: "La fricción frena.", y: "Con fricción la rapidez tiene que ser menor que √(2·g·h). La B la aumenta.", m: "B ✗" },
+      { w: "θ = 90°: pared vertical.", y: "El bloque cae pegado a la pared sin empujarla: no hay normal ni fricción, y tiene que dar √(2·g·h). Con cot 90° = 0, la A lo cumple; la C todavía frena.", m: "C ✗<span class=\"ar\">→</span>queda A" },
+      { w: "Comprueba con energía.", y: "La fricción es μ·M·g·cos θ y actúa a lo largo del plano, h/sen θ.", m: `M·g·h − μ·M·g·cos θ·${fr("h", "sen θ")} = ½·M·v²<span class="ar">→</span>v = ${rt("2·g·h·(1 − μ·cot θ)")}` }],
+    res: "A. Los dos casos extremos (μ = 0 y θ = 90°) bastaron para descartar las otras tres.",
+    checks: [{ q: "¿Cuál es?", opts: ["√(2·g·h·(1 − μ·cot θ))", "√(2·g·h·(1 + μ·cot θ))", "√(2·g·h·(1 − μ))", "√(2·g·h/μ)"], a: 0 }] },
+  { n: "T6", t: "La máxima deformación del resorte", src: "Preguntas del profe · ronda 2",
+    fig: () => resortePoleaSvg(),
+    txt: "El bloque 2M, unido a un resorte de constante k, desliza sin fricción y está atado por una polea a un bloque M que cuelga. Se suelta desde el reposo con el resorte sin deformar. ¿Cuál es la máxima deformación? A) 4·M·g/k · B) M·g/(2k) · C) M·g/(4k) · D) 3·M·g/k · E) 2·M·g/k.",
+    hints: ["Las cinco son longitudes: [M·g/k] = fuerza/(fuerza/longitud) = L.", "¿Dónde quedaría quieto si lo bajaras despacio? Si lo sueltas de golpe, llega ahí con rapidez y se pasa."],
+    sol: [{ w: "Dimensiones: todas valen.", y: "M·g es una fuerza y k es fuerza sobre longitud: M·g/k es una longitud." },
+      { w: "El punto de equilibrio.", y: "Quieto, el resorte sostiene el peso de M: k·x = M·g, o sea x = M·g/k.", m: "x<sub>equilibrio</sub> = M·g/k" },
+      { w: "Se pasa del equilibrio.", y: "Lo sueltas desde el reposo: llega al equilibrio con rapidez y sigue estirando. Tiene que ser más que M·g/k.", m: "B ✗<span class=\"ar\">·</span>C ✗" },
+      { w: "Resuelve entre las que quedan.", y: "Energía: M baja x y pierde M·g·x; el resorte guarda ½·k·x². En la máxima deformación los dos están quietos.", m: `M·g·${tch("x")} = ½·k·x·${tch("x")}<span class="ar">→</span>x = ${fr("2·M·g", "k")}` }],
+    res: "E, 2·M·g/k: el doble del equilibrio. Es un MAS alrededor de M·g/k con amplitud M·g/k (F2).",
+    checks: [{ q: "¿Cuál es?", opts: ["4·M·g/k", "M·g/(2k)", "M·g/(4k)", "3·M·g/k", "2·M·g/k"], a: 4 }] }
+];
+
+function stepsHtml(steps) { return `<ol class="wx-steps">${steps.map((s) => `<li><p class="what">${s.w}</p>${s.y ? `<p class="why">${s.y}</p>` : ""}${s.m ? `<div class="mx">${s.m}</div>` : ""}</li>`).join("")}</ol>`; }
+(function renderProblems() {
+  const box = $("#problems");
+  PROBS.forEach((p) => {
+    if (p.group) { const gr = el("div", "prob-group"); gr.appendChild(el("h3", "", p.group)); if (p.note) gr.appendChild(el("p", "", p.note)); box.appendChild(gr); return; }
+    const a = el("article", "prob"); a.id = "prob-" + p.n;
+    const h = el("div", "prob-head"); h.appendChild(el("h3", "", p.n + " · " + p.t)); h.appendChild(el("span", "src", p.src)); a.appendChild(h);
+    const body = el("div", "prob-body");
+    const fig = el("div"); fig.innerHTML = p.fig(); body.appendChild(fig);
+    body.appendChild(el("p", "", p.txt)); a.appendChild(body);
+    p.checks.forEach((ck) => {
+      const c = el("div", "check"); const cq = el("p"); cq.innerHTML = "Chequeo rápido · " + ck.q; c.appendChild(cq);
+      const opts = el("div", "opts"); const fb = el("p", "fb"); fb.setAttribute("aria-live", "polite");
+      ck.opts.forEach((o, oi) => {
+        const b = el("button", "opt", o); b.type = "button";
+        b.addEventListener("click", () => {
+          opts.querySelectorAll(".opt").forEach((x) => x.classList.remove("right", "wrong"));
+          if (oi === ck.a) { b.classList.add("right"); fb.textContent = "Correcto. Revisa la solución para comparar tu desarrollo."; fb.className = "fb ok"; }
+          else { b.classList.add("wrong"); fb.textContent = "No es esa. Abre la pista 1 y vuelve a intentarlo."; fb.className = "fb no"; }
+        });
+        opts.appendChild(b);
+      });
+      c.appendChild(opts); c.appendChild(fb); a.appendChild(c);
+    });
+    const rv = el("div", "reveals");
+    p.hints.forEach((ht, i) => { const d = el("details", "rev"); d.appendChild(el("summary", "", "Pista " + (i + 1))); const b = el("div", "rev-body"); const pp = el("p"); pp.innerHTML = ht; b.appendChild(pp); d.appendChild(b); rv.appendChild(d); });
+    const ds = el("details", "rev"); ds.appendChild(el("summary", "", "Solución paso a paso"));
+    const sb2 = el("div", "rev-body"); sb2.innerHTML = stepsHtml(p.sol) + `<div class="wx-res"><b>Resultado:</b> ${p.res}</div>`; ds.appendChild(sb2); rv.appendChild(ds);
+    a.appendChild(rv);
+    box.appendChild(a);
+  });
+})();
+
+
+
+/* ---------- Quiz ---------- */
+const MOD = "F1", NEXT = "Aprobado. Sigue con la ronda 1 de las preguntas del profe y, después, con F2 · Movimiento armónico simple.";
+const QUIZ = {
+  A: [
+    { k: "Corta", q: "¿Cuál de estas expresiones tiene dimensiones de tiempo? (ℓ es una longitud y g la gravedad)",
+      o: ["√(ℓ/g)", "√(g/ℓ)", "g/ℓ", "ℓ·g"], a: 0,
+      e: "[ℓ/g] = L/(L/T²) = T², y la raíz da T. √(g/ℓ) da 1/T (es una ω), g/ℓ da 1/T² y ℓ·g da L²/T²." },
+    { k: "Corta", fig: () => resorteSvg({ pos: 0.6, H: 120, aria: "Un bloque en un resorte de constante k" }), q: "¿Qué dimensiones tiene la constante k de un resorte?",
+      o: ["M/T²", "M·L/T²", "M/L", "L/T²"], a: 0,
+      e: "F = k·x, así que k = fuerza/longitud = (M·L/T²)/L = M/T². M·L/T² es una fuerza y L/T² una aceleración." },
+    { k: "Conceptual", q: "¿Cuál de estas NO puede ser una energía? (k: resorte, A: amplitud, I: momento de inercia, ω: velocidad angular)",
+      o: ["½·k·A²", "M·g·h", "½·I·ω²", "M·v²/R"], a: 3,
+      e: "Energía: M·L²/T². ½·k·A² = (M/T²)·L², M·g·h = M·(L/T²)·L y ½·I·ω² = M·L²·(1/T²) sí lo son. M·v²/R = M·(L²/T²)/L = M·L/T² es una fuerza (la centrípeta)." },
+    { k: "Tipo examen", fig: () => fisicoSvg(), q: "Un cuerpo rígido de masa M cuelga de un pivote y oscila. Su momento de inercia respecto al pivote es I y su centro de masa está a una distancia d del pivote. Sin resolver, ¿cuál puede ser su frecuencia angular?",
+      o: ["√(M·g·d/I)", "√(I/(M·g·d))", "M·g·d/I", "√(M·g/(I·d))"], a: 0,
+      e: "Una frecuencia angular es 1/T. [M·g·d/I] = M·(L/T²)·L/(M·L²) = 1/T², y la raíz da 1/T ✓. La segunda es la volteada: da T (sería periodo/2π). La tercera da 1/T² y la cuarta 1/(L·T)." },
+    { k: "Tipo examen", fig: () => planoSvg2({ h: false, D: true, lab: "sin fricción, parte del reposo", aria: "Un bloque arriba de un plano inclinado sin fricción de largo D y ángulo theta" }), q: "Un bloque se suelta desde el reposo arriba de un plano sin fricción de largo D y ángulo θ. ¿Cuánto tarda en llegar abajo?",
+      o: ["√(2·D/(g·sen θ))", "√(2·D·g·sen θ)", "2·D/(g·sen θ)", "√(2·g/(D·sen θ))"], a: 0,
+      e: "Un tiempo es T. [D/g] = T², con raíz T ✓. D·g da L²/T² (con raíz, una rapidez), D/g sin raíz da T² y g/D da 1/T². Caso extremo: con θ = 90° es caída libre, t = √(2·D/g) ✓." }
+  ],
+  B: [
+    { k: "Corta", q: "¿Qué dimensiones tiene el momento angular L = I·ω?",
+      o: ["M·L²/T", "M·L/T", "M·L²/T²", "M·L²"], a: 0,
+      e: "[I] = M·L² y [ω] = 1/T: M·L²/T. M·L/T es el momento lineal y M·L²/T² una energía." },
+    { k: "Corta", q: "¿Cuál de estas puede ser una rapidez? (R es un radio)",
+      o: ["√(g·R)", "g·R", "√(g/R)", "R/g"], a: 0,
+      e: "[g·R] = L²/T², con raíz L/T ✓. Sin raíz es L²/T², √(g/R) es 1/T y R/g es T²." },
+    { k: "Conceptual", q: "¿Cuál de estas NO puede ser una fuerza?",
+      o: ["M·v²/R", "k·x", "μ·M·g", "½·M·v²"], a: 3,
+      e: "½·M·v² es una energía (M·L²/T²). Las otras tres son M·L/T²: centrípeta, resorte y fricción." },
+    { k: "Tipo examen", fig: () => resorteSvg({ pos: 1, marks: true, ghosts: [0], H: 140, aria: "Un bloque M en un resorte k estirado hasta x = A" }), q: "Un bloque de masa M en un resorte de constante k se suelta desde x = A. Sin resolver, ¿cuál puede ser su rapidez máxima?",
+      o: ["A·√(k/M)", "A·√(M/k)", "A·k/M", "√(k·A/M)"], a: 0,
+      e: "Una rapidez es L/T. √(k/M) = 1/T, así que A·√(k/M) = L/T ✓. A·√(M/k) da L·T, A·k/M da L/T² (es la aceleración máxima) y √(k·A/M) da √L/T." },
+    { k: "Tipo examen", fig: () => contacto2Svg("M₁", "M₂"), q: "Una fuerza F empuja dos bloques en contacto, M₁ atrás y M₂ adelante, sin fricción. ¿Cuánto vale la fuerza entre ellos?",
+      o: ["F·M₂/(M₁ + M₂)", "F·M₁/(M₁ + M₂)", "F", "F·(M₁ + M₂)/M₂"], a: 0,
+      e: "Caso extremo: si M₂ = 0, no hay nada que empujar y la fuerza de contacto es 0. Solo la primera da 0; la segunda daría F, la tercera F y la cuarta infinito." }
+  ]
+};
+
+let db = null;
+function renderQuiz(key) {
+  const form = $("#quiz-" + key.toLowerCase()); form.textContent = "";
+  QUIZ[key].forEach((it, i) => {
+    const fs = el("fieldset", "q");
+    const lg = el("legend"); lg.appendChild(el("span", "qn", String(i + 1)));
+    const lt = el("span"); lt.appendChild(el("span", "kind", it.k)); lt.appendChild(document.createElement("br")); lt.appendChild(document.createTextNode(it.q)); lg.appendChild(lt);
+    fs.appendChild(lg);
+    if (it.fig) { const fg = el("div", "qfig"); fg.innerHTML = it.fig(); fs.appendChild(fg); }
+    const ops = el("div", "qopts");
+    it.o.forEach((o, oi) => {
+      const lab = el("label", "qopt"); const r = el("input"); r.type = "radio"; r.name = `${key}-q${i}`; r.id = `${key}-q${i}-o${oi}`; r.value = String(oi);
+      lab.appendChild(r); lab.appendChild(el("span", "", String.fromCharCode(65 + oi) + ") " + o)); ops.appendChild(lab);
+    });
+    fs.appendChild(ops);
+    const ex = el("p", "qexp"); ex.hidden = true; fs.appendChild(ex);
+    form.appendChild(fs);
+  });
+  const row = el("div", "qrow");
+  const btn = el("button", "btn", "Calificar quiz " + key); btn.type = "submit"; btn.id = "grade-" + key;
+  const msg = el("span", "muted"); msg.id = "msg-" + key;
+  row.appendChild(btn); row.appendChild(msg); form.appendChild(row);
+}
+async function grade(key) {
+  const form = $("#quiz-" + key.toLowerCase());
+  const answers = QUIZ[key].map((_, i) => { const c = form.querySelector(`input[name="${key}-q${i}"]:checked`); return c ? Number(c.value) : null; });
+  const missing = answers.filter((a) => a === null).length;
+  if (missing) { $("#msg-" + key).textContent = missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`; return; }
+  $("#msg-" + key).textContent = "";
+  let score = 0;
+  QUIZ[key].forEach((it, i) => {
+    const fs = form.querySelectorAll("fieldset.q")[i];
+    const ok = answers[i] === it.a; if (ok) score++;
+    fs.querySelectorAll(".qopt").forEach((lab, oi) => { lab.classList.remove("right", "wrong"); if (oi === it.a) lab.classList.add("right"); else if (oi === answers[i]) lab.classList.add("wrong"); });
+    const ex = fs.querySelector(".qexp"); ex.hidden = false; ex.className = "qexp " + (ok ? "ok" : "no");
+    ex.textContent = (ok ? "Correcta. " : "Incorrecta. La respuesta es " + String.fromCharCode(65 + it.a) + ". ") + it.e;
+    fs.querySelectorAll("input").forEach((r) => (r.disabled = true));
+  });
+  $("#grade-" + key).disabled = true;
+  const pass = score >= 4;
+  const res = $("#res-" + key.toLowerCase()); res.hidden = false; res.className = "result " + (pass ? "pass" : "fail"); res.textContent = "";
+  res.appendChild(el("p", "score", score + "/5"));
+  res.appendChild(el("p", "", pass ? NEXT : "Todavía no. Lee las explicaciones de las que fallaste, repasa esa parte de la teoría y haz el Quiz B."));
+  const saveNote = el("p", "muted", db ? "Guardando tu intento…" : "No se pudo guardar el intento en esta vista. Cuéntale a Claude tu nota en el chat.");
+  res.appendChild(saveNote);
+  const retry = el("button", "btn ghost", "Volver a intentar el quiz " + key); retry.type = "button";
+  retry.addEventListener("click", () => { res.hidden = true; renderQuiz(key); $("#quiz-" + key.toLowerCase()).scrollIntoView({ block: "start" }); });
+  res.appendChild(retry);
+  if (!pass && key === "A") $("#quizb-wrap").hidden = false;
+  if (db) {
+    try {
+      await db.collection("intentos").add({ modulo: MOD, quiz: key, puntaje: score, total: 5, aprobado: pass, respuestas: answers.map((a) => String.fromCharCode(65 + a)), fecha: new Date().toISOString() });
+      saveNote.textContent = "Intento guardado. Cuando vuelvas al chat, Claude lo marca en tu plan.";
+    } catch (e) { saveNote.textContent = "No se pudo guardar el intento. Cuéntale a Claude tu nota en el chat."; }
+  }
+}
+renderQuiz("A"); renderQuiz("B");
+["A", "B"].forEach((k) => $("#quiz-" + k.toLowerCase()).addEventListener("submit", (e) => { e.preventDefault(); grade(k); }));
+
+function renderAttempts(list) {
+  const box = $("#attempts"); box.textContent = "";
+  if (!list.length) { box.appendChild(el("p", "muted", "Todavía no has presentado el quiz. Tus intentos aparecen aquí y quedan guardados para que Claude actualice tu plan.")); return; }
+  list.forEach((d) => {
+    const r = el("div", "att");
+    r.appendChild(el("b", "", "Quiz " + d.quiz + " · " + d.puntaje + "/" + d.total));
+    r.appendChild(el("span", "pill " + (d.aprobado ? "ok" : "no"), d.aprobado ? "Aprobado" : "No aprobado"));
+    let when = ""; try { when = new Date(d.fecha).toLocaleString("es-CO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { when = d.fecha || ""; }
+    r.appendChild(el("span", "muted", when));
+    box.appendChild(r);
+  });
+  if (list.some((d) => d.quiz === "A" && !d.aprobado) && !list.some((d) => d.aprobado)) $("#quizb-wrap").hidden = false;
+}
+
+(async function () {
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  db.collection("intentos").orderBy("fecha", "desc").limit(6).onSnapshot((snap) => {
+    renderAttempts(snap.docs.filter((d) => d.exists).map((d) => d.data()));
+  }, () => {});
+})();
+</script>

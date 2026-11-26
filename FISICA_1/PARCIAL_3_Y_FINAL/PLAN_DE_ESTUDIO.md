@@ -86,18 +86,19 @@ Reglas que siguen igual: la masa va con **M** mayúscula, los ángulos de circul
 | **X2 · Exprés: gravitación y satélites** | 13.1–13.7 | F = G·M₁·M₂/r²; g a una altura; U = −G·M₁·M₂/r; velocidad de escape; órbitas circulares; Kepler | Problemas del libro (no salió en ningún parcial 3 anterior) |
 | **M8 · Simulacro: el Parcial 3 de 2026-1** | caps. 8–11 | El parcial real, tal cual: 3 de selección múltiple + 3 abiertos (90 pts), 80 minutos. Rúbrica tipo profe. **Meta: 72/90** | Parcial 3 de 2026-1 (guardado: no lo abras antes) |
 
-### Fase 2 · Examen final (rehecha el 24 de noviembre)
+### Fase 2 · Examen final (rehecha el 26 de noviembre)
 
-Numerados en el orden en que se estudian. F1 y F2 son módulos completos; F3, F4 y F5 son repasos sin lab (problemas de parciales anteriores y quiz).
+Numerados en el orden en que se estudian y ordenados por cuántos puntos da cada hora. F2 es un módulo completo; F1 y F3 son exprés; F4, F5 y F6 son repasos sin lab.
 
 | Módulo | Libro | Qué vas a dominar | De dónde salen los problemas |
 |---|---|---|---|
-| **F1 · Oscilaciones I: movimiento armónico simple** | 14.1–14.4 | A, T, f y ω = 2π·f; masa–resorte con ω = √(k/M); x(t) = A·cos(ω·t + φ); v_máx = A·ω, a_máx = A·ω²; energía ½·k·A²; resorte vertical | Libro y clases del 10 al 24 nov (no hay diapositivas ni parciales); un problema mixto choque + MAS |
-| **F2 · Oscilaciones II: péndulos, amortiguadas y forzadas** | 14.5–14.8 | Péndulo simple T = 2π·√(L/g); péndulo físico T = 2π·√(I/(M·g·d)) con el I de M3; amortiguamiento y resonancia (conceptual) | Libro; barra y aro colgados |
-| **F3 · Repaso P3 + gravitación** | caps. 8–11 y 13 | Lo que más sale en los P3; los quizzes pendientes de M6 y M7; gravitación en una página | Quiz 3 bono 2026-2 (A y B), tareas 10 y 11, libro cap. 13 |
-| **F4 · Repaso P2: Newton, fricción, circular y energía** | caps. 4–7 | DCL, fricción estática y cinética, dinámica circular, energía con fricción y resortes | Tu Parcial 2 (58/90) y los 4 parciales 2 anteriores |
-| **F5 · Repaso P1: vectores, cinemática y proyectiles** | caps. 1–3 | Vectores, aceleración constante, proyectiles, circular uniforme, velocidad relativa | Tu Parcial 1 (69/90) y los 4 parciales 1 anteriores |
-| **F6 · Simulacro final** | todo | 3 horas, problemas nuevos de los tres parciales y del cap. 14. **Meta: 60/100 (= 3,0); 75/100 para ir tranquilo** | Armado por Claude: no hay finales anteriores |
+| **F1 · Descartar opciones: dimensiones y casos extremos** | 1.4 | Dimensiones de v, a, F, energía, k, ω, I, p y L; tachar opciones; casos extremos (μ = 0, masa 0, θ = 0° o 90°); revisar resultados | Consejo que le dieron el 26 de noviembre. En las preguntas del profe las opciones casi siempre tienen las mismas dimensiones: ahí descartan los casos extremos |
+| **F2 · Oscilaciones I: movimiento armónico simple** | 14.1–14.4 | ω = √(k/M), T, f, v_máx y a_máx, energía ½·k·A², resorte vertical | Libro y clases; un problema mixto choque + MAS |
+| **F3 · Oscilaciones II: péndulos, amortiguadas y forzadas** | 14.5–14.8 | Péndulo simple y físico, amortiguamiento y resonancia (conceptual) | Libro; la pregunta del profe del péndulo con más amplitud |
+| **F4 · Repaso P2: Newton, fricción, circular y energía** | caps. 4–7 | Ascensores, contacto, poleas móviles, loop, energía con fricción y resortes, diagramas U(x) | Tu Parcial 2, parciales 2 anteriores y 7 preguntas del profe |
+| **F5 · Repaso P3 + gravitación** | caps. 8–11 y 13 | Lo que más sale en los P3, quizzes pendientes de M6 y M7, gravitación y el cometa | Quiz 3 bono, tareas 10 y 11 y 7 preguntas del profe |
+| **F6 · Repaso P1: cinemática y gráficas** | caps. 1–3 | Gráficas v→x, proyectil, caída libre | 5 preguntas del profe y tu Parcial 1 |
+| **F7 · Simulacro final** | todo | Preguntas cortas del estilo del profe y algunos abiertos, 2 h. **Meta: 60/100** | Armado por Claude |
 
 ## 5. Cronograma
 
@@ -121,21 +122,19 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 
 ### Fase 2 · Examen final
 
-> **Ajuste del 24 de noviembre.** La fase 2 original (20 al 29) no alcanzó a empezar. Arranca el martes 24: lo nuevo (oscilaciones) va primero y los repasos de los parciales son módulos cortos. Prioridades del material del final: 1) cap. 14, porque solo entra en el final; 2) P3 (sin nota) y P2 (tu parcial más bajo); 3) gravitación y P1.
+> **Ajuste del 26 de noviembre.** No se alcanzó a empezar el 24: arranca el jueves 26 con un bloque y el viernes con dos, ordenado por puntos. (Antes, ajuste del 24: lo nuevo (oscilaciones) va primero y los repasos de los parciales son módulos cortos. Prioridades del material del final: 1) cap. 14, porque solo entra en el final; 2) P3 (sin nota) y P2 (tu parcial más bajo); 3) gravitación y P1.
 
 | Día | Carga | Qué |
 |---|---|---|
-| Mar 24 nov | Liviana · 1–1,5 h | **F1** movimiento armónico simple: teoría y lab |
-| Mié 25 nov | Media · 2,5–3 h | **F1** taller y quiz · **F2** péndulos, amortiguadas y forzadas: teoría y lab |
-| Jue 26 nov | Liviana · 1,5 h | **Preguntas del profe, ronda 1** (30 min, antes de clase) · clase de repaso general (12:30): pregunta por el formato, hoja de fórmulas, calculadora y salón · **F2** taller y quiz |
-| Vie 27 nov | Suave · ~2 h | **F3** repaso P3 + gravitación (con los quizzes de M6 y M7) · evaluación de cursos antes de las 11:59 p. m. |
-| Sáb 28 nov | Pesada · 4–5 h | **F4** repaso P2 · **F5** repaso P1 · **Preguntas del profe, ronda 2** (30 min) |
-| Dom 29 nov | Pesada · 4–5 h | **F6** simulacro final (3 h) + corrección · en la noche, el simulacro de Bloque Neón |
+| Jue 26 nov | Liviana · 1–1,5 h | **Bloque 1:** F1 (30 min) + Preguntas del profe, ronda 1 (30 min) · clase de repaso a las 12:30 |
+| Vie 27 nov | Suave · 2–2,5 h | **Bloque 1:** F2 · **Bloque 2:** F3 · evaluación de cursos antes de las 11:59 p. m. |
+| Sáb 28 nov | Pesada · 4–5 h | **F4** repaso P2 · **F5** repaso P3 + gravitación · Preguntas del profe, ronda 2 |
+| Dom 29 nov | Pesada · 4–5 h | **F6** repaso P1 (corto) · **F7** simulacro + corrección · en la noche, simulacro de Bloque Neón |
 | **Lun 30 nov** | — | En la mañana, la hoja de fórmulas del final (y el simulacro de BN antes de las 2:00 p. m. si no lo hiciste) · **EXAMEN FINAL (15:00)** |
 
 > **Preguntas del profe (24 de noviembre).** El estudiante subió las diapositivas «Preparación examen final» del profe (versión 2024-2, en `material/06_Final/`). Traen 3 juegos de preguntas de finales anteriores, presentados en línea: 10 de selección múltiple de 1 punto cada uno. Hay 22 distintas: 7 de Newton y energía, 5 de cinemática, 5 del Parcial 3, 3 de oscilaciones y 2 de gravitación. 4 se repiten entre juegos: x = h/μ, la cuerda que se recorta (9π), la aceleración máxima del MAS y el cometa. Están resueltas en el artifact [Preguntas del profe](https://claude.ai/artifact/Y31P81uVmYN73fWZvW6S9t), en dos rondas. Por eso la gravitación sube a prioridad 2. **Errata:** en la bala que se incrusta en un bloque con vara rígida, el profe usa la condición de cuerda (tensión 0 arriba) y da (1 + M/m)·√(5gR); con una vara rígida de verdad bastaría v ≈ 0 arriba, lo que da 2·(1 + M/m)·√(gR), que también está entre las opciones. Se deja la del profe, con la nota.
 
-**Si te atrasas en la fase 2:** recorta primero F5 (deja solo lo que perdiste en tu Parcial 1). Nunca recortes la teoría de F1 y F2 ni el simulacro.
+**Si te atrasas en la fase 2:** recorta primero F6 y el taller de F2. Nunca recortes las preguntas del profe ni el simulacro.
 
 
 ## 6. Tu progreso
@@ -152,12 +151,13 @@ Carga de tu semana: **martes y jueves, liviana** (1–1,5 h); **lunes y viernes,
 | M7 Momento angular | ☐ | ☐ | ☐ | — | 🔒 |
 | X2 Exprés gravitación | ☐ | — | ☐ | — | lunes 16 |
 | M8 Simulacro: Parcial 3 de 2026-1 | — | — | — | —/90 | 🔒 |
-| F1 Movimiento armónico simple | ☐ | ☐ | ☐ | — | siguiente |
-| F2 Péndulos, amortiguadas y forzadas | ☐ | ☐ | ☐ | — | 🔒 |
-| F3 Repaso P3 + gravitación | ☐ | — | ☐ | — | 🔒 |
+| F1 Descartar opciones | ☐ | — | ☐ | — | hoy |
+| F2 Movimiento armónico simple | ☐ | ☐ | ☐ | — | 🔒 |
+| F3 Péndulos, amortiguadas y forzadas | ☐ | — | ☐ | — | 🔒 |
 | F4 Repaso P2 | ☐ | — | ☐ | — | 🔒 |
-| F5 Repaso P1 | ☐ | — | ☐ | — | 🔒 |
-| F6 Simulacro final | — | — | — | —/100 | 🔒 |
+| F5 Repaso P3 + gravitación | ☐ | — | ☐ | — | 🔒 |
+| F6 Repaso P1 | ☐ | — | ☐ | — | 🔒 |
+| F7 Simulacro final | — | — | — | —/100 | 🔒 |
 
 > El progreso real vive en el plan-artifact. Al 24 de noviembre: M1 4/5, M2 5/5, M3 4/5, M4 4/5, M5 5/5; M6 y M7 sin quiz (van en F3); M8 sin terminar.
 
